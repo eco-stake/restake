@@ -20,10 +20,23 @@ class App extends React.Component {
     this.rpcUrl = process.env.REACT_APP_RPC_URL
     this.restUrl = process.env.REACT_APP_REST_URL
     this.state = {}
+    this.connect = this.connect.bind(this);
+    this.refresh = this.refresh.bind(this);
   }
 
-  async componentDidMount() {
-    setTimeout(() => this.connect(), 1000)
+  componentDidMount() {
+    window.onload = async () => {
+      if (!window.keplr) {
+        this.setState({isLoaded: true, error: 'Please install Keplr extension'})
+      } else {
+        this.connect()
+      }
+    }
+    window.addEventListener("keplr_keystorechange", this.refresh)
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener("keplr_keystorechange", this.refresh)
   }
 
   async getBalance() {
@@ -37,6 +50,11 @@ class App extends React.Component {
         },
         (error) => { }
       )
+  }
+
+  async refresh() {
+    console.log('Refresh')
+    this.connect()
   }
 
   async connect() {
@@ -91,7 +109,7 @@ class App extends React.Component {
             stargateClient={this.state.stargateClient} />
         }
         {!this.state.address &&
-          <Button onClick={() => this.connect()}>
+          <Button onClick={this.connect}>
             Connect
           </Button>
         }

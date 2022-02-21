@@ -12,10 +12,17 @@ class Wallet extends React.Component {
     this.onAddValidator = this.onAddValidator.bind(this);
   }
 
-  async componentDidMount() {
+  componentDidMount() {
+    this.getValidators()
     this.getDelegations()
     this.getGrants()
-    this.getValidators()
+  }
+
+  componentDidUpdate(prevProps) {
+    if(this.props.address !== prevProps.address){
+      this.getDelegations()
+      this.getGrants()
+    }
   }
 
   componentWillUnmount() {
