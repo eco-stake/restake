@@ -9,70 +9,58 @@ import {
 class Delegations extends React.Component {
   constructor(props) {
     super(props);
-    this.restUrl = process.env.REACT_APP_REST_URL
-    this.botAddress = process.env.REACT_APP_BOT_ADDRESS
-    this.state = {}
+    this.state = {restake: []}
   }
 
-  async componentDidMount() {
-    this.getGrants()
+  componentDidMount() {
   }
 
   componentWillUnmount() {
   }
 
-  async getGrants() {
-    const searchParams = new URLSearchParams();
-    searchParams.append("grantee", this.botAddress);
-    searchParams.append("granter", this.props.address);
-    // searchParams.append("msg_type_url", "/cosmos.staking.v1beta1.MsgDelegate");
-    fetch(this.restUrl + "/cosmos/authz/v1beta1/grants?" + searchParams.toString())
-      .then(res => res.json())
-      .then(
-        (result) => {
-          console.log(result)
-          this.setState({
-            isLoaded: true,
-            grants: result
-          });
-        },
-        (error) => {
-          this.setState({
-            isLoaded: true,
-            error
-          });
-        }
-      )
+  addToRestake(validatorAddress) {
+    this.setState((state) => ({
+      restake: [...state.restake, validatorAddress]
+    }));
   }
 
-  async setupRestake() {
-    console.log(this.props.stargateClient)
+  removeFromRestake(validatorAddress) {
+    this.setState((state) => ({
+      restake: state.restake.filter(el => el !== validatorAddress)
+    }));
+  }
+
+  restakePercentage(){
+    return (100.0 / this.state.restake.length).toFixed(2)
   }
 
   render() {
-    if (!this.state.isLoaded) {
+    if (!this.props.delegations || !this.props.validators) {
       return (
         <p>Loading...</p>
-      )
-    }
-    if (this.state.error) {
-      return (
-        <p>Loading failed</p>
       )
     }
 
     const listItems = this.props.delegations && Object.entries(this.props.delegations).map(([validator_address, item], i) => {
       const validator = this.props.validators[item.delegation.validator_address]
-      // const grants =
       if(validator)
         return (
           <tr key={validator.operator_address}>
             <td>{validator.description.moniker}</td>
             <td><Balance coins={item.balance} /></td>
             <td>
-              <Button onClick={() => this.setupRestake()}>
-                Setup REStake
-              </Button>
+              {this.state.restake.includes(validator.operator_address) &&
+                <span>{this.restakePercentage()}%</span>}
+            </td>
+            <td>
+              {this.state.restake.includes(validator.operator_address)
+                ? <Button className="btn-sm btn-danger" onClick={() => this.removeFromRestake(validator.operator_address)}>
+                    Remove from REStake
+                  </Button>
+                : <Button className="btn-sm" disabled={this.state.restake.length >= 5} onClick={() => this.addToRestake(validator.operator_address)}>
+                    Add to REStake
+                  </Button>
+              }
             </td>
           </tr>
         )
@@ -82,6 +70,14 @@ class Delegations extends React.Component {
 
     return (
       <Table>
+        <thead>
+          <tr>
+            <th>Validator</th>
+            <th>Delegations</th>
+            <th>Restake percentage</th>
+            <th width={200}></th>
+          </tr>
+        </thead>
         <tbody>
           {listItems}
         </tbody>

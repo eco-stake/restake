@@ -2,6 +2,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import React from 'react'
 import Wallet from './Wallet'
+import Balance from './Balance'
 
 import {
     SigningStargateClient
@@ -17,15 +18,29 @@ class App extends React.Component {
     super(props);
     this.chainId = process.env.REACT_APP_CHAIN_ID
     this.rpcUrl = process.env.REACT_APP_RPC_URL
+    this.restUrl = process.env.REACT_APP_REST_URL
     this.state = {}
   }
 
   async componentDidMount() {
-    this.connect()
+    setTimeout(() => this.connect(), 1000)
+  }
+
+  async getBalance() {
+    fetch(this.restUrl + "/cosmos/bank/v1beta1/balances/" + this.state.address)
+      .then(res => res.json())
+      .then(
+        (result) => {
+          this.setState({
+            balance: result.balances.find(element => element.denom == 'uosmo')
+          })
+        },
+        (error) => { }
+      )
   }
 
   async connect() {
-    // await window.keplr.enable(this.chainId);
+    await window.keplr.enable(this.chainId);
     if (window.getOfflineSigner){
       const offlineSigner = window.getOfflineSigner(this.chainId)
       const accounts = await offlineSigner.getAccounts()
@@ -38,6 +53,7 @@ class App extends React.Component {
         address: accounts[0].address,
         stargateClient: stargateClient
       })
+      this.getBalance()
     }
   }
 
@@ -60,7 +76,7 @@ class App extends React.Component {
             {this.state.address &&
               <>
                 <li className="nav-item">
-                  <a className="nav-link disabled">{this.state.address}</a>
+                  <a className="nav-link disabled">{this.state.address} | <Balance coins={this.state.balance} /></a>
                 </li>
                 <li className="nav-item">
                   <a href="#" onClick={() => this.disconnect()} className="nav-link" aria-current="page">Disconnect</a>

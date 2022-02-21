@@ -1,20 +1,28 @@
 import React from 'react'
 import Delegations from './Delegations'
-import Validators from './Validators'
+import AddValidator from './AddValidator'
 
 class Wallet extends React.Component {
   constructor(props) {
     super(props);
     this.restUrl = process.env.REACT_APP_REST_URL
+    this.botAddress = process.env.REACT_APP_BOT_ADDRESS
     this.state = {}
+
+    this.onAddValidator = this.onAddValidator.bind(this);
   }
 
   async componentDidMount() {
-    this.getValidators()
     this.getDelegations()
+    this.getGrants()
+    this.getValidators()
   }
 
   componentWillUnmount() {
+  }
+
+  onAddValidator(){
+    setTimeout(() => this.getDelegations(), 1000)
   }
 
   async getValidators() {
@@ -23,16 +31,10 @@ class Wallet extends React.Component {
       .then(
         (result) => {
           const validators = result.validators.reduce((a, v) => ({ ...a, [v.operator_address]: v}), {})
-          this.setState({
-            isLoaded: true,
-            validators: validators
-          });
+          this.setState({ validators: validators });
         },
         (error) => {
-          this.setState({
-            isLoaded: true,
-            error
-          });
+          this.setState({ error });
         }
       )
   }
@@ -57,6 +59,24 @@ class Wallet extends React.Component {
       )
   }
 
+  async getGrants() {
+    const searchParams = new URLSearchParams();
+    searchParams.append("grantee", this.botAddress);
+    searchParams.append("granter", this.props.address);
+    // searchParams.append("msg_type_url", "/cosmos.staking.v1beta1.MsgDelegate");
+    fetch(this.restUrl + "/cosmos/authz/v1beta1/grants?" + searchParams.toString())
+      .then(res => res.json())
+      .then(
+        (result) => {
+          console.log(result)
+          this.setState({ grants: result });
+        },
+        (error) => {
+          this.setState({ error });
+        }
+      )
+  }
+
   render() {
     if (!this.state.isLoaded) {
       return (
@@ -70,16 +90,18 @@ class Wallet extends React.Component {
     }
     return (
       <div>
-        <h3>Delegations</h3>
         <Delegations
           address={this.props.address}
           validators={this.state.validators}
           delegations={this.state.delegations}
+          grants={this.state.grants}
           stargateClient={this.props.stargateClient} />
-        <h3>Validators</h3>
-        <Validators
+        <AddValidator
+          address={this.props.address}
           validators={this.state.validators}
-          delegations={this.state.delegations} />
+          delegations={this.state.delegations}
+          stargateClient={this.props.stargateClient}
+          onAddValidator={this.onAddValidator} />
       </div>
     )
   }

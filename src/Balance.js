@@ -7,6 +7,10 @@ function Balance(props) {
     return coins.denom.slice(1).toUpperCase()
   }
 
+  if(!props.coins){
+    return null
+  }
+
   return (
     <span className="balance">
       <span className="amount">{amount(props.coins)}</span>&nbsp;
