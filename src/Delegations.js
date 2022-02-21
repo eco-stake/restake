@@ -1,5 +1,5 @@
 import React from 'react'
-import Balance from './Balance'
+import Coins from './Coins'
 
 import {
   Table,
@@ -47,7 +47,7 @@ class Delegations extends React.Component {
         return (
           <tr key={validator.operator_address}>
             <td>{validator.description.moniker}</td>
-            <td><Balance coins={item.balance} /></td>
+            <td><Coins coins={item.balance} /></td>
             <td>
               {this.state.restake.includes(validator.operator_address) &&
                 <span>{this.restakePercentage()}%</span>}

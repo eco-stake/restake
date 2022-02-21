@@ -1,4 +1,4 @@
-import Balance from './Balance'
+import Coins from './Coins'
 
 import {
   Table,

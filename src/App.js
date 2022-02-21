@@ -2,7 +2,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import React from 'react'
 import Wallet from './Wallet'
-import Balance from './Balance'
+import Coins from './Coins'
 
 import {
     SigningStargateClient
@@ -32,7 +32,7 @@ class App extends React.Component {
       .then(
         (result) => {
           this.setState({
-            balance: result.balances.find(element => element.denom == 'uosmo')
+            balance: result.balances.find(element => element.denom === 'uosmo') || {denom: 'uosmo', amount: 0}
           })
         },
         (error) => { }
@@ -76,7 +76,7 @@ class App extends React.Component {
             {this.state.address &&
               <>
                 <li className="nav-item">
-                  <a className="nav-link disabled">{this.state.address} | <Balance coins={this.state.balance} /></a>
+                  <a className="nav-link disabled">{this.state.address} | <Coins coins={this.state.balance} /></a>
                 </li>
                 <li className="nav-item">
                   <a href="#" onClick={() => this.disconnect()} className="nav-link" aria-current="page">Disconnect</a>

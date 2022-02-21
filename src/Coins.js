@@ -1,4 +1,4 @@
-function Balance(props) {
+function Coins(props) {
   function amount(coins){
     return coins.amount / 1000000.0
   }
@@ -12,11 +12,11 @@ function Balance(props) {
   }
 
   return (
-    <span className="balance">
+    <span className="coins">
       <span className="amount">{amount(props.coins)}</span>&nbsp;
       <span className="denom">{denom(props.coins)}</span>
     </span>
   )
 }
 
-export default Balance;
+export default Coins;
