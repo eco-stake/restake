@@ -1,6 +1,5 @@
 import React from 'react'
 import Delegations from './Delegations'
-import AddValidator from './AddValidator'
 
 class Wallet extends React.Component {
   constructor(props) {
@@ -9,19 +8,18 @@ class Wallet extends React.Component {
     this.botAddress = process.env.REACT_APP_BOT_ADDRESS
     this.state = {}
 
+    this.getDelegations = this.getDelegations.bind(this);
     this.onAddValidator = this.onAddValidator.bind(this);
   }
 
   componentDidMount() {
     this.getValidators()
     this.getDelegations()
-    this.getGrants()
   }
 
   componentDidUpdate(prevProps) {
     if(this.props.address !== prevProps.address){
       this.getDelegations()
-      this.getGrants()
     }
   }
 
@@ -66,24 +64,6 @@ class Wallet extends React.Component {
       )
   }
 
-  async getGrants() {
-    const searchParams = new URLSearchParams();
-    searchParams.append("grantee", this.botAddress);
-    searchParams.append("granter", this.props.address);
-    // searchParams.append("msg_type_url", "/cosmos.staking.v1beta1.MsgDelegate");
-    fetch(this.restUrl + "/cosmos/authz/v1beta1/grants?" + searchParams.toString())
-      .then(res => res.json())
-      .then(
-        (result) => {
-          console.log(result)
-          this.setState({ grants: result });
-        },
-        (error) => {
-          this.setState({ error });
-        }
-      )
-  }
-
   render() {
     if (!this.state.isLoaded) {
       return (
@@ -101,13 +81,8 @@ class Wallet extends React.Component {
           address={this.props.address}
           validators={this.state.validators}
           delegations={this.state.delegations}
-          grants={this.state.grants}
-          stargateClient={this.props.stargateClient} />
-        <AddValidator
-          address={this.props.address}
-          validators={this.state.validators}
-          delegations={this.state.delegations}
           stargateClient={this.props.stargateClient}
+          getDelegations={this.getDelegations}
           onAddValidator={this.onAddValidator} />
       </div>
     )

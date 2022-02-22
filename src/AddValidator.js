@@ -65,11 +65,8 @@ class AddValidator extends React.Component {
         amount: coin(parseFloat(amount) * 1000000.0, "uosmo"),
       },
     };
-    const gasPrice = GasPrice.fromString("0.025ucosm");
+    const gasPrice = GasPrice.fromString("0.025uosmo");
     const fee = calculateFee(180_000, gasPrice);
-
-    const chainId = await client.getChainId();
-    console.log("Connected to chain:", chainId);
 
     try {
       const result = await client.signAndBroadcast(address, [msg], fee, memo);
@@ -92,7 +89,7 @@ class AddValidator extends React.Component {
   render() {
     return (
       <>
-        <Button onClick={() => this.show()}>
+        <Button className="btn-secondary" onClick={() => this.show()}>
           Add Validator
         </Button>
 

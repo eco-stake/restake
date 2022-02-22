@@ -1,6 +1,8 @@
+import _ from 'lodash'
+
 function Coins(props) {
   function amount(coins){
-    return coins.amount / 1000000.0
+    return _.round(coins.amount / 1000000.0, 6)
   }
 
   function denom(coins){
