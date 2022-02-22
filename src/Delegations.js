@@ -13,6 +13,7 @@ import { GenericAuthorization } from "cosmjs-types/cosmos/authz/v1beta1/authz";
 import { StakeAuthorization } from "cosmjs-types/cosmos/staking/v1beta1/authz";
 import { MsgWithdrawDelegatorReward } from "cosmjs-types/cosmos/distribution/v1beta1/tx";
 import { MsgDelegate } from "cosmjs-types/cosmos/staking/v1beta1/tx";
+import { Timestamp } from "cosmjs-types/google/protobuf/timestamp";
 
 import {
   Table,
@@ -67,10 +68,19 @@ class Delegations extends React.Component {
       .then(
         (result) => {
           const claimGrant = result.grants.find(el => {
-            return el.authorization['@type'] === "/cosmos.authz.v1beta1.GenericAuthorization" && el.authorization.msg === "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward"
+            if (el.authorization['@type'] === "/cosmos.authz.v1beta1.GenericAuthorization" &&
+              el.authorization.msg === "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward"){
+              return Date.parse(el.expiration) > new Date()
+            }else{
+              return false
+            }
           })
           const stakeGrant = result.grants.find(el => {
-            return el.authorization['@type'] === "/cosmos.staking.v1beta1.StakeAuthorization"
+            if(el.authorization['@type'] === "/cosmos.staking.v1beta1.StakeAuthorization"){
+              return Date.parse(el.expiration) > new Date()
+            }else{
+              return false
+            }
           })
           let grantValidators
           if(stakeGrant){
@@ -79,6 +89,8 @@ class Delegations extends React.Component {
           this.setState({
             claimGrant: claimGrant,
             stakeGrant: stakeGrant,
+            grantsValid: !!(claimGrant && stakeGrant),
+            grantsExist: !!(claimGrant || stakeGrant),
             grantValidators: grantValidators || [],
             restake: grantValidators || []
           })
@@ -90,6 +102,12 @@ class Delegations extends React.Component {
   }
 
   buildGrantMsg(type, value){
+    const dateNow = new Date();
+    const expiration = new Date(
+      dateNow.getFullYear() + 1,
+      dateNow.getMonth(),
+      dateNow.getDate()
+    )
     return {
       typeUrl: "/cosmos.authz.v1beta1.MsgGrant",
       value: {
@@ -100,8 +118,22 @@ class Delegations extends React.Component {
             typeUrl: type,
             value: value
           },
-          // expiration: undefined
+          expiration: Timestamp.fromPartial({
+            seconds: expiration.getTime() / 1000,
+            nanos: 0
+          })
         }
+      },
+    }
+  }
+
+  buildRevokeMsg(type){
+    return {
+      typeUrl: "/cosmos.authz.v1beta1.MsgRevoke",
+      value: {
+        granter: this.props.address,
+        grantee: this.botAddress,
+        msgTypeUrl: type
       },
     }
   }
@@ -112,7 +144,7 @@ class Delegations extends React.Component {
     const client = this.props.stargateClient
     const address = this.props.address
     const totalRewards = this.totalRewards()
-    const perValidatorReward = totalRewards.amount / this.state.restake.length
+    const perValidatorReward = parseInt(totalRewards.amount / this.state.restake.length)
     let messages = this.state.restake.map(el => {
       return [{
         typeUrl: "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward",
@@ -191,6 +223,38 @@ class Delegations extends React.Component {
     } catch (error) {
       console.log('Failed to broadcast:', error)
       this.setState({ updateLoading: false, error: 'Failed to broadcast TX' })
+    }
+  }
+
+  async revokeRestake() {
+    this.setState({revokeLoading: true})
+
+    const client = this.props.stargateClient
+    const address = this.props.address
+    const messages = [
+      this.buildRevokeMsg("/cosmos.staking.v1beta1.MsgDelegate"),
+      this.buildRevokeMsg("/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward")
+    ]
+    console.log(messages)
+
+    const gasPrice = GasPrice.fromString("0.025uosmo");
+    const fee = calculateFee(180_000, gasPrice);
+
+    try {
+      const result = await client.signAndBroadcast(address, messages, fee);
+      console.log("Broadcast result:", result);
+
+      assertIsDeliverTxSuccess(result);
+      console.log("Successfully broadcasted:", result);
+
+      this.setState({revokeLoading: false, error: null})
+      client.disconnect();
+
+      setTimeout(() => this.getGrants(), 3000)
+
+    } catch (error) {
+      console.log('Failed to broadcast:', error)
+      this.setState({ revokeLoading: false, error: 'Failed to broadcast TX' })
     }
   }
 
@@ -322,7 +386,7 @@ class Delegations extends React.Component {
               {this.restakeChanged() && (
                 !this.state.updateLoading
                   ? <Button className="mr-5" onClick={() => this.updateRestake()}>Update Restake</Button>
-                  : <Button className="btn btn-primary" type="button" disabled>
+                  : <Button className="mr-5" disabled>
                     <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>&nbsp;
                     Submitting TX...
                   </Button>
@@ -330,7 +394,15 @@ class Delegations extends React.Component {
               {!this.restakeChanged() && this.state.restake.length > 0 && (
                 !this.state.manualLoading
                   ? <Button className="btn-secondary mr-5" onClick={() => this.manualRestake()}>Restake <Coins coins={this.totalRewards()} /></Button>
-                  : <Button className="btn btn-primary" type="button" disabled>
+                  : <Button className="btn-secondary mr-5" disabled>
+                    <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>&nbsp;
+                    Submitting TX...
+                  </Button>
+              )}
+              {!this.restakeChanged() && this.state.grantsExist && (
+                !this.state.revokeLoading
+                  ? <Button className="btn-danger mr-5" onClick={() => this.revokeRestake()}>Revoke Restake</Button>
+                  : <Button className="btn-danger mr-5" disabled>
                     <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>&nbsp;
                     Submitting TX...
                   </Button>

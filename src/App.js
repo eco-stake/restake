@@ -7,7 +7,7 @@ import Coins from './Coins'
 import {
     SigningStargateClient
 } from '@cosmjs/stargate'
-import { MsgExec, MsgGrant, MsgRevoke } from "cosmjs-types/cosmos/authz/v1beta1/tx";
+import { MsgGrant, MsgRevoke } from "cosmjs-types/cosmos/authz/v1beta1/tx";
 
 import {
   Container,
@@ -69,6 +69,7 @@ class App extends React.Component {
         offlineSigner
       )
       stargateClient.registry.register("/cosmos.authz.v1beta1.MsgGrant", MsgGrant)
+      stargateClient.registry.register("/cosmos.authz.v1beta1.MsgRevoke", MsgRevoke)
       this.setState({
         address: accounts[0].address,
         stargateClient: stargateClient
