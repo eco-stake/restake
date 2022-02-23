@@ -1,6 +1,10 @@
 import React from 'react'
 import Delegations from './Delegations'
 
+import {
+  Spinner
+} from 'react-bootstrap';
+
 class Wallet extends React.Component {
   constructor(props) {
     super(props);
@@ -27,7 +31,7 @@ class Wallet extends React.Component {
   }
 
   onAddValidator(){
-    setTimeout(() => this.getDelegations(), 1000)
+    setTimeout(() => this.getDelegations(), 3_000)
   }
 
   async getValidators() {
@@ -67,7 +71,11 @@ class Wallet extends React.Component {
   render() {
     if (!this.state.isLoaded) {
       return (
-        <p>Loading...</p>
+        <p className="text-center">
+          <Spinner animation="border" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </Spinner>
+        </p>
       )
     }
     if (this.state.error) {
@@ -76,7 +84,7 @@ class Wallet extends React.Component {
       )
     }
     return (
-      <div>
+      <div className="mb-5">
         <Delegations
           address={this.props.address}
           validators={this.state.validators}
