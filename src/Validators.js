@@ -1,4 +1,4 @@
-import Coins from './Coins'
+import _ from 'lodash'
 
 import {
   Table,
@@ -6,11 +6,10 @@ import {
 } from 'react-bootstrap'
 
 function Validators(props) {
-  const listItems = props.validators && Object.entries(props.validators).map(([validator_address, item], i) => {
-    const delegation = props.delegations && props.delegations[validator_address]
-    if(delegation) return null
+  function renderItem(item, variant){
+    variant = variant ? 'table-' + variant : ''
     return (
-      <tr key={item.operator_address}>
+      <tr key={item.operator_address} className={variant}>
         <td>{item.description.moniker}</td>
         <td>
           <Button onClick={() => props.selectValidator(item)}>
@@ -19,20 +18,31 @@ function Validators(props) {
         </td>
       </tr>
     )
-  })
+  }
 
   return (
-    <Table>
-      <thead>
-        <tr>
-          <td>Validator</td>
-          <td></td>
-        </tr>
-      </thead>
-      <tbody>
-        {listItems}
-      </tbody>
-    </Table>
+    <>
+      {!props.operatorDelegation &&
+      <p>Delegate to {props.operator.description.moniker} to enable auto REStake</p>
+      }
+      <Table>
+        <thead>
+          <tr>
+            <td>Validator</td>
+            <td></td>
+          </tr>
+        </thead>
+        <tbody>
+          {!props.operatorDelegation && renderItem(props.operator, 'primary')}
+          {props.validators && Object.entries(_.omit(props.validators, props.operator.operator_address)).map(([validator_address, item], i) => {
+            const delegation = props.delegations && props.delegations[validator_address]
+            if(delegation) return null
+
+            return renderItem(item)
+          })}
+        </tbody>
+      </Table>
+    </>
   )
 }
 

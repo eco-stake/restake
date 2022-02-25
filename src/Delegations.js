@@ -1,55 +1,58 @@
 import React from 'react'
 import _ from 'lodash'
+import AlertMessage from './AlertMessage'
 import Coins from './Coins'
 import AddValidator from './AddValidator'
-
-import {
-  coin,
-  calculateFee,
-  assertIsDeliverTxSuccess,
-  GasPrice
-} from '@cosmjs/stargate'
-import { GenericAuthorization } from "cosmjs-types/cosmos/authz/v1beta1/authz";
-import { StakeAuthorization } from "cosmjs-types/cosmos/staking/v1beta1/authz";
-import { MsgWithdrawDelegatorReward } from "cosmjs-types/cosmos/distribution/v1beta1/tx";
-import { MsgDelegate } from "cosmjs-types/cosmos/staking/v1beta1/tx";
-import { Timestamp } from "cosmjs-types/google/protobuf/timestamp";
+import ClaimRewards from './ClaimRewards'
+import RevokeRestake from './RevokeRestake'
+import UpdateRestake from './UpdateRestake'
+import Delegate from './Delegate'
 
 import {
   Table,
-  Button
+  Button,
+  Dropdown,
+  Spinner
 } from 'react-bootstrap'
+
+import {
+  CheckCircle, XCircle
+} from 'react-bootstrap-icons'
 
 class Delegations extends React.Component {
   constructor(props) {
     super(props);
-    this.restUrl = process.env.REACT_APP_REST_URL
     this.botAddress = process.env.REACT_APP_BOT_ADDRESS
     this.maxValidators = process.env.REACT_APP_MAX_VALIDATORS
-    this.state = {restake: [], grantValidators: []}
+    this.state = {restake: [], grantValidators: [], validatorLoading: {}}
+
+    this.setError = this.setError.bind(this)
+    this.setClaimLoading = this.setClaimLoading.bind(this)
+    this.onUpdateRestake = this.onUpdateRestake.bind(this)
+    this.onClaimRewards = this.onClaimRewards.bind(this)
+    this.onRevoke = this.onRevoke.bind(this)
   }
 
-  componentDidMount() {
+  async componentDidMount() {
+    const isNanoLedger = this.props.stargateClient.getIsNanoLedger()
+    this.setState({ isNanoLedger: isNanoLedger })
     this.getGrants()
     this.getRewards()
   }
 
-  componentDidUpdate(prevProps){
+  async componentDidUpdate(prevProps){
     if(this.props.address !== prevProps.address){
+      const isNanoLedger = this.props.stargateClient.getIsNanoLedger()
+      this.setState({ isNanoLedger: isNanoLedger })
       this.getGrants()
       this.getRewards()
     }
   }
 
-  componentWillUnmount() {
-  }
-
   getRewards() {
-    fetch(this.restUrl + "/cosmos/distribution/v1beta1/delegators/" + this.props.address + "/rewards")
-      .then(res => res.json())
+    this.props.restClient.getRewards(this.props.address)
       .then(
-        (result) => {
-          const rewards = result.rewards.reduce((a, v) => ({ ...a, [v.validator_address]: v}), {})
+        (rewards) => {
           this.setState({ rewards: rewards });
         },
         (error) => {
@@ -59,38 +62,18 @@ class Delegations extends React.Component {
   }
 
   getGrants() {
-    const searchParams = new URLSearchParams();
-    searchParams.append("grantee", this.botAddress);
-    searchParams.append("granter", this.props.address);
-    // searchParams.append("msg_type_url", "/cosmos.staking.v1beta1.MsgDelegate");
-    fetch(this.restUrl + "/cosmos/authz/v1beta1/grants?" + searchParams.toString())
-      .then(res => res.json())
+    this.props.restClient.getGrants(this.botAddress, this.props.address)
       .then(
         (result) => {
-          const claimGrant = result.grants.find(el => {
-            if (el.authorization['@type'] === "/cosmos.authz.v1beta1.GenericAuthorization" &&
-              el.authorization.msg === "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward"){
-              return Date.parse(el.expiration) > new Date()
-            }else{
-              return false
-            }
-          })
-          const stakeGrant = result.grants.find(el => {
-            if(el.authorization['@type'] === "/cosmos.staking.v1beta1.StakeAuthorization"){
-              return Date.parse(el.expiration) > new Date()
-            }else{
-              return false
-            }
-          })
           let grantValidators
-          if(stakeGrant){
-            grantValidators = stakeGrant.authorization.allow_list.address
+          if(result.stakeGrant){
+            grantValidators = result.stakeGrant.authorization.allow_list.address
           }
           this.setState({
-            claimGrant: claimGrant,
-            stakeGrant: stakeGrant,
-            grantsValid: !!(claimGrant && stakeGrant),
-            grantsExist: !!(claimGrant || stakeGrant),
+            claimGrant: result.claimGrant,
+            stakeGrant: result.stakeGrant,
+            grantsValid: !!(result.claimGrant && result.stakeGrant),
+            grantsExist: !!(result.claimGrant || result.stakeGrant),
             grantValidators: grantValidators || [],
             restake: grantValidators || []
           })
@@ -101,161 +84,50 @@ class Delegations extends React.Component {
       )
   }
 
-  buildGrantMsg(type, value){
-    const dateNow = new Date();
-    const expiration = new Date(
-      dateNow.getFullYear() + 1,
-      dateNow.getMonth(),
-      dateNow.getDate()
-    )
-    return {
-      typeUrl: "/cosmos.authz.v1beta1.MsgGrant",
-      value: {
-        granter: this.props.address,
-        grantee: this.botAddress,
-        grant: {
-          authorization: {
-            typeUrl: type,
-            value: value
-          },
-          expiration: Timestamp.fromPartial({
-            seconds: expiration.getTime() / 1000,
-            nanos: 0
-          })
-        }
-      },
-    }
+  onUpdateRestake(){
+    this.setState({
+      grantValidators: this.state.restake,
+      grantsValid: true,
+      grantsExist: true,
+      error: null
+    })
+    setTimeout(() => this.getGrants(), 10_000)
   }
 
-  buildRevokeMsg(type){
-    return {
-      typeUrl: "/cosmos.authz.v1beta1.MsgRevoke",
-      value: {
-        granter: this.props.address,
-        grantee: this.botAddress,
-        msgTypeUrl: type
-      },
-    }
+  onRevoke() {
+    this.setState({
+      claimGrant: null,
+      stakeGrant: null,
+      grantsValid: false,
+      grantsExist: false,
+      grantValidators: [],
+      restake: [],
+      error: null
+    })
   }
 
-  async manualRestake() {
-    this.setState({manualLoading: true})
-
-    const client = this.props.stargateClient
-    const address = this.props.address
-    const totalRewards = this.totalRewards()
-    const perValidatorReward = parseInt(totalRewards.amount / this.state.restake.length)
-    let messages = this.state.restake.map(el => {
-      return [{
-        typeUrl: "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward",
-        value: MsgWithdrawDelegatorReward.fromPartial({
-          delegatorAddress: this.props.address,
-          validatorAddress: el
-        })
-      }, {
-        typeUrl: "/cosmos.staking.v1beta1.MsgDelegate",
-        value: MsgDelegate.fromPartial({
-          delegatorAddress: this.props.address,
-          validatorAddress: el,
-          amount: coin(perValidatorReward, 'uosmo')
-        })
-      }]
-    }).flat()
-    console.log(messages)
-
-    const gasPrice = GasPrice.fromString("0.025uosmo");
-    const fee = calculateFee(600_000, gasPrice);
-
-    try {
-      const result = await client.signAndBroadcast(address, messages, fee);
-      console.log("Broadcast result:", result);
-
-      assertIsDeliverTxSuccess(result);
-      console.log("Successfully broadcasted:", result);
-
-      this.setState({manualLoading: false, error: null})
-      client.disconnect();
-
-      setTimeout(() => this.props.getDelegations(), 3000)
-
-    } catch (error) {
-      console.log('Failed to broadcast:', error)
-      this.setState({ manualLoading: false, error: 'Failed to broadcast TX' })
-    }
+  onClaimRewards(){
+    this.setState({claimLoading: false, validatorLoading: {}, error: null})
+    setTimeout(() => {
+      this.props.getDelegations()
+      this.getRewards()
+    }, 5_000)
   }
 
-  async updateRestake() {
-    this.setState({updateLoading: true})
-
-    const client = this.props.stargateClient
-    const address = this.props.address
-    const validatorAddresses = this.state.restake
-    const messages = [
-      this.buildGrantMsg("/cosmos.staking.v1beta1.StakeAuthorization",
-        StakeAuthorization.encode(StakeAuthorization.fromPartial({
-          allowList: {address: validatorAddresses},
-          authorizationType: 1
-        })).finish(),
-      ),
-      this.buildGrantMsg("/cosmos.authz.v1beta1.GenericAuthorization",
-        GenericAuthorization.encode(GenericAuthorization.fromPartial({
-          msg: '/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward'
-        })).finish(),
-      )
-    ]
-    console.log(messages)
-
-    const gasPrice = GasPrice.fromString("0.025uosmo");
-    const fee = calculateFee(180_000, gasPrice);
-
-    try {
-      const result = await client.signAndBroadcast(address, messages, fee);
-      console.log("Broadcast result:", result);
-
-      assertIsDeliverTxSuccess(result);
-      console.log("Successfully broadcasted:", result);
-
-      this.setState({updateLoading: false, error: null})
-      client.disconnect();
-
-      setTimeout(() => this.getGrants(), 3000)
-
-    } catch (error) {
-      console.log('Failed to broadcast:', error)
-      this.setState({ updateLoading: false, error: 'Failed to broadcast TX' })
-    }
+  setClaimLoading(value){
+    if(value) this.setState({error: null})
+    this.setState({claimLoading: !!value})
   }
 
-  async revokeRestake() {
-    this.setState({revokeLoading: true})
+  setValidatorLoading(validatorAddress, value){
+    if(value) this.setState({error: null})
+    const loading = this.state.validatorLoading
+    loading[validatorAddress] = !!value
+    this.setState({validatorLoading: loading})
+  }
 
-    const client = this.props.stargateClient
-    const address = this.props.address
-    const messages = [
-      this.buildRevokeMsg("/cosmos.staking.v1beta1.MsgDelegate"),
-      this.buildRevokeMsg("/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward")
-    ]
-    console.log(messages)
-
-    const gasPrice = GasPrice.fromString("0.025uosmo");
-    const fee = calculateFee(180_000, gasPrice);
-
-    try {
-      const result = await client.signAndBroadcast(address, messages, fee);
-      console.log("Broadcast result:", result);
-
-      assertIsDeliverTxSuccess(result);
-      console.log("Successfully broadcasted:", result);
-
-      this.setState({revokeLoading: false, error: null})
-      client.disconnect();
-
-      setTimeout(() => this.getGrants(), 3000)
-
-    } catch (error) {
-      console.log('Failed to broadcast:', error)
-      this.setState({ revokeLoading: false, error: 'Failed to broadcast TX' })
-    }
+  setError(error){
+    this.setState({ error: error })
   }
 
   addToRestake(validatorAddress) {
@@ -270,28 +142,26 @@ class Delegations extends React.Component {
     }));
   }
 
+  restakeEnabled(){
+    return !this.state.isNanoLedger && !!this.props.operatorDelegation
+  }
+
   restakeChanged(){
-    return !_.isEqual(this.state.restake, this.state.grantValidators)
+    if(!this.restakeEnabled()) return false
+
+    return !_.isEqual(this.state.restake.sort(), this.state.grantValidators.sort())
   }
 
   restakeIncludes(validatorAddress){
     return this.state.restake.includes(validatorAddress)
   }
 
-  restakePercentage(validatorAddress){
-    if(this.restakeIncludes(validatorAddress)){
-      return _.round(100.0 / this.state.restake.length)
-    }else{
-      return 0
-    }
-  }
-
-  totalRewards(){
+  totalRewards(validators){
     if(!this.state.rewards) return;
 
     const total = Object.values(this.state.rewards).reduce((sum, item) => {
       const reward = item.reward.find(el => el.denom === 'uosmo')
-      if(reward && this.state.restake.includes(item.validator_address)){
+      if(reward && (validators === undefined || validators.includes(item.validator_address))){
         return sum + parseInt(reward.amount)
       }
       return sum
@@ -302,110 +172,205 @@ class Delegations extends React.Component {
     }
   }
 
+  renderDelegation(validatorAddress, item, variant){
+    const validator = this.props.validators[validatorAddress]
+    const rewards = this.state.rewards && this.state.rewards[validatorAddress]
+    variant = variant ? 'table-' + variant : ''
+    if(validator)
+      return (
+        <tr key={validator.operator_address} className={variant}>
+        {/* <tr key={validator.operator_address} className={this.restakeIncludes(validator.operator_address) ? 'table-active ' + variant : variant}> */}
+          <td>{validator.description.moniker}</td>
+          <td>{validator.commission.commission_rates.rate * 100}%</td>
+          <td></td>
+          <td><Coins coins={item.balance} /></td>
+          <td>{rewards && rewards.reward.map(el => <Coins key={el.denom} coins={el} />)}</td>
+          <td>
+            {this.restakeIncludes(validator.operator_address) ? <CheckCircle /> : <XCircle className="opacity-25" />}
+          </td>
+          <td>
+            <div className="d-grid gap-2 d-md-flex justify-content-md-end">
+              {!this.state.validatorLoading[validator.operator_address]
+                ? (
+                  <Dropdown>
+                    <Dropdown.Toggle variant="secondary" size="sm" id="dropdown-basic">
+                      Manage
+                    </Dropdown.Toggle>
+
+                    <Dropdown.Menu>
+                      {this.restakeEnabled() && (
+                        this.restakeIncludes(validator.operator_address)
+                          ? <Dropdown.Item onClick={() => this.removeFromRestake(validator.operator_address)}>Disable REStake</Dropdown.Item>
+                          : <Dropdown.Item  disabled={this.state.restake.length >= this.maxValidators} onClick={() => this.addToRestake(validator.operator_address)}>Enable REStake</Dropdown.Item>
+                      )}
+                      {this.restakeEnabled() && <hr />}
+                      <ClaimRewards
+                        restake={true}
+                        address={this.props.address}
+                        validators={[validator.operator_address]}
+                        rewards={this.totalRewards([validator.operator_address])}
+                        stargateClient={this.props.stargateClient}
+                        onClaimRewards={this.onClaimRewards}
+                        setLoading={(loading) => this.setValidatorLoading(validator.operator_address, loading)}
+                        setError={this.setError} />
+                      <ClaimRewards
+                        address={this.props.address}
+                        validators={[validator.operator_address]}
+                        rewards={this.totalRewards([validator.operator_address])}
+                        stargateClient={this.props.stargateClient}
+                        onClaimRewards={this.onClaimRewards}
+                        setLoading={(loading) => this.setValidatorLoading(validator.operator_address, loading)}
+                        setError={this.setError} />
+                      <hr />
+                      <Delegate
+                        address={this.props.address}
+                        validator={validator}
+                        stargateClient={this.props.stargateClient}
+                        onDelegate={this.onClaimRewards} />
+                      <Dropdown.Item disabled={true} title="Coming soon" onClick={() => this.redelegate(validator.operator_address)}>Redelegate</Dropdown.Item>
+                      <Dropdown.Item disabled={true} title="Coming soon" onClick={() => this.undelegate(validator.operator_address)}>Undelegate</Dropdown.Item>
+                    </Dropdown.Menu>
+                  </Dropdown>
+                ) : (
+                  <Button className="btn-sm btn-secondary mr-5" disabled>
+                    <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>&nbsp;
+                    Submitting TX...
+                  </Button>
+                )
+              }
+            </div>
+          </td>
+        </tr>
+      )
+    else
+      return ''
+  }
+
   render() {
     if (!this.props.delegations || !this.props.validators) {
       return (
-        <p>Loading...</p>
+        <div className="text-center">
+          <Spinner animation="border" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </Spinner>
+        </div>
       )
     }
 
     if (Object.values(this.props.delegations).length < 1){
       return (
-        <div className="text-center">
-          <p>You have no delegations yet. Stake to a validator first to setup REStake.</p>
-          <AddValidator
-            address={this.props.address}
-            validators={this.props.validators}
-            delegations={this.props.delegations}
-            stargateClient={this.props.stargateClient}
-            onAddValidator={this.props.onAddValidator} />
-        </div>
+        <>
+          <div className="text-center">
+            <p>You have no delegations yet. Stake to a validator first to setup REStake.</p>
+            <AddValidator
+              operator={this.props.operator}
+              address={this.props.address}
+              validators={this.props.validators}
+              delegations={this.props.delegations}
+              operatorDelegation={this.props.operatorDelegation}
+              stargateClient={this.props.stargateClient}
+              onAddValidator={this.props.onAddValidator} />
+          </div>
+        </>
       )
     }
 
-    const listItems = this.props.delegations && Object.entries(this.props.delegations).map(([validator_address, item], i) => {
-      const validator = this.props.validators[item.delegation.validator_address]
-      const rewards = this.state.rewards && this.state.rewards[item.delegation.validator_address]
-      if(validator)
-        return (
-          <tr key={validator.operator_address}>
-            <td>{validator.description.moniker}</td>
-            <td></td>
-            <td><Coins coins={item.balance} /></td>
-            <td>{rewards && rewards.reward.map(el => <Coins key={el.denom} coins={el} />)}</td>
-            <td>
-              {this.restakePercentage(validator.operator_address)}%
-            </td>
-            <td>
-              {this.state.restake.includes(validator.operator_address)
-                ? <Button className="btn-sm btn-secondary float-end" onClick={() => this.removeFromRestake(validator.operator_address)}>
-                  Remove from REStake
-                </Button>
-                : this.state.restake.length < this.maxValidators && (
-                  <Button className="btn-sm float-end" disabled={this.state.restake.length >= this.maxValidators} onClick={() => this.addToRestake(validator.operator_address)}>
-                    Add to REStake
-                  </Button>
-                )
-              }
-            </td>
-          </tr>
-        )
-      else
-        return ''
-    })
-
     return (
       <>
-        <Table>
+        {this.state.isNanoLedger &&
+        <AlertMessage variant="warning" message="Ledger devices are unable to send authz transactions right now. We will support as soon as possible, and you can manually restake for now." />
+        }
+        {this.restakeChanged() &&
+        <AlertMessage variant="primary" message="You have changed your validator selection, make sure to update your authz grants using the button below." />
+        }
+        <AlertMessage message={this.state.error} />
+        <Table className="table-hover">
           <thead>
             <tr>
               <th>Validator</th>
+              <th>Commission</th>
               <th>APY</th>
               <th>Delegation</th>
               <th>Rewards</th>
-              <th>Restake %</th>
-              <th width={200}>
-              </th>
+              <th>REStake</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
-            {listItems}
+            {this.props.operatorDelegation && (
+              this.renderDelegation(this.props.operator.operator_address, this.props.operatorDelegation, 'primary')
+            )}
+            {this.props.delegations && (
+              Object.entries(_.omit(this.props.delegations, this.props.operator.operator_address)).map(([validatorAddress, item], i) => {
+                return this.renderDelegation(validatorAddress, item)
+              })
+            )}
           </tbody>
         </Table>
         <div className="row">
           <div className="col">
             <AddValidator
+              operator={this.props.operator}
               address={this.props.address}
               validators={this.props.validators}
               delegations={this.props.delegations}
+              operatorDelegation={this.props.operatorDelegation}
               stargateClient={this.props.stargateClient}
               onAddValidator={this.props.onAddValidator} />
           </div>
           <div className="col">
             <div className="d-grid gap-2 d-md-flex justify-content-md-end">
-              {this.restakeChanged() && (
-                !this.state.updateLoading
-                  ? <Button className="mr-5" onClick={() => this.updateRestake()}>Update Restake</Button>
-                  : <Button className="mr-5" disabled>
-                    <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>&nbsp;
-                    Submitting TX...
-                  </Button>
-              )}
-              {!this.restakeChanged() && this.state.restake.length > 0 && (
-                !this.state.manualLoading
-                  ? <Button className="btn-secondary mr-5" onClick={() => this.manualRestake()}>Restake <Coins coins={this.totalRewards()} /></Button>
-                  : <Button className="btn-secondary mr-5" disabled>
-                    <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>&nbsp;
-                    Submitting TX...
-                  </Button>
+              {!this.restakeChanged() && this.state.rewards && this.totalRewards().amount > 0 && (
+                !this.state.claimLoading
+                  ? (
+                    <Dropdown>
+                      <Dropdown.Toggle variant="secondary" id="claim-dropdown">
+                        Claim Rewards
+                      </Dropdown.Toggle>
+
+                      <Dropdown.Menu>
+                        <ClaimRewards
+                          restake={true}
+                          address={this.props.address}
+                          validators={this.state.restake}
+                          rewards={this.totalRewards(this.state.restake)}
+                          stargateClient={this.props.stargateClient}
+                          onClaimRewards={this.onClaimRewards}
+                          setLoading={this.setClaimLoading}
+                          setError={this.setError} />
+                        <ClaimRewards
+                          address={this.props.address}
+                          validators={Object.entries(this.props.validators)}
+                          rewards={this.totalRewards()}
+                          stargateClient={this.props.stargateClient}
+                          onClaimRewards={this.onClaimRewards}
+                          setLoading={this.setClaimLoading}
+                          setError={this.setError} />
+                      </Dropdown.Menu>
+                    </Dropdown>
+                  ) : (
+                    <Button className="btn-secondary mr-5" disabled>
+                      <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>&nbsp;
+                      Submitting TX...
+                    </Button>
+                  )
               )}
               {!this.restakeChanged() && this.state.grantsExist && (
-                !this.state.revokeLoading
-                  ? <Button className="btn-danger mr-5" onClick={() => this.revokeRestake()}>Revoke Restake</Button>
-                  : <Button className="btn-danger mr-5" disabled>
-                    <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>&nbsp;
-                    Submitting TX...
-                  </Button>
+                <RevokeRestake
+                  address={this.props.address}
+                  botAddress={this.botAddress}
+                  stargateClient={this.props.stargateClient}
+                  onRevoke={this.onRevoke}
+                  setError={this.setError} />
+              )}
+              {this.restakeChanged() && (
+                <UpdateRestake
+                  address={this.props.address}
+                  botAddress={this.botAddress}
+                  validators={this.state.restake}
+                  stargateClient={this.props.stargateClient}
+                  onUpdateRestake={this.onUpdateRestake}
+                  setError={this.setError} />
               )}
             </div>
           </div>

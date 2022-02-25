@@ -8,16 +8,13 @@ import {
 class Wallet extends React.Component {
   constructor(props) {
     super(props);
-    this.restUrl = process.env.REACT_APP_REST_URL
     this.botAddress = process.env.REACT_APP_BOT_ADDRESS
     this.state = {}
-
     this.getDelegations = this.getDelegations.bind(this);
     this.onAddValidator = this.onAddValidator.bind(this);
   }
 
   componentDidMount() {
-    this.getValidators()
     this.getDelegations()
   }
 
@@ -27,36 +24,18 @@ class Wallet extends React.Component {
     }
   }
 
-  componentWillUnmount() {
-  }
-
   onAddValidator(){
     setTimeout(() => this.getDelegations(), 3_000)
   }
 
-  async getValidators() {
-    fetch(this.restUrl + "/cosmos/staking/v1beta1/validators?status=BOND_STATUS_BONDED&pagination.limit=500")
-      .then(res => res.json())
-      .then(
-        (result) => {
-          const validators = result.validators.reduce((a, v) => ({ ...a, [v.operator_address]: v}), {})
-          this.setState({ validators: validators });
-        },
-        (error) => {
-          this.setState({ error });
-        }
-      )
-  }
-
   async getDelegations() {
-    fetch(this.restUrl + "/cosmos/staking/v1beta1/delegations/" + this.props.address)
-      .then(res => res.json())
+    this.props.restClient.getDelegations(this.props.address)
       .then(
-        (result) => {
-          const delegations = result.delegation_responses.reduce((a, v) => ({ ...a, [v.delegation.validator_address]: v}), {})
+        (delegations) => {
           this.setState({
             isLoaded: true,
-            delegations: delegations
+            delegations: delegations,
+            operatorDelegation: delegations[this.props.operator.operator_address]
           });
         },
         (error) => {
@@ -71,11 +50,11 @@ class Wallet extends React.Component {
   render() {
     if (!this.state.isLoaded) {
       return (
-        <p className="text-center">
+        <div className="text-center">
           <Spinner animation="border" role="status">
             <span className="visually-hidden">Loading...</span>
           </Spinner>
-        </p>
+        </div>
       )
     }
     if (this.state.error) {
@@ -86,9 +65,12 @@ class Wallet extends React.Component {
     return (
       <div className="mb-5">
         <Delegations
+          operator={this.props.operator}
           address={this.props.address}
-          validators={this.state.validators}
+          validators={this.props.validators}
           delegations={this.state.delegations}
+          operatorDelegation={this.state.operatorDelegation}
+          restClient={this.props.restClient}
           stargateClient={this.props.stargateClient}
           getDelegations={this.getDelegations}
           onAddValidator={this.onAddValidator} />
