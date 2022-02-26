@@ -1,6 +1,8 @@
 import { DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
 import SigningClient from '../src/SigningClient.mjs'
 import RestClient from '../src/RestClient.mjs'
+import Network from '../src/Network.mjs'
+import Operator from '../src/Operator.mjs'
 
 import {
   coin
@@ -8,17 +10,13 @@ import {
 
 import { MsgWithdrawDelegatorReward } from "cosmjs-types/cosmos/distribution/v1beta1/tx.js";
 import { MsgDelegate } from "cosmjs-types/cosmos/staking/v1beta1/tx.js";
+import { MsgExec } from "cosmjs-types/cosmos/authz/v1beta1/tx.js";
+
+import fs from 'fs'
 
 class Autostake {
   constructor(){
-    this.rpcUrl = process.env.REACT_APP_RPC_URL
-    this.restUrl = process.env.REACT_APP_REST_URL
-    this.validatorAddress = process.env.REACT_APP_VALIDATOR_ADDRESS
-    this.botAddress = process.env.REACT_APP_BOT_ADDRESS
-    this.maxValidators = process.env.REACT_APP_MAX_VALIDATORS
     this.mnemonic = process.env.MNEMONIC
-    this.restClient = RestClient(this.restUrl)
-    this.minimumReward = 1_000
     if(!this.mnemonic){
       console.log('Please provide a MNEMONIC environment variable')
       process.exit()
@@ -26,33 +24,60 @@ class Autostake {
   }
 
   async run(addresses){
-    console.log('Running autostake bot', this.botAddress)
-    if(addresses !== undefined){
-      addresses = Array.isArray(addresses) ? addresses : [addresses]
-      console.log('for addresses', addresses)
-    }
-    await this.getClient()
-    await this.getBalance()
-    if(!addresses){
-      await this.getDelegations()
-    }
-    this.getGrantsAndAutostake(addresses)
+    this.getNetworksData().forEach(async (data) => {
+      const client = await this.getClient(data)
+      if(!client) return
+
+      console.log('Running autostake bot', client.operator.botAddress)
+      if(addresses !== undefined){
+        addresses = Array.isArray(addresses) ? addresses : [addresses]
+        console.log('for addresses', addresses)
+      }
+      await this.checkBalance(client)
+      let delegations
+      if(!addresses){
+        delegations = await this.getDelegations(client)
+      }
+      this.getGrantsAndAutostake(client, delegations, addresses)
+    })
   }
 
-  async getClient(){
+  getNetworksData(){
+    let response = fs.readFileSync('public/networks.json');
+    return JSON.parse(response);
+  }
+
+  async getClient(data){
+    const network = Network(data)
     const wallet = await DirectSecp256k1HdWallet.fromMnemonic(this.mnemonic, {
-      prefix: "osmo",
+      prefix: network.prefix
     });
-    this.client = await SigningClient(this.rpcUrl, wallet)
-    const address = await this.client.getAddress()
-    if(!this.botAddress === address){
-      console.log('botAddress does not match MNEMONIC')
-      process.exit()
+    const client = await SigningClient(network, wallet)
+    client.registry.register("/cosmos.authz.v1beta1.MsgExec", MsgExec)
+    const botAddress = await client.getAddress()
+    const operatorData = data.operators.find(el => el.botAddress === botAddress)
+
+    if(!operatorData){
+      return null
+    }
+
+    const operator = Operator(operatorData)
+
+    return{
+      network: network,
+      operator: operator,
+      rpcUrl: network.rpcUrl,
+      restUrl: network.restUrl,
+      validatorAddress: operator.address,
+      maxValidators: operator.data.maxValidators,
+      minimumReward: operator.data.minimumReward,
+      signingClient: client,
+      restClient: RestClient(network.restUrl)
     }
   }
 
-  getBalance() {
-    return this.restClient.getBalance(this.botAddress)
+  checkBalance(client) {
+    return client.restClient.getBalance(client.operator.botAddress, client.network.denom)
       .then(
         (balance) => {
           console.log("Bot balance is", balance.amount, balance.denom)
@@ -68,12 +93,12 @@ class Autostake {
       )
   }
 
-  getDelegations() {
-    return this.restClient.getValidatorDelegations(this.validatorAddress, 1_000)
+  getDelegations(client) {
+    return client.restClient.getValidatorDelegations(client.operator.address, 1_000)
       .then(
         (delegations) => {
-          this.delegations = delegations
-          console.log("Checking", this.delegations.length, "delegators for grants..")
+          console.log("Checking", delegations.length, "delegators for grants..")
+          return delegations
         },
         (error) => {
           console.log("ERROR:", error)
@@ -82,30 +107,30 @@ class Autostake {
       )
   }
 
-  getGrantsAndAutostake(addresses) {
-    addresses = addresses === undefined ? this.delegations : addresses
+  getGrantsAndAutostake(client, delegations, addresses) {
+    addresses = addresses === undefined ? delegations : addresses
     addresses.forEach(item => {
       if(item.balance && item.balance.amount === 0) return
 
       const delegatorAddress = item.delegation ? item.delegation.delegator_address : item
-      return this.restClient.getGrants(this.botAddress, delegatorAddress)
+      return client.restClient.getGrants(client.operator.botAddress, delegatorAddress)
         .then(
           (result) => {
             if(result.claimGrant || result.stakeGrant){
               console.log(delegatorAddress, "Grants found")
               if(result.claimGrant && result.stakeGrant){
                 const grantValidators = result.stakeGrant.authorization.allow_list.address
-                if(!grantValidators.includes(this.validatorAddress)){
+                if(!grantValidators.includes(client.operator.address)){
                   console.log(delegatorAddress, "Not autostaking for this validator, skipping")
                   return
                 }
-                if(grantValidators.size > this.maxValidators){
+                if(grantValidators.size > client.operator.data.maxValidators){
                   console.log(delegatorAddress, "Autostaking for too many validators, skipping")
                   return
                 }
                 console.log(delegatorAddress, "Can autostake for:", grantValidators)
 
-                return this.autostake(delegatorAddress, grantValidators)
+                return this.autostake(client, delegatorAddress, grantValidators)
               }else{
                 console.log(delegatorAddress, "Missing required grants")
               }
@@ -119,13 +144,13 @@ class Autostake {
     })
   }
 
-  async autostake(address, validators){
-    const totalRewards = await this.totalRewards(address, validators)
+  async autostake(client, address, validators){
+    const totalRewards = await this.totalRewards(client, address, validators)
     const perValidatorReward = parseInt(totalRewards / validators.length)
-    console.log(address, "Total rewards", totalRewards, "uosmo")
-    console.log(address, "Autostaking", perValidatorReward, "uosmo per validator")
+    console.log(address, "Total rewards", totalRewards, client.network.denom)
+    console.log(address, "Autostaking", perValidatorReward, client.network.denom, "per validator")
 
-    if(perValidatorReward < this.minimumReward){
+    if(perValidatorReward < client.operator.data.minimumReward){
       console.log(address, 'Reward is too low, skipping')
       return
     }
@@ -142,7 +167,7 @@ class Autostake {
         value: MsgDelegate.encode(MsgDelegate.fromPartial({
           delegatorAddress: address,
           validatorAddress: el,
-          amount: coin(perValidatorReward, 'uosmo')
+          amount: coin(perValidatorReward, client.network.denom)
         })).finish()
       }]
     }).flat()
@@ -150,12 +175,13 @@ class Autostake {
     let execMsg = {
       typeUrl: "/cosmos.authz.v1beta1.MsgExec",
       value: {
-        grantee: this.botAddress,
+        grantee: client.operator.botAddress,
         msgs: messages
       }
     }
 
-    return this.client.signAndBroadcast(this.botAddress, [execMsg], 800_000, 'REStaked by ECO Stake 🌱').then((result) => {
+    const memo = 'REStaked by ' + client.operator.moniker
+    return client.signingClient.signAndBroadcast(client.operator.botAddress, [execMsg], 800_000, memo).then((result) => {
       console.log(address, "Successfully broadcasted");
     }, (error) => {
       console.log(address, 'Failed to broadcast:', error)
@@ -163,12 +189,12 @@ class Autostake {
     })
   }
 
-  totalRewards(address, validators){
-    return this.restClient.getRewards(address)
+  totalRewards(client, address, validators){
+    return client.restClient.getRewards(address)
       .then(
         (rewards) => {
           const total = Object.values(rewards).reduce((sum, item) => {
-            const reward = item.reward.find(el => el.denom === 'uosmo')
+            const reward = item.reward.find(el => el.denom === client.network.denom)
             if(reward && validators.includes(item.validator_address)){
               return sum + parseInt(reward.amount)
             }

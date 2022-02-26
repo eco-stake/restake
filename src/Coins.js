@@ -9,7 +9,7 @@ function Coins(props) {
     return coins.denom.slice(1).toUpperCase()
   }
 
-  if(!props.coins){
+  if(!props.coins || !props.coins.denom){
     return null
   }
 

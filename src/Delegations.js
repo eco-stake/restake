@@ -7,6 +7,7 @@ import ClaimRewards from './ClaimRewards'
 import RevokeRestake from './RevokeRestake'
 import UpdateRestake from './UpdateRestake'
 import Delegate from './Delegate'
+import ValidatorImage from './ValidatorImage'
 
 import {
   Table,
@@ -22,8 +23,6 @@ import {
 class Delegations extends React.Component {
   constructor(props) {
     super(props);
-    this.botAddress = process.env.REACT_APP_BOT_ADDRESS
-    this.maxValidators = process.env.REACT_APP_MAX_VALIDATORS
     this.state = {restake: [], grantValidators: [], validatorLoading: {}}
 
     this.setError = this.setError.bind(this)
@@ -36,16 +35,31 @@ class Delegations extends React.Component {
   async componentDidMount() {
     const isNanoLedger = this.props.stargateClient.getIsNanoLedger()
     this.setState({ isNanoLedger: isNanoLedger })
-    this.getGrants()
-    this.getRewards()
+    this.refresh()
   }
 
   async componentDidUpdate(prevProps){
+    if(!this.props.address) return
+
     if(this.props.address !== prevProps.address){
       const isNanoLedger = this.props.stargateClient.getIsNanoLedger()
-      this.setState({ isNanoLedger: isNanoLedger })
+      this.setState({ isNanoLedger: isNanoLedger, authzMissing: false, error: null })
+      this.refresh()
+    }else{
+      if(this.props.operator !== prevProps.operator && this.props.network === prevProps.network){
+        if(this.props.operator){
+          this.getGrants()
+        }
+      }
+    }
+  }
+
+  refresh(){
+    this.getRewards()
+    if(this.props.operator){
       this.getGrants()
-      this.getRewards()
+    }else{
+      this.getGrants(this.props.network.data.testAddress)
     }
   }
 
@@ -61,8 +75,10 @@ class Delegations extends React.Component {
       )
   }
 
-  getGrants() {
-    this.props.restClient.getGrants(this.botAddress, this.props.address)
+  getGrants(botAddress) {
+    if(this.state.authzMissing) return
+    if(!botAddress) botAddress = this.props.operator.botAddress
+    this.props.restClient.getGrants(botAddress, this.props.address)
       .then(
         (result) => {
           let grantValidators
@@ -77,11 +93,13 @@ class Delegations extends React.Component {
             grantValidators: grantValidators || [],
             restake: grantValidators || []
           })
-        },
-        (error) => {
-          this.setState({ error });
-        }
-      )
+        }, (error) => {
+          if (error.response.status === 501) {
+            this.setState({ authzMissing: true });
+          }else{
+            this.setState({ error });
+          }
+        })
   }
 
   onUpdateRestake(){
@@ -143,11 +161,12 @@ class Delegations extends React.Component {
   }
 
   restakeEnabled(){
-    return !this.state.isNanoLedger && !!this.props.operatorDelegation
+    return !this.state.isNanoLedger && !this.state.authzMissing && !!this.props.operator && !!this.props.operatorDelegation
   }
 
   restakeChanged(){
     if(!this.restakeEnabled()) return false
+    if(!this.restakeIncludes(this.props.operator.address)) return false
 
     return !_.isEqual(this.state.restake.sort(), this.state.grantValidators.sort())
   }
@@ -156,11 +175,21 @@ class Delegations extends React.Component {
     return this.state.restake.includes(validatorAddress)
   }
 
+  canAddToRestake(validatorAddress){
+    return this.state.restake.length < this.props.operator.data.maxValidators &&
+      (this.props.operator.address === validatorAddress || this.restakeIncludes(this.props.operator.address))
+  }
+
+  canRemoveFromRestake(validatorAddress){
+    return this.state.restake.length === 1 || this.props.operator.address !== validatorAddress
+  }
+
   totalRewards(validators){
     if(!this.state.rewards) return;
 
+    const denom = this.props.network.denom
     const total = Object.values(this.state.rewards).reduce((sum, item) => {
-      const reward = item.reward.find(el => el.denom === 'uosmo')
+      const reward = item.reward.find(el => el.denom === denom)
       if(reward && (validators === undefined || validators.includes(item.validator_address))){
         return sum + parseInt(reward.amount)
       }
@@ -168,26 +197,34 @@ class Delegations extends React.Component {
     }, 0)
     return {
       amount: total,
-      denom: 'uosmo'
+      denom: denom
     }
+  }
+
+  otherDelegations(){
+    if(!this.props.operator) return this.props.delegations
+
+    return _.omit(this.props.delegations, this.props.operator.address)
   }
 
   renderDelegation(validatorAddress, item, variant){
     const validator = this.props.validators[validatorAddress]
     const rewards = this.state.rewards && this.state.rewards[validatorAddress]
     variant = variant ? 'table-' + variant : ''
-    if(validator)
+    if(validator){
       return (
         <tr key={validator.operator_address} className={variant}>
-        {/* <tr key={validator.operator_address} className={this.restakeIncludes(validator.operator_address) ? 'table-active ' + variant : variant}> */}
+          <td width={30}><ValidatorImage validator={validator} imageUrl={this.props.validatorImages[this.props.network.name][validator.operator_address]} /></td>
           <td>{validator.description.moniker}</td>
           <td>{validator.commission.commission_rates.rate * 100}%</td>
           <td></td>
           <td><Coins coins={item.balance} /></td>
           <td>{rewards && rewards.reward.map(el => <Coins key={el.denom} coins={el} />)}</td>
+          {this.restakeEnabled() &&
           <td>
             {this.restakeIncludes(validator.operator_address) ? <CheckCircle /> : <XCircle className="opacity-25" />}
           </td>
+          }
           <td>
             <div className="d-grid gap-2 d-md-flex justify-content-md-end">
               {!this.state.validatorLoading[validator.operator_address]
@@ -200,12 +237,13 @@ class Delegations extends React.Component {
                     <Dropdown.Menu>
                       {this.restakeEnabled() && (
                         this.restakeIncludes(validator.operator_address)
-                          ? <Dropdown.Item onClick={() => this.removeFromRestake(validator.operator_address)}>Disable REStake</Dropdown.Item>
-                          : <Dropdown.Item  disabled={this.state.restake.length >= this.maxValidators} onClick={() => this.addToRestake(validator.operator_address)}>Enable REStake</Dropdown.Item>
+                          ? <Dropdown.Item disabled={!this.canRemoveFromRestake(validator.operator_address)} onClick={() => this.removeFromRestake(validator.operator_address)}>Disable REStake</Dropdown.Item>
+                          : <Dropdown.Item disabled={!this.canAddToRestake(validator.operator_address)} onClick={() => this.addToRestake(validator.operator_address)}>Enable REStake</Dropdown.Item>
                       )}
                       {this.restakeEnabled() && <hr />}
                       <ClaimRewards
                         restake={true}
+                        network={this.props.network}
                         address={this.props.address}
                         validators={[validator.operator_address]}
                         rewards={this.totalRewards([validator.operator_address])}
@@ -214,6 +252,7 @@ class Delegations extends React.Component {
                         setLoading={(loading) => this.setValidatorLoading(validator.operator_address, loading)}
                         setError={this.setError} />
                       <ClaimRewards
+                        network={this.props.network}
                         address={this.props.address}
                         validators={[validator.operator_address]}
                         rewards={this.totalRewards([validator.operator_address])}
@@ -223,6 +262,7 @@ class Delegations extends React.Component {
                         setError={this.setError} />
                       <hr />
                       <Delegate
+                        network={this.props.network}
                         address={this.props.address}
                         validator={validator}
                         stargateClient={this.props.stargateClient}
@@ -242,8 +282,9 @@ class Delegations extends React.Component {
           </td>
         </tr>
       )
-    else
-      return ''
+    }else{
+      return null
+    }
   }
 
   render() {
@@ -257,15 +298,43 @@ class Delegations extends React.Component {
       )
     }
 
+    const alerts = (
+      <>
+        {this.state.authzMissing &&
+        <AlertMessage variant="warning">
+          {this.props.network.prettyName} doesn't support authz just yet. You can manually restake for now and REStake is ready when support is enabled
+        </AlertMessage>
+        }
+        {!this.state.authzMissing && !this.props.operator &&
+          <AlertMessage variant="warning" message="There are no REStake operators for this network yet. You can REStake manually, or check the About section to run one yourself" />
+        }
+        {!this.state.authzMissing && this.props.operator && this.state.isNanoLedger &&
+        <AlertMessage variant="warning" message="Ledger devices are unable to send authz transactions right now. We will support them as soon as possible, and you can manually restake for now." />
+        }
+        {this.state.restake.length > 0 && !this.restakeIncludes(this.props.operator.address) &&
+          <AlertMessage variant="warning">
+            You must include {this.props.operator.moniker} in your REStake selection
+          </AlertMessage>
+        }
+        {this.restakeChanged() &&
+          <AlertMessage variant="primary" message="You have changed your validator selection, make sure to update your authz grants using the button below." />
+        }
+        <AlertMessage message={this.state.error} />
+      </>
+    )
+
     if (Object.values(this.props.delegations).length < 1){
       return (
         <>
+          {alerts}
           <div className="text-center">
             <p>You have no delegations yet. Stake to a validator first to setup REStake.</p>
             <AddValidator
+              network={this.props.network}
               operator={this.props.operator}
               address={this.props.address}
               validators={this.props.validators}
+              validatorImages={this.props.validatorImages}
               delegations={this.props.delegations}
               operatorDelegation={this.props.operatorDelegation}
               stargateClient={this.props.stargateClient}
@@ -277,42 +346,42 @@ class Delegations extends React.Component {
 
     return (
       <>
-        {this.state.isNanoLedger &&
-        <AlertMessage variant="warning" message="Ledger devices are unable to send authz transactions right now. We will support as soon as possible, and you can manually restake for now." />
-        }
-        {this.restakeChanged() &&
-        <AlertMessage variant="primary" message="You have changed your validator selection, make sure to update your authz grants using the button below." />
-        }
-        <AlertMessage message={this.state.error} />
-        <Table className="table-hover">
-          <thead>
-            <tr>
-              <th>Validator</th>
-              <th>Commission</th>
-              <th>APY</th>
-              <th>Delegation</th>
-              <th>Rewards</th>
-              <th>REStake</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {this.props.operatorDelegation && (
-              this.renderDelegation(this.props.operator.operator_address, this.props.operatorDelegation, 'primary')
-            )}
-            {this.props.delegations && (
-              Object.entries(_.omit(this.props.delegations, this.props.operator.operator_address)).map(([validatorAddress, item], i) => {
-                return this.renderDelegation(validatorAddress, item)
-              })
-            )}
-          </tbody>
-        </Table>
+        {alerts}
+        {Object.values(this.props.delegations).length && (
+          <Table className="table-hover">
+            <thead>
+              <tr>
+                <th colSpan={2}>Validator</th>
+                <th>Commission</th>
+                <th>APY</th>
+                <th>Delegation</th>
+                <th>Rewards</th>
+                {this.restakeEnabled() &&
+                <th>REStake ({this.state.restake.length}/{this.props.operator.data.maxValidators})</th>
+                }
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {this.props.operator && this.props.operatorDelegation && (
+                this.renderDelegation(this.props.operator.address, this.props.operatorDelegation, 'warning')
+              )}
+              {this.props.delegations && (
+                Object.entries(this.otherDelegations()).map(([validatorAddress, item], i) => {
+                  return this.renderDelegation(validatorAddress, item)
+                })
+              )}
+            </tbody>
+          </Table>
+        )}
         <div className="row">
           <div className="col">
             <AddValidator
+              network={this.props.network}
               operator={this.props.operator}
               address={this.props.address}
               validators={this.props.validators}
+              validatorImages={this.props.validatorImages}
               delegations={this.props.delegations}
               operatorDelegation={this.props.operatorDelegation}
               stargateClient={this.props.stargateClient}
@@ -331,6 +400,7 @@ class Delegations extends React.Component {
                       <Dropdown.Menu>
                         <ClaimRewards
                           restake={true}
+                          network={this.props.network}
                           address={this.props.address}
                           validators={this.state.restake}
                           rewards={this.totalRewards(this.state.restake)}
@@ -339,8 +409,9 @@ class Delegations extends React.Component {
                           setLoading={this.setClaimLoading}
                           setError={this.setError} />
                         <ClaimRewards
+                          network={this.props.network}
                           address={this.props.address}
-                          validators={Object.entries(this.props.validators)}
+                          validators={Object.keys(this.props.delegations)}
                           rewards={this.totalRewards()}
                           stargateClient={this.props.stargateClient}
                           onClaimRewards={this.onClaimRewards}
@@ -358,7 +429,7 @@ class Delegations extends React.Component {
               {!this.restakeChanged() && this.state.grantsExist && (
                 <RevokeRestake
                   address={this.props.address}
-                  botAddress={this.botAddress}
+                  botAddress={this.props.operator.botAddress}
                   stargateClient={this.props.stargateClient}
                   onRevoke={this.onRevoke}
                   setError={this.setError} />
@@ -366,7 +437,7 @@ class Delegations extends React.Component {
               {this.restakeChanged() && (
                 <UpdateRestake
                   address={this.props.address}
-                  botAddress={this.botAddress}
+                  botAddress={this.props.operator.botAddress}
                   validators={this.state.restake}
                   stargateClient={this.props.stargateClient}
                   onUpdateRestake={this.onUpdateRestake}

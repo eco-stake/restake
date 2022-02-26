@@ -44,7 +44,7 @@ class DelegateForm extends React.Component {
       value: {
         delegatorAddress: address,
         validatorAddress: validatorAddress,
-        amount: coin(parseFloat(amount) * 1000000, "uosmo"),
+        amount: coin(parseFloat(amount) * 1000000, this.props.network.denom),
       }
     }
 
@@ -56,6 +56,10 @@ class DelegateForm extends React.Component {
       console.log('Failed to broadcast:', error)
       this.setState({ loading: false, error: 'Failed to broadcast TX' })
     })
+  }
+
+  denom(){
+    return this.props.network.denom.slice(1).toUpperCase()
   }
 
   render() {
@@ -72,7 +76,7 @@ class DelegateForm extends React.Component {
             <Form.Label>Amount</Form.Label>
             <div className="input-group mb-3">
               <Form.Control name="amount" type="number" step={0.000001} placeholder="10" required={true} value={this.state.amount} onChange={this.handleInputChange} />
-              <span className="input-group-text">OSMO</span>
+              <span className="input-group-text">{this.denom()}</span>
             </div>
           </Form.Group>
           <Form.Group className="mb-3">

@@ -12,12 +12,12 @@ const RestClient = (restUrl) => {
       )
   }
 
-  const getBalance = (address) => {
+  const getBalance = (address, denom) => {
     return axios.get(restUrl + "/cosmos/bank/v1beta1/balances/" + address)
       .then(res => res.data)
       .then(
         (result) => {
-          const balance = result.balances.find(element => element.denom === 'uosmo') || {denom: 'uosmo', amount: 0}
+          const balance = result.balances.find(element => element.denom === denom) || {denom: denom, amount: 0}
           return balance
         }
       )

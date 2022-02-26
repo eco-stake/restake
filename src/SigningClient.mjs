@@ -5,10 +5,10 @@ import {
   GasPrice
 } from '@cosmjs/stargate'
 
-const SigningClient = async (rpcUrl, signer, key) => {
+const SigningClient = async (network, signer, key) => {
 
   const client = await SigningStargateClient.connectWithSigner(
-    rpcUrl,
+    network.rpcUrl,
     signer
   )
 
@@ -23,7 +23,7 @@ const SigningClient = async (rpcUrl, signer, key) => {
 
   const signAndBroadcast = async (address, msgs, gas, memo, gasPrice) => {
     if(!gas) gas = 180_000
-    if(!gasPrice) gasPrice = GasPrice.fromString("0.025uosmo");
+    if(!gasPrice) gasPrice = GasPrice.fromString(network.gasPrice);
     const fee = calculateFee(gas, gasPrice);
     return new Promise((success, reject) => {
       try {
@@ -42,6 +42,7 @@ const SigningClient = async (rpcUrl, signer, key) => {
 
   return {
     registry: client.registry,
+    chainId: client.chainId,
     getAddress,
     getIsNanoLedger,
     signAndBroadcast

@@ -1,0 +1,61 @@
+[{
+  "name": "osmosis",
+  "prettyName": "Osmosis",
+  "chainId": "osmosis-1",
+  "prefix": "osmo",
+  "denom": "uosmo",
+  "restUrl": "https://lcd-osmosis.blockapsis.com",
+  "rpcUrl": "https://osmosis.validator.network",
+  "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/osmo.svg",
+  "gasPrice": "0.025uosmo",
+  "testAddress": "osmo1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczed559y",
+  "operators": [
+    {
+      "address": "osmovaloper1u5v0m74mql5nzfx2yh43s2tke4mvzghr6m2n5t",
+      "botAddress": "osmo1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczed559y",
+      "maxValidators": 3,
+      "runTime": "01:00",
+      "minimumReward": 1000
+    }
+  ]
+}, {
+  "name": "juno",
+  "prettyName": "Juno",
+  "chainId": "juno-1",
+  "prefix": "juno",
+  "denom": "ujuno",
+  "restUrl": "https://lcd-juno.itastakers.com",
+  "rpcUrl": "https://rpc-juno.itastakers.com",
+  "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/juno.svg",
+  "gasPrice": "0.025ujuno",
+  "testAddress": "juno1yxsmtnxdt6gxnaqrg0j0nudg7et2gqcz8yyl52",
+  "operators": [{
+    "address": "junovaloper193xl2tqh2tjkld2zv49ku5s44ee4qmgr65jcep",
+    "botAddress": "juno1yxsmtnxdt6gxnaqrg0j0nudg7et2gqcz8yyl52",
+    "maxValidators": 3,
+    "runTime": "01:00",
+    "minimumReward": 1000
+  }]
+}, {
+  "name": "chihuahua",
+  "prettyName": "Chihuahua",
+  "chainId": "chihuahua-1",
+  "prefix": "chihuahua",
+  "denom": "uhuahua",
+  "restUrl": "https://api.chihuahua.wtf",
+  "rpcUrl": "https://rpc.chihuahua.wtf",
+  "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/huahua.png",
+  "gasPrice": "0.025uhuahua",
+  "testAddress": "chihuahua1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczjr22j5",
+  "operators": []
+}, {
+  "name": "akash",
+  "prettyName": "Akash",
+  "chainId": "akashnet-2",
+  "prefix": "akash",
+  "denom": "uakt",
+  "restUrl": "https://api.akash.smartnodes.one",
+  "rpcUrl": "https://rpc.akash.smartnodes.one:443",
+  "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/akt.svg",
+  "operators": []
+}]

@@ -1,5 +1,8 @@
 import React from 'react'
 import Delegations from './Delegations'
+import Coins from './Coins'
+
+import Countdown from 'react-countdown';
 
 import {
   Spinner
@@ -8,10 +11,10 @@ import {
 class Wallet extends React.Component {
   constructor(props) {
     super(props);
-    this.botAddress = process.env.REACT_APP_BOT_ADDRESS
     this.state = {}
     this.getDelegations = this.getDelegations.bind(this);
     this.onAddValidator = this.onAddValidator.bind(this);
+    this.countdownRenderer = this.countdownRenderer.bind(this);
   }
 
   componentDidMount() {
@@ -35,7 +38,7 @@ class Wallet extends React.Component {
           this.setState({
             isLoaded: true,
             delegations: delegations,
-            operatorDelegation: delegations[this.props.operator.operator_address]
+            operatorDelegation: this.props.operator && delegations[this.props.operator.address]
           });
         },
         (error) => {
@@ -45,6 +48,40 @@ class Wallet extends React.Component {
           });
         }
       )
+  }
+
+  nextRun(delayHour){
+    const now = new Date()
+    const runTime = this.state.runTime.split(':')
+    let day
+    if(delayHour){
+      day = now.getHours() > runTime[0] ? now.getDate() + 1 : now.getDate()
+    }else{
+      day = now.getHours() >= runTime[0] ? now.getDate() + 1 : now.getDate()
+    }
+
+    return new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      day,
+      runTime[0],
+      runTime[1],
+      runTime[2] || 0
+    )
+  }
+
+  countdownRenderer({ hours, minutes, seconds, completed }){
+    if (completed) {
+      return <p>Auto REStake is running right now. The next run will be at {this.state.runTime} tomorrow</p>
+    } else {
+      let string = ''
+      if(hours > 0) string = string.concat(hours + ' hours, ')
+      if(minutes > 0) string = string.concat(minutes + ' minutes and ')
+      string = string.concat(seconds + ' seconds')
+      return (
+        <p className="text-center">Auto REStake will run in <span>{string}</span></p>
+      )
+    }
   }
 
   render() {
@@ -65,15 +102,26 @@ class Wallet extends React.Component {
     return (
       <div className="mb-5">
         <Delegations
+          network={this.props.network}
           operator={this.props.operator}
           address={this.props.address}
           validators={this.props.validators}
+          validatorImages={this.props.validatorImages}
           delegations={this.state.delegations}
           operatorDelegation={this.state.operatorDelegation}
           restClient={this.props.restClient}
           stargateClient={this.props.stargateClient}
           getDelegations={this.getDelegations}
           onAddValidator={this.onAddValidator} />
+        {this.state.operator && Object.values(this.state.delegations).length &&
+        <div className="text-center">
+          <Countdown
+            date={this.nextRun(true)}
+            renderer={this.countdownRenderer}
+          />
+          <p><em>The minimum reward is <Coins coins={this.state.minimumReward} /></em></p>
+        </div>
+        }
       </div>
     )
   }

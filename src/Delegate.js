@@ -7,7 +7,7 @@ import {
   Modal
 } from 'react-bootstrap'
 
-function AddValidator(props) {
+function Delegate(props) {
   const [show, setShow] = useState(false);
 
   useEffect(() => {
@@ -24,6 +24,7 @@ function AddValidator(props) {
         <Modal.Body>
           {props.validator && (
             <DelegateForm
+              network={props.network}
               validator={props.validator}
               address={props.address}
               stargateClient={props.stargateClient}
@@ -35,4 +36,4 @@ function AddValidator(props) {
   );
 }
 
-export default AddValidator
+export default Delegate

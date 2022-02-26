@@ -1,12 +1,24 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Outlet
+} from "react-router-dom";
+import NetworkFinder from './NetworkFinder'
 import './index.css';
-import App from './App';
 import reportWebVitals from './reportWebVitals';
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<NetworkFinder />} />
+        <Route path="/:network" element={<NetworkFinder />} />
+        <Route path="/:network/:operator" element={<NetworkFinder />} />
+      </Routes>
+    </BrowserRouter>
   </React.StrictMode>,
   document.getElementById('root')
 );

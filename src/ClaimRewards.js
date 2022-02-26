@@ -31,7 +31,7 @@ function ClaimRewards(props) {
           value: MsgDelegate.fromPartial({
             delegatorAddress: props.address,
             validatorAddress: el,
-            amount: coin(perValidatorReward, 'uosmo')
+            amount: coin(perValidatorReward, props.network.denom)
           })
         })
       }
