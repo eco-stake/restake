@@ -377,7 +377,7 @@ class Delegations extends React.Component {
     return (
       <>
         {alerts}
-        {Object.values(this.props.delegations).length && (
+        {Object.values(this.props.delegations).length > 0 && (
           <Table className="align-middle table-hover">
             <thead>
               <tr>

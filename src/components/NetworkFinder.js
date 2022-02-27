@@ -1,6 +1,6 @@
-import React, { useEffect, useState, useReducer } from 'react';
+import React, { useEffect, useReducer } from 'react';
 import { useParams, useNavigate } from "react-router-dom";
-import Network from './Network'
+import Network from '../utils/Network'
 import App from './App';
 
 import {

@@ -3,12 +3,11 @@ import ReactDOM from 'react-dom';
 import {
   BrowserRouter,
   Routes,
-  Route,
-  Outlet
+  Route
 } from "react-router-dom";
-import NetworkFinder from './NetworkFinder'
+import NetworkFinder from './components/NetworkFinder'
 import './index.css';
-import reportWebVitals from './reportWebVitals';
+import reportWebVitals from './utils/reportWebVitals';
 
 ReactDOM.render(
   <React.StrictMode>

@@ -125,7 +125,7 @@ class Wallet extends React.Component {
           stargateClient={this.props.stargateClient}
           getDelegations={this.getDelegations}
           onAddValidator={this.onAddValidator} />
-        {this.props.operator && Object.values(this.state.delegations).length &&
+        {this.props.operator && Object.values(this.state.delegations).length > 0 &&
         <div className="text-center">
           <Countdown
             date={this.nextRun(true)}

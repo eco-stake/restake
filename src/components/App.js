@@ -6,7 +6,7 @@ import AlertMessage from './AlertMessage'
 import NetworkChoice from './NetworkChoice'
 import Wallet from './Wallet'
 import Coins from './Coins'
-import SigningClient from './SigningClient'
+import SigningClient from '../utils/SigningClient'
 
 import { MsgGrant, MsgRevoke } from "cosmjs-types/cosmos/authz/v1beta1/tx.js";
 
@@ -17,7 +17,7 @@ import {
 } from 'react-bootstrap';
 import {CopyToClipboard} from 'react-copy-to-clipboard';
 import GitHubButton from 'react-github-btn'
-import PoweredByAkash from './assets/powered-by-akash.svg'
+import PoweredByAkash from '../assets/powered-by-akash.svg'
 
 class App extends React.Component {
   constructor(props) {
@@ -190,7 +190,7 @@ class App extends React.Component {
                 </span>
               </li>
               <li className="nav-item">
-                <a href="#" onClick={() => this.disconnect()} className="nav-link" aria-current="page">Disconnect</a>
+                <Button onClick={() => this.disconnect()} className="nav-link btn-link" aria-current="page">Disconnect</Button>
               </li>
             </>
             }
