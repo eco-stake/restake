@@ -3,7 +3,7 @@ import './App.css';
 import React from 'react'
 import _ from 'lodash'
 import AlertMessage from './AlertMessage'
-import NetworkChoice from './NetworkChoice'
+import NetworkSelect from './NetworkSelect'
 import Wallet from './Wallet'
 import Coins from './Coins'
 import SigningClient from '../utils/SigningClient'
@@ -24,7 +24,8 @@ class App extends React.Component {
     super(props);
     this.state = {validatorImages: {}}
     this.connect = this.connect.bind(this);
-    this.getValidatorImages = this.getValidatorImages.bind(this);
+    this.getValidatorImage = this.getValidatorImage.bind(this);
+    this.loadValidatorImages = this.loadValidatorImages.bind(this);
   }
 
   async componentDidMount() {
@@ -39,9 +40,9 @@ class App extends React.Component {
     }
     window.addEventListener("keplr_keystorechange", this.connect)
     if(this.props.operator){
-      this.getValidatorImages(this.props.network, [this.props.operator.validatorData])
+      this.loadValidatorImages(this.props.network, [this.props.operator.validatorData])
     }
-    this.getValidatorImages(this.props.network, this.props.validators)
+    this.loadValidatorImages(this.props.network, this.props.validators)
   }
 
   async componentDidUpdate(prevProps){
@@ -100,21 +101,31 @@ class App extends React.Component {
     })
   }
 
-  async getValidatorImages(network, validators) {
+  getValidatorImage(network, validatorAddress){
+    const images = this.state.validatorImages[network.name] || {}
+    if(images[validatorAddress]){
+      return images[validatorAddress]
+    }
+    return localStorage.getItem(validatorAddress)
+  }
+
+  async loadValidatorImages(network, validators) {
     this.setState((state, props) => ({
       validatorImages: _.set(state.validatorImages, network.name, state.validatorImages[network.name] || {})
     }));
     const calls = Object.values(validators).map(validator => {
       return () => {
-        if(validator.description.identity && (!this.state.validatorImages[network.name] || !this.state.validatorImages[network.name][validator.operator_address])){
+        if(validator.description.identity && !this.getValidatorImage(network, validator.operator_address)){
           return fetch("https://keybase.io/_/api/1.0/user/lookup.json?fields=pictures&key_suffix=" + validator.description.identity)
             .then((response) => {
               return response.json();
             }).then((data) => {
               if(data.them && data.them[0] && data.them[0].pictures){
+                const imageUrl = data.them[0].pictures.primary.url
                 this.setState((state, props) => ({
-                  validatorImages: _.set(state.validatorImages, [network.name, validator.operator_address], data.them[0].pictures.primary.url)
+                  validatorImages: _.set(state.validatorImages, [network.name, validator.operator_address], imageUrl)
                 }));
+                localStorage.setItem(validator.operator_address, imageUrl)
               }
             })
         }else{
@@ -170,10 +181,10 @@ class App extends React.Component {
             }
           </div>
           <div className="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none">
-            <NetworkChoice networks={this.props.networks}
+            <NetworkSelect networks={this.props.networks}
               network={this.props.network} operator={this.props.operator}
-              validators={this.props.validators} validatorImages={this.state.validatorImages}
-              changeNetwork={this.props.changeNetwork} getValidatorImages={this.getValidatorImages} />
+              validators={this.props.validators} getValidatorImage={this.getValidatorImage}
+              changeNetwork={this.props.changeNetwork} loadValidatorImages={this.loadValidatorImages} />
           </div>
           <ul className="nav nav-pills justify-content-end">
             {this.state.address &&
@@ -219,7 +230,7 @@ class App extends React.Component {
               operator={this.props.operator}
               address={this.state.address}
               validators={this.props.validators}
-              validatorImages={this.state.validatorImages}
+              getValidatorImage={this.getValidatorImage}
               restClient={this.state.restClient}
               stargateClient={this.state.stargateClient} />
           </>

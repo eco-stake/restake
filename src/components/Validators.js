@@ -23,7 +23,7 @@ function Validators(props) {
     return (
       <tr key={item.operator_address} className={variant}>
         <td width={40}>
-          <ValidatorImage validator={item} imageUrl={props.validatorImages[props.network.name][item.operator_address]} />
+          <ValidatorImage validator={item} imageUrl={props.getValidatorImage(props.network, item.operator_address)} />
         </td>
         <td>{item.description.moniker}</td>
         <td>

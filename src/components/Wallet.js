@@ -118,7 +118,7 @@ class Wallet extends React.Component {
           operator={this.props.operator}
           address={this.props.address}
           validators={this.props.validators}
-          validatorImages={this.props.validatorImages}
+          getValidatorImage={this.props.getValidatorImage}
           delegations={this.state.delegations}
           operatorDelegation={this.state.operatorDelegation}
           restClient={this.props.restClient}

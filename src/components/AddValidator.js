@@ -41,7 +41,7 @@ function AddValidator(props) {
             network={props.network}
             operator={props.operator}
             validators={props.validators}
-            validatorImages={props.validatorImages}
+            getValidatorImage={props.getValidatorImage}
             delegations={props.delegations}
             operatorDelegation={props.operatorDelegation}
             selectValidator={(validator) => setValidator(validator)} /> }

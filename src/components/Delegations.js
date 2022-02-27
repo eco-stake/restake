@@ -234,7 +234,7 @@ class Delegations extends React.Component {
     if(validator){
       return (
         <tr key={validatorAddress} className={rowVariant}>
-          <td width={30}><ValidatorImage validator={validator} imageUrl={this.props.validatorImages[this.props.network.name][validatorAddress]} width={30} height={30} /></td>
+          <td width={30}><ValidatorImage validator={validator} imageUrl={this.props.getValidatorImage(this.props.network, validatorAddress)} width={30} height={30} /></td>
           <td>{validator.description.moniker}</td>
           <td>{validator.commission.commission_rates.rate * 100}%</td>
           <td></td>
@@ -364,7 +364,7 @@ class Delegations extends React.Component {
               operator={this.props.operator}
               address={this.props.address}
               validators={this.props.validators}
-              validatorImages={this.props.validatorImages}
+              getValidatorImage={this.props.getValidatorImage}
               delegations={this.props.delegations}
               operatorDelegation={this.props.operatorDelegation}
               stargateClient={this.props.stargateClient}
@@ -411,7 +411,7 @@ class Delegations extends React.Component {
               operator={this.props.operator}
               address={this.props.address}
               validators={this.props.validators}
-              validatorImages={this.props.validatorImages}
+              getValidatorImage={this.props.getValidatorImage}
               delegations={this.props.delegations}
               operatorDelegation={this.props.operatorDelegation}
               stargateClient={this.props.stargateClient}

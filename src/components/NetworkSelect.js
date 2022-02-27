@@ -11,7 +11,7 @@ import {
 
 import Select from 'react-select';
 
-function NetworkChoice(props) {
+function NetworkSelect(props) {
   const [show, setShow] = useState(false);
   const [loading, setLoading] = useState(false);
   const [selectedNetwork, setSelectedNetwork] = useState();
@@ -22,7 +22,7 @@ function NetworkChoice(props) {
     {networks: [], operators: [], network: {value: ''}, operator: {value: ''}}
   )
 
-  const {getValidatorImages} = props
+  const {loadValidatorImages} = props
 
   const handleOpen = () => {
     setSelectedNetwork(props.network)
@@ -81,8 +81,8 @@ function NetworkChoice(props) {
       network.getValidators().then(data => {
         setValidators(data)
         const operators = network.getOperators(data)
-        getValidatorImages(network, operators.map(el => el.validatorData))
-        getValidatorImages(network, data)
+        loadValidatorImages(network, operators.map(el => el.validatorData))
+        loadValidatorImages(network, data)
         setSelectedOperator(operators[0])
         setLoading(false)
       })
@@ -97,10 +97,10 @@ function NetworkChoice(props) {
             <img alt={props.network.prettyName} src={props.network.data.image} height={30} width={30} />
           </div>
           </div>
-          {props.operator && props.validatorImages[props.network.name] && (
+          {props.operator && (
         <div className="d-none d-sm-block">
             <div className="col p-0 avatar avatar-sm rounded-circle text-white">
-              <img alt={props.operator.moniker} src={props.validatorImages[props.network.name][props.operator.address]} height={30} width={30} />
+              <ValidatorImage validator={props.operator.validatorData} imageUrl={props.getValidatorImage(props.network, props.operator.address)} height={30} width={30} />
             </div>
          </div>
           )}
@@ -139,7 +139,7 @@ function NetworkChoice(props) {
                 <label className="form-label">Operator</label>
                 <div className="col-1">
                   {selectedOperator &&
-                  <ValidatorImage className="mt-1" validator={selectedOperator.validatorData} imageUrl={props.validatorImages[selectedNetwork.name][selectedOperator.address]} height={30} width={30} />
+                  <ValidatorImage className="mt-1" validator={selectedOperator.validatorData} imageUrl={props.getValidatorImage(selectedNetwork, selectedOperator.address)} height={30} width={30} />
                   }
                 </div>
                 <div className="col">
@@ -171,4 +171,4 @@ function NetworkChoice(props) {
   );
 }
 
-export default NetworkChoice
+export default NetworkSelect
