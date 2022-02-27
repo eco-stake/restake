@@ -1,4 +1,6 @@
+import React, { useState } from 'react';
 import _ from 'lodash'
+import FuzzySearch from 'fuzzy-search'
 
 import ValidatorImage from './ValidatorImage'
 
@@ -8,7 +10,9 @@ import {
 } from 'react-bootstrap'
 
 function Validators(props) {
-  function otherDelegations(){
+  const [filter, setFilter] = useState()
+
+  function otherValidators(){
     if(!props.operator) return props.validators
 
     return _.omit(props.validators, props.operator.address)
@@ -18,8 +22,8 @@ function Validators(props) {
     variant = variant ? 'table-' + variant : ''
     return (
       <tr key={item.operator_address} className={variant}>
-        <td width={30}>
-          <ValidatorImage validator={item} imageUrl={props.validatorImages[props.network.name][item.operator_address]} height={30} />
+        <td width={40}>
+          <ValidatorImage validator={item} imageUrl={props.validatorImages[props.network.name][item.operator_address]} />
         </td>
         <td>{item.description.moniker}</td>
         <td>
@@ -31,15 +35,35 @@ function Validators(props) {
     )
   }
 
+  function filterValidators(event){
+    setFilter(event.target.value)
+  }
+
+  function filteredResults(){
+    if(!props.validators) return {}
+
+    const validators = otherValidators()
+    if(!filter || filter === '') return validators
+
+    const searcher = new FuzzySearch(
+      Object.values(validators), ['description.moniker'],
+      {sort: true}
+    )
+
+    const results =  searcher.search(filter)
+    return results.reduce((a, v) => ({ ...a, [v.operator_address]: v}), {})
+  }
+
   return (
     <>
       {props.operator && !props.operatorDelegation &&
       <p>Delegate to {props.operator.description.moniker} to enable auto REStake</p>
       }
+      <input className="form-control mb-3" id="myInput" onKeyUp={filterValidators} type="text" placeholder="Search.." />
       <Table>
         <tbody>
           {props.operator && !props.operatorDelegation && renderItem(props.operator.validatorData, 'primary')}
-          {props.validators && Object.entries(otherDelegations()).map(([validator_address, item], i) => {
+          {Object.entries(filteredResults()).map(([validator_address, item], i) => {
             const delegation = props.delegations && props.delegations[validator_address]
             if(delegation) return null
 

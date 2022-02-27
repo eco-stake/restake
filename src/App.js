@@ -70,8 +70,6 @@ class App extends React.Component {
       validatorAddress: operator && operator.address,
       rpcUrl: network.rpcUrl,
       maxValidators: operator && operator.data.maxValidators,
-      runTime: operator && operator.data.runTime,
-      minimumReward: operator && {amount: operator.data.minimumReward, denom: network.denom},
       restClient: network.restClient
     })
   }

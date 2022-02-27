@@ -50,9 +50,21 @@ class Wallet extends React.Component {
       )
   }
 
+  minimumReward(){
+    const operator = this.props.operator
+
+    if(operator){
+      return {amount: operator.data.minimumReward, denom: this.props.network.denom}
+    }
+  }
+
   nextRun(delayHour){
     const now = new Date()
-    const runTime = this.state.runTime.split(':')
+    const operator = this.props.operator
+    if(!operator || !operator.data.runTime){
+      return null
+    }
+    const runTime = operator.data.runTime.split(':')
     let day
     if(delayHour){
       day = now.getHours() > runTime[0] ? now.getDate() + 1 : now.getDate()
@@ -113,13 +125,13 @@ class Wallet extends React.Component {
           stargateClient={this.props.stargateClient}
           getDelegations={this.getDelegations}
           onAddValidator={this.onAddValidator} />
-        {this.state.operator && Object.values(this.state.delegations).length &&
+        {this.props.operator && Object.values(this.state.delegations).length &&
         <div className="text-center">
           <Countdown
             date={this.nextRun(true)}
             renderer={this.countdownRenderer}
           />
-          <p><em>The minimum reward is <Coins coins={this.state.minimumReward} /></em></p>
+          <p><em>The minimum reward is <Coins coins={this.minimumReward()} /></em></p>
         </div>
         }
       </div>

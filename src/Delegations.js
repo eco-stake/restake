@@ -184,6 +184,10 @@ class Delegations extends React.Component {
     return this.state.restake.length === 1 || this.props.operator.address !== validatorAddress
   }
 
+  validatorIsOperator(validatorAddress){
+    return this.props.operator.address === validatorAddress
+  }
+
   totalRewards(validators){
     if(!this.state.rewards) return;
 
@@ -207,14 +211,26 @@ class Delegations extends React.Component {
     return _.omit(this.props.delegations, this.props.operator.address)
   }
 
-  renderDelegation(validatorAddress, item, variant){
+  renderDelegation(validatorAddress, item){
     const validator = this.props.validators[validatorAddress]
     const rewards = this.state.rewards && this.state.rewards[validatorAddress]
-    variant = variant ? 'table-' + variant : ''
+    let rowVariant = undefined
+    let addButton = {variant: 'outline-secondary', disabled: !this.canAddToRestake(validatorAddress)}
+    let removeButton = {variant: 'outline-danger', disabled: !this.canRemoveFromRestake(validatorAddress)}
+    if(this.validatorIsOperator(validatorAddress)){
+      rowVariant = 'warning'
+      if(!addButton.disabled) addButton.variant = 'primary'
+    }else{
+      if(this.restakeIncludes(validatorAddress)){
+        rowVariant = 'secondary'
+        if(!addButton.disabled) addButton.variant = 'outline-primary'
+      }
+    }
+    rowVariant = rowVariant ? 'table-' + rowVariant : ''
     if(validator){
       return (
-        <tr key={validator.operator_address} className={variant}>
-          <td width={30}><ValidatorImage validator={validator} imageUrl={this.props.validatorImages[this.props.network.name][validator.operator_address]} /></td>
+        <tr key={validatorAddress} className={rowVariant}>
+          <td width={30}><ValidatorImage validator={validator} imageUrl={this.props.validatorImages[this.props.network.name][validatorAddress]} /></td>
           <td>{validator.description.moniker}</td>
           <td>{validator.commission.commission_rates.rate * 100}%</td>
           <td></td>
@@ -222,12 +238,22 @@ class Delegations extends React.Component {
           <td>{rewards && rewards.reward.map(el => <Coins key={el.denom} coins={el} />)}</td>
           {this.restakeEnabled() &&
           <td>
-            {this.restakeIncludes(validator.operator_address) ? <CheckCircle /> : <XCircle className="opacity-25" />}
+            {false && (this.restakeIncludes(validatorAddress) ? <CheckCircle /> : <XCircle className="opacity-25" />)}
+            {this.restakeIncludes(validatorAddress)
+              ? (
+                <Button size="sm" disabled={removeButton.disabled}
+                  variant={removeButton.variant}
+                  onClick={() => this.removeFromRestake(validatorAddress)}>Disable</Button>
+              ) : (
+                <Button size="sm" disabled={addButton.disabled}
+                  variant={addButton.variant}
+                  onClick={() => this.addToRestake(validatorAddress)}>Enable</Button>)
+            }
           </td>
           }
           <td>
             <div className="d-grid gap-2 d-md-flex justify-content-md-end">
-              {!this.state.validatorLoading[validator.operator_address]
+              {!this.state.validatorLoading[validatorAddress]
                 ? (
                   <Dropdown>
                     <Dropdown.Toggle variant="secondary" size="sm" id="dropdown-basic">
@@ -236,29 +262,29 @@ class Delegations extends React.Component {
 
                     <Dropdown.Menu>
                       {this.restakeEnabled() && (
-                        this.restakeIncludes(validator.operator_address)
-                          ? <Dropdown.Item disabled={!this.canRemoveFromRestake(validator.operator_address)} onClick={() => this.removeFromRestake(validator.operator_address)}>Disable REStake</Dropdown.Item>
-                          : <Dropdown.Item disabled={!this.canAddToRestake(validator.operator_address)} onClick={() => this.addToRestake(validator.operator_address)}>Enable REStake</Dropdown.Item>
+                        this.restakeIncludes(validatorAddress)
+                          ? <Dropdown.Item disabled={!this.canRemoveFromRestake(validatorAddress)} onClick={() => this.removeFromRestake(validatorAddress)}>Disable REStake</Dropdown.Item>
+                          : <Dropdown.Item disabled={!this.canAddToRestake(validatorAddress)} onClick={() => this.addToRestake(validatorAddress)}>Enable REStake</Dropdown.Item>
                       )}
                       {this.restakeEnabled() && <hr />}
                       <ClaimRewards
                         restake={true}
                         network={this.props.network}
                         address={this.props.address}
-                        validators={[validator.operator_address]}
-                        rewards={this.totalRewards([validator.operator_address])}
+                        validators={[validatorAddress]}
+                        rewards={this.totalRewards([validatorAddress])}
                         stargateClient={this.props.stargateClient}
                         onClaimRewards={this.onClaimRewards}
-                        setLoading={(loading) => this.setValidatorLoading(validator.operator_address, loading)}
+                        setLoading={(loading) => this.setValidatorLoading(validatorAddress, loading)}
                         setError={this.setError} />
                       <ClaimRewards
                         network={this.props.network}
                         address={this.props.address}
-                        validators={[validator.operator_address]}
-                        rewards={this.totalRewards([validator.operator_address])}
+                        validators={[validatorAddress]}
+                        rewards={this.totalRewards([validatorAddress])}
                         stargateClient={this.props.stargateClient}
                         onClaimRewards={this.onClaimRewards}
-                        setLoading={(loading) => this.setValidatorLoading(validator.operator_address, loading)}
+                        setLoading={(loading) => this.setValidatorLoading(validatorAddress, loading)}
                         setError={this.setError} />
                       <hr />
                       <Delegate
@@ -267,8 +293,8 @@ class Delegations extends React.Component {
                         validator={validator}
                         stargateClient={this.props.stargateClient}
                         onDelegate={this.onClaimRewards} />
-                      <Dropdown.Item disabled={true} title="Coming soon" onClick={() => this.redelegate(validator.operator_address)}>Redelegate</Dropdown.Item>
-                      <Dropdown.Item disabled={true} title="Coming soon" onClick={() => this.undelegate(validator.operator_address)}>Undelegate</Dropdown.Item>
+                      <Dropdown.Item disabled={true} title="Coming soon" onClick={() => this.redelegate(validatorAddress)}>Redelegate</Dropdown.Item>
+                      <Dropdown.Item disabled={true} title="Coming soon" onClick={() => this.undelegate(validatorAddress)}>Undelegate</Dropdown.Item>
                     </Dropdown.Menu>
                   </Dropdown>
                 ) : (
@@ -317,7 +343,7 @@ class Delegations extends React.Component {
           </AlertMessage>
         }
         {this.restakeChanged() &&
-          <AlertMessage variant="primary" message="You have changed your validator selection, make sure to update your authz grants using the button below." />
+          <AlertMessage variant="primary" message="Your validator selection has changed, make sure to update your authz grants using the button below." />
         }
         <AlertMessage message={this.state.error} />
       </>
@@ -364,7 +390,7 @@ class Delegations extends React.Component {
             </thead>
             <tbody>
               {this.props.operator && this.props.operatorDelegation && (
-                this.renderDelegation(this.props.operator.address, this.props.operatorDelegation, 'warning')
+                this.renderDelegation(this.props.operator.address, this.props.operatorDelegation)
               )}
               {this.props.delegations && (
                 Object.entries(this.otherDelegations()).map(([validatorAddress, item], i) => {

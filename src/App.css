@@ -6,3 +6,24 @@ header a.moniker{
 .clipboard.copied{
   text-decoration: underline
 }
+
+.btn-circle-sm {
+  width: 40px;
+  height: 40px;
+  line-height: 40px;
+  font-size: 0.9rem;
+}
+
+.btn-circle-lg {
+  width: 55px;
+  height: 55px;
+  line-height: 55px;
+  font-size: 1.1rem;
+}
+
+.btn-circle-xl {
+  width: 70px;
+  height: 70px;
+  line-height: 70px;
+  font-size: 1.3rem;
+}
