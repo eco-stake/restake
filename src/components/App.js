@@ -250,6 +250,7 @@ class App extends React.Component {
               operator={this.props.operator}
               address={this.state.address}
               validators={this.props.validators}
+              balance={this.state.balance}
               getValidatorImage={this.getValidatorImage}
               restClient={this.state.restClient}
               stargateClient={this.state.stargateClient} />

@@ -26,9 +26,9 @@ function Validators(props) {
           <ValidatorImage validator={item} imageUrl={props.getValidatorImage(props.network, item.operator_address)} />
         </td>
         <td>{item.description.moniker}</td>
-        <td>
+        <td className="text-end">
           <Button onClick={() => props.selectValidator(item)}>
-            Delegate
+            {props.redelegate ? 'Redelegate' : 'Delegate'}
           </Button>
         </td>
       </tr>
@@ -65,7 +65,7 @@ function Validators(props) {
           {props.operator && !props.operatorDelegation && renderItem(props.operator.validatorData, 'warning')}
           {Object.entries(filteredResults()).map(([validator_address, item], i) => {
             const delegation = props.delegations && props.delegations[validator_address]
-            if(delegation) return null
+            if(delegation && !props.redelegate) return null
 
             return renderItem(item)
           })}

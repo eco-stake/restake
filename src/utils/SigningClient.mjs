@@ -41,16 +41,16 @@ const SigningClient = async (network, signer, key) => {
   const signAndBroadcast = async (address, msgs, gas, memo, gasPrice) => {
     const fee = getFee(gas, gasPrice)
     return new Promise((success, reject) => {
-      try {
         client.signAndBroadcast(address, msgs, fee, memo).then((result) => {
-          assertIsDeliverTxSuccess(result);
-          success(result)
+          try {
+            assertIsDeliverTxSuccess(result);
+            success(result)
+          } catch (error) {
+            reject(error)
+          }
         }, (error) => {
           reject(error)
         })
-      } catch (error) {
-        reject(error)
-      }
       client.disconnect();
     });
   }

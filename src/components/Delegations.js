@@ -2,7 +2,6 @@ import React from 'react'
 import _ from 'lodash'
 import AlertMessage from './AlertMessage'
 import Coins from './Coins'
-import AddValidator from './AddValidator'
 import ClaimRewards from './ClaimRewards'
 import RevokeRestake from './RevokeRestake'
 import UpdateRestake from './UpdateRestake'
@@ -226,7 +225,7 @@ class Delegations extends React.Component {
         if(!addButton.disabled) addButton.variant = 'primary'
       }else{
         if(this.restakeIncludes(validatorAddress)){
-          rowVariant = 'table-secondary'
+          rowVariant = 'table-light'
           if(!addButton.disabled) addButton.variant = 'outline-primary'
         }
       }
@@ -241,6 +240,7 @@ class Delegations extends React.Component {
               address={this.props.address}
               validator={validator}
               getValidatorImage={this.props.getValidatorImage}
+              availableBalance={this.props.balance}
               stargateClient={this.props.stargateClient}
               onDelegate={this.onClaimRewards}>{validator.description.moniker}</Delegate>
             </td>
@@ -303,11 +303,29 @@ class Delegations extends React.Component {
                         network={this.props.network}
                         address={this.props.address}
                         validator={validator}
+                        availableBalance={this.props.balance}
                         getValidatorImage={this.props.getValidatorImage}
                         stargateClient={this.props.stargateClient}
                         onDelegate={this.onClaimRewards} />
-                      <Dropdown.Item disabled={true} title="Coming soon" onClick={() => this.redelegate(validatorAddress)}>Redelegate</Dropdown.Item>
-                      <Dropdown.Item disabled={true} title="Coming soon" onClick={() => this.undelegate(validatorAddress)}>Undelegate</Dropdown.Item>
+                      <Delegate
+                        redelegate={true}
+                        network={this.props.network}
+                        address={this.props.address}
+                        validator={validator}
+                        validators={this.props.validators}
+                        availableBalance={(this.props.delegations[validatorAddress] || {}).balance}
+                        getValidatorImage={this.props.getValidatorImage}
+                        stargateClient={this.props.stargateClient}
+                        onDelegate={this.onClaimRewards} />
+                      <Delegate
+                        undelegate={true}
+                        network={this.props.network}
+                        address={this.props.address}
+                        validator={validator}
+                        availableBalance={(this.props.delegations[validatorAddress] || {}).balance}
+                        getValidatorImage={this.props.getValidatorImage}
+                        stargateClient={this.props.stargateClient}
+                        onDelegate={this.onClaimRewards} />
                     </Dropdown.Menu>
                   </Dropdown>
                 ) : (
@@ -368,7 +386,8 @@ class Delegations extends React.Component {
           {alerts}
           <div className="text-center">
             <p>You have no delegations yet. Stake to a validator first to setup REStake.</p>
-            <AddValidator
+            <Delegate
+              button={true}
               network={this.props.network}
               operator={this.props.operator}
               address={this.props.address}
@@ -376,6 +395,7 @@ class Delegations extends React.Component {
               getValidatorImage={this.props.getValidatorImage}
               delegations={this.props.delegations}
               operatorDelegation={this.props.operatorDelegation}
+              availableBalance={this.props.balance}
               stargateClient={this.props.stargateClient}
               onAddValidator={this.props.onAddValidator} />
           </div>
@@ -415,7 +435,8 @@ class Delegations extends React.Component {
         )}
         <div className="row">
           <div className="col">
-            <AddValidator
+            <Delegate
+              button={true}
               network={this.props.network}
               operator={this.props.operator}
               address={this.props.address}
@@ -423,6 +444,7 @@ class Delegations extends React.Component {
               getValidatorImage={this.props.getValidatorImage}
               delegations={this.props.delegations}
               operatorDelegation={this.props.operatorDelegation}
+              availableBalance={this.props.balance}
               stargateClient={this.props.stargateClient}
               onAddValidator={this.props.onAddValidator} />
           </div>
