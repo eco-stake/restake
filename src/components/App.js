@@ -17,6 +17,10 @@ import {
 } from 'react-bootstrap';
 import {CopyToClipboard} from 'react-copy-to-clipboard';
 import GitHubButton from 'react-github-btn'
+import Logo from '../assets/logo.png'
+import Logo2x from '../assets/logo@2x.png'
+import Logo3x from '../assets/logo@3x.png'
+
 import PoweredByAkash from '../assets/powered-by-akash.svg'
 
 class App extends React.Component {
@@ -172,7 +176,7 @@ class App extends React.Component {
         <header className="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
           <div className="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none">
             <a href="/" className="text-dark text-decoration-none">
-              <span className="fs-4">REStake</span>
+              <img src={Logo} srcSet={`${Logo2x} 2x, ${Logo3x} 3x`} alt="REStake" />
             </a>
             {this.props.operator &&
             <a href={this.props.operator.description.website} target="_blank" rel="noreferrer" className="moniker text-dark text-decoration-none">
