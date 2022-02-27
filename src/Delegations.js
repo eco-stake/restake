@@ -185,6 +185,8 @@ class Delegations extends React.Component {
   }
 
   validatorIsOperator(validatorAddress){
+    if(!this.restakeEnabled()) return false
+
     return this.props.operator.address === validatorAddress
   }
 
@@ -214,23 +216,25 @@ class Delegations extends React.Component {
   renderDelegation(validatorAddress, item){
     const validator = this.props.validators[validatorAddress]
     const rewards = this.state.rewards && this.state.rewards[validatorAddress]
-    let rowVariant = undefined
-    let addButton = {variant: 'outline-secondary', disabled: !this.canAddToRestake(validatorAddress)}
-    let removeButton = {variant: 'outline-danger', disabled: !this.canRemoveFromRestake(validatorAddress)}
-    if(this.validatorIsOperator(validatorAddress)){
-      rowVariant = 'warning'
-      if(!addButton.disabled) addButton.variant = 'primary'
-    }else{
-      if(this.restakeIncludes(validatorAddress)){
-        rowVariant = 'secondary'
-        if(!addButton.disabled) addButton.variant = 'outline-primary'
+    let rowVariant = this.validatorIsOperator(validatorAddress) ? 'table-warning' : undefined
+    let addButton = {}
+    let removeButton = {}
+    if(this.restakeEnabled()){
+      addButton = {variant: 'outline-secondary', disabled: !this.canAddToRestake(validatorAddress)}
+      removeButton = {variant: 'outline-danger', disabled: !this.canRemoveFromRestake(validatorAddress)}
+      if(this.validatorIsOperator(validatorAddress)){
+        if(!addButton.disabled) addButton.variant = 'primary'
+      }else{
+        if(this.restakeIncludes(validatorAddress)){
+          rowVariant = 'table-secondary'
+          if(!addButton.disabled) addButton.variant = 'outline-primary'
+        }
       }
     }
-    rowVariant = rowVariant ? 'table-' + rowVariant : ''
     if(validator){
       return (
         <tr key={validatorAddress} className={rowVariant}>
-          <td width={30}><ValidatorImage validator={validator} imageUrl={this.props.validatorImages[this.props.network.name][validatorAddress]} /></td>
+          <td width={30}><ValidatorImage validator={validator} imageUrl={this.props.validatorImages[this.props.network.name][validatorAddress]} width={30} height={30} /></td>
           <td>{validator.description.moniker}</td>
           <td>{validator.commission.commission_rates.rate * 100}%</td>
           <td></td>
@@ -374,7 +378,7 @@ class Delegations extends React.Component {
       <>
         {alerts}
         {Object.values(this.props.delegations).length && (
-          <Table className="table-hover">
+          <Table className="align-middle table-hover">
             <thead>
               <tr>
                 <th colSpan={2}>Validator</th>

@@ -15,15 +15,36 @@ function ClaimRewards(props) {
   function claim(){
     props.setLoading(true)
 
-    const perValidatorReward = parseInt(props.rewards.amount / props.validators.length)
+    const gas = props.validators.reduce((sum, el) => {
+      return props.restake ? 200_000 : 100_000
+    }, 0)
+    const fee = props.stargateClient.getFee(gas)
+
+    let totalReward, perValidatorReward
+
+    let signAndBroadcast = props.stargateClient.signAndBroadcast
+
+    if(props.restake){
+      signAndBroadcast = props.stargateClient.signAndBroadcastWithoutBalanceCheck
+      totalReward = (props.rewards.amount - fee.amount[0].amount)
+      perValidatorReward = parseInt(totalReward / props.validators.length)
+      console.log(gas, fee, totalReward, perValidatorReward, perValidatorReward * props.validators.length)
+      if(perValidatorReward <= 0){
+        props.setLoading(false)
+        props.setError('Reward is too low')
+        return
+      }
+    }
     let messages = props.validators.map(el => {
-      let valMessages = [{
+      let valMessages = []
+
+      valMessages.push({
         typeUrl: "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward",
         value: MsgWithdrawDelegatorReward.fromPartial({
           delegatorAddress: props.address,
           validatorAddress: el
         })
-      }]
+      })
 
       if(props.restake){
         valMessages.push({
@@ -40,7 +61,7 @@ function ClaimRewards(props) {
     }).flat()
     console.log(messages)
 
-    props.stargateClient.signAndBroadcast(props.address, messages, 600_000).then((result) => {
+    signAndBroadcast(props.address, messages, gas).then((result) => {
       console.log("Successfully broadcasted:", result);
       props.setLoading(false)
       props.onClaimRewards(result)

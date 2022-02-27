@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import {
   SigningStargateClient,
   calculateFee,
@@ -21,10 +22,24 @@ const SigningClient = async (network, signer, key) => {
     return key.isNanoLedger
   }
 
-  const signAndBroadcast = async (address, msgs, gas, memo, gasPrice) => {
+  const getFee = (gas, gasPrice) => {
     if(!gas) gas = 180_000
     if(!gasPrice) gasPrice = GasPrice.fromString(network.gasPrice);
-    const fee = calculateFee(gas, gasPrice);
+    return calculateFee(gas, gasPrice);
+  }
+
+  const signAndBroadcastWithoutBalanceCheck = (address, msgs, gas, memo, gasPrice) => {
+    const defaultOptions = _.clone(signer.keplr.defaultOptions)
+    _.merge(signer.keplr.defaultOptions, {
+      sign: { disableBalanceCheck: true }
+    })
+    return signAndBroadcast(address, msgs, gas, memo, gasPrice).finally(() => {
+      signer.keplr.defaultOptions = defaultOptions
+    })
+  }
+
+  const signAndBroadcast = async (address, msgs, gas, memo, gasPrice) => {
+    const fee = getFee(gas, gasPrice)
     return new Promise((success, reject) => {
       try {
         client.signAndBroadcast(address, msgs, fee, memo).then((result) => {
@@ -44,8 +59,10 @@ const SigningClient = async (network, signer, key) => {
     registry: client.registry,
     chainId: client.chainId,
     getAddress,
+    getFee,
     getIsNanoLedger,
-    signAndBroadcast
+    signAndBroadcast,
+    signAndBroadcastWithoutBalanceCheck
   }
 }
 

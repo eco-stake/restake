@@ -139,7 +139,7 @@ function NetworkChoice(props) {
                 <label className="form-label">Operator</label>
                 <div className="col-1">
                   {selectedOperator &&
-                  <ValidatorImage className="mt-1" validator={selectedOperator.validatorData} imageUrl={props.validatorImages[selectedNetwork.name][selectedOperator.address]} height={30} />
+                  <ValidatorImage className="mt-1" validator={selectedOperator.validatorData} imageUrl={props.validatorImages[selectedNetwork.name][selectedOperator.address]} height={30} width={30} />
                   }
                 </div>
                 <div className="col">

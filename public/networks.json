@@ -7,7 +7,7 @@
   "restUrl": "https://lcd-osmosis.blockapsis.com",
   "rpcUrl": "https://osmosis.validator.network",
   "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/osmo.svg",
-  "gasPrice": "0.025uosmo",
+  "gasPrice": "0uosmo",
   "testAddress": "osmo1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczed559y",
   "operators": [
     {
@@ -27,7 +27,7 @@
   "restUrl": "https://lcd-juno.itastakers.com",
   "rpcUrl": "https://rpc-juno.itastakers.com",
   "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/juno.svg",
-  "gasPrice": "0.025ujuno",
+  "gasPrice": "0.0025ujuno",
   "testAddress": "juno1yxsmtnxdt6gxnaqrg0j0nudg7et2gqcz8yyl52",
   "operators": [{
     "address": "junovaloper193xl2tqh2tjkld2zv49ku5s44ee4qmgr65jcep",
@@ -47,15 +47,5 @@
   "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/huahua.png",
   "gasPrice": "0.025uhuahua",
   "testAddress": "chihuahua1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczjr22j5",
-  "operators": []
-}, {
-  "name": "akash",
-  "prettyName": "Akash",
-  "chainId": "akashnet-2",
-  "prefix": "akash",
-  "denom": "uakt",
-  "restUrl": "https://api.akash.smartnodes.one",
-  "rpcUrl": "https://rpc.akash.smartnodes.one:443",
-  "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/akt.svg",
   "operators": []
 }]

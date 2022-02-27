@@ -180,8 +180,11 @@ class Autostake {
       }
     }
 
+    const gas = validators.reduce((sum, el) => {
+      return 200_000
+    }, 0)
     const memo = 'REStaked by ' + client.operator.moniker
-    return client.signingClient.signAndBroadcast(client.operator.botAddress, [execMsg], 800_000, memo).then((result) => {
+    return client.signingClient.signAndBroadcast(client.operator.botAddress, [execMsg], gas, memo).then((result) => {
       console.log(address, "Successfully broadcasted");
     }, (error) => {
       console.log(address, 'Failed to broadcast:', error)

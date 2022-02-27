@@ -60,7 +60,7 @@ function Validators(props) {
       <p>Delegate to {props.operator.description.moniker} to enable auto REStake</p>
       }
       <input className="form-control mb-3" id="myInput" onKeyUp={filterValidators} type="text" placeholder="Search.." />
-      <Table>
+      <Table className="align-middle">
         <tbody>
           {props.operator && !props.operatorDelegation && renderItem(props.operator.validatorData, 'primary')}
           {Object.entries(filteredResults()).map(([validator_address, item], i) => {
