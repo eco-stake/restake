@@ -174,13 +174,13 @@ class App extends React.Component {
   render() {
     return (
       <Container>
-        <header className="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
-          <div className="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none">
+        <header className="d-flex flex-wrap justify-content-between py-3 mb-4 border-bottom">
+          <div className="logo d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none">
             <a href="/" className="text-dark text-decoration-none">
               <img src={Logo} srcSet={`${Logo2x} 2x, ${Logo3x} 3x`} alt="REStake" />
             </a>
-            {this.props.operator &&
-            <ValidatorLink operator={this.props.operator} className="moniker">
+            {false && this.props.operator &&
+            <ValidatorLink operator={this.props.operator} className="moniker d-none d-md-block">
               <small>by {this.props.operator.moniker}</small>
             </ValidatorLink>
             }
@@ -194,26 +194,41 @@ class App extends React.Component {
           <ul className="nav nav-pills justify-content-end">
             {this.state.address &&
             <>
-              <li className="nav-item">
+              <li className="nav-item d-none d-xl-block">
                 <CopyToClipboard text={this.state.address}
                   onCopy={() => this.setCopied()}>
                   <span role="button"><span className={'nav-link disabled clipboard' + (this.state.copied ? ' copied' : '')}>{this.state.address}</span></span>
                 </CopyToClipboard>
               </li>
-              <li className="nav-item">
+              <li className="nav-item d-none d-md-block">
                 <span className="nav-link">
                   <Badge><Coins coins={this.state.balance} /></Badge>
                 </span>
               </li>
+              {false && (
               <li className="nav-item">
                 <Button onClick={() => this.disconnect()} className="nav-link btn-link" aria-current="page">Disconnect</Button>
               </li>
+              )}
             </>
             }
           </ul>
         </header>
         <div className="mb-5">
-          <p className="lead text-center mt-5 mb-5"> REStake auto-compounds your <strong>{this.props.network.prettyName}</strong> staking earnings <strong>once per day</strong>, for <strong>{this.getMaxValidatorText()}</strong> validators.</p>
+          <p className="lead fs-3 text-center mt-5 mb-5"><strong><ValidatorLink operator={this.props.operator} fallback="REStake" /></strong> auto-compounds your <strong>{this.props.network.prettyName}</strong> staking earnings <strong>once per day</strong>, for <strong>{this.getMaxValidatorText()}</strong> validators. </p>
+          {this.props.operator && (
+            <>
+              <p className="mt-5 text-center">
+                Enabling REStake will authorize <strong><ValidatorLink operator={this.props.operator} /></strong> to send <em>WithdrawDelegatorReward</em> and <em>Delegate</em> transactions on your behalf for 1 year, for the validators you specify.
+              </p>
+              <p className="text-center mb-5">
+                You can revoke the authorization at any time and everything is open source. <strong><ValidatorLink operator={this.props.operator} /> will pay the transaction fees for you.</strong>
+              </p>
+            </>
+          )}
+          {false &&
+          <Button variant="link-secondary" onClick={() => this.setState({showAbout: true})}>Read more</Button>
+          }
           {!this.state.address && (
             !this.state.keplr
               ? (
@@ -240,16 +255,6 @@ class App extends React.Component {
               stargateClient={this.state.stargateClient} />
           </>
           }
-          {this.props.operator && (
-            <>
-              <p className="mt-5 text-center">
-                Enabling REStake will authorize <strong><ValidatorLink operator={this.props.operator} /></strong> to send <em>WithdrawDelegatorReward</em> and <em>Delegate</em> transactions on your behalf for 1 year, for the validators you specify.
-              </p>
-              <p className="text-center mb-5">
-                You can revoke the authorization at any time and everything is open source. <strong><ValidatorLink operator={this.props.operator} /> will pay the transaction fees for you.</strong>
-              </p>
-            </>
-          )}
         </div>
         <footer className="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
           <a href="https://akash.network" target="_blank" rel="noreferrer" className="col-md-4 mb-0 text-muted">

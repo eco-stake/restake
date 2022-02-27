@@ -89,21 +89,25 @@ function NetworkSelect(props) {
     }
   }
 
+  const selectOperator = (newValue) => {
+    const operators = selectedNetwork.getOperators(validators)
+    const operator = selectedNetwork.getOperator(operators, newValue.value)
+    if(operator){
+      setSelectedOperator(operator)
+    }
+  }
+
   return (
     <>
       <Button onClick={handleOpen} variant="link" className="d-flex align-items-center text-dark text-decoration-none border-secondary btn-outline-light" role="button">
-        <div className="d-none d-sm-block">
-          <div className="avatar avatar-sm rounded-circle text-white">
-            <img alt={props.network.prettyName} src={props.network.data.image} height={30} width={30} />
+        <div className="avatar avatar-sm rounded-circle text-white">
+          <img alt={props.network.prettyName} src={props.network.data.image} height={30} width={30} />
+        </div>
+        {props.operator && (
+          <div className="col p-0 avatar avatar-sm rounded-circle text-white">
+            <ValidatorImage validator={props.operator.validatorData} imageUrl={props.getValidatorImage(props.network, props.operator.address)} height={30} width={30} />
           </div>
-          </div>
-          {props.operator && (
-        <div className="d-none d-sm-block">
-            <div className="col p-0 avatar avatar-sm rounded-circle text-white">
-              <ValidatorImage validator={props.operator.validatorData} imageUrl={props.getValidatorImage(props.network, props.operator.address)} height={30} width={30} />
-            </div>
-         </div>
-          )}
+        )}
         <div className="d-none d-sm-block ms-2">
           <span className="h6">{props.network.prettyName}</span>
         </div>
@@ -148,7 +152,8 @@ function NetworkSelect(props) {
                     required={true}
                     isClearable={false}
                     name="operator"
-                    options={options.operators} />
+                    options={options.operators}
+                    onChange={selectOperator} />
                 </div>
               </div>
             }

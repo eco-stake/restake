@@ -62,7 +62,7 @@ function Validators(props) {
       <input className="form-control mb-3" id="myInput" onKeyUp={filterValidators} type="text" placeholder="Search.." />
       <Table className="align-middle">
         <tbody>
-          {props.operator && !props.operatorDelegation && renderItem(props.operator.validatorData, 'primary')}
+          {props.operator && !props.operatorDelegation && renderItem(props.operator.validatorData, 'warning')}
           {Object.entries(filteredResults()).map(([validator_address, item], i) => {
             const delegation = props.delegations && props.delegations[validator_address]
             if(delegation) return null

@@ -65,7 +65,6 @@ class DelegateForm extends React.Component {
   render() {
     return (
       <>
-        <p>Delegate to {this.props.validator.description.moniker}</p>
         {this.state.error &&
         <Alert variant="danger">
           {this.state.error}

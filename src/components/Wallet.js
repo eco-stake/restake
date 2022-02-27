@@ -25,6 +25,10 @@ class Wallet extends React.Component {
     if(this.props.address !== prevProps.address){
       this.getDelegations()
     }
+    if(this.props.operator !== prevProps.operator && this.props.network === prevProps.network){
+      this.getDelegations()
+      this.setState({operatorDelegation: null})
+    }
   }
 
   onAddValidator(){
@@ -91,7 +95,7 @@ class Wallet extends React.Component {
       if(minutes > 0) string = string.concat(minutes + ' minutes and ')
       string = string.concat(seconds + ' seconds')
       return (
-        <p className="text-center">Auto REStake will run in <span>{string}</span></p>
+        <p>Auto REStake will run in <span>{string}</span></p>
       )
     }
   }
@@ -126,7 +130,7 @@ class Wallet extends React.Component {
           getDelegations={this.getDelegations}
           onAddValidator={this.onAddValidator} />
         {this.props.operator && Object.values(this.state.delegations).length > 0 &&
-        <div className="text-center">
+        <div className="mt-5 text-center">
           <Countdown
             date={this.nextRun(true)}
             renderer={this.countdownRenderer}

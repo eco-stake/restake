@@ -9,15 +9,19 @@
   "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/osmo.svg",
   "gasPrice": "0uosmo",
   "testAddress": "osmo1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczed559y",
-  "operators": [
-    {
+  "operators": [{
       "address": "osmovaloper1u5v0m74mql5nzfx2yh43s2tke4mvzghr6m2n5t",
       "botAddress": "osmo1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczed559y",
       "maxValidators": 3,
-      "runTime": "01:00",
+      "runTime": "21:00",
       "minimumReward": 1000
-    }
-  ]
+    }, {
+      "address": "osmovaloper1md9f5524vtmrn64lyv2pdfn7cnkjkklf44vtjz",
+      "botAddress": "osmo1md9f5524vtmrn64lyv2pdfn7cnkjkklf0zyg99",
+      "maxValidators": 3,
+      "runTime": "21:00",
+      "minimumReward": 2000
+    }]
 }, {
   "name": "juno",
   "prettyName": "Juno",
@@ -33,7 +37,7 @@
     "address": "junovaloper193xl2tqh2tjkld2zv49ku5s44ee4qmgr65jcep",
     "botAddress": "juno1yxsmtnxdt6gxnaqrg0j0nudg7et2gqcz8yyl52",
     "maxValidators": 3,
-    "runTime": "01:00",
+    "runTime": "21:00",
     "minimumReward": 1000
   }]
 }, {

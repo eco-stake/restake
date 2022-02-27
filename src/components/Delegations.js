@@ -235,9 +235,17 @@ class Delegations extends React.Component {
       return (
         <tr key={validatorAddress} className={rowVariant}>
           <td width={30}><ValidatorImage validator={validator} imageUrl={this.props.getValidatorImage(this.props.network, validatorAddress)} width={30} height={30} /></td>
-          <td>{validator.description.moniker}</td>
-          <td>{validator.commission.commission_rates.rate * 100}%</td>
-          <td></td>
+          <td>
+            <Delegate
+              network={this.props.network}
+              address={this.props.address}
+              validator={validator}
+              getValidatorImage={this.props.getValidatorImage}
+              stargateClient={this.props.stargateClient}
+              onDelegate={this.onClaimRewards}>{validator.description.moniker}</Delegate>
+            </td>
+          <td className="d-none d-lg-table-cell">{validator.commission.commission_rates.rate * 100}%</td>
+          <td className="d-none d-lg-table-cell"></td>
           <td><Coins coins={item.balance} /></td>
           <td>{rewards && rewards.reward.map(el => <Coins key={el.denom} coins={el} />)}</td>
           {this.restakeEnabled() &&
@@ -295,6 +303,7 @@ class Delegations extends React.Component {
                         network={this.props.network}
                         address={this.props.address}
                         validator={validator}
+                        getValidatorImage={this.props.getValidatorImage}
                         stargateClient={this.props.stargateClient}
                         onDelegate={this.onClaimRewards} />
                       <Dropdown.Item disabled={true} title="Coming soon" onClick={() => this.redelegate(validatorAddress)}>Redelegate</Dropdown.Item>
@@ -341,7 +350,7 @@ class Delegations extends React.Component {
         {!this.state.authzMissing && this.props.operator && this.state.isNanoLedger &&
         <AlertMessage variant="warning" message="Ledger devices are unable to send authz transactions right now. We will support them as soon as possible, and you can manually restake for now." />
         }
-        {this.state.restake.length > 0 && !this.restakeIncludes(this.props.operator.address) &&
+        {this.restakeEnabled() && this.state.restake.length > 0 && !this.restakeIncludes(this.props.operator.address) &&
           <AlertMessage variant="warning">
             You must include {this.props.operator.moniker} in your REStake selection
           </AlertMessage>
@@ -382,14 +391,14 @@ class Delegations extends React.Component {
             <thead>
               <tr>
                 <th colSpan={2}>Validator</th>
-                <th>Commission</th>
-                <th>APY</th>
+                <th className="d-none d-lg-table-cell">Commission</th>
+                <th className="d-none d-lg-table-cell">APY</th>
                 <th>Delegation</th>
                 <th>Rewards</th>
                 {this.restakeEnabled() &&
                 <th>REStake ({this.state.restake.length}/{this.props.operator.data.maxValidators})</th>
                 }
-                <th></th>
+                <th width={200}></th>
               </tr>
             </thead>
             <tbody>
