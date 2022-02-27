@@ -1,6 +1,3 @@
-import {
-} from 'react-bootstrap'
-
 function ValidatorImage(props) {
   const className = props.className || ''
   return (

@@ -2,11 +2,12 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import React from 'react'
 import _ from 'lodash'
+import SigningClient from '../utils/SigningClient'
 import AlertMessage from './AlertMessage'
 import NetworkSelect from './NetworkSelect'
 import Wallet from './Wallet'
 import Coins from './Coins'
-import SigningClient from '../utils/SigningClient'
+import ValidatorLink from './ValidatorLink'
 
 import { MsgGrant, MsgRevoke } from "cosmjs-types/cosmos/authz/v1beta1/tx.js";
 
@@ -179,9 +180,9 @@ class App extends React.Component {
               <img src={Logo} srcSet={`${Logo2x} 2x, ${Logo3x} 3x`} alt="REStake" />
             </a>
             {this.props.operator &&
-            <a href={this.props.operator.description.website} target="_blank" rel="noreferrer" className="moniker text-dark text-decoration-none">
+            <ValidatorLink operator={this.props.operator} className="moniker">
               <small>by {this.props.operator.moniker}</small>
-            </a>
+            </ValidatorLink>
             }
           </div>
           <div className="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none">
@@ -242,10 +243,10 @@ class App extends React.Component {
           {this.props.operator && (
             <>
               <p className="mt-5 text-center">
-                Enabling REStake will authorize <a href={this.props.operator.description.website} target="_blank" rel="noreferrer" className="text-dark text-decoration-none">{this.props.operator.moniker}</a> to send <em>WithdrawDelegatorReward</em> and <em>Delegate</em> transactions on your behalf for 1 year, for the validators you specify.
+                Enabling REStake will authorize <strong><ValidatorLink operator={this.props.operator} /></strong> to send <em>WithdrawDelegatorReward</em> and <em>Delegate</em> transactions on your behalf for 1 year, for the validators you specify.
               </p>
               <p className="text-center mb-5">
-                You can revoke the authorization at any time and everything is open source. <strong><a href={this.props.operator.description.website} target="_blank" rel="noreferrer" className="text-dark text-decoration-none">{this.props.operator.moniker}</a> will pay the transaction fees for you.</strong>
+                You can revoke the authorization at any time and everything is open source. <strong><ValidatorLink operator={this.props.operator} /> will pay the transaction fees for you.</strong>
               </p>
             </>
           )}
