@@ -57,7 +57,7 @@ class App extends React.Component {
       this.connect()
     }
     if(this.props.network !== prevProps.network || this.props.operator !== prevProps.operator){
-      if(this.props.address){
+      if(this.state.address){
         this.connect()
       }
       await this.setNetworkAndOperator()

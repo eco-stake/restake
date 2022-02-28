@@ -1,0 +1,40 @@
+---
+version: "2.0"
+
+services:
+  node:
+    image: ghcr.io/eco-stake/restake:latest
+    expose:
+      - port: 80
+        to:
+          - global: true
+        accept:
+          - restake.ecostake.com
+
+profiles:
+  compute:
+    node:
+      resources:
+        cpu:
+          units: 1
+        memory:
+          size: 512Mi
+        storage:
+          size: 100Mi
+  placement:
+    dcloud:
+      attributes:
+        host: akash
+      signedBy:
+        anyOf:
+          - akash1365yvmc4s7awdyj3n2sav7xfx76adc6dnmlx63
+      pricing:
+        node:
+          denom: uakt
+          amount: 100
+
+deployment:
+  node:
+    dcloud:
+      profile: node
+      count: 3
