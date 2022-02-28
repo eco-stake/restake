@@ -48,6 +48,8 @@ class Delegations extends React.Component {
       if(this.props.operator !== prevProps.operator && this.props.network === prevProps.network){
         if(this.props.operator){
           this.getGrants()
+        }else{
+          this.getGrants(this.props.network.data.testAddress)
         }
       }
     }
@@ -247,7 +249,7 @@ class Delegations extends React.Component {
           <td className="d-none d-lg-table-cell">{validator.commission.commission_rates.rate * 100}%</td>
           <td className="d-none d-lg-table-cell"></td>
           <td><Coins coins={item.balance} /></td>
-          <td>{rewards && rewards.reward.map(el => <Coins key={el.denom} coins={el} />)}</td>
+          <td className="d-none d-sm-table-cell">{rewards && rewards.reward.map(el => <Coins key={el.denom} coins={el} />)}</td>
           {this.restakeEnabled() &&
           <td>
             {false && (this.restakeIncludes(validatorAddress) ? <CheckCircle /> : <XCircle className="opacity-25" />)}
@@ -264,7 +266,7 @@ class Delegations extends React.Component {
           </td>
           }
           <td>
-            <div className="d-grid gap-2 d-md-flex justify-content-md-end">
+            <div className="d-grid gap-2 d-md-flex justify-content-end">
               {!this.state.validatorLoading[validatorAddress]
                 ? (
                   <Dropdown>
@@ -358,23 +360,23 @@ class Delegations extends React.Component {
     const alerts = (
       <>
         {this.state.authzMissing &&
-        <AlertMessage variant="warning">
+        <AlertMessage variant="warning" dismissible={false}>
           {this.props.network.prettyName} doesn't support Authz just yet. You can manually restake for now and REStake is ready when support is enabled
         </AlertMessage>
         }
         {!this.state.authzMissing && !this.props.operator &&
-          <AlertMessage variant="warning" message="There are no REStake operators for this network yet. You can REStake manually, or check the About section to run one yourself" />
+          <AlertMessage variant="warning" message="There are no REStake operators for this network yet. You can REStake manually, or check the About section to run one yourself" dismissible={false} />
         }
         {!this.state.authzMissing && this.props.operator && this.state.isNanoLedger &&
-        <AlertMessage variant="warning" message="Ledger devices are unable to send authz transactions right now. We will support them as soon as possible, and you can manually restake for now." />
+        <AlertMessage variant="warning" message="Ledger devices are unable to send authz transactions right now. We will support them as soon as possible, and you can manually restake for now." dismissible={false} />
         }
         {this.restakeEnabled() && this.state.restake.length > 0 && !this.restakeIncludes(this.props.operator.address) &&
-          <AlertMessage variant="warning">
+          <AlertMessage variant="warning" dismissible={false}>
             You must include {this.props.operator.moniker} in your REStake selection
           </AlertMessage>
         }
         {this.restakeChanged() &&
-          <AlertMessage variant="primary" message="Your validator selection has changed, make sure to update your authz grants using the button below." />
+          <AlertMessage variant="primary" dismissible={false} message="Your validator selection has changed, make sure to update your authz grants using the button below." />
         }
         <AlertMessage message={this.state.error} />
       </>
@@ -414,7 +416,7 @@ class Delegations extends React.Component {
                 <th className="d-none d-lg-table-cell">Commission</th>
                 <th className="d-none d-lg-table-cell">APY</th>
                 <th>Delegation</th>
-                <th>Rewards</th>
+                <th className="d-none d-sm-table-cell">Rewards</th>
                 {this.restakeEnabled() &&
                 <th>REStake ({this.state.restake.length}/{this.props.operator.data.maxValidators})</th>
                 }

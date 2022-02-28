@@ -233,7 +233,7 @@ class App extends React.Component {
           {!this.state.address && (
             !this.state.keplr
               ? (
-                <AlertMessage variant="warning">
+                <AlertMessage variant="warning" dismissible={false}>
                   Please install the <a href="https://chrome.google.com/webstore/detail/keplr/dmkamcknogkgcdfhhbddcghachkejeap?hl=en" target="_blank" rel="noreferrer">Keplr browser extension</a> using desktop Google Chrome. WalletConnect and mobile support is coming soon.
                 </AlertMessage>
               ) : (
@@ -260,11 +260,11 @@ class App extends React.Component {
         </div>
         <footer className="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
           <a href="https://akash.network" target="_blank" rel="noreferrer" className="col-md-4 mb-0 text-muted">
-            <img src={PoweredByAkash} alt="Powered by Akash" width={250} />
+            <img src={PoweredByAkash} alt="Powered by Akash" width={200} />
           </a>
 
-          <a href="https://ecostake.com" target="_blank" rel="noreferrer" className="col-md-4 d-flex align-items-center justify-content-center mb-lg-3 mb-md-0 me-lg-auto link-dark text-decoration-none">
-            Built with 💚 by ECO Stake 🌱
+          <a href="https://ecostake.com" target="_blank" rel="noreferrer" className="col-md-4 d-flex align-items-center justify-content-center me-lg-auto link-dark text-decoration-none">
+            <span className="d-none d-sm-inline me-1">Built with 💚&nbsp;</span> by ECO Stake 🌱
           </a>
 
           <p className="col-md-4 mb-0 text-muted text-end justify-content-end d-none d-lg-flex">
