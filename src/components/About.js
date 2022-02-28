@@ -22,7 +22,7 @@ function About(props) {
             <li>Watch the countdown timer and.. profit!</li>
           </ol>
           <h5>Run REStake yourself</h5>
-          <p>REStake is intended to be run by many validators, giving delegators the choice of operator for many different networks. It's also easy to run as a user if you want your own private REStake</p>
+          <p>REStake is intended to be run by many validators, giving delegators the choice of operator for many different networks. Ask your favourite validator to become an operator or run one yourself, it's easy!</p>
           <p>The project is entirely open source and instructions for running and contributing to REStake can be <a href="https://github.com/eco-stake/restake" target="_blank" rel="noreferrer">found on Github</a>.</p>
           <h5>ECO Stake 🌱</h5>
           <p>ECO Stake is a climate positive validator, but we care about the Cosmos ecosystem too. We built REStake to make it easy for all validators to run an autocompounder with Authz, and it's one of many projects we work on in the ecosystem. <a href="https://ecostake.com" target="_blank" rel="noreferrer">Delegate with us</a> to support more projects like this.</p>

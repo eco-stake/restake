@@ -57,7 +57,9 @@ class App extends React.Component {
       this.connect()
     }
     if(this.props.network !== prevProps.network || this.props.operator !== prevProps.operator){
-      this.connect()
+      if(this.props.address){
+        this.connect()
+      }
       await this.setNetworkAndOperator()
     }
   }
@@ -176,7 +178,7 @@ class App extends React.Component {
     return (
       <Container>
         <header className="d-flex flex-wrap justify-content-between py-3 mb-4 border-bottom">
-          <div className="logo d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none">
+          <div className="logo d-flex align-items-center mb-3 mb-md-0 text-dark text-decoration-none">
             <span onClick={() => this.setState({showAbout: true})} role="button" className="text-dark text-decoration-none">
               <img src={Logo} srcSet={`${Logo2x} 2x, ${Logo3x} 3x`} alt="REStake" />
             </span>
@@ -186,34 +188,32 @@ class App extends React.Component {
             </ValidatorLink>
             }
           </div>
-          <div className="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none">
+          {this.state.address &&
+          <ul className="nav nav-pills justify-content-end">
+            <li className="nav-item d-none d-xl-block">
+              <CopyToClipboard text={this.state.address}
+                onCopy={() => this.setCopied()}>
+                <span role="button"><span className={'nav-link disabled clipboard' + (this.state.copied ? ' copied' : '')}>{this.state.address}</span></span>
+              </CopyToClipboard>
+            </li>
+            <li className="nav-item d-none d-md-block">
+              <span className="nav-link">
+                <Badge><Coins coins={this.state.balance} /></Badge>
+              </span>
+            </li>
+            {false && (
+              <li className="nav-item">
+                <Button onClick={() => this.disconnect()} className="nav-link btn-link" aria-current="page">Disconnect</Button>
+              </li>
+            )}
+          </ul>
+          }
+          <div className="d-flex align-items-center mb-3 mb-md-0 text-dark text-decoration-none">
             <NetworkSelect networks={this.props.networks}
               network={this.props.network} operator={this.props.operator}
               validators={this.props.validators} getValidatorImage={this.getValidatorImage}
               changeNetwork={this.props.changeNetwork} loadValidatorImages={this.loadValidatorImages} />
           </div>
-          <ul className="nav nav-pills justify-content-end">
-            {this.state.address &&
-            <>
-              <li className="nav-item d-none d-xl-block">
-                <CopyToClipboard text={this.state.address}
-                  onCopy={() => this.setCopied()}>
-                  <span role="button"><span className={'nav-link disabled clipboard' + (this.state.copied ? ' copied' : '')}>{this.state.address}</span></span>
-                </CopyToClipboard>
-              </li>
-              <li className="nav-item d-none d-md-block">
-                <span className="nav-link">
-                  <Badge><Coins coins={this.state.balance} /></Badge>
-                </span>
-              </li>
-              {false && (
-              <li className="nav-item">
-                <Button onClick={() => this.disconnect()} className="nav-link btn-link" aria-current="page">Disconnect</Button>
-              </li>
-              )}
-            </>
-            }
-          </ul>
         </header>
         <div className="mb-5">
           <p className="lead fs-3 text-center mt-5 mb-5"><strong><ValidatorLink operator={this.props.operator} fallback="REStake" /></strong> auto-compounds your <strong>{this.props.network.prettyName}</strong> staking earnings <strong>once per day</strong>, for <strong>{this.getMaxValidatorText()}</strong> validators. </p>
