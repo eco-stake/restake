@@ -1,11 +1,13 @@
 import React, { useEffect, useReducer } from 'react';
 import { useParams, useNavigate } from "react-router-dom";
-import Network from '../utils/Network'
+import Network from '../utils/Network.mjs'
 import App from './App';
 
 import {
   Spinner
 } from 'react-bootstrap';
+
+import data from '../networks.json';
 
 function NetworkFinder() {
   const params = useParams();
@@ -17,16 +19,7 @@ function NetworkFinder() {
   )
 
   const getNetworks = () => {
-    return fetch('/networks.json', {
-      headers : {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      }
-    }).then((response) => {
-      return response.json();
-    }).then((data) => {
-      return data.reduce((a, v) => ({ ...a, [v.name]: v}), {})
-    })
+    return data.reduce((a, v) => ({ ...a, [v.name]: v}), {})
   }
 
   const changeNetwork = (network, operator, validators) => {
@@ -47,9 +40,8 @@ function NetworkFinder() {
   useEffect(() => {
     if(!Object.keys(state.networks).length){
       setState({loading: true})
-      getNetworks().then((networks) => {
-        setState({networks: networks})
-      })
+      const networks = getNetworks()
+      setState({networks: networks})
     }
   }, [state.networks])
 

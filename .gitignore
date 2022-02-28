@@ -24,3 +24,8 @@ yarn-debug.log*
 yarn-error.log*
 
 .vim
+
+# Parcel related files
+dist/
+.cache
+.parcel-cache/

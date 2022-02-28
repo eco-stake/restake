@@ -1,6 +1,6 @@
 import React, { useState, useReducer, useEffect } from 'react';
 
-import Network from '../utils/Network'
+import Network from '../utils/Network.mjs'
 import ValidatorImage from './ValidatorImage'
 
 import {
