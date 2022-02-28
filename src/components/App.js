@@ -263,11 +263,11 @@ class App extends React.Component {
             <img src={PoweredByAkash} alt="Powered by Akash" width={250} />
           </a>
 
-          <a href="https://ecostake.com" target="_blank" rel="noreferrer" className="col-md-4 d-flex align-items-center justify-content-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none">
+          <a href="https://ecostake.com" target="_blank" rel="noreferrer" className="col-md-4 d-flex align-items-center justify-content-center mb-lg-3 mb-md-0 me-lg-auto link-dark text-decoration-none">
             Built with 💚 by ECO Stake 🌱
           </a>
 
-          <p className="col-md-4 mb-0 text-muted text-end justify-content-end">
+          <p className="col-md-4 mb-0 text-muted text-end justify-content-end d-none d-lg-flex">
             <GitHubButton href="https://github.com/eco-stake/restake" data-icon="octicon-star" data-size="large" data-show-count="true" aria-label="Star eco-stake/restake on GitHub">Star</GitHubButton>
           </p>
         </footer>
