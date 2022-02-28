@@ -1,21 +1,10 @@
-# Dockerfile
-
-# base image
+# dev env
 FROM node:alpine
 
-# create & set working directory
-RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
-
-# copy source files
-COPY . /usr/src/app
-
-ENV NODE_ENV=production
-
-# install dependencies
+COPY package*.json ./
 RUN npm install
+COPY . ./
 
-# start app
-RUN npm run build
 EXPOSE 3000
 CMD npm run start
