@@ -489,7 +489,7 @@ class Delegations extends React.Component {
                     </Button>
                   )
               )}
-              {!this.restakeChanged() && this.state.grantsExist && (
+              {!this.restakeChanged() && this.props.operator && this.state.grantsExist && (
                 <RevokeRestake
                   address={this.props.address}
                   botAddress={this.props.operator.botAddress}
