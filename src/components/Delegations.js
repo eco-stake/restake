@@ -359,7 +359,7 @@ class Delegations extends React.Component {
       <>
         {this.state.authzMissing &&
         <AlertMessage variant="warning">
-          {this.props.network.prettyName} doesn't support authz just yet. You can manually restake for now and REStake is ready when support is enabled
+          {this.props.network.prettyName} doesn't support Authz just yet. You can manually restake for now and REStake is ready when support is enabled
         </AlertMessage>
         }
         {!this.state.authzMissing && !this.props.operator &&

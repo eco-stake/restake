@@ -8,6 +8,7 @@ import NetworkSelect from './NetworkSelect'
 import Wallet from './Wallet'
 import Coins from './Coins'
 import ValidatorLink from './ValidatorLink'
+import About from './About'
 
 import { MsgGrant, MsgRevoke } from "cosmjs-types/cosmos/authz/v1beta1/tx.js";
 
@@ -176,9 +177,9 @@ class App extends React.Component {
       <Container>
         <header className="d-flex flex-wrap justify-content-between py-3 mb-4 border-bottom">
           <div className="logo d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none">
-            <a href="/" className="text-dark text-decoration-none">
+            <span onClick={() => this.setState({showAbout: true})} role="button" className="text-dark text-decoration-none">
               <img src={Logo} srcSet={`${Logo2x} 2x, ${Logo3x} 3x`} alt="REStake" />
-            </a>
+            </span>
             {false && this.props.operator &&
             <ValidatorLink operator={this.props.operator} className="moniker d-none d-md-block">
               <small>by {this.props.operator.moniker}</small>
@@ -270,6 +271,7 @@ class App extends React.Component {
             <GitHubButton href="https://github.com/eco-stake/restake" data-icon="octicon-star" data-size="large" data-show-count="true" aria-label="Star eco-stake/restake on GitHub">Star</GitHubButton>
           </p>
         </footer>
+        <About show={this.state.showAbout} onHide={() => this.setState({showAbout: false})} />
       </Container>
     )
   }
