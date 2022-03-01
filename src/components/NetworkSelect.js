@@ -43,11 +43,12 @@ function NetworkSelect(props) {
     const networks = Object.values(props.networks).sort((a, b) => a.name > b.name ? 1 : -1)
     setOptions({
       networks: networks.map(el => {
-        return {value: el.name, label: el.prettyName}
+        return {value: el.name, label: el.prettyName, image: el.image}
       }),
       network: selectedNetwork && {
         value: selectedNetwork.name,
-        label: selectedNetwork.prettyName
+        label: selectedNetwork.prettyName,
+        image: selectedNetwork.data.image
       }
     })
   }, [props.networks, selectedNetwork])
@@ -62,11 +63,12 @@ function NetworkSelect(props) {
         const validator = validators[el.address]
         if(!validator) return null
 
-        return {value: el.address, label: validator.description.moniker}
+        return {value: el.address, label: validator.description.moniker, validator: validator}
       }),
       operator: selectedOperator && validator && {
         value: selectedOperator.address,
-        label: validator.description.moniker
+        label: validator.description.moniker,
+        validator: validator
       }
     })
   }, [selectedNetwork, selectedOperator, validators])
@@ -130,28 +132,26 @@ function NetworkSelect(props) {
           <Form onSubmit={handleSubmit}>
             {props.networks &&
             <div className="row mb-3">
-              <label className="form-label">Network</label>
-              <div className="col-1">
-                <img className="mt-1" alt={selectedNetwork.prettyName} src={selectedNetwork.data.image} height={30} width={30} />
-              </div>
               <div className="col">
+                <label className="form-label">Network</label>
                 <Select
                   value={options.network}
                   isClearable={false}
                   name="network"
                   options={options.networks}
-                  onChange={selectNetwork}/>
+                  onChange={selectNetwork}
+                  formatOptionLabel={network => (
+                    <div className="image-option">
+                      <img src={network.image} width={30} height={30} alt={network.label} />
+                      <span className="ms-2">{network.label}</span>
+                    </div>
+                  )}/>
               </div>
             </div>
             }
             {selectedNetwork.getOperators(validators).length > 0 &&
               <div className="row mb-3">
                 <label className="form-label">Operator</label>
-                <div className="col-1">
-                  {selectedOperator &&
-                  <ValidatorImage className="mt-1" validator={selectedOperator.validatorData} imageUrl={props.getValidatorImage(selectedNetwork, selectedOperator.address)} height={30} width={30} />
-                  }
-                </div>
                 <div className="col">
                   <Select
                     value={options.operator}
@@ -159,7 +159,13 @@ function NetworkSelect(props) {
                     isClearable={false}
                     name="operator"
                     options={options.operators}
-                    onChange={selectOperator} />
+                    onChange={selectOperator}
+                    formatOptionLabel={operator => (
+                      <div className="image-option">
+                        <ValidatorImage validator={operator.validator} imageUrl={props.getValidatorImage(selectedNetwork, operator.value)} height={30} width={30} />
+                        <span className="ms-2">{operator.label}</span>
+                      </div>
+                    )}/>
                 </div>
               </div>
             }
