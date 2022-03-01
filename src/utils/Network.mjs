@@ -6,7 +6,8 @@ const Network = async (data) => {
   const restClient = await RestClient(data.chainId, data.restUrl)
 
   const signingClient = (wallet, key) => {
-    return SigningClient(data.rpcUrl, data.chainId, data.gasPrice, wallet, key)
+    const gasPrice = data.gasPrice || '0.0025' + data.denom
+    return SigningClient(data.rpcUrl, data.chainId, gasPrice, wallet, key)
   }
 
   const getOperator = (operators, operatorAddress) => {

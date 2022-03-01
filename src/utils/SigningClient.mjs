@@ -62,10 +62,10 @@ const SigningClient = async (rpcUrl, chainId, defaultGasPrice, signer, key) => {
 
   function findAvailableUrl(urls){
     return findAsync(urls, (url) => {
-      return axios.get(url + '/health')
+      return axios.get(url + '/status?', {timeout: 1000})
         .then(res => res.data)
         .then(data => {
-          return !!data.result
+          return data.result.node_info.network === chainId
         }).catch(error => {
           return false
         })

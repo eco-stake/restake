@@ -95,7 +95,7 @@ const RestClient = async (chainId, restUrls) => {
 
   function findAvailableUrl(urls){
     return findAsync(urls, (url) => {
-      return axios.get(url + '/node_info')
+      return axios.get(url + '/node_info', {timeout: 1000})
         .then(res => res.data)
         .then(data => {
           return data.node_info.network === chainId

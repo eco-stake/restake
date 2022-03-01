@@ -14,6 +14,7 @@ import Select from 'react-select';
 function NetworkSelect(props) {
   const [show, setShow] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
   const [selectedNetwork, setSelectedNetwork] = useState();
   const [selectedOperator, setSelectedOperator] = useState();
   const [validators, setValidators] = useState([]);
@@ -74,6 +75,7 @@ function NetworkSelect(props) {
     const data = props.networks[newValue.value]
     if(data){
       setLoading(true)
+      setError(false)
       Network(data).then(network => {
         setSelectedNetwork(network)
         setValidators({})
@@ -84,6 +86,9 @@ function NetworkSelect(props) {
           loadValidatorImages(network, operators.map(el => el.validatorData))
           loadValidatorImages(network, data)
           setSelectedOperator(operators[0])
+          setLoading(false)
+        }).catch(error => {
+          setError('Unable to connect to this network currently. Try again later.')
           setLoading(false)
         })
       })
@@ -158,11 +163,14 @@ function NetworkSelect(props) {
                 </div>
               </div>
             }
-            {selectedNetwork.getOperators(validators).length < 1 &&
+            {error &&
+              <p><em>{error}</em></p>
+            }
+            {!error && selectedNetwork.getOperators(validators).length < 1 &&
               <p><em>There are no operators for this network just yet. You can manually REStake for now</em></p>
             }
             {!loading
-              ? <Button type="submit" className="btn btn-primary">Change</Button>
+              ? !error && <Button type="submit" className="btn btn-primary">Change</Button>
               : (
                 <Button className="btn-sm btn-primary mr-5" disabled>
                   <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>&nbsp;

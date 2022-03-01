@@ -46,10 +46,18 @@ class Wallet extends React.Component {
           });
         },
         (error) => {
-          this.setState({
-            isLoaded: true,
-            error
-          });
+          if(error.response.status === 404){
+            this.setState({
+              isLoaded: true,
+              delegations: [],
+              operatorDelegation: null
+            });
+          }else{
+            this.setState({
+              isLoaded: true,
+              error
+            });
+          }
         }
       )
   }

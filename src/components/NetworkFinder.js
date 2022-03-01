@@ -19,7 +19,7 @@ function NetworkFinder() {
   )
 
   const getNetworks = () => {
-    return data.reduce((a, v) => ({ ...a, [v.name]: v}), {})
+    return data.filter(el => el.enabled !== false).reduce((a, v) => ({ ...a, [v.name]: v}), {})
   }
 
   const changeNetwork = (network, operator, validators) => {

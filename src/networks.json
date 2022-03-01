@@ -1,67 +1,185 @@
-[{
-  "name": "osmosis",
-  "prettyName": "Osmosis",
-  "chainId": "osmosis-1",
-  "prefix": "osmo",
-  "denom": "uosmo",
-  "restUrl": [
-    "https://lcd-osmosis.blockapsis.com"
-  ],
-  "rpcUrl": [
-    "https://osmosis.validator.network",
-    "https://osmosis-1.technofractal.com:443",
-    "https://rpc-osmosis.blockapsis.com"
-  ],
-  "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/osmo.svg",
-  "gasPrice": "0uosmo",
-  "testAddress": "osmo1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczed559y",
-  "operators": [{
+[
+  {
+    "name": "osmosis",
+    "prettyName": "Osmosis",
+    "chainId": "osmosis-1",
+    "prefix": "osmo",
+    "denom": "uosmo",
+    "restUrl": [
+      "https://lcd-osmosis.blockapsis.com"
+    ],
+    "rpcUrl": [
+      "https://osmosis.validator.network",
+      "https://osmosis-1.technofractal.com:443",
+      "https://rpc-osmosis.blockapsis.com"
+    ],
+    "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/osmo.svg",
+    "gasPrice": "0uosmo",
+    "testAddress": "osmo1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczed559y",
+    "operators": [{
       "address": "osmovaloper1u5v0m74mql5nzfx2yh43s2tke4mvzghr6m2n5t",
       "botAddress": "osmo1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczed559y",
       "maxValidators": 3,
       "runTime": "21:00",
       "minimumReward": 1000
-    }, {
-      "address": "osmovaloper1md9f5524vtmrn64lyv2pdfn7cnkjkklf44vtjz",
-      "botAddress": "osmo1md9f5524vtmrn64lyv2pdfn7cnkjkklf0zyg99",
-      "maxValidators": 3,
-      "runTime": "21:00",
-      "minimumReward": 2000
     }]
-}, {
-  "name": "juno",
-  "prettyName": "Juno",
-  "chainId": "juno-1",
-  "prefix": "juno",
-  "denom": "ujuno",
-  "restUrl": [
-    "https://lcd-juno.itastakers.com",
-    "https://lcd.juno-1.technofractal.com"
-  ],
-  "rpcUrl": [
-    "https://rpc-juno.itastakers.com",
-    "https://juno-1.technofractal.com:443"
-  ],
-  "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/juno.svg",
-  "gasPrice": "0.0025ujuno",
-  "testAddress": "juno1yxsmtnxdt6gxnaqrg0j0nudg7et2gqcz8yyl52",
-  "operators": [{
-    "address": "junovaloper193xl2tqh2tjkld2zv49ku5s44ee4qmgr65jcep",
-    "botAddress": "juno1yxsmtnxdt6gxnaqrg0j0nudg7et2gqcz8yyl52",
-    "maxValidators": 3,
-    "runTime": "21:00",
-    "minimumReward": 1000
-  }]
-}, {
-  "name": "chihuahua",
-  "prettyName": "Chihuahua",
-  "chainId": "chihuahua-1",
-  "prefix": "chihuahua",
-  "denom": "uhuahua",
-  "restUrl": "https://api.chihuahua.wtf",
-  "rpcUrl": "https://rpc.chihuahua.wtf",
-  "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/huahua.png",
-  "gasPrice": "0.025uhuahua",
-  "testAddress": "chihuahua1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczjr22j5",
-  "operators": []
-}]
+  },
+  {
+    "name": "juno",
+    "prettyName": "Juno",
+    "chainId": "juno-1",
+    "prefix": "juno",
+    "denom": "ujuno",
+    "restUrl": [
+      "https://lcd-juno.itastakers.com",
+      "https://lcd.juno-1.technofractal.com"
+    ],
+    "rpcUrl": [
+      "https://rpc-juno.itastakers.com",
+      "https://juno-1.technofractal.com:443"
+    ],
+    "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/juno.svg",
+    "gasPrice": "0.0025ujuno",
+    "testAddress": "juno1yxsmtnxdt6gxnaqrg0j0nudg7et2gqcz8yyl52",
+    "operators": []
+  },
+  {
+    "name": "cosmoshub",
+    "prettyName": "Cosmos Hub",
+    "chainId": "cosmoshub-4",
+    "prefix": "cosmos",
+    "denom": "uatom",
+    "restUrl": [
+      "https://lcd-cosmoshub.blockapsis.com"
+    ],
+    "rpcUrl": [
+      "https://cosmoshub.validator.network",
+      "https://cosmoshub-4.technofractal.com:443",
+      "https://rpc.cosmos.network:443",
+      "https://rpc-cosmoshub.blockapsis.com"
+    ],
+    "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/atom.svg",
+    "gasPrice": "0uatom",
+    "testAddress": "cosmos1yxsmtnxdt6gxnaqrg0j0nudg7et2gqcz3k8ynk",
+    "operators": []
+  },
+  {
+    "name": "akash",
+    "prettyName": "Akash",
+    "chainId": "akashnet-2",
+    "prefix": "akash",
+    "denom": "uakt",
+    "restUrl": [
+      "http://135.181.60.250:1317",
+      "http://135.181.181.120:1518",
+      "http://135.181.181.119:1518",
+      "http://135.181.181.121:1518",
+      "http://135.181.181.122:1518",
+      "http://135.181.181.123:1518"
+    ],
+    "rpcUrl": [
+      "http://135.181.60.250:26657",
+      "http://rpc.akash.forbole.com:80",
+      "http://akash-sentry01.skynetvalidators.com:26657",
+      "https://akash.technofractal.com:443",
+      "http://162.55.94.246:28957",
+      "http://135.181.181.120:28957",
+      "http://135.181.181.119:28957",
+      "http://135.181.181.121:28957",
+      "http://135.181.181.122:28957",
+      "http://135.181.181.123:28957"
+    ],
+    "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/akt.svg",
+    "testAddress": null,
+    "operators": []
+  },
+  {
+    "name": "chihuahua",
+    "prettyName": "Chihuahua",
+    "chainId": "chihuahua-1",
+    "prefix": "chihuahua",
+    "denom": "uhuahua",
+    "restUrl": "https://api.chihuahua.wtf",
+    "rpcUrl": "https://rpc.chihuahua.wtf",
+    "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/huahua.png",
+    "gasPrice": "0.025uhuahua",
+    "testAddress": "chihuahua1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczjr22j5",
+    "operators": []
+  },
+  {
+    "name": "gravitybridge",
+    "prettyName": "Gravity Bridge",
+    "chainId": "gravity-bridge-3",
+    "prefix": "gravity",
+    "denom": "ugraviton",
+    "restUrl": [
+      "https://gravitychain.io:1317",
+      "http://gravity-rpc.qwoyn.com:1317"
+    ],
+    "rpcUrl": [
+      "https://gravitychain.io:26657",
+      "http://gravity-rpc.qwoyn.com:26657",
+      "gravity-bridge-1-08.nodes.amhost.net:26657",
+      "45.138.49.222:26657"
+    ],
+    "image": "https://raw.githubusercontent.com/Gravity-Bridge/Gravity-Docs/main/assets/Graviton-Blue.svg",
+    "testAddress": "gravity1yxsmtnxdt6gxnaqrg0j0nudg7et2gqcz4x4uk7",
+    "operators": []
+  },
+  {
+    "name": "regen",
+    "prettyName": "Regen Network",
+    "chainId": "regen-1",
+    "prefix": "regen",
+    "denom": "uregen",
+    "restUrl": [
+      "http://public-rpc.regen.vitwit.com:1317",
+      "https://regen.stakesystems.io"
+    ],
+    "rpcUrl": [
+      "http://public-rpc.regen.vitwit.com:26657",
+      "https://regen.stakesystems.io:2053",
+      "http://rpc.regen.forbole.com:80"
+    ],
+    "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/regen.png",
+    "testAddress": "regen1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczw5vc9j",
+    "operators": []
+  },
+  {
+    "name": "terra",
+    "prettyName": "Terra",
+    "chainId": "columbus-5",
+    "prefix": "terra",
+    "denom": "uluna",
+    "restUrl": [
+      "http://64.227.72.101:1317",
+      "https://blockdaemon-terra-lcd.api.bdnodes.net:1317"
+    ],
+    "rpcUrl": [
+      "https://terra-rpc.easy2stake.com:443",
+      "http://64.227.72.101:26657",
+      "http://public-node.terra.dev:26657",
+      "https://terra.technofractal.com:443"
+    ],
+    "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/luna.svg",
+    "testAddress": "terra1rnszu7kumz5lmgdk3fv2pmzt3s8vhcddqep7d4",
+    "operators": []
+  },
+  {
+    "name": "sentinel",
+    "prettyName": "Sentinel",
+    "chainId": "sentinelhub-2",
+    "prefix": "sent",
+    "denom": "udvpn",
+    "restUrl": [
+      "https://lcd-sentinel.keplr.app"
+    ],
+    "rpcUrl": [
+      "https://rpc-sentinel.keplr.app",
+      "https://sentinelhub-2.technofractal.com:443"
+    ],
+    "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/dvpn.png",
+    "testAddress": "sent1yxsmtnxdt6gxnaqrg0j0nudg7et2gqcz2d3ahe",
+    "operators": []
+  }
+]

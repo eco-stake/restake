@@ -59,7 +59,7 @@ class Delegations extends React.Component {
     this.getRewards()
     if(this.props.operator){
       this.getGrants()
-    }else{
+    }else if(this.props.network.data.testAddress){
       this.getGrants(this.props.network.data.testAddress)
     }
   }
@@ -399,7 +399,7 @@ class Delegations extends React.Component {
               operatorDelegation={this.props.operatorDelegation}
               availableBalance={this.props.balance}
               stargateClient={this.props.stargateClient}
-              onAddValidator={this.props.onAddValidator} />
+              onDelegate={this.props.onAddValidator} />
           </div>
         </>
       )
@@ -448,7 +448,7 @@ class Delegations extends React.Component {
               operatorDelegation={this.props.operatorDelegation}
               availableBalance={this.props.balance}
               stargateClient={this.props.stargateClient}
-              onAddValidator={this.props.onAddValidator} />
+              onDelegate={this.props.onAddValidator} />
           </div>
           <div className="col">
             <div className="d-grid gap-2 d-md-flex justify-content-md-end">
