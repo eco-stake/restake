@@ -161,8 +161,12 @@ class Delegations extends React.Component {
     }));
   }
 
+  restakePossible(){
+    return !this.state.isNanoLedger && !this.state.authzMissing && !!this.props.operator
+  }
+
   restakeEnabled(){
-    return !this.state.isNanoLedger && !this.state.authzMissing && !!this.props.operator && !!this.props.operatorDelegation
+    return this.restakePossible() && !!this.props.operatorDelegation
   }
 
   restakeChanged(){
@@ -177,6 +181,8 @@ class Delegations extends React.Component {
   }
 
   canAddToRestake(validatorAddress){
+    if(!this.restakeEnabled()) return false
+
     return this.state.restake.length < this.props.operator.data.maxValidators &&
       (this.props.operator.address === validatorAddress || this.restakeIncludes(this.props.operator.address))
   }
@@ -220,7 +226,7 @@ class Delegations extends React.Component {
     let rowVariant = this.validatorIsOperator(validatorAddress) ? 'table-warning' : undefined
     let addButton = {}
     let removeButton = {}
-    if(this.restakeEnabled()){
+    if(this.restakePossible()){
       addButton = {variant: 'outline-secondary', disabled: !this.canAddToRestake(validatorAddress)}
       removeButton = {variant: 'outline-danger', disabled: !this.canRemoveFromRestake(validatorAddress)}
       if(this.validatorIsOperator(validatorAddress)){
@@ -250,10 +256,9 @@ class Delegations extends React.Component {
           <td className="d-none d-lg-table-cell"></td>
           <td><Coins coins={item.balance} /></td>
           <td className="d-none d-sm-table-cell">{rewards && rewards.reward.map(el => <Coins key={el.denom} coins={el} />)}</td>
-          {this.restakeEnabled() &&
+          {this.restakePossible() &&
           <td>
-            {false && (this.restakeIncludes(validatorAddress) ? <CheckCircle /> : <XCircle className="opacity-25" />)}
-            {this.restakeIncludes(validatorAddress)
+            {this.restakeEnabled() && this.restakeIncludes(validatorAddress)
               ? (
                 <Button size="sm" disabled={removeButton.disabled}
                   variant={removeButton.variant}
@@ -282,7 +287,6 @@ class Delegations extends React.Component {
                       )}
                       {this.restakeEnabled() && <hr />}
                       <ClaimRewards
-                        restake={true}
                         network={this.props.network}
                         address={this.props.address}
                         validators={[validatorAddress]}
@@ -292,6 +296,7 @@ class Delegations extends React.Component {
                         setLoading={(loading) => this.setValidatorLoading(validatorAddress, loading)}
                         setError={this.setError} />
                       <ClaimRewards
+                        restake={true}
                         network={this.props.network}
                         address={this.props.address}
                         validators={[validatorAddress]}
@@ -370,6 +375,11 @@ class Delegations extends React.Component {
         {!this.state.authzMissing && this.props.operator && this.state.isNanoLedger &&
         <AlertMessage variant="warning" message="Ledger devices are unable to send authz transactions right now. We will support them as soon as possible, and you can manually restake for now." dismissible={false} />
         }
+        {this.restakePossible() && !this.props.operatorDelegation &&
+          <AlertMessage variant="warning" dismissible={false}>
+            You must delegate to {this.props.operator.moniker} to enable REStake
+          </AlertMessage>
+        }
         {this.restakeEnabled() && this.state.restake.length > 0 && !this.restakeIncludes(this.props.operator.address) &&
           <AlertMessage variant="warning" dismissible={false}>
             You must include {this.props.operator.moniker} in your REStake selection
@@ -417,7 +427,7 @@ class Delegations extends React.Component {
                 <th className="d-none d-lg-table-cell">APY</th>
                 <th>Delegation</th>
                 <th className="d-none d-sm-table-cell">Rewards</th>
-                {this.restakeEnabled() &&
+                {this.restakePossible() &&
                 <th>REStake ({this.state.restake.length}/{this.props.operator.data.maxValidators})</th>
                 }
                 <th width={200}></th>

@@ -76,7 +76,7 @@ function ClaimRewards(props) {
     <>
       {props.validators.length > 0 && (
         <Dropdown.Item onClick={() => claim()}>
-          {props.restake ? 'REStake' : 'Claim'} <Badge bg="secondary"><Coins coins={props.rewards} /></Badge>
+          {props.restake ? 'Compound' : 'Claim'} <Badge bg="secondary"><Coins coins={props.rewards} /></Badge>
         </Dropdown.Item>
       )}
     </>
