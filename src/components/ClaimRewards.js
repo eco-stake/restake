@@ -16,7 +16,7 @@ function ClaimRewards(props) {
     props.setLoading(true)
 
     const gas = props.validators.reduce((sum, el) => {
-      return props.restake ? 200_000 : 100_000
+      return sum + (props.restake ? 300_000 : 100_000)
     }, 0)
     const fee = props.stargateClient.getFee(gas)
 

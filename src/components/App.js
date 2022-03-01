@@ -74,21 +74,33 @@ class App extends React.Component {
     if(!network) return
 
     return this.setState({
+      error: false,
       chainId: network.chainId,
       denom: network.denom,
       validatorAddress: operator && operator.address,
-      rpcUrl: network.rpcUrl,
       maxValidators: operator && operator.data.maxValidators,
       restClient: network.restClient
     })
   }
 
   async connect() {
+    if(!this.props.network.connected){
+      return this.setState({
+        error: 'Could not connect to any available API servers'
+      })
+    }
     await window.keplr.enable(this.state.chainId);
     if (window.getOfflineSigner){
       const offlineSigner = await window.getOfflineSignerAuto(this.state.chainId)
       const key = await window.keplr.getKey(this.state.chainId);
-      const stargateClient = await SigningClient(this.props.network, offlineSigner, key)
+      const stargateClient = await this.props.network.signingClient(offlineSigner, key)
+      if(!stargateClient.connected){
+        this.setState({
+          error: 'Could not connect to any available RPC servers'
+        })
+        return
+      }
+
       const address = await stargateClient.getAddress()
 
       stargateClient.registry.register("/cosmos.authz.v1beta1.MsgGrant", MsgGrant)
@@ -144,7 +156,7 @@ class App extends React.Component {
     const batchCalls = _.chunk(calls, 1);
 
     for (const batchCall of batchCalls) {
-      await Promise.all(batchCall.map(call => call())) // makes a hundred calls in series
+      await Promise.all(batchCall.map(call => call()))
     }
   }
 
@@ -230,6 +242,7 @@ class App extends React.Component {
           {false &&
           <Button variant="link-secondary" onClick={() => this.setState({showAbout: true})}>Read more</Button>
           }
+          <AlertMessage message={this.state.error} variant="danger" dismissible={false} />
           {!this.state.address && (
             !this.state.keplr
               ? (

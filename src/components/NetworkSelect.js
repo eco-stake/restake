@@ -74,17 +74,18 @@ function NetworkSelect(props) {
     const data = props.networks[newValue.value]
     if(data){
       setLoading(true)
-      const network = Network(data)
-      setSelectedNetwork(network)
-      setValidators({})
-      setSelectedOperator(null)
-      network.getValidators().then(data => {
-        setValidators(data)
-        const operators = network.getOperators(data)
-        loadValidatorImages(network, operators.map(el => el.validatorData))
-        loadValidatorImages(network, data)
-        setSelectedOperator(operators[0])
-        setLoading(false)
+      Network(data).then(network => {
+        setSelectedNetwork(network)
+        setValidators({})
+        setSelectedOperator(null)
+        network.getValidators().then(data => {
+          setValidators(data)
+          const operators = network.getOperators(data)
+          loadValidatorImages(network, operators.map(el => el.validatorData))
+          loadValidatorImages(network, data)
+          setSelectedOperator(operators[0])
+          setLoading(false)
+        })
       })
     }
   }

@@ -58,14 +58,21 @@ function NetworkFinder() {
         url = data.operators.length ? (url + "/" + data.operators[0].address) : url
         navigate(url);
       }
-      const network = Network(data)
-      setState({network: network})
+      Network(data).then(network => {
+        setState({network: network})
+      })
     }
   }, [state.networks, state.network, params.network, navigate])
 
   useEffect(() => {
+    if(state.error) return
+
     if(state.network && (!Object.keys(state.validators).length)){
-      if(state.error) return
+      if(!state.network.restClient.connected){
+        return setState({
+          loading: false
+        })
+      }
 
       state.network.getValidators().then(validators => {
         setState({
@@ -74,9 +81,9 @@ function NetworkFinder() {
           operator: undefined,
           loading: false
         })
-      }, error => setState({error: error}))
+      }, error => setState({loading: false, error: error}))
     }
-  })
+  }, [state.network])
 
   useEffect(() => {
     if(state.operators.length && !state.operator){

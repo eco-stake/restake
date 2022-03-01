@@ -4,8 +4,14 @@
   "chainId": "osmosis-1",
   "prefix": "osmo",
   "denom": "uosmo",
-  "restUrl": "https://lcd-osmosis.blockapsis.com",
-  "rpcUrl": "https://osmosis.validator.network",
+  "restUrl": [
+    "https://lcd-osmosis.blockapsis.com"
+  ],
+  "rpcUrl": [
+    "https://osmosis.validator.network/",
+    "https://osmosis-1.technofractal.com:443",
+    "https://rpc-osmosis.blockapsis.com"
+  ],
   "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/osmo.svg",
   "gasPrice": "0uosmo",
   "testAddress": "osmo1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczed559y",
@@ -28,8 +34,14 @@
   "chainId": "juno-1",
   "prefix": "juno",
   "denom": "ujuno",
-  "restUrl": "https://lcd-juno.itastakers.com",
-  "rpcUrl": "https://rpc-juno.itastakers.com",
+  "restUrl": [
+    "https://lcd-juno.itastakers.com",
+    "https://lcd.juno-1.technofractal.com/"
+  ],
+  "rpcUrl": [
+    "https://rpc-juno.itastakers.com",
+    "https://juno-1.technofractal.com:443"
+  ],
   "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/juno.svg",
   "gasPrice": "0.0025ujuno",
   "testAddress": "juno1yxsmtnxdt6gxnaqrg0j0nudg7et2gqcz8yyl52",

@@ -1,8 +1,13 @@
 import RestClient from './RestClient.mjs'
+import SigningClient from './SigningClient.mjs'
 import Operator from './Operator.mjs'
 
-const Network = (data) => {
-  const restClient = RestClient(data.restUrl)
+const Network = async (data) => {
+  const restClient = await RestClient(data.chainId, data.restUrl)
+
+  const signingClient = (wallet, key) => {
+    return SigningClient(data.rpcUrl, data.chainId, data.gasPrice, wallet, key)
+  }
 
   const getOperator = (operators, operatorAddress) => {
     return operators.find(elem => elem.address === operatorAddress)
@@ -20,17 +25,19 @@ const Network = (data) => {
   }
 
   return {
+    connected: restClient.connected,
     name: data.name,
     prettyName: data.prettyName,
     chainId: data.chainId,
     prefix: data.prefix,
     gasPrice: data.gasPrice,
     denom: data.denom,
-    restUrl: data.restUrl,
+    restUrl: restClient.restUrl,
     rpcUrl: data.rpcUrl,
     operators: data.operators,
     data,
     restClient,
+    signingClient,
     getValidators,
     getOperators,
     getOperator

@@ -56,7 +56,6 @@ class DelegateForm extends React.Component {
       }
     }else{
       const msgType = this.props.undelegate ? 'MsgUndelegate' : 'MsgDelegate'
-      if(this.props.undelegate) gas = 200_000
       msg = {
         typeUrl: "/cosmos.staking.v1beta1." + msgType,
         value: {

@@ -1,8 +1,6 @@
 import { DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
-import SigningClient from '../src/SigningClient.mjs'
-import RestClient from '../src/RestClient.mjs'
-import Network from '../src/Network.mjs'
-import Operator from '../src/Operator.mjs'
+import Network from '../src/utils/Network.mjs'
+import Operator from '../src/utils/Operator.mjs'
 
 import {
   coin
@@ -13,6 +11,7 @@ import { MsgDelegate } from "cosmjs-types/cosmos/staking/v1beta1/tx.js";
 import { MsgExec } from "cosmjs-types/cosmos/authz/v1beta1/tx.js";
 
 import fs from 'fs'
+import _ from 'lodash'
 
 class Autostake {
   constructor(){
@@ -24,35 +23,65 @@ class Autostake {
   }
 
   async run(addresses){
-    this.getNetworksData().forEach(async (data) => {
-      const client = await this.getClient(data)
-      if(!client) return
+    const calls = this.getNetworksData().map(data => {
+      return async () => {
+        console.log('Checking', data.name)
+        const client = await this.getClient(data)
+        if(!client) return
 
-      console.log('Running autostake bot', client.operator.botAddress)
-      if(addresses !== undefined){
-        addresses = Array.isArray(addresses) ? addresses : [addresses]
-        console.log('for addresses', addresses)
+        console.log('Running autostake bot', client.operator.botAddress)
+        if(addresses !== undefined){
+          addresses = Array.isArray(addresses) ? addresses : [addresses]
+          console.log('for addresses', addresses)
+        }
+        await this.checkBalance(client)
+        let delegations
+        if(!addresses){
+          addresses = await this.getDelegations(client).then(delegations => {
+            return delegations.map(delegation => {
+              if(delegation.balance.amount === 0) return
+
+              return delegation.delegation.delegator_address
+            })
+          })
+        }
+
+        let calls = _.compact(addresses).map(item => {
+          return async () => {
+            console.log('checking', item)
+            let grantValidators = await this.getGrantValidators(client, item)
+            if(grantValidators) await this.autostake(client, item, grantValidators)
+          }
+        })
+        await this.executeSync(calls, 1)
       }
-      await this.checkBalance(client)
-      let delegations
-      if(!addresses){
-        delegations = await this.getDelegations(client)
-      }
-      this.getGrantsAndAutostake(client, delegations, addresses)
     })
+    await this.executeSync(calls, 1)
+  }
+
+  async executeSync(calls, count){
+    const batchCalls = _.chunk(calls, count);
+    for (const batchCall of batchCalls) {
+      await Promise.all(batchCall.map(call => call()))
+    }
   }
 
   getNetworksData(){
-    let response = fs.readFileSync('public/networks.json');
+    let response = fs.readFileSync('src/networks.json');
     return JSON.parse(response);
   }
 
   async getClient(data){
-    const network = Network(data)
+    const network = await Network(data)
+    if(!network.connected) return null
+
     const wallet = await DirectSecp256k1HdWallet.fromMnemonic(this.mnemonic, {
       prefix: network.prefix
     });
-    const client = await SigningClient(network, wallet)
+
+    const client = await network.signingClient(wallet)
+    if(!client.connected) return null
+
     client.registry.register("/cosmos.authz.v1beta1.MsgExec", MsgExec)
     const botAddress = await client.getAddress()
     const operatorData = data.operators.find(el => el.botAddress === botAddress)
@@ -66,13 +95,8 @@ class Autostake {
     return{
       network: network,
       operator: operator,
-      rpcUrl: network.rpcUrl,
-      restUrl: network.restUrl,
-      validatorAddress: operator.address,
-      maxValidators: operator.data.maxValidators,
-      minimumReward: operator.data.minimumReward,
       signingClient: client,
-      restClient: RestClient(network.restUrl)
+      restClient: network.restClient
     }
   }
 
@@ -107,41 +131,35 @@ class Autostake {
       )
   }
 
-  getGrantsAndAutostake(client, delegations, addresses) {
-    addresses = addresses === undefined ? delegations : addresses
-    addresses.forEach(item => {
-      if(item.balance && item.balance.amount === 0) return
-
-      const delegatorAddress = item.delegation ? item.delegation.delegator_address : item
-      return client.restClient.getGrants(client.operator.botAddress, delegatorAddress)
-        .then(
-          (result) => {
-            if(result.claimGrant || result.stakeGrant){
-              console.log(delegatorAddress, "Grants found")
-              if(result.claimGrant && result.stakeGrant){
-                const grantValidators = result.stakeGrant.authorization.allow_list.address
-                if(!grantValidators.includes(client.operator.address)){
-                  console.log(delegatorAddress, "Not autostaking for this validator, skipping")
-                  return
-                }
-                if(grantValidators.size > client.operator.data.maxValidators){
-                  console.log(delegatorAddress, "Autostaking for too many validators, skipping")
-                  return
-                }
-                console.log(delegatorAddress, "Can autostake for:", grantValidators)
-
-                return this.autostake(client, delegatorAddress, grantValidators)
-              }else{
-                console.log(delegatorAddress, "Missing required grants")
+  getGrantValidators(client, delegatorAddress) {
+    return client.restClient.getGrants(client.operator.botAddress, delegatorAddress)
+      .then(
+        (result) => {
+          if(result.claimGrant || result.stakeGrant){
+            console.log(delegatorAddress, "Grants found")
+            if(result.claimGrant && result.stakeGrant){
+              const grantValidators = result.stakeGrant.authorization.allow_list.address
+              if(!grantValidators.includes(client.operator.address)){
+                console.log(delegatorAddress, "Not autostaking for this validator, skipping")
+                return
               }
+              if(grantValidators.size > client.operator.data.maxValidators){
+                console.log(delegatorAddress, "Autostaking for too many validators, skipping")
+                return
+              }
+              console.log(delegatorAddress, "Can autostake for:", grantValidators)
+
+              return grantValidators
+            }else{
+              console.log(delegatorAddress, "Missing required grants")
             }
-          },
-          (error) => {
-            console.log("ERROR:", error)
-            process.exit()
           }
-        )
-    })
+        },
+        (error) => {
+          console.log("ERROR:", error)
+          process.exit()
+        }
+      )
   }
 
   async autostake(client, address, validators){
@@ -181,7 +199,7 @@ class Autostake {
     }
 
     const gas = validators.reduce((sum, el) => {
-      return 200_000
+      return sum + 300_000
     }, 0)
     const memo = 'REStaked by ' + client.operator.moniker
     return client.signingClient.signAndBroadcast(client.operator.botAddress, [execMsg], gas, memo).then((result) => {

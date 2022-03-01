@@ -1,6 +1,9 @@
 import axios from 'axios'
 
-const RestClient = (restUrl) => {
+const RestClient = async (chainId, restUrls) => {
+
+  const restUrl = await findAvailableUrl(Array.isArray(restUrls) ? restUrls : [restUrls])
+
   const getValidators = () => {
     return axios.get(restUrl + "/cosmos/staking/v1beta1/validators?status=BOND_STATUS_BONDED&pagination.limit=500")
       .then(res => res.data)
@@ -90,7 +93,30 @@ const RestClient = (restUrl) => {
       )
   }
 
+  function findAvailableUrl(urls){
+    return findAsync(urls, (url) => {
+      return axios.get(url + '/node_info')
+        .then(res => res.data)
+        .then(data => {
+          return data.node_info.network === chainId
+        }).catch(error => {
+          return false
+        })
+    })
+  }
+
+  function mapAsync(array, callbackfn) {
+    return Promise.all(array.map(callbackfn));
+  }
+
+  function findAsync(array, callbackfn) {
+    return mapAsync(array, callbackfn).then(findMap => {
+      return array.find((value, index) => findMap[index]);
+    });
+  }
+
   return {
+    connected: !!restUrl,
     getValidators,
     getBalance,
     getDelegations,

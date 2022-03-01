@@ -6,10 +6,15 @@ import {
   GasPrice
 } from '@cosmjs/stargate'
 
-const SigningClient = async (network, signer, key) => {
+import axios from 'axios'
 
-  const client = await SigningStargateClient.connectWithSigner(
-    network.rpcUrl,
+const SigningClient = async (rpcUrl, chainId, defaultGasPrice, signer, key) => {
+
+  const rpcUrls = Array.isArray(rpcUrl) ? rpcUrl : [rpcUrl]
+  rpcUrl = await findAvailableUrl(rpcUrls)
+
+  const client = rpcUrl && await SigningStargateClient.connectWithSigner(
+    rpcUrl,
     signer
   )
 
@@ -23,8 +28,8 @@ const SigningClient = async (network, signer, key) => {
   }
 
   const getFee = (gas, gasPrice) => {
-    if(!gas) gas = 180_000
-    if(!gasPrice) gasPrice = GasPrice.fromString(network.gasPrice);
+    if(!gas) gas = 200_000
+    if(!gasPrice) gasPrice = GasPrice.fromString(defaultGasPrice);
     return calculateFee(gas, gasPrice);
   }
 
@@ -55,9 +60,33 @@ const SigningClient = async (network, signer, key) => {
     });
   }
 
+  function findAvailableUrl(urls){
+    return findAsync(urls, (url) => {
+      return axios.get(url + '/status')
+        .then(res => res.data)
+        .then(data => {
+          return data.result.node_info.network === chainId
+        }).catch(error => {
+          return false
+        })
+    })
+  }
+
+  function mapAsync(array, callbackfn) {
+    return Promise.all(array.map(callbackfn));
+  }
+
+  function findAsync(array, callbackfn) {
+    return mapAsync(array, callbackfn).then(findMap => {
+      return array.find((value, index) => findMap[index]);
+    });
+  }
+
   return {
-    registry: client.registry,
-    chainId: client.chainId,
+    connected: !!rpcUrl,
+    registry: client && client.registry,
+    client,
+    chainId,
     getAddress,
     getFee,
     getIsNanoLedger,
