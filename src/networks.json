@@ -8,7 +8,7 @@
     "https://lcd-osmosis.blockapsis.com"
   ],
   "rpcUrl": [
-    "https://osmosis.validator.network/",
+    "https://osmosis.validator.network",
     "https://osmosis-1.technofractal.com:443",
     "https://rpc-osmosis.blockapsis.com"
   ],
@@ -36,7 +36,7 @@
   "denom": "ujuno",
   "restUrl": [
     "https://lcd-juno.itastakers.com",
-    "https://lcd.juno-1.technofractal.com/"
+    "https://lcd.juno-1.technofractal.com"
   ],
   "rpcUrl": [
     "https://rpc-juno.itastakers.com",
