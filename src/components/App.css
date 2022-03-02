@@ -3,7 +3,7 @@ header a.moniker{
 }
 
 .clipboard.copied{
-  text-decoration: underline
+  text-decoration: underline;
 }
 
 .btn-circle-sm {

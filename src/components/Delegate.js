@@ -27,6 +27,14 @@ function Delegate(props) {
     setShow(false)
   }
 
+  const excludeValidators = () => {
+    if(props.redelegate){
+      return [props.validator.operator_address]
+    }else if(props.delegations){
+      return Object.keys(props.delegations)
+    }
+  }
+
   const actionText = () => {
     if(props.redelegate) return 'Redelegate'
     if(props.undelegate) return 'Undelegate'
@@ -47,7 +55,7 @@ function Delegate(props) {
     }else{
       if(props.button){
         return (
-          <Button variant="secondary" onClick={handleOpen}>
+          <Button variant={props.variant || 'secondary'} onClick={handleOpen}>
             {actionText()}
           </Button>
         )
@@ -64,7 +72,7 @@ function Delegate(props) {
   return (
     <>
       {button()}
-      <Modal show={show} onHide={() => setShow(false)}>
+      <Modal size={selectedValidator ? '' : 'lg'} show={show} onHide={() => setShow(false)}>
         <Modal.Header closeButton>
           <Modal.Title>
             {selectedValidator
@@ -82,11 +90,11 @@ function Delegate(props) {
           <Validators
             redelegate={props.redelegate}
             network={props.network}
-            operator={props.operator}
+            operators={props.operators}
+            exclude={excludeValidators()}
             validators={props.validators}
             getValidatorImage={props.getValidatorImage}
             delegations={props.delegations}
-            operatorDelegation={props.operatorDelegation}
             selectValidator={(selectedValidator) => setSelectedValidator(selectedValidator)} /> }
           {selectedValidator && (
             <>

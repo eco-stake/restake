@@ -12,30 +12,48 @@ import {
 } from 'react-bootstrap'
 
 function ClaimRewards(props) {
-  function claim(){
+  async function claim(){
     props.setLoading(true)
 
-    const gas = props.validators.reduce((sum, el) => {
-      return sum + (props.restake ? 300_000 : 100_000)
-    }, 0)
-    const fee = props.stargateClient.getFee(gas)
-
-    let totalReward, perValidatorReward
-
+    let totalReward = props.rewards.amount
+    let perValidatorReward = totalReward
     let signAndBroadcast = props.stargateClient.signAndBroadcast
+    let gas
 
     if(props.restake){
+      let messages = buildMessages(props.validators, perValidatorReward)
+
+      gas = await props.stargateClient.simulate(props.address, messages)
+
+      const fee = props.stargateClient.getFee(gas)
+      const feeAmount = fee.amount[0].amount
+
       signAndBroadcast = props.stargateClient.signAndBroadcastWithoutBalanceCheck
-      totalReward = (props.rewards.amount - fee.amount[0].amount)
+      totalReward = (totalReward - feeAmount)
       perValidatorReward = parseInt(totalReward / props.validators.length)
-      console.log(gas, fee, totalReward, perValidatorReward, perValidatorReward * props.validators.length)
-      if(perValidatorReward <= 0){
-        props.setLoading(false)
-        props.setError('Reward is too low')
-        return
-      }
     }
-    let messages = props.validators.map(el => {
+    if(perValidatorReward <= 0){
+      props.setLoading(false)
+      props.setError('Reward is too low')
+      return
+    }
+    let messages = buildMessages(props.validators, perValidatorReward)
+    gas = gas || await props.stargateClient.simulate(props.address, messages)
+    console.log(messages, gas)
+
+    signAndBroadcast(props.address, messages, gas).then((result) => {
+      console.log("Successfully broadcasted:", result);
+      props.setLoading(false)
+      props.onClaimRewards(result)
+    }, (error) => {
+      console.log('Failed to broadcast:', error)
+      props.setLoading(false)
+      props.setError('Failed to broadcast TX')
+    })
+  }
+
+  function buildMessages(validators, perValidatorReward){
+    return validators.map(el => {
       let valMessages = []
 
       valMessages.push({
@@ -59,24 +77,13 @@ function ClaimRewards(props) {
 
       return valMessages
     }).flat()
-    console.log(messages)
-
-    signAndBroadcast(props.address, messages, gas).then((result) => {
-      console.log("Successfully broadcasted:", result);
-      props.setLoading(false)
-      props.onClaimRewards(result)
-    }, (error) => {
-      console.log('Failed to broadcast:', error)
-      props.setLoading(false)
-      props.setError('Failed to broadcast TX')
-    })
   }
 
   return (
     <>
       {props.validators.length > 0 && (
         <Dropdown.Item onClick={() => claim()}>
-          {props.restake ? 'Compound' : 'Claim'} <Badge bg="secondary"><Coins coins={props.rewards} /></Badge>
+          {props.restake ? 'Manual Compound' : 'Claim Rewards'}
         </Dropdown.Item>
       )}
     </>

@@ -25,10 +25,6 @@ class Wallet extends React.Component {
     if(this.props.address !== prevProps.address){
       this.getDelegations()
     }
-    if(this.props.operator !== prevProps.operator && this.props.network === prevProps.network){
-      this.getDelegations()
-      this.setState({operatorDelegation: null})
-    }
   }
 
   onAddValidator(){
@@ -42,7 +38,6 @@ class Wallet extends React.Component {
           this.setState({
             isLoaded: true,
             delegations: delegations,
-            operatorDelegation: this.props.operator && delegations[this.props.operator.address]
           });
         },
         (error) => {
@@ -50,7 +45,6 @@ class Wallet extends React.Component {
             this.setState({
               isLoaded: true,
               delegations: [],
-              operatorDelegation: null
             });
           }else{
             this.setState({
@@ -70,9 +64,8 @@ class Wallet extends React.Component {
     }
   }
 
-  nextRun(delayHour){
+  nextRun(operator, delayHour){
     const now = new Date()
-    const operator = this.props.operator
     if(!operator || !operator.data.runTime){
       return null
     }
@@ -127,18 +120,17 @@ class Wallet extends React.Component {
       <div className="mb-5">
         <Delegations
           network={this.props.network}
-          operator={this.props.operator}
           address={this.props.address}
           balance={this.props.balance}
+          operators={this.props.operators}
           validators={this.props.validators}
           getValidatorImage={this.props.getValidatorImage}
           delegations={this.state.delegations}
-          operatorDelegation={this.state.operatorDelegation}
           restClient={this.props.restClient}
           stargateClient={this.props.stargateClient}
           getDelegations={this.getDelegations}
           onAddValidator={this.onAddValidator} />
-        {this.props.operator && Object.values(this.state.delegations).length > 0 &&
+        {false && this.props.operator && Object.values(this.state.delegations).length > 0 &&
         <div className="mt-5 text-center">
           <Countdown
             date={this.nextRun(true)}

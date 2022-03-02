@@ -1,6 +1,7 @@
 import { DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
 import Network from '../src/utils/Network.mjs'
 import Operator from '../src/utils/Operator.mjs'
+import {filterAsync} from '../src/utils/Helpers.mjs'
 
 import {
   coin
@@ -22,7 +23,7 @@ class Autostake {
     }
   }
 
-  async run(addresses){
+  async run(){
     const calls = this.getNetworksData().map(data => {
       return async () => {
         console.log('Checking', data.name)
@@ -30,27 +31,25 @@ class Autostake {
         if(!client) return
 
         console.log('Running autostake bot', client.operator.botAddress)
-        if(addresses !== undefined){
-          addresses = Array.isArray(addresses) ? addresses : [addresses]
-          console.log('for addresses', addresses)
-        }
         await this.checkBalance(client)
         let delegations
-        if(!addresses){
-          addresses = await this.getDelegations(client).then(delegations => {
-            return delegations.map(delegation => {
-              if(delegation.balance.amount === 0) return
+        const addresses = await this.getDelegations(client).then(delegations => {
+          return delegations.map(delegation => {
+            if(delegation.balance.amount === 0) return
 
-              return delegation.delegation.delegator_address
-            })
+            return delegation.delegation.delegator_address
           })
-        }
+        })
 
-        let calls = _.compact(addresses).map(item => {
+        const grantedAddresses = await filterAsync(addresses, (address) => {
+          return this.getGrantValidators(client, address).then(validators => {
+            return !!validators
+          })
+        })
+
+        let calls = _.compact(grantedAddresses).map(item => {
           return async () => {
-            console.log('checking', item)
-            let grantValidators = await this.getGrantValidators(client, item)
-            if(grantValidators) await this.autostake(client, item, grantValidators)
+            await this.autostake(client, item, [client.operator.address])
           }
         })
         await this.executeSync(calls, 1)
@@ -143,10 +142,6 @@ class Autostake {
                 console.log(delegatorAddress, "Not autostaking for this validator, skipping")
                 return
               }
-              if(grantValidators.size > client.operator.data.maxValidators){
-                console.log(delegatorAddress, "Autostaking for too many validators, skipping")
-                return
-              }
               console.log(delegatorAddress, "Can autostake for:", grantValidators)
 
               return grantValidators
@@ -198,11 +193,8 @@ class Autostake {
       }
     }
 
-    const gas = validators.reduce((sum, el) => {
-      return sum + 300_000
-    }, 0)
     const memo = 'REStaked by ' + client.operator.moniker
-    return client.signingClient.signAndBroadcast(client.operator.botAddress, [execMsg], gas, memo).then((result) => {
+    return client.signingClient.signAndBroadcast(client.operator.botAddress, [execMsg], undefined, memo).then((result) => {
       console.log(address, "Successfully broadcasted");
     }, (error) => {
       console.log(address, 'Failed to broadcast:', error)

@@ -19,9 +19,13 @@
     "operators": [{
       "address": "osmovaloper1u5v0m74mql5nzfx2yh43s2tke4mvzghr6m2n5t",
       "botAddress": "osmo1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczed559y",
-      "maxValidators": 3,
       "runTime": "21:00",
       "minimumReward": 1000
+    }, {
+      "address": "osmovaloper1md9f5524vtmrn64lyv2pdfn7cnkjkklf44vtjz",
+      "botAddress": "osmo1e44rluarkdw56dy2turnwjtvtg4wqvs06sx5ph",
+      "runTime": "21:00",
+      "minimumReward": 10000
     }]
   },
   {
@@ -41,7 +45,12 @@
     "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/juno.svg",
     "gasPrice": "0.0025ujuno",
     "testAddress": "juno1yxsmtnxdt6gxnaqrg0j0nudg7et2gqcz8yyl52",
-    "operators": []
+    "operators": [{
+      "address": "junovaloper193xl2tqh2tjkld2zv49ku5s44ee4qmgr65jcep",
+      "botAddress": "juno1e44rluarkdw56dy2turnwjtvtg4wqvs0yeklse",
+      "runTime": "21:00",
+      "minimumReward": 1000
+    }]
   },
   {
     "name": "cosmoshub",
@@ -104,7 +113,12 @@
     "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/huahua.png",
     "gasPrice": "0.025uhuahua",
     "testAddress": "chihuahua1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczjr22j5",
-    "operators": []
+    "operators": [{
+      "address": "chihuahuavaloper19vwcee000fhazmpt4ultvnnkhfh23ppwxll8zz",
+      "botAddress": "chihuahua1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczjr22j5",
+      "runTime": "21:00",
+      "minimumReward": 1000
+    }]
   },
   {
     "name": "gravitybridge",

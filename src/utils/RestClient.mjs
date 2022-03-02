@@ -1,4 +1,5 @@
 import axios from 'axios'
+import {findAsync} from './Helpers.mjs'
 
 const RestClient = async (chainId, restUrls) => {
 
@@ -103,16 +104,6 @@ const RestClient = async (chainId, restUrls) => {
           return false
         })
     })
-  }
-
-  function mapAsync(array, callbackfn) {
-    return Promise.all(array.map(callbackfn));
-  }
-
-  function findAsync(array, callbackfn) {
-    return mapAsync(array, callbackfn).then(findMap => {
-      return array.find((value, index) => findMap[index]);
-    });
   }
 
   return {

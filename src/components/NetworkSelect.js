@@ -16,18 +16,16 @@ function NetworkSelect(props) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const [selectedNetwork, setSelectedNetwork] = useState();
-  const [selectedOperator, setSelectedOperator] = useState();
   const [validators, setValidators] = useState([]);
   const [options, setOptions] = useReducer(
     (state, newState) => ({...state, ...newState}),
-    {networks: [], operators: [], network: {value: ''}, operator: {value: ''}}
+    {networks: [], operators: [], network: {value: ''}}
   )
 
   const {loadValidatorImages} = props
 
   const handleOpen = () => {
     setSelectedNetwork(props.network)
-    setSelectedOperator(props.operator)
     setValidators(props.validators)
     setShow(true)
   }
@@ -35,7 +33,7 @@ function NetworkSelect(props) {
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    props.changeNetwork(selectedNetwork, selectedOperator, validators)
+    props.changeNetwork(selectedNetwork, validators)
     setShow(false)
   }
 
@@ -53,26 +51,6 @@ function NetworkSelect(props) {
     })
   }, [props.networks, selectedNetwork])
 
-  useEffect(() => {
-    if(!validators || !Object.keys(validators).length) return null
-
-    const validator = selectedOperator && validators[selectedOperator.address]
-    const operators = selectedNetwork.getOperators(validators)
-    setOptions({
-      operators: operators.map(el => {
-        const validator = validators[el.address]
-        if(!validator) return null
-
-        return {value: el.address, label: validator.description.moniker, validator: validator}
-      }),
-      operator: selectedOperator && validator && {
-        value: selectedOperator.address,
-        label: validator.description.moniker,
-        validator: validator
-      }
-    })
-  }, [selectedNetwork, selectedOperator, validators])
-
   const selectNetwork = (newValue) => {
     const data = props.networks[newValue.value]
     if(data){
@@ -81,13 +59,8 @@ function NetworkSelect(props) {
       Network(data).then(network => {
         setSelectedNetwork(network)
         setValidators({})
-        setSelectedOperator(null)
         network.getValidators().then(data => {
           setValidators(data)
-          const operators = network.getOperators(data)
-          loadValidatorImages(network, operators.map(el => el.validatorData))
-          loadValidatorImages(network, data)
-          setSelectedOperator(operators[0])
           setLoading(false)
         }).catch(error => {
           setError('Unable to connect to this network currently. Try again later.')
@@ -97,25 +70,12 @@ function NetworkSelect(props) {
     }
   }
 
-  const selectOperator = (newValue) => {
-    const operators = selectedNetwork.getOperators(validators)
-    const operator = selectedNetwork.getOperator(operators, newValue.value)
-    if(operator){
-      setSelectedOperator(operator)
-    }
-  }
-
   return (
     <>
       <Button onClick={handleOpen} variant="link" className="d-flex align-items-center text-dark text-decoration-none border-secondary btn-outline-light" role="button">
         <div className="avatar avatar-sm rounded-circle text-white">
           <img alt={props.network.prettyName} src={props.network.data.image} height={30} width={30} />
         </div>
-        {props.operator && (
-          <div className="col p-0 avatar avatar-sm rounded-circle text-white">
-            <ValidatorImage validator={props.operator.validatorData} imageUrl={props.getValidatorImage(props.network, props.operator.address)} height={30} width={30} />
-          </div>
-        )}
         <div className="d-none d-sm-block ms-2">
           <span className="h6">{props.network.prettyName}</span>
         </div>
@@ -133,7 +93,6 @@ function NetworkSelect(props) {
             {props.networks &&
             <div className="row mb-3">
               <div className="col">
-                <label className="form-label">Network</label>
                 <Select
                   value={options.network}
                   isClearable={false}
@@ -148,26 +107,6 @@ function NetworkSelect(props) {
                   )}/>
               </div>
             </div>
-            }
-            {selectedNetwork.getOperators(validators).length > 0 &&
-              <div className="row mb-3">
-                <label className="form-label">Operator</label>
-                <div className="col">
-                  <Select
-                    value={options.operator}
-                    required={true}
-                    isClearable={false}
-                    name="operator"
-                    options={options.operators}
-                    onChange={selectOperator}
-                    formatOptionLabel={operator => (
-                      <div className="image-option">
-                        <ValidatorImage validator={operator.validator} imageUrl={props.getValidatorImage(selectedNetwork, operator.value)} height={30} width={30} />
-                        <span className="ms-2">{operator.label}</span>
-                      </div>
-                    )}/>
-                </div>
-              </div>
             }
             {error &&
               <p><em>{error}</em></p>

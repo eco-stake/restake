@@ -19,7 +19,7 @@ function RevokeRestake(props) {
     props.stargateClient.signAndBroadcast(props.address, messages).then((result) => {
       console.log("Successfully broadcasted:", result);
       setLoading(false)
-      props.onRevoke()
+      props.onRevoke(props.operator)
     }, (error) => {
       console.log('Failed to broadcast:', error)
       setLoading(false)
@@ -32,7 +32,7 @@ function RevokeRestake(props) {
       typeUrl: "/cosmos.authz.v1beta1.MsgRevoke",
       value: {
         granter: props.address,
-        grantee: props.botAddress,
+        grantee: props.operator.botAddress,
         msgTypeUrl: type
       },
     }
@@ -42,11 +42,12 @@ function RevokeRestake(props) {
     <>
       {!loading
         ? (
-          <Button className="btn-danger mr-5" onClick={() => revoke()}>Revoke REStake</Button>
+          <Button className="mr-5" onClick={() => revoke()} size={props.size} disabled={props.disabled} variant={props.variant}>
+            Revoke
+          </Button>
         ) : (
-          <Button className="btn-danger mr-5" disabled>
+          <Button className="mr-5" disabled size={props.size} variant={props.variant}>
             <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>&nbsp;
-            Submitting TX...
           </Button>
         )
       }
