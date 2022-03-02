@@ -96,11 +96,7 @@ class DelegateForm extends React.Component {
   actionText(){
     if(this.props.redelegate) return 'Redelegate'
     if(this.props.undelegate) return 'Undelegate'
-    if(this.props.validator){
-      return 'Delegate'
-    }else{
-      return 'Add Validator'
-    }
+    return 'Delegate'
   }
 
   denom(){

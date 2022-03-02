@@ -81,7 +81,7 @@ function Validators(props) {
           <tbody>
             <tr>
               <th>Validator</th>
-              <th className="text-center">Operator</th>
+              <th className="text-center">REStake</th>
               <th></th>
             </tr>
             {filteredOperators.map(([validator_address, item], i) => renderItem(item, true))}

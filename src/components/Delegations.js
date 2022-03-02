@@ -103,7 +103,7 @@ class Delegations extends React.Component {
     this.props.restClient.getGrants(this.props.network.data.testaddress, this.props.address)
       .then(
         (result) => { }, (error) => {
-          if (error.response.status === 501) {
+          if (error.response && error.response.status === 501) {
             this.setState({ authzMissing: true });
           }
         })
@@ -227,34 +227,31 @@ class Delegations extends React.Component {
               stargateClient={this.props.stargateClient}
               onDelegate={this.onClaimRewards}>{validator.description.moniker}</Delegate>
           </td>
-          <td className="d-none d-sm-table-cell text-center">{operator ? <CheckCircle className="text-success" /> : <XCircle className="opacity-50" />}</td>
+          <td className="text-center">
+            {operator ? this.restakePossible() ? (
+              this.grantsValid(operator) ? (
+                <RevokeRestake
+                  size="sm" variant="outline-danger"
+                  address={this.props.address}
+                  operator={operator}
+                  stargateClient={this.props.stargateClient}
+                  onRevoke={this.onRevoke}
+                  setError={this.setError} />
+              ) : (
+                <GrantRestake
+                  size="sm" variant="outline-success"
+                  address={this.props.address}
+                  operator={operator}
+                  stargateClient={this.props.stargateClient}
+                  onGrant={this.onGrant}
+                  setError={this.setError} />
+              )
+            ) : <CheckCircle className="text-success" /> : <XCircle className="opacity-50" />}
+          </td>
           <td className="d-none d-lg-table-cell">{validator.commission.commission_rates.rate * 100}%</td>
           <td className="d-none d-lg-table-cell"></td>
           <td className="d-none d-sm-table-cell"><Coins coins={item.balance} /></td>
           <td className="d-none d-sm-table-cell">{rewards && rewards.reward.map(el => <Coins key={el.denom} coins={el} />)}</td>
-          {this.restakePossible() && (
-            <td>
-              {operator && (
-                this.grantsValid(operator) ? (
-                  <RevokeRestake
-                    size="sm" variant="outline-danger"
-                    address={this.props.address}
-                    operator={operator}
-                    stargateClient={this.props.stargateClient}
-                    onRevoke={this.onRevoke}
-                    setError={this.setError} />
-                ) : (
-                  <GrantRestake
-                    size="sm" variant="outline-success"
-                    address={this.props.address}
-                    operator={operator}
-                    stargateClient={this.props.stargateClient}
-                    onGrant={this.onGrant}
-                    setError={this.setError} />
-                )
-              )}
-            </td>
-          )}
           <td>
             <div className="d-grid gap-2 d-md-flex justify-content-end">
               {!this.state.validatorLoading[validatorAddress]
@@ -390,14 +387,11 @@ class Delegations extends React.Component {
             <thead>
               <tr>
                 <th colSpan={2}>Validator</th>
-                <th className="d-none d-sm-table-cell text-center">Operator</th>
+                <th className="d-none d-sm-table-cell text-center">REStake</th>
                 <th className="d-none d-lg-table-cell">Commission</th>
                 <th className="d-none d-lg-table-cell">APY</th>
                 <th className="d-none d-sm-table-cell">Delegation</th>
                 <th className="d-none d-sm-table-cell">Rewards</th>
-                {this.restakePossible() &&
-                <th>REStake</th>
-                }
                 <th width={110}></th>
               </tr>
             </thead>
