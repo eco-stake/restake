@@ -62,6 +62,7 @@ function NetworkSelect(props) {
         setValidators({})
         network.getValidators().then(data => {
           setValidators(data)
+          loadValidatorImages(network, data)
           setLoading(false)
         }).catch(error => {
           setError('Unable to connect to this network currently. Try again later.')
