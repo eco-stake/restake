@@ -35,38 +35,15 @@ class DelegateForm extends React.Component {
 
     this.setState({loading: true})
 
-    const client = this.props.stargateClient
     const address = this.props.address
-    const validatorAddress = this.props.selectedValidator.operator_address
     const amount = this.state.amount
     const memo = this.state.memo
-    let msg
-    let gas
+    const client = this.props.stargateClient
 
-    if(this.props.redelegate){
-      gas = 300_000
-      msg = {
-        typeUrl: "/cosmos.staking.v1beta1.MsgBeginRedelegate",
-        value: {
-          delegatorAddress: address,
-          validatorSrcAddress: this.props.validator.operator_address,
-          validatorDstAddress: validatorAddress,
-          amount: coin(parseFloat(amount) * 1000000, this.props.network.denom),
-        }
-      }
-    }else{
-      const msgType = this.props.undelegate ? 'MsgUndelegate' : 'MsgDelegate'
-      msg = {
-        typeUrl: "/cosmos.staking.v1beta1." + msgType,
-        value: {
-          delegatorAddress: address,
-          validatorAddress: validatorAddress,
-          amount: coin(parseFloat(amount) * 1000000, this.props.network.denom),
-        }
-      }
-    }
+    let messages = this.buildMessages(amount)
+    const gas = await client.simulate(this.props.address, messages)
 
-    client.signAndBroadcast(address, [msg], gas, memo).then((result) => {
+    client.signAndBroadcast(address, messages, gas, memo).then((result) => {
       console.log("Successfully broadcasted:", result);
       this.setState({loading: false, error: null})
       this.props.onDelegate()
@@ -76,11 +53,44 @@ class DelegateForm extends React.Component {
     })
   }
 
-  setAvailableAmount(){
-    const saveTxFeeNum = (this.props.redelegate || this.props.undelegate) ? 0 : 10
-    const gasPrice = this.props.stargateClient.getFee().amount[0].amount
-    const amount = (this.props.availableBalance.amount - (gasPrice * saveTxFeeNum))
-    this.setState({amount: amount / 1_000_000.0})
+  buildMessages(amount){
+    const address = this.props.address
+    const validatorAddress = this.props.selectedValidator.operator_address
+    let messages = []
+    if(this.props.redelegate){
+      messages.push({
+        typeUrl: "/cosmos.staking.v1beta1.MsgBeginRedelegate",
+        value: {
+          delegatorAddress: address,
+          validatorSrcAddress: this.props.validator.operator_address,
+          validatorDstAddress: validatorAddress,
+          amount: coin(parseFloat(amount) * 1000000, this.props.network.denom),
+        }
+      })
+    }else{
+      const msgType = this.props.undelegate ? 'MsgUndelegate' : 'MsgDelegate'
+      messages.push({
+        typeUrl: "/cosmos.staking.v1beta1." + msgType,
+        value: {
+          delegatorAddress: address,
+          validatorAddress: validatorAddress,
+          amount: coin(parseFloat(amount) * 1000000, this.props.network.denom),
+        }
+      })
+    }
+    return messages
+  }
+
+  async setAvailableAmount(){
+    const messages = this.buildMessages(this.props.availableBalance.amount / 1_000_000.0)
+    this.props.stargateClient.simulate(this.props.address, messages).then(gas => {
+      const saveTxFeeNum = (this.props.redelegate || this.props.undelegate) ? 0 : 10
+      const gasPrice = this.props.stargateClient.getFee(gas).amount[0].amount
+      const amount = (this.props.availableBalance.amount - (gasPrice * saveTxFeeNum))
+      this.setState({amount: amount / 1_000_000.0})
+    }, error => {
+      this.setState({error: error.message})
+    })
   }
 
   actionText(){

@@ -1,3 +1,5 @@
+import {findAsync} from './Helpers.mjs'
+
 import _ from 'lodash'
 import {
   SigningStargateClient,
@@ -44,11 +46,14 @@ const SigningClient = async (rpcUrl, chainId, defaultGasPrice, signer, key) => {
   }
 
   const signAndBroadcast = async (address, msgs, gas, memo, gasPrice) => {
+    if(!gas) gas = await simulate(address, msgs, memo)
     const fee = getFee(gas, gasPrice)
+
     return new Promise((success, reject) => {
         client.signAndBroadcast(address, msgs, fee, memo).then((result) => {
           try {
             assertIsDeliverTxSuccess(result);
+            client.disconnect();
             success(result)
           } catch (error) {
             reject(error)
@@ -56,8 +61,12 @@ const SigningClient = async (rpcUrl, chainId, defaultGasPrice, signer, key) => {
         }, (error) => {
           reject(error)
         })
-      client.disconnect();
     });
+  }
+
+  const simulate = async (address, msgs, memo, modifier) => {
+    const estimate = await client.simulate(address, msgs, memo)
+    return parseInt(estimate * (modifier || 1.1))
   }
 
   function findAvailableUrl(urls){
@@ -72,16 +81,6 @@ const SigningClient = async (rpcUrl, chainId, defaultGasPrice, signer, key) => {
     })
   }
 
-  function mapAsync(array, callbackfn) {
-    return Promise.all(array.map(callbackfn));
-  }
-
-  function findAsync(array, callbackfn) {
-    return mapAsync(array, callbackfn).then(findMap => {
-      return array.find((value, index) => findMap[index]);
-    });
-  }
-
   return {
     connected: !!rpcUrl,
     registry: client && client.registry,
@@ -90,6 +89,7 @@ const SigningClient = async (rpcUrl, chainId, defaultGasPrice, signer, key) => {
     getAddress,
     getFee,
     getIsNanoLedger,
+    simulate,
     signAndBroadcast,
     signAndBroadcastWithoutBalanceCheck
   }

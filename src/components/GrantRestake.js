@@ -8,7 +8,7 @@ import {
   Button
 } from 'react-bootstrap'
 
-function UpdateRestake(props) {
+function GrantRestake(props) {
   const [loading, setLoading] = useState(false);
 
   function update(){
@@ -17,7 +17,7 @@ function UpdateRestake(props) {
     const messages = [
       buildGrantMsg("/cosmos.staking.v1beta1.StakeAuthorization",
         StakeAuthorization.encode(StakeAuthorization.fromPartial({
-          allowList: {address: props.validators},
+          allowList: {address: [props.operator.address]},
           authorizationType: 1
         })).finish(),
       ),
@@ -32,7 +32,7 @@ function UpdateRestake(props) {
     props.stargateClient.signAndBroadcast(props.address, messages).then((result) => {
       console.log("Successfully broadcasted:", result);
       setLoading(false)
-      props.onUpdateRestake()
+      props.onGrant(props.operator)
     }, (error) => {
       console.log('Failed to broadcast:', error)
       setLoading(false)
@@ -51,7 +51,7 @@ function UpdateRestake(props) {
       typeUrl: "/cosmos.authz.v1beta1.MsgGrant",
       value: {
         granter: props.address,
-        grantee: props.botAddress,
+        grantee: props.operator.botAddress,
         grant: {
           authorization: {
             typeUrl: type,
@@ -70,11 +70,12 @@ function UpdateRestake(props) {
     <>
       {!loading
         ? (
-          <Button className="mr-5" onClick={() => update()}>Update REStake</Button>
+          <Button className="mr-5" onClick={() => update()} size={props.size} disabled={props.disabled} variant={props.variant}>
+            Enable
+          </Button>
         ) : (
-          <Button className="mr-5" disabled>
+          <Button className="mr-5" disabled size={props.size} variant={props.variant}>
             <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>&nbsp;
-            Submitting TX...
           </Button>
         )
       }
@@ -82,4 +83,4 @@ function UpdateRestake(props) {
   )
 }
 
-export default UpdateRestake;
+export default GrantRestake;

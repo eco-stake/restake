@@ -12,14 +12,13 @@ function About(props) {
         <Modal.Body className="small">
           <h5>How REStake works</h5>
           <p>REStake makes use of a new feature in Cosmos blockchains called Authz. This allows a validator (or any other wallet) to send certain pre-authorised transactions on your behalf.</p>
-          <p>When you enable REStake you authorise the operator to send WithdrawDelegatorReward for any address, and Delegate for the validators you specify. The operator cannot delegate to any other validators, and the authorisation expires automatically after one year.</p>
+          <p>When you enable REStake you authorise the validator to send WithdrawDelegatorReward for any address, and Delegate for their own validator address. The validator cannot delegate to any other validators, and the authorisation expires automatically after one year and you can revoke at any time.</p>
           <h5>How to use REStake</h5>
           <ol>
-            <li>Choose a network and operator who will carry out the REStake</li>
-            <li>Delegate to the operator so they can find you</li>
-            <li>Enable REStake on the validators you want to compound rewards</li>
-            <li>Update REStake to apply the new Authz grants</li>
-            <li>Watch the countdown timer and.. profit!</li>
+            <li>Choose a network. Some don't support Authz yet but many do.</li>
+            <li>Delegate to any validators who offers the REStake service.</li>
+            <li>Enable REStake on the validators you want to compound rewards.</li>
+            <li>Watch the countdown timer and profit!</li>
           </ol>
           <h5>Run REStake yourself</h5>
           <p>REStake is intended to be run by many validators, giving delegators the choice of operator for many different networks. Ask your favourite validator to become an operator or run one yourself, it's easy!</p>

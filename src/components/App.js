@@ -35,7 +35,7 @@ class App extends React.Component {
   }
 
   async componentDidMount() {
-    await this.setNetworkAndOperator()
+    await this.setNetwork()
     window.onload = async () => {
       if (!window.keplr) {
         this.setState({keplr: false})
@@ -45,8 +45,8 @@ class App extends React.Component {
       }
     }
     window.addEventListener("keplr_keystorechange", this.connect)
-    if(this.props.operator){
-      this.loadValidatorImages(this.props.network, [this.props.operator.validatorData])
+    if(this.props.operators){
+      this.loadValidatorImages(this.props.network, this.props.operators.map(el => el.validatorData))
     }
     this.loadValidatorImages(this.props.network, this.props.validators)
   }
@@ -56,11 +56,11 @@ class App extends React.Component {
       this.setState({keplr: true})
       this.connect()
     }
-    if(this.props.network !== prevProps.network || this.props.operator !== prevProps.operator){
+    if(this.props.network !== prevProps.network){
       if(this.state.address){
         this.connect()
       }
-      await this.setNetworkAndOperator()
+      await this.setNetwork()
     }
   }
 
@@ -68,17 +68,14 @@ class App extends React.Component {
     window.removeEventListener("keplr_keystorechange", this.connect)
   }
 
-  setNetworkAndOperator(){
+  setNetwork(){
     const network = this.props.network
-    const operator = this.props.operator
     if(!network) return
 
     return this.setState({
       error: false,
       chainId: network.chainId,
       denom: network.denom,
-      validatorAddress: operator && operator.address,
-      maxValidators: operator && operator.data.maxValidators,
       restClient: network.restClient
     })
   }
@@ -171,14 +168,6 @@ class App extends React.Component {
       )
   }
 
-  getMaxValidatorText(){
-    if(this.state.maxValidators){
-      return 'up to ' + this.state.maxValidators
-    }else{
-      return 'multiple'
-    }
-  }
-
   setCopied(){
     this.setState({copied: true})
     setTimeout(() => {
@@ -194,11 +183,6 @@ class App extends React.Component {
             <span onClick={() => this.setState({showAbout: true})} role="button" className="text-dark text-decoration-none">
               <img src={Logo} srcSet={`${Logo2x} 2x, ${Logo3x} 3x`} alt="REStake" />
             </span>
-            {false && this.props.operator &&
-            <ValidatorLink operator={this.props.operator} className="moniker d-none d-md-block">
-              <small>by {this.props.operator.moniker}</small>
-            </ValidatorLink>
-            }
           </div>
           {this.state.address &&
           <ul className="nav nav-pills justify-content-end">
@@ -222,26 +206,13 @@ class App extends React.Component {
           }
           <div className="d-flex align-items-center mb-3 mb-md-0 text-dark text-decoration-none">
             <NetworkSelect networks={this.props.networks}
-              network={this.props.network} operator={this.props.operator}
+              network={this.props.network}
               validators={this.props.validators} getValidatorImage={this.getValidatorImage}
               changeNetwork={this.props.changeNetwork} loadValidatorImages={this.loadValidatorImages} />
           </div>
         </header>
         <div className="mb-5">
-          <p className="lead fs-3 text-center mt-5 mb-5"><strong><ValidatorLink operator={this.props.operator} fallback="REStake" /></strong> auto-compounds your <strong>{this.props.network.prettyName}</strong> staking earnings <strong>once per day</strong>, for <strong>{this.getMaxValidatorText()}</strong> validators. </p>
-          {this.props.operator && (
-            <>
-              <p className="mt-5 text-center">
-                Enabling REStake will authorize <strong><ValidatorLink operator={this.props.operator} /></strong> to send <em>WithdrawDelegatorReward</em> and <em>Delegate</em> transactions on your behalf for 1 year, for the validators you specify.
-              </p>
-              <p className="text-center mb-5">
-                You can revoke the authorization at any time and everything is open source. <strong><ValidatorLink operator={this.props.operator} /> will pay the transaction fees for you.</strong>
-              </p>
-            </>
-          )}
-          {false &&
-          <Button variant="link-secondary" onClick={() => this.setState({showAbout: true})}>Read more</Button>
-          }
+          <p className="lead fs-3 text-center mt-5 mb-5">REStake allows validators to <strong>auto-compound</strong> your <strong>{this.props.network.prettyName}</strong> staking rewards for you</p>
           <AlertMessage message={this.state.error} variant="danger" dismissible={false} />
           {!this.state.address && (
             !this.state.keplr
@@ -261,8 +232,8 @@ class App extends React.Component {
           <>
             <Wallet
               network={this.props.network}
-              operator={this.props.operator}
               address={this.state.address}
+              operators={this.props.operators}
               validators={this.props.validators}
               balance={this.state.balance}
               getValidatorImage={this.getValidatorImage}
@@ -270,6 +241,17 @@ class App extends React.Component {
               stargateClient={this.state.stargateClient} />
           </>
           }
+          <hr />
+          <p className="mt-5 text-center">
+            Enabling REStake will authorize the validator to send <em>WithdrawDelegatorReward</em> and <em>Delegate</em> transactions on your behalf for 1 year.<br />
+            They will only be authorised to delegate to their own validator. You can revoke the authorization at any time and everything is open source.
+          </p>
+          <p className="text-center mb-3">
+            <strong>The validators will pay the transaction fees for you.</strong>
+          </p>
+          <p className="text-center mb-5">
+            <Button onClick={() => this.setState({showAbout: true})} variant="outline-secondary">More info</Button>
+          </p>
         </div>
         <footer className="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
           <a href="https://akash.network" target="_blank" rel="noreferrer" className="col-md-4 mb-0 text-muted">

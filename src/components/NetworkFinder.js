@@ -22,19 +22,15 @@ function NetworkFinder() {
     return data.filter(el => el.enabled !== false).reduce((a, v) => ({ ...a, [v.name]: v}), {})
   }
 
-  const changeNetwork = (network, operator, validators) => {
+  const changeNetwork = (network, validators) => {
+    const operators = Object.keys(validators).length ? network.getOperators(validators) : []
     setState({
       network: network,
-      operator: operator,
       validators: validators,
-      operators: Object.keys(validators).length && network.getOperators(validators)
+      operators: operators
     })
 
-    if(operator){
-      navigate("/" + network.name + "/" + operator.address);
-    }else{
-      navigate("/" + network.name);
-    }
+    navigate("/" + network.name);
   }
 
   useEffect(() => {
@@ -54,9 +50,7 @@ function NetworkFinder() {
         return
       }
       if(!params.network){
-        let url = "/" + networkName
-        url = data.operators.length ? (url + "/" + data.operators[0].address) : url
-        navigate(url);
+        navigate(url, networkName);
       }
       Network(data).then(network => {
         setState({network: network})
@@ -78,26 +72,11 @@ function NetworkFinder() {
         setState({
           validators,
           operators: state.network.getOperators(validators),
-          operator: undefined,
           loading: false
         })
       }, error => setState({loading: false, error: error}))
     }
   }, [state.network])
-
-  useEffect(() => {
-    if(state.operators.length && !state.operator){
-      let operator
-      if(params.operator){
-        operator = state.network.getOperator(state.operators, params.operator)
-      }
-      if(!operator) operator = state.operators[0]
-      if(operator && params.operator !== operator.address){
-        navigate("/" + state.network.name + "/" + operator.address);
-      }
-      setState({operator: operator})
-    }
-  }, [state.operators, state.operator, params, state.network, navigate])
 
   if (state.loading) {
     return (
@@ -119,8 +98,8 @@ function NetworkFinder() {
     return <p>Page not found</p>
   }
 
-  return <App networks={state.networks} network={state.network} operators={state.operators} operator={state.operator} validators={state.validators}
-    changeNetwork={(network, operator, validators) => changeNetwork(network, operator, validators)} />;
+  return <App networks={state.networks} network={state.network} operators={state.operators} validators={state.validators}
+    changeNetwork={(network, validators) => changeNetwork(network, validators)} />;
 }
 
 export default NetworkFinder

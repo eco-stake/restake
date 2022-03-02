@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import _ from 'lodash'
 import FuzzySearch from 'fuzzy-search'
 
+import Coins from './Coins'
 import ValidatorImage from './ValidatorImage'
 
 import {
@@ -9,40 +10,30 @@ import {
   Button
 } from 'react-bootstrap'
 
+import {
+  CheckCircle, XCircle
+} from 'react-bootstrap-icons'
+
 function Validators(props) {
   const [filter, setFilter] = useState()
 
-  function otherValidators(){
-    if(!props.operator) return props.validators
-
-    return _.omit(props.validators, props.operator.address)
+  function operatorValidators(){
+    return _.pick(props.validators, props.operators.map(el => el.address))
   }
 
-  function renderItem(item, variant){
-    variant = variant ? 'table-' + variant : ''
-    return (
-      <tr key={item.operator_address} className={variant}>
-        <td width={40}>
-          <ValidatorImage validator={item} imageUrl={props.getValidatorImage(props.network, item.operator_address)} />
-        </td>
-        <td>{item.description.moniker}</td>
-        <td className="text-end">
-          <Button onClick={() => props.selectValidator(item)}>
-            {props.redelegate ? 'Redelegate' : 'Delegate'}
-          </Button>
-        </td>
-      </tr>
-    )
+  function otherValidators(){
+    return _.omit(props.validators, props.operators.map(el => el.address))
   }
 
   function filterValidators(event){
     setFilter(event.target.value)
   }
 
-  function filteredResults(){
-    if(!props.validators) return {}
+  function filteredResults(validators){
+    if(!validators) return {}
 
-    const validators = otherValidators()
+    if(props.exclude) validators = _.omit(validators, props.exclude)
+
     if(!filter || filter === '') return validators
 
     const searcher = new FuzzySearch(
@@ -54,23 +45,53 @@ function Validators(props) {
     return results.reduce((a, v) => ({ ...a, [v.operator_address]: v}), {})
   }
 
+  function renderItem(item, isOperator){
+    variant = isOperator ? 'warning' : null
+    variant = variant ? 'table-' + variant : ''
+    return (
+      <tr key={item.operator_address} className={variant}>
+        <td>
+          <div className="row">
+            <div className="col-1 me-2">
+              <ValidatorImage validator={item} imageUrl={props.getValidatorImage(props.network, item.operator_address)} />
+            </div>
+            <div className="col pt-1">
+              <span className="align-middle">{item.description.moniker}</span>
+            </div>
+          </div>
+        </td>
+        <td className="text-center">{isOperator ? <CheckCircle className="text-success" /> : <XCircle className="opacity-50" />}</td>
+        <td className="text-end">
+          <Button onClick={() => props.selectValidator(item)}>
+            {props.redelegate ? 'Redelegate' : 'Delegate'}
+          </Button>
+        </td>
+      </tr>
+    )
+  }
+
+  const filteredOperators = Object.entries(filteredResults(operatorValidators()))
+  const filteredValidators = Object.entries(filteredResults(otherValidators()))
+
   return (
     <>
-      {props.operator && !props.operatorDelegation &&
-      <p>Delegate to {props.operator.description.moniker} to enable auto REStake</p>
-      }
       <input className="form-control mb-3" id="myInput" onKeyUp={filterValidators} type="text" placeholder="Search.." />
-      <Table className="align-middle">
-        <tbody>
-          {props.operator && !props.operatorDelegation && renderItem(props.operator.validatorData, 'warning')}
-          {Object.entries(filteredResults()).map(([validator_address, item], i) => {
-            const delegation = props.delegations && props.delegations[validator_address]
-            if(delegation && !props.redelegate) return null
-
-            return renderItem(item)
-          })}
-        </tbody>
-      </Table>
+      {(filteredOperators.length > 0 || filteredValidators.length > 0) &&
+        <Table className="align-middle">
+          <tbody>
+            <tr>
+              <th>Validator</th>
+              <th className="text-center">Operator</th>
+              <th></th>
+            </tr>
+            {filteredOperators.map(([validator_address, item], i) => renderItem(item, true))}
+            {filteredValidators.map(([validator_address, item], i) => renderItem(item))}
+          </tbody>
+        </Table>
+      }
+      {filteredOperators.length < 1 && filteredValidators.length < 1 &&
+        <p>No results found</p>
+      }
     </>
   )
 }
