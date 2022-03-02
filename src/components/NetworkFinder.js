@@ -50,6 +50,7 @@ function NetworkFinder() {
         return
       }
       if(!params.network){
+        let url = "/" + networkName
         navigate(url, networkName);
       }
       Network(data).then(network => {
