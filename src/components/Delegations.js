@@ -425,11 +425,11 @@ class Delegations extends React.Component {
           </div>
           <div className="col">
             <div className="d-grid gap-2 d-md-flex justify-content-end">
-              {this.state.rewards && this.totalRewards().amount > 0 && (
+              {this.state.rewards && (
                 !this.state.claimLoading
                   ? (
                     <Dropdown>
-                      <Dropdown.Toggle variant="secondary" id="claim-dropdown">
+                      <Dropdown.Toggle variant="secondary" id="claim-dropdown" disabled={this.totalRewards().amount === 0}>
                         All Rewards
                       </Dropdown.Toggle>
 
