@@ -319,7 +319,6 @@ class Delegations extends React.Component {
                 ) : (
                   <Button className="btn-sm btn-secondary mr-5" disabled>
                     <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>&nbsp;
-                    Submitting TX...
                   </Button>
                 )
               }
@@ -431,7 +430,7 @@ class Delegations extends React.Component {
               onDelegate={this.props.onAddValidator} />
           </div>
           <div className="col">
-            <div className="d-grid gap-2 d-md-flex justify-content-md-end">
+            <div className="d-grid gap-2 d-md-flex justify-content-end">
               {this.state.rewards && this.totalRewards().amount > 0 && (
                 !this.state.claimLoading
                   ? (
@@ -465,7 +464,6 @@ class Delegations extends React.Component {
                   ) : (
                     <Button className="btn-secondary mr-5" disabled>
                       <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>&nbsp;
-                      Submitting TX...
                     </Button>
                   )
               )}

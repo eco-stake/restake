@@ -138,7 +138,6 @@ class DelegateForm extends React.Component {
             ? <Button type="submit" className="btn btn-primary">{this.actionText()}</Button>
             : <Button className="btn btn-primary" type="button" disabled>
               <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>&nbsp;
-              Submitting TX...
             </Button>
           }
         </Form>

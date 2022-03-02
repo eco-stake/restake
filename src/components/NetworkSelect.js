@@ -41,12 +41,13 @@ function NetworkSelect(props) {
     const networks = Object.values(props.networks).sort((a, b) => a.name > b.name ? 1 : -1)
     setOptions({
       networks: networks.map(el => {
-        return {value: el.name, label: el.prettyName, image: el.image}
+        return {value: el.name, label: el.prettyName, image: el.image, operators: el.operators}
       }),
       network: selectedNetwork && {
         value: selectedNetwork.name,
         label: selectedNetwork.prettyName,
-        image: selectedNetwork.data.image
+        image: selectedNetwork.data.image,
+        operators: selectedNetwork.data.operators
       }
     })
   }, [props.networks, selectedNetwork])
@@ -100,9 +101,18 @@ function NetworkSelect(props) {
                   options={options.networks}
                   onChange={selectNetwork}
                   formatOptionLabel={network => (
-                    <div className="image-option">
-                      <img src={network.image} width={30} height={30} alt={network.label} />
-                      <span className="ms-2">{network.label}</span>
+                    <div className="row">
+                      <div className="col-1">
+                        <img src={network.image} width={30} height={30} alt={network.label} />
+                      </div>
+                      <div className="col pt-1">
+                        <span className="ms-1">{network.label}</span>
+                      </div>
+                      {network.operators.length > 0 &&
+                      <div className="col text-end pt-1">
+                        <small>{network.operators.length} Operators</small>
+                      </div>
+                      }
                     </div>
                   )}/>
               </div>
