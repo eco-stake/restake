@@ -107,7 +107,8 @@
         "botAddress": "cosmos1eml7agwd5x084ennlg6apvskufzrlvnrks6h4e",
         "runTime": "21:00",
         "minimumReward": 10000
-      }],
+      }
+    ],
     "authzSupport": true
   },
   {
@@ -138,12 +139,14 @@
     ],
     "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/akt.svg",
     "testAddress": null,
-    "operators": [{
+    "operators": [
+      {
         "address": "akashvaloper1enhj36w6clcm5fjnp87jnffnkthfux2uj88l6h",
         "botAddress": "akash1eml7agwd5x084ennlg6apvskufzrlvnrmthsvr",
         "runTime": "21:00",
         "minimumReward": 10000
-      }],
+      }
+    ],
     "authzSupport": false
   },
   {
@@ -341,6 +344,24 @@
     ],
     "image": "https://raw.githubusercontent.com/cosmos/chain-registry/master/desmos/images/dsm.png",
     "gasPrice": "0.001udsm",
+    "operators": [],
+    "authzSupport": true
+  },
+  {
+    "name": "cryptoorgchain",
+    "prettyName": "Crypto.org",
+    "chainId": "crypto-org-chain-mainnet-1",
+    "prefix": "cro",
+    "denom": "basecro",
+    "restUrl": [
+      "https://mainnet.crypto.org/",
+      "https://lcd-crypto-org.keplr.app/"
+    ],
+    "rpcUrl": [
+      "https://mainnet.crypto.org",
+      "https://rpc-crypto-org.keplr.app"
+    ],
+    "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/cro.png",
     "operators": [],
     "authzSupport": true
   }
