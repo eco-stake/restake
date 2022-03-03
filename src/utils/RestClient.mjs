@@ -108,6 +108,7 @@ const RestClient = async (chainId, restUrls) => {
 
   return {
     connected: !!restUrl,
+    restUrl,
     getValidators,
     getBalance,
     getDelegations,

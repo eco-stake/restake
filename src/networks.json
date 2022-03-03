@@ -16,17 +16,21 @@
     "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/osmo.svg",
     "gasPrice": "0uosmo",
     "testAddress": "osmo1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczed559y",
-    "operators": [{
-      "address": "osmovaloper1u5v0m74mql5nzfx2yh43s2tke4mvzghr6m2n5t",
-      "botAddress": "osmo1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczed559y",
-      "runTime": "21:00",
-      "minimumReward": 1000
-    }, {
-      "address": "osmovaloper1md9f5524vtmrn64lyv2pdfn7cnkjkklf44vtjz",
-      "botAddress": "osmo1e44rluarkdw56dy2turnwjtvtg4wqvs06sx5ph",
-      "runTime": "21:00",
-      "minimumReward": 10000
-    }]
+    "operators": [
+      {
+        "address": "osmovaloper1u5v0m74mql5nzfx2yh43s2tke4mvzghr6m2n5t",
+        "botAddress": "osmo1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczed559y",
+        "runTime": "21:00",
+        "minimumReward": 1000
+      },
+      {
+        "address": "osmovaloper1md9f5524vtmrn64lyv2pdfn7cnkjkklf44vtjz",
+        "botAddress": "osmo1e44rluarkdw56dy2turnwjtvtg4wqvs06sx5ph",
+        "runTime": "21:00",
+        "minimumReward": 10000
+      }
+    ],
+    "authzSupport": true
   },
   {
     "name": "juno",
@@ -36,7 +40,7 @@
     "denom": "ujuno",
     "restUrl": [
       "https://lcd-juno.itastakers.com",
-      "https://lcd.juno-1.technofractal.com"
+      "https://lcd.juno-1.technofractal.com/"
     ],
     "rpcUrl": [
       "https://rpc-juno.itastakers.com",
@@ -45,12 +49,15 @@
     "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/juno.svg",
     "gasPrice": "0.0025ujuno",
     "testAddress": "juno1yxsmtnxdt6gxnaqrg0j0nudg7et2gqcz8yyl52",
-    "operators": [{
-      "address": "junovaloper193xl2tqh2tjkld2zv49ku5s44ee4qmgr65jcep",
-      "botAddress": "juno1e44rluarkdw56dy2turnwjtvtg4wqvs0yeklse",
-      "runTime": "21:00",
-      "minimumReward": 1000
-    }]
+    "operators": [
+      {
+        "address": "junovaloper193xl2tqh2tjkld2zv49ku5s44ee4qmgr65jcep",
+        "botAddress": "juno1e44rluarkdw56dy2turnwjtvtg4wqvs0yeklse",
+        "runTime": "21:00",
+        "minimumReward": 1000
+      }
+    ],
+    "authzSupport": true
   },
   {
     "name": "cosmoshub",
@@ -70,7 +77,8 @@
     "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/atom.svg",
     "gasPrice": "0uatom",
     "testAddress": "cosmos1yxsmtnxdt6gxnaqrg0j0nudg7et2gqcz3k8ynk",
-    "operators": []
+    "operators": [],
+    "authzSupport": true
   },
   {
     "name": "akash",
@@ -100,7 +108,8 @@
     ],
     "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/akt.svg",
     "testAddress": null,
-    "operators": []
+    "operators": [],
+    "authzSupport": false
   },
   {
     "name": "chihuahua",
@@ -108,17 +117,24 @@
     "chainId": "chihuahua-1",
     "prefix": "chihuahua",
     "denom": "uhuahua",
-    "restUrl": "https://api.chihuahua.wtf",
-    "rpcUrl": "https://rpc.chihuahua.wtf",
+    "restUrl": [
+      "https://api.chihuahua.wtf/"
+    ],
+    "rpcUrl": [
+      "https://rpc.chihuahua.wtf"
+    ],
     "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/huahua.png",
     "gasPrice": "0.025uhuahua",
     "testAddress": "chihuahua1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczjr22j5",
-    "operators": [{
-      "address": "chihuahuavaloper19vwcee000fhazmpt4ultvnnkhfh23ppwxll8zz",
-      "botAddress": "chihuahua1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczjr22j5",
-      "runTime": "21:00",
-      "minimumReward": 1000
-    }]
+    "operators": [
+      {
+        "address": "chihuahuavaloper19vwcee000fhazmpt4ultvnnkhfh23ppwxll8zz",
+        "botAddress": "chihuahua1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczjr22j5",
+        "runTime": "21:00",
+        "minimumReward": 1000
+      }
+    ],
+    "authzSupport": false
   },
   {
     "name": "gravitybridge",
@@ -138,7 +154,8 @@
     ],
     "image": "https://raw.githubusercontent.com/Gravity-Bridge/Gravity-Docs/main/assets/Graviton-Blue.svg",
     "testAddress": "gravity1yxsmtnxdt6gxnaqrg0j0nudg7et2gqcz4x4uk7",
-    "operators": []
+    "operators": [],
+    "authzSupport": true
   },
   {
     "name": "regen",
@@ -157,7 +174,8 @@
     ],
     "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/regen.png",
     "testAddress": "regen1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczw5vc9j",
-    "operators": []
+    "operators": [],
+    "authzSupport": true
   },
   {
     "name": "terra",
@@ -177,7 +195,8 @@
     ],
     "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/luna.svg",
     "testAddress": "terra1rnszu7kumz5lmgdk3fv2pmzt3s8vhcddqep7d4",
-    "operators": []
+    "operators": [],
+    "authzSupport": true
   },
   {
     "name": "sentinel",
@@ -194,6 +213,7 @@
     ],
     "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/dvpn.png",
     "testAddress": "sent1yxsmtnxdt6gxnaqrg0j0nudg7et2gqcz2d3ahe",
-    "operators": []
+    "operators": [],
+    "authzSupport": false
   }
 ]

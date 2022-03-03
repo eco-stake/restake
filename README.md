@@ -85,6 +85,16 @@ Note that the `botAddress` is the address which will be granted by the delegator
 
 You can now submit your `networks.json` update to the repository in a pull request which will be merged and deployed as soon as possible.
 
+## Adding/updating a network
+
+A script is included to generate the config needed to add a new chain from the [Chain Registry](https://github.com/cosmos/chain-registry). It will update the config file in-place, retaining the important information like operators etc. It can be used to update and add a chain, just check the changes with Git.
+
+Make sure you match the directory name from Chain Registry.
+
+```
+docker-compose run app npm run registryConfig cosmoshub
+```
+
 ## Running the UI
 
 Run the UI using docker with one line:
