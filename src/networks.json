@@ -28,6 +28,12 @@
         "botAddress": "osmo1e44rluarkdw56dy2turnwjtvtg4wqvs06sx5ph",
         "runTime": "21:00",
         "minimumReward": 10000
+      },
+      {
+        "address": "osmovaloper1t8qckan2yrygq7kl9apwhzfalwzgc2429p8f0s",
+        "botAddress": "osmo1eml7agwd5x084ennlg6apvskufzrlvnr7tf8rt",
+        "runTime": "21:00",
+        "minimumReward": 10000
       }
     ],
     "authzSupport": true
@@ -55,6 +61,12 @@
         "botAddress": "juno1e44rluarkdw56dy2turnwjtvtg4wqvs0yeklse",
         "runTime": "21:00",
         "minimumReward": 1000
+      },
+      {
+        "address": "junovaloper17n3w6v5q3n0tws4xv8upd9ul4qqes0nlg7q0xd",
+        "botAddress": "juno1eml7agwd5x084ennlg6apvskufzrlvnrqzevj9",
+        "runTime": "21:00",
+        "minimumReward": 10000
       }
     ],
     "authzSupport": true
@@ -77,7 +89,13 @@
     "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/atom.svg",
     "gasPrice": "0uatom",
     "testAddress": "cosmos1yxsmtnxdt6gxnaqrg0j0nudg7et2gqcz3k8ynk",
-    "operators": [],
+    "operators": [
+      {
+        "address": "cosmosvaloper1vvwtk805lxehwle9l4yudmq6mn0g32px9xtkhc",
+        "botAddress": "cosmos1eml7agwd5x084ennlg6apvskufzrlvnrks6h4e",
+        "runTime": "21:00",
+        "minimumReward": 10000
+      }],
     "authzSupport": true
   },
   {
@@ -108,7 +126,12 @@
     ],
     "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/akt.svg",
     "testAddress": null,
-    "operators": [],
+    "operators": [{
+        "address": "akashvaloper1enhj36w6clcm5fjnp87jnffnkthfux2uj88l6h",
+        "botAddress": "akash1eml7agwd5x084ennlg6apvskufzrlvnrmthsvr",
+        "runTime": "21:00",
+        "minimumReward": 10000
+      }],
     "authzSupport": false
   },
   {
