@@ -215,5 +215,92 @@
     "testAddress": "sent1yxsmtnxdt6gxnaqrg0j0nudg7et2gqcz2d3ahe",
     "operators": [],
     "authzSupport": false
+  },
+  {
+    "name": "dig",
+    "prettyName": "Dig Chain",
+    "chainId": "dig-1",
+    "prefix": "dig",
+    "denom": "udig",
+    "restUrl": [
+      "https://api-1-dig.notional.ventures",
+      "https://api-2-dig.notional.ventures"
+    ],
+    "rpcUrl": [
+      "https://rpc-1-dig.notional.ventures",
+      "https://rpc-2-dig.notional.ventures"
+    ],
+    "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/dig.png",
+    "operators": [],
+    "authzSupport": false
+  },
+  {
+    "name": "bitcanna",
+    "prettyName": "BitCanna",
+    "chainId": "bitcanna-1",
+    "prefix": "bcna",
+    "denom": "ubcna",
+    "restUrl": [
+      "https://lcd.bitcanna.io"
+    ],
+    "rpcUrl": [
+      "https://rpc.bitcanna.io",
+      "https://rpc-bitcanna.itastakers.com"
+    ],
+    "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/bcna.svg",
+    "gasPrice": "0.001ubcna",
+    "operators": [],
+    "authzSupport": false
+  },
+  {
+    "name": "emoney",
+    "prettyName": "e-Money",
+    "chainId": "emoney-3",
+    "prefix": "emoney",
+    "denom": "ungm",
+    "restUrl": [
+      "https://lcd-emoney.keplr.app",
+      "https://emoney.validator.network/api/"
+    ],
+    "rpcUrl": [
+      "https://rpc-emoney.keplr.app",
+      "https://emoney.validator.network"
+    ],
+    "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/ngm.svg",
+    "operators": [],
+    "authzSupport": false
+  },
+  {
+    "name": "kava",
+    "prettyName": "Kava",
+    "chainId": "kava-9",
+    "prefix": "kava",
+    "denom": "ukava",
+    "restUrl": [
+      "https://api.data.kava.io/"
+    ],
+    "rpcUrl": [
+      "https://rpc.kava.io"
+    ],
+    "image": "https://raw.githubusercontent.com/Kava-Labs/kava/master/kava-logo.svg",
+    "operators": [],
+    "authzSupport": false
+  },
+  {
+    "name": "desmos",
+    "prettyName": "Desmos",
+    "chainId": "desmos-mainnet",
+    "prefix": "desmos",
+    "denom": "udsm",
+    "restUrl": [
+      "https://api.mainnet.desmos.network"
+    ],
+    "rpcUrl": [
+      "https://rpc.mainnet.desmos.network"
+    ],
+    "image": "https://raw.githubusercontent.com/cosmos/chain-registry/master/desmos/images/dsm.png",
+    "gasPrice": "0.001udsm",
+    "operators": [],
+    "authzSupport": true
   }
 ]
