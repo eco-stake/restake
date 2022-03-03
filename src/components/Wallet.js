@@ -19,12 +19,26 @@ class Wallet extends React.Component {
 
   componentDidMount() {
     this.getDelegations()
+    this.refreshInterval()
   }
 
   componentDidUpdate(prevProps) {
     if(this.props.address !== prevProps.address){
       this.getDelegations()
+      this.refreshInterval()
     }
+  }
+
+  componentWillUnmount(){
+    clearInterval(this.state.refreshInterval);
+  }
+
+  refreshInterval(){
+    clearInterval(this.state.refreshInterval);
+    const interval = setInterval(() => {
+      this.getDelegations()
+    }, 30_000)
+    this.setState({refreshInterval: interval})
   }
 
   onAddValidator(){

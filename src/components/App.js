@@ -30,6 +30,7 @@ class App extends React.Component {
     super(props);
     this.state = {validatorImages: {}}
     this.connect = this.connect.bind(this);
+    this.showNetworkSelect = this.showNetworkSelect.bind(this);
     this.getValidatorImage = this.getValidatorImage.bind(this);
     this.loadValidatorImages = this.loadValidatorImages.bind(this);
   }
@@ -78,6 +79,10 @@ class App extends React.Component {
       denom: network.denom,
       restClient: network.restClient
     })
+  }
+
+  showNetworkSelect(){
+    this.setState({showNetworkSelect: true})
   }
 
   async connect() {
@@ -205,20 +210,20 @@ class App extends React.Component {
           </ul>
           }
           <div className="d-flex align-items-center mb-3 mb-md-0 text-dark text-decoration-none">
-            <NetworkSelect networks={this.props.networks}
+            <NetworkSelect show={this.state.showNetworkSelect} onHide={() => {this.setState({showNetworkSelect: false})}} networks={this.props.networks}
               network={this.props.network}
               validators={this.props.validators} getValidatorImage={this.getValidatorImage}
               changeNetwork={this.props.changeNetwork} loadValidatorImages={this.loadValidatorImages} />
           </div>
         </header>
         <div className="mb-5">
-          <p className="lead fs-3 text-center mt-5 mb-5">REStake allows validators to <strong>auto-compound</strong> your <strong>{this.props.network.prettyName}</strong> staking rewards for you</p>
+          <p className="lead fs-3 text-center mt-5 mb-5">REStake allows validators to <strong>auto-compound</strong> your <strong onClick={this.showNetworkSelect} className="text-decoration-underline" role="button">{this.props.network.prettyName}</strong> staking rewards for you</p>
           <AlertMessage message={this.state.error} variant="danger" dismissible={false} />
           {!this.state.address && (
             !this.state.keplr
               ? (
                 <AlertMessage variant="warning" dismissible={false}>
-                  Please install the <a href="https://chrome.google.com/webstore/detail/keplr/dmkamcknogkgcdfhhbddcghachkejeap?hl=en" target="_blank" rel="noreferrer">Keplr browser extension</a> using desktop Google Chrome. WalletConnect and mobile support is coming soon.
+                  Please install the <a href="https://chrome.google.com/webstore/detail/keplr/dmkamcknogkgcdfhhbddcghachkejeap?hl=en" target="_blank" rel="noreferrer">Keplr browser extension</a> using desktop Google Chrome.<br />WalletConnect and mobile support is coming soon.
                 </AlertMessage>
               ) : (
                 <div className="mb-5 text-center">
@@ -243,10 +248,10 @@ class App extends React.Component {
           }
           <hr />
           <p className="mt-5 text-center">
-            Enabling REStake will authorize the validator to send <em>WithdrawDelegatorReward</em> and <em>Delegate</em> transactions on your behalf for 1 year.<br />
+            Enabling REStake will authorize the validator to send <em>WithdrawDelegatorReward</em> and <em>Delegate</em> transactions on your behalf for 1 year using <a href="https://docs.cosmos.network/master/modules/authz/" target="_blank" rel="noreferrer">Authz</a>.<br />
             They will only be authorised to delegate to their own validator. You can revoke the authorization at any time and everything is open source.
           </p>
-          <p className="text-center mb-3">
+          <p className="text-center mb-4">
             <strong>The validators will pay the transaction fees for you.</strong>
           </p>
           <p className="text-center mb-5">

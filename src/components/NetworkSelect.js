@@ -6,13 +6,14 @@ import ValidatorImage from './ValidatorImage'
 import {
   Button,
   Modal,
-  Form
+  Form,
+  Badge
 } from 'react-bootstrap'
 
 import Select from 'react-select';
 
 function NetworkSelect(props) {
-  const [show, setShow] = useState(false);
+  const [show, setShow] = useState(props.show);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const [selectedNetwork, setSelectedNetwork] = useState();
@@ -30,24 +31,38 @@ function NetworkSelect(props) {
     setShow(true)
   }
 
+  const handleClose = () => {
+    setShow(false)
+    props.onHide()
+  }
+
   const handleSubmit = (event) => {
     event.preventDefault();
 
     props.changeNetwork(selectedNetwork, validators)
-    setShow(false)
+    handleClose()
   }
+
+  useEffect(() => {
+    if(props.show && !show){
+      handleOpen()
+    }else if(!props.show && show){
+      handleClose()
+    }
+  }, [props.show])
 
   useEffect(() => {
     const networks = Object.values(props.networks).sort((a, b) => a.name > b.name ? 1 : -1)
     setOptions({
       networks: networks.map(el => {
-        return {value: el.name, label: el.prettyName, image: el.image, operators: el.operators}
+        return {value: el.name, label: el.prettyName, image: el.image, operators: el.operators, authz: el.authzSupport}
       }),
       network: selectedNetwork && {
         value: selectedNetwork.name,
         label: selectedNetwork.prettyName,
         image: selectedNetwork.data.image,
-        operators: selectedNetwork.data.operators
+        operators: selectedNetwork.data.operators,
+        authz: selectedNetwork.authzSupport
       }
     })
   }, [props.networks, selectedNetwork])
@@ -81,11 +96,17 @@ function NetworkSelect(props) {
         <div className="d-none d-sm-block ms-2">
           <span className="h6">{props.network.prettyName}</span>
         </div>
+        <div className="d-none d-sm-block ms-2">
+          {props.network.authzSupport
+            ? <Badge bg="success">Authz</Badge>
+            : <Badge bg="danger">Authz</Badge>
+          }
+        </div>
         <div className="d-none d-md-block ms-md-2">
           <i className="bi bi-chevron-down text-muted text-xs"></i>
         </div>
       </Button>
-      <Modal show={show} onHide={() => setShow(false)}>
+      <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title>Change Network</Modal.Title>
         </Modal.Header>
@@ -109,11 +130,15 @@ function NetworkSelect(props) {
                       <div className="col pt-1">
                         <span className="ms-1">{network.label}</span>
                       </div>
-                      {network.operators.length > 0 &&
                       <div className="col text-end pt-1">
-                        <small>{network.operators.length} Operators</small>
+                        {network.operators.length > 0 &&
+                        <small>{network.operators.length} Operator{network.operators.length > 1 ? 's' : ''}</small>
+                        }
+                        {network.authz
+                          ? <Badge className="ms-3" bg="success">Authz</Badge>
+                          : <Badge className="ms-3" bg="danger">Authz</Badge>
+                        }
                       </div>
-                      }
                     </div>
                   )}/>
               </div>
@@ -122,8 +147,11 @@ function NetworkSelect(props) {
             {error &&
               <p><em>{error}</em></p>
             }
-            {!error && selectedNetwork.getOperators(validators).length < 1 &&
-              <p><em>There are no operators for this network just yet. You can manually REStake for now</em></p>
+            {!error && !selectedNetwork.authzSupport &&
+              <p><em>This network does not support Authz yet. You can manually stake and compound for now</em></p>
+            }
+            {!error && selectedNetwork.authzSupport && selectedNetwork.getOperators(validators).length < 1 &&
+              <p><em>This network supports Authz but there are no operators just yet. You can manually REStake for now</em></p>
             }
             {!loading
               ? !error && <Button type="submit" className="btn btn-primary">Change</Button>

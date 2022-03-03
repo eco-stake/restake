@@ -4,6 +4,7 @@ import FuzzySearch from 'fuzzy-search'
 
 import Coins from './Coins'
 import ValidatorImage from './ValidatorImage'
+import TooltipIcon from './TooltipIcon'
 
 import {
   Table,
@@ -60,7 +61,14 @@ function Validators(props) {
             </div>
           </div>
         </td>
-        <td className="text-center">{isOperator ? <CheckCircle className="text-success" /> : <XCircle className="opacity-50" />}</td>
+        <td className="text-center">
+          {isOperator
+            ? <TooltipIcon icon={<CheckCircle className="text-success" />} identifier={item.operator_address}
+              tooltip="This validator can auto-compound your rewards" />
+            : <TooltipIcon icon={<XCircle className="opacity-50" />} identifier={item.operator_address}
+              tooltip="This validator is not a REStake operator" />
+          }
+        </td>
         <td className="text-end">
           <Button onClick={() => props.selectValidator(item)}>
             {props.redelegate ? 'Redelegate' : 'Delegate'}

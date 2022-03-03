@@ -3,17 +3,20 @@ import Validators from './Validators'
 import ValidatorImage from './ValidatorImage'
 import ValidatorLink from './ValidatorLink'
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 
 import {
   Dropdown,
   Button,
-  Modal
+  Modal,
+  OverlayTrigger,
+  Tooltip
 } from 'react-bootstrap'
 
 function Delegate(props) {
   const [show, setShow] = useState(false);
   const [selectedValidator, setSelectedValidator] = useState(!props.redelegate && props.validator);
+  const target = useRef(null);
 
   const handleOpen = () => {
     setShow(true)
@@ -54,10 +57,25 @@ function Delegate(props) {
       )
     }else{
       if(props.button){
-        return (
-          <Button variant={props.variant || 'secondary'} onClick={handleOpen}>
+        const button = (
+          <Button variant={props.variant || 'secondary'} size={props.size} onClick={handleOpen}>
             {actionText()}
           </Button>
+        )
+        return (
+          <>
+            {props.tooltip && props.validator ? (
+              <OverlayTrigger
+                key={props.validator.operator_address}
+                placement="top"
+                overlay={
+                  <Tooltip id={`tooltip-${props.validator.operator_address}`}>
+                    {props.tooltip}
+                  </Tooltip>
+                }
+              >{button}</OverlayTrigger>
+            ) : button}
+          </>
         )
       }else{
         return (

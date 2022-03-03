@@ -142,11 +142,11 @@ class Autostake {
                 console.log(delegatorAddress, "Not autostaking for this validator, skipping")
                 return
               }
-              console.log(delegatorAddress, "Can autostake for:", grantValidators)
+              console.log(delegatorAddress, "Grants valid")
 
               return grantValidators
             }else{
-              console.log(delegatorAddress, "Missing required grants")
+              console.log(delegatorAddress, "Grants invalid")
             }
           }
         },

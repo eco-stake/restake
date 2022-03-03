@@ -36,6 +36,7 @@ const Network = async (data) => {
     restUrl: restClient.restUrl,
     rpcUrl: data.rpcUrl,
     operators: data.operators,
+    authzSupport: data.authzSupport,
     data,
     restClient,
     signingClient,

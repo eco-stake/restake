@@ -20,7 +20,7 @@ function ClaimRewards(props) {
     let signAndBroadcast = props.stargateClient.signAndBroadcast
     let gas
 
-    if(props.restake){
+    if(props.restake && perValidatorReward > 0){
       let messages = buildMessages(props.validators, perValidatorReward)
 
       gas = await props.stargateClient.simulate(props.address, messages)
