@@ -46,6 +46,12 @@
         "botAddress": "osmo195mm9y35sekrjk73anw2az9lv9xs5mztjduk29",
         "runTime": "22:00",
         "minimumReward": 10000
+      },
+      {
+        "address": "osmovaloper1glmy88g0uf6vmw29pyxu3yq0pxpjqtzqr5e57n",
+        "botAddress": "osmo12xpq68caw2aqdu70jm4k792g0v9prhrpgc45k2",
+        "runTime": "22:00",
+        "minimumReward": 10000
       }
     ],
     "authzSupport": true
@@ -97,6 +103,12 @@
         "botAddress": "juno1l7je4yr3ffs6d8v6ck49fmueqqndvgpw79c8jp",
         "runTime": "14:00",
         "minimumReward": 10000
+      },
+      {
+        "address": "junovaloper1wd02ktcvpananlvd9u6jm3x3ap3vmw59jv9vez",
+        "botAddress": "juno12xpq68caw2aqdu70jm4k792g0v9prhrpk39l8y",
+        "runTime": "14:00",
+        "minimumReward": 10000
       }
     ],
     "authzSupport": true
@@ -123,6 +135,12 @@
       {
         "address": "cosmosvaloper1vvwtk805lxehwle9l4yudmq6mn0g32px9xtkhc",
         "botAddress": "cosmos1eml7agwd5x084ennlg6apvskufzrlvnrks6h4e",
+        "runTime": "21:00",
+        "minimumReward": 10000
+      },
+      {
+        "address": "cosmosvaloper140l6y2gp3gxvay6qtn70re7z2s0gn57zfd832j",
+        "botAddress": "cosmos12xpq68caw2aqdu70jm4k792g0v9prhrpqrxyqc",
         "runTime": "21:00",
         "minimumReward": 10000
       }
@@ -163,6 +181,12 @@
         "botAddress": "akash1eml7agwd5x084ennlg6apvskufzrlvnrmthsvr",
         "runTime": "21:00",
         "minimumReward": 10000
+      },
+      {
+        "address": "akashvaloper140l6y2gp3gxvay6qtn70re7z2s0gn57ztqs903",
+        "botAddress": "akash12xpq68caw2aqdu70jm4k792g0v9prhrpdctrez",
+        "runTime": "21:00",
+        "minimumReward": 10000
       }
     ],
     "authzSupport": false
@@ -200,6 +224,12 @@
         "botAddress": "chihuahua195mm9y35sekrjk73anw2az9lv9xs5mzterzga4",
         "runTime": "22:00",
         "minimumReward": 1000
+      },
+      {
+        "address": "chihuahuavaloper140l6y2gp3gxvay6qtn70re7z2s0gn57zum7h5l",
+        "botAddress": "chihuahua12xpq68caw2aqdu70jm4k792g0v9prhrprkt2p6",
+        "runTime": "22:00",
+        "minimumReward": 1000
       }
     ],
     "authzSupport": false
@@ -222,7 +252,14 @@
     ],
     "image": "https://raw.githubusercontent.com/Gravity-Bridge/Gravity-Docs/main/assets/Graviton-Blue.svg",
     "testAddress": "gravity1yxsmtnxdt6gxnaqrg0j0nudg7et2gqcz4x4uk7",
-    "operators": [],
+    "operators": [
+      {
+        "address": "gravityvaloper140l6y2gp3gxvay6qtn70re7z2s0gn57zezczfa",
+        "botAddress": "gravity12xpq68caw2aqdu70jm4k792g0v9prhrpyn5u9s",
+        "runTime": "22:00",
+        "minimumReward": 1000
+      }
+    ],
     "authzSupport": true
   },
   {
@@ -372,6 +409,12 @@
       {
         "address": "desmosvaloper1xwazl8ftks4gn00y5x3c47auquc62ssu07r7m6",
         "botAddress": "desmos1hcuv07593sxu4luumnh4dy2fujaxyh7xd9rya5",
+        "runTime": "22:00",
+        "minimumReward": 1000
+      },
+      {
+        "address": "desmosvaloper1r0emf6ap6y5advzgtsf4uz3g68p5t5484j4alp",
+        "botAddress": "desmos1nrt8va6he35w4vclr6sejkqpvsmr4vtas330me",
         "runTime": "22:00",
         "minimumReward": 1000
       }
