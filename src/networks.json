@@ -40,6 +40,12 @@
         "botAddress": "osmo106n92ygqknaw5wcgl2e9v0duxxux6ntt7y67ae",
         "runTime": "21:00",
         "minimumReward": 10000
+      },
+      {
+        "address": "osmovaloper1xwazl8ftks4gn00y5x3c47auquc62ssuh8af89",
+        "botAddress": "osmo195mm9y35sekrjk73anw2az9lv9xs5mztjduk29",
+        "runTime": "22:00",
+        "minimumReward": 10000
       }
     ],
     "authzSupport": true
@@ -78,6 +84,12 @@
         "address": "junovaloper10y7ucn6jhjtakwchgpw32y0tgaku6yn255z7gm",
         "botAddress": "juno106n92ygqknaw5wcgl2e9v0duxxux6nttqd24vh",
         "runTime": "21:00",
+        "minimumReward": 10000
+      },
+      {
+        "address": "junovaloper1xwazl8ftks4gn00y5x3c47auquc62ssuvynw64",
+        "botAddress": "juno195mm9y35sekrjk73anw2az9lv9xs5mztvyvamt",
+        "runTime": "22:00",
         "minimumReward": 10000
       }
     ],
@@ -172,6 +184,12 @@
         "address": "chihuahuavaloper1glk94taeyhfpje4zaz8dsfxmn4yr3g8kkzv4x5",
         "botAddress": "chihuahua106n92ygqknaw5wcgl2e9v0duxxux6ntt42yq2f",
         "runTime": "21:00",
+        "minimumReward": 1000
+      },
+      {
+        "address": "chihuahuavaloper1xwazl8ftks4gn00y5x3c47auquc62ssu4ftf5w",
+        "botAddress": "chihuahua195mm9y35sekrjk73anw2az9lv9xs5mzterzga4",
+        "runTime": "22:00",
         "minimumReward": 1000
       }
     ],
@@ -341,7 +359,14 @@
     ],
     "image": "https://raw.githubusercontent.com/cosmos/chain-registry/master/desmos/images/dsm.png",
     "gasPrice": "0.001udsm",
-    "operators": [],
+    "operators": [
+      {
+        "address": "desmosvaloper1xwazl8ftks4gn00y5x3c47auquc62ssu07r7m6",
+        "botAddress": "desmos1hcuv07593sxu4luumnh4dy2fujaxyh7xd9rya5",
+        "runTime": "22:00",
+        "minimumReward": 1000
+      }
+    ],
     "authzSupport": true
   }
 ]
