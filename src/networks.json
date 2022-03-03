@@ -69,6 +69,12 @@
     "testAddress": "juno1yxsmtnxdt6gxnaqrg0j0nudg7et2gqcz8yyl52",
     "operators": [
       {
+        "address": "junovaloper1x8u2ypdr35802tjyjqyxan8x85fzxe6sk0qmh8",
+        "botAddress": "juno1r8egcurpwxftegr07gjv9gwffw4fk009a4v3ll",
+        "runTime": "21:00",
+        "minimumReward": 10000
+      },
+      {
         "address": "junovaloper193xl2tqh2tjkld2zv49ku5s44ee4qmgr65jcep",
         "botAddress": "juno1e44rluarkdw56dy2turnwjtvtg4wqvs0yeklse",
         "runTime": "21:00",
@@ -183,6 +189,12 @@
     "gasPrice": "0.025uhuahua",
     "testAddress": "chihuahua1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczjr22j5",
     "operators": [
+      {
+        "address": "chihuahuavaloper1tzk3kzjy7fj4w37hm5v48c2t8vvgukzcqgkz8k",
+        "botAddress": "chihuahua1r8egcurpwxftegr07gjv9gwffw4fk009gjzyep",
+        "runTime": "21:00",
+        "minimumReward": 1000
+      },
       {
         "address": "chihuahuavaloper19vwcee000fhazmpt4ultvnnkhfh23ppwxll8zz",
         "botAddress": "chihuahua1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczjr22j5",
