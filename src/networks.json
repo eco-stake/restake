@@ -46,6 +46,12 @@
         "botAddress": "osmo195mm9y35sekrjk73anw2az9lv9xs5mztjduk29",
         "runTime": "22:00",
         "minimumReward": 10000
+      },
+      {
+        "address": "osmovaloper1u6jr0pztvsjpvx77rfzmtw49xwzu9kas05lk04",
+        "botAddress": "osmo1v9vae554q55xa4pcfdm0p3kv8nxn50jkjh5zmm",
+        "runTime": "23:00",
+        "minimumReward": 10000
       }
     ],
     "authzSupport": true
@@ -97,6 +103,12 @@
         "botAddress": "juno1l7je4yr3ffs6d8v6ck49fmueqqndvgpw79c8jp",
         "runTime": "14:00",
         "minimumReward": 10000
+      },
+      {
+        "address": "junovaloper1p0r4znp29547d8ra5k8t6ls0ztm3tj74ak38wz",
+        "botAddress": "juno1v9vae554q55xa4pcfdm0p3kv8nxn50jkv7yf24",
+        "runTime": "23:00",
+        "minimumReward": 10000
       }
     ],
     "authzSupport": true
@@ -124,6 +136,12 @@
         "address": "cosmosvaloper1vvwtk805lxehwle9l4yudmq6mn0g32px9xtkhc",
         "botAddress": "cosmos1eml7agwd5x084ennlg6apvskufzrlvnrks6h4e",
         "runTime": "21:00",
+        "minimumReward": 10000
+      },
+      {
+        "address": "cosmosvaloper1fsg635n5vgc7jazz9sx5725wnc3xqgr7awxaag",
+        "botAddress": "cosmos1v9vae554q55xa4pcfdm0p3kv8nxn50jk6v8jdf",
+        "runTime": "23:00",
         "minimumReward": 10000
       }
     ],
@@ -200,6 +218,12 @@
         "botAddress": "chihuahua195mm9y35sekrjk73anw2az9lv9xs5mzterzga4",
         "runTime": "22:00",
         "minimumReward": 1000
+      },
+      {
+        "address": "chihuahuavaloper18jlk0pkpr8cnnpjtgu3dqxjvpvlnj6r4e2dtvf",
+        "botAddress": "chihuahua1v9vae554q55xa4pcfdm0p3kv8nxn50jkee2uvt",
+        "runTime": "23:00",
+        "minimumReward": 1000
       }
     ],
     "authzSupport": false
@@ -222,7 +246,14 @@
     ],
     "image": "https://raw.githubusercontent.com/Gravity-Bridge/Gravity-Docs/main/assets/Graviton-Blue.svg",
     "testAddress": "gravity1yxsmtnxdt6gxnaqrg0j0nudg7et2gqcz4x4uk7",
-    "operators": [],
+    "operators": [
+      {
+        "address": "gravityvaloper187reejg4et24jpggqt55vnc47l926w0p8w70mh",
+        "botAddress": "gravity1v9vae554q55xa4pcfdm0p3kv8nxn50jk7u42gp",
+        "runTime": "23:00",
+        "minimumReward": 1000
+      }
+    ],
     "authzSupport": true
   },
   {
@@ -335,7 +366,9 @@
       "https://emoney.validator.network"
     ],
     "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/ngm.svg",
-    "operators": [],
+    "operators": [
+
+    ],
     "authzSupport": false
   },
   {
@@ -351,7 +384,14 @@
       "https://rpc.kava.io"
     ],
     "image": "https://raw.githubusercontent.com/Kava-Labs/kava/master/kava-logo.svg",
-    "operators": [],
+    "operators": [
+      {
+        "address": "kavavaloper17jr6wyhm2twyph6d88l5ux945gwmf8vfkhckda",
+        "botAddress": "kava1avq4zm9cyrhc2cv9e4pn6p2l97y8aaucu0r733",
+        "runTime": "23:00",
+        "minimumReward": 1000
+      }
+    ],
     "authzSupport": false
   },
   {
@@ -393,7 +433,14 @@
       "https://rpc-crypto-org.keplr.app"
     ],
     "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/cro.png",
-    "operators": [],
+    "operators": [
+      {
+        "address": "crocncl15m2ae4c2ajpkz6hw0d4ucvwfyuwq8ns5z369u8",
+        "botAddress": "cro1lwh80rs0m3rz5qrar46jz72eg8ykakukz7tdmc",
+        "runTime": "23:00",
+        "minimumReward": 1000
+      }
+    ],
     "authzSupport": true
   }
 ]
