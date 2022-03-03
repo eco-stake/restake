@@ -30,7 +30,7 @@ class Autostake {
         const client = await this.getClient(data)
         if(!client) return
 
-        console.log('Running autostake bot', client.operator.botAddress)
+        console.log('Running autostake')
         await this.checkBalance(client)
         let delegations
         const addresses = await this.getDelegations(client).then(delegations => {
@@ -78,11 +78,14 @@ class Autostake {
       prefix: network.prefix
     });
 
+    const accounts = await wallet.getAccounts()
+    const botAddress = accounts[0].address
+    console.log('Your bot address for', data.name, 'is', botAddress)
+
     const client = await network.signingClient(wallet)
     if(!client.connected) return null
 
     client.registry.register("/cosmos.authz.v1beta1.MsgExec", MsgExec)
-    const botAddress = await client.getAddress()
     const operatorData = data.operators.find(el => el.botAddress === botAddress)
 
     if(!operatorData){

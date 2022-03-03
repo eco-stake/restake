@@ -7,6 +7,20 @@ import {findAsync} from '../src/utils/Helpers.mjs'
 
 const registryConfig = (name) => {
   const generateConfig = (chain, tokens, existingConfig) => {
+    if(!existingConfig) existingConfig = {}
+
+    const restApis = chain.apis && chain.apis.rest
+    const rpcApis = chain.apis && chain.apis.rpc
+    if(_.isEmpty(restApis) && _.isEmpty(existingConfig.restUrl)){
+      console.log('No REST URL found')
+      return
+    }
+
+    if(_.isEmpty(rpcApis) && _.isEmpty(existingConfig.rpcUrl)){
+      console.log('No RPC URL found')
+      return
+    }
+
     const fees = chain.fees && chain.fees.fee_tokens && chain.fees.fee_tokens[0] || {}
     let gasPrice
       if(fees && fees.fixed_min_gas_price && fees.denom){
