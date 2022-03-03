@@ -75,14 +75,19 @@ function NetworkSelect(props) {
       Network(data).then(network => {
         setSelectedNetwork(network)
         setValidators({})
-        network.getValidators().then(data => {
-          setValidators(data)
-          loadValidatorImages(network, data)
-          setLoading(false)
-        }).catch(error => {
+        if(network.connected){
+          network.getValidators().then(data => {
+            setValidators(data)
+            loadValidatorImages(network, data)
+            setLoading(false)
+          }).catch(error => {
+            setError('Unable to connect to this network currently. Try again later.')
+            setLoading(false)
+          })
+        }else{
           setError('Unable to connect to this network currently. Try again later.')
           setLoading(false)
-        })
+        }
       })
     }
   }
@@ -98,8 +103,8 @@ function NetworkSelect(props) {
         </div>
         <div className="d-none d-sm-block ms-2">
           {props.network.authzSupport
-            ? <Badge bg="success">Authz</Badge>
-            : <Badge bg="danger">Authz</Badge>
+            ? <Badge className="rounded-pill" bg="success">Authz</Badge>
+            : <Badge className="rounded-pill text-decoration-line-through" bg="danger">Authz</Badge>
           }
         </div>
         <div className="d-none d-md-block ms-md-2">
@@ -135,8 +140,8 @@ function NetworkSelect(props) {
                         <small>{network.operators.length} Operator{network.operators.length > 1 ? 's' : ''}</small>
                         }
                         {network.authz
-                          ? <Badge className="ms-3" bg="success">Authz</Badge>
-                          : <Badge className="ms-3" bg="danger">Authz</Badge>
+                          ? <Badge className="ms-3 rounded-pill" bg="success">Authz</Badge>
+                          : <Badge className="ms-3 rounded-pill text-decoration-line-through" bg="danger">Authz</Badge>
                         }
                       </div>
                     </div>

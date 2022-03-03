@@ -45,13 +45,15 @@ function NetworkFinder() {
     if(Object.keys(state.networks).length && !state.network){
       const networkName = params.network || Object.keys(state.networks)[0]
       const data = state.networks[networkName]
+      if(params.network && !data){
+        navigate("/" + Object.keys(state.networks)[0]);
+      }
       if(!data){
         setState({loading: false})
         return
       }
       if(!params.network){
-        let url = "/" + networkName
-        navigate(url, networkName);
+        navigate("/" + networkName);
       }
       Network(data).then(network => {
         setState({network: network})

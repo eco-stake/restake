@@ -77,7 +77,11 @@ class Delegations extends React.Component {
           this.setState({ rewards: rewards });
         },
         (error) => {
-          this.setState({ error });
+          if([404, 500].includes(error.response.status)){
+          this.setState({ rewards: {} });
+          }else{
+            this.setState({ error });
+          }
         }
       )
   }
