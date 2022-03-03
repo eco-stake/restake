@@ -254,7 +254,7 @@ class Delegations extends React.Component {
               onDelegate={this.onClaimRewards}>{validator.description.moniker}</Delegate>
           </td>
           <td className="text-center">
-            {operator ? this.restakePossible() ? (
+            {operator ? this.restakePossible() && delegation ? (
               this.grantsValid(operator) ? (
                 <RevokeRestake
                   size="sm" variant="outline-danger"
