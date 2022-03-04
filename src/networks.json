@@ -707,6 +707,7 @@
   },
   {
     "name": "evmos",
+    "enabled": false,
     "prettyName": "Evmos",
     "chainId": "evmos_9001-1",
     "prefix": "evmos",
