@@ -237,6 +237,12 @@
         "botAddress": "akash12xpq68caw2aqdu70jm4k792g0v9prhrpdctrez",
         "runTime": "21:00",
         "minimumReward": 10000
+      },
+      {
+        "address": "akashvaloper1uepjmgfuk6rnd0djsglu88w7d0t49lmlsqkfuf",
+        "botAddress": "akash1weeu5yuj8n23hd87wsdxqqgfmzzz9zt6zrr52c",
+        "runTime": "21:00",
+        "minimumReward": 10000
       }
     ],
     "authzSupport": false
@@ -297,6 +303,12 @@
       {
         "address": "chihuahuavaloper140l6y2gp3gxvay6qtn70re7z2s0gn57zum7h5l",
         "botAddress": "chihuahua12xpq68caw2aqdu70jm4k792g0v9prhrprkt2p6",
+        "runTime": "22:00",
+        "minimumReward": 1000
+      },
+      {
+        "address": "chihuahuavaloper1zl4vt84hya03e8hu7dx4q4cvn2ts2xdr685p5g",
+        "botAddress": "chihuahua1weeu5yuj8n23hd87wsdxqqgfmzzz9zt6vdrajq",
         "runTime": "22:00",
         "minimumReward": 1000
       }
@@ -447,9 +459,7 @@
       "https://emoney.validator.network"
     ],
     "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/ngm.svg",
-    "operators": [
-
-    ],
+    "operators": [],
     "authzSupport": false
   },
   {
