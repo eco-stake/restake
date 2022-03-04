@@ -10,7 +10,6 @@
     ],
     "rpcUrl": [
       "https://osmosis.validator.network",
-      "https://osmosis-1.technofractal.com:443",
       "https://rpc-osmosis.blockapsis.com"
     ],
     "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/osmo.svg",
@@ -100,12 +99,10 @@
     "prefix": "juno",
     "denom": "ujuno",
     "restUrl": [
-      "https://lcd-juno.itastakers.com",
-      "https://lcd.juno-1.technofractal.com/"
+      "https://lcd-juno.itastakers.com"
     ],
     "rpcUrl": [
-      "https://rpc-juno.itastakers.com",
-      "https://juno-1.technofractal.com:443"
+      "https://rpc-juno.itastakers.com"
     ],
     "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/juno.svg",
     "gasPrice": "0.0025ujuno",
@@ -203,8 +200,6 @@
     ],
     "rpcUrl": [
       "https://cosmoshub.validator.network",
-      "https://cosmoshub-4.technofractal.com:443",
-      "https://rpc.cosmos.network:443",
       "https://rpc-cosmoshub.blockapsis.com"
     ],
     "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/atom.svg",
@@ -436,12 +431,10 @@
     "prefix": "regen",
     "denom": "uregen",
     "restUrl": [
-      "https://rest.cosmos.directory/regen",
-      "https://regen.stakesystems.io"
+      "https://rest.cosmos.directory/regen"
     ],
     "rpcUrl": [
-      "https://rpc.cosmos.directory/regen",
-      "https://regen.stakesystems.io:2053"
+      "https://rpc.cosmos.directory/regen"
     ],
     "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/regen.png",
     "gasPrice": "0.002uregen",
@@ -497,8 +490,7 @@
       "https://lcd-sentinel.keplr.app"
     ],
     "rpcUrl": [
-      "https://rpc-sentinel.keplr.app",
-      "https://sentinelhub-2.technofractal.com:443"
+      "https://rpc-sentinel.keplr.app"
     ],
     "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/dvpn.png",
     "gasPrice": "0.02udvpn",
@@ -532,12 +524,10 @@
     "prefix": "dig",
     "denom": "udig",
     "restUrl": [
-      "https://api-1-dig.notional.ventures",
-      "https://api-2-dig.notional.ventures"
+      "https://api-1-dig.notional.ventures"
     ],
     "rpcUrl": [
-      "https://rpc-1-dig.notional.ventures",
-      "https://rpc-2-dig.notional.ventures"
+      "https://rpc-1-dig.notional.ventures"
     ],
     "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/dig.png",
     "gasPrice": "0.0025udig",
@@ -693,7 +683,6 @@
     "prefix": "cro",
     "denom": "basecro",
     "restUrl": [
-      "https://mainnet.crypto.org/",
       "https://lcd-crypto-org.keplr.app/"
     ],
     "rpcUrl": [
@@ -807,13 +796,11 @@
     "denom": "ustars",
     "restUrl": [
       "https://rest.stargaze-apis.com",
-      "https://api.stargaze.ezstaking.io",
-      "https://api.stars.kingnodes.com"
+      "https://api.stargaze.ezstaking.io"
     ],
     "rpcUrl": [
       "https://rpc.stargaze-apis.com",
-      "https://rpc.stargaze.ezstaking.io",
-      "https://rpc.stars.kingnodes.com"
+      "https://rpc.stargaze.ezstaking.io"
     ],
     "image": "https://raw.githubusercontent.com/public-awesome/assets/main/images/stars.png",
     "operators": [
@@ -834,15 +821,11 @@
     "denom": "ucmdx",
     "restUrl": [
       "https://api.comdex.audit.one/rest",
-      "https://rest.comdex.one",
-      "http://comdex.node.vitwit.com:1317",
-      "https://api-comdex.zenchainlabs.io"
+      "https://rest.comdex.one"
     ],
     "rpcUrl": [
       "https://api.comdex.audit.one/rpc/",
-      "https://rpc.comdex.one",
-      "http://comdex.node.vitwit.com:26657",
-      "https://rpc-comdex.zenchainlabs.io"
+      "https://rpc.comdex.one"
     ],
     "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/cmdx.png",
     "operators": [

@@ -48,7 +48,7 @@ function ClaimRewards(props) {
     }, (error) => {
       console.log('Failed to broadcast:', error)
       props.setLoading(false)
-      props.setError('Failed to broadcast TX')
+      props.setError('Failed to broadcast: ' + error.message)
     })
   }
 

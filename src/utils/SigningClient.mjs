@@ -65,8 +65,12 @@ const SigningClient = async (rpcUrl, chainId, defaultGasPrice, signer, key) => {
   }
 
   const simulate = async (address, msgs, memo, modifier) => {
-    const estimate = await client.simulate(address, msgs, memo)
-    return parseInt(estimate * (modifier || 1.5))
+    try{
+      const estimate = await client.simulate(address, msgs, memo)
+      return (parseInt(estimate * (modifier || 1.5)))
+    }catch (error){
+      return undefined
+    }
   }
 
   function findAvailableUrl(urls){

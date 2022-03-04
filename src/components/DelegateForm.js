@@ -49,7 +49,7 @@ class DelegateForm extends React.Component {
       this.props.onDelegate()
     }, (error) => {
       console.log('Failed to broadcast:', error)
-      this.setState({ loading: false, error: 'Failed to broadcast TX' })
+      this.setState({ loading: false, error: error.message })
     })
   }
 
@@ -82,7 +82,7 @@ class DelegateForm extends React.Component {
   }
 
   async setAvailableAmount(){
-    const messages = this.buildMessages(this.props.availableBalance.amount / 1_000_000.0)
+    const messages = this.buildMessages(parseInt(this.props.availableBalance.amount * 0.95) / 1_000_000.0)
     this.props.stargateClient.simulate(this.props.address, messages).then(gas => {
       const saveTxFeeNum = (this.props.redelegate || this.props.undelegate) ? 0 : 10
       const gasPrice = this.props.stargateClient.getFee(gas).amount[0].amount

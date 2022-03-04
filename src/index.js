@@ -15,7 +15,8 @@ import reportWebVitals from './utils/reportWebVitals';
 
 Bugsnag.start({
   apiKey: '5cda10bb1c98f351cd0b722a1535d8c2',
-  plugins: [new BugsnagPluginReact()]
+  plugins: [new BugsnagPluginReact()],
+  enabledReleaseStages: [ 'production', 'staging' ]
 })
 
 const ErrorBoundary = Bugsnag.getPlugin('react')
