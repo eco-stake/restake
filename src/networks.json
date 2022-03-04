@@ -529,5 +529,28 @@
       }
     ],
     "authzSupport": true
+  },
+  {
+    "name": "evmos",
+    "prettyName": "Evmos",
+    "chainId": "evmos_9001-1",
+    "prefix": "evmos",
+    "denom": "aevmos",
+    "restUrl": [
+      "https://rest.bd.evmos.org:1317/"
+    ],
+    "rpcUrl": [
+      "https://tendermint.bd.evmos.org:26657/"
+    ],
+    "image": "https://archive.evmos.dev/assets/evmos-black-icon.svg",
+    "operators": [
+      {
+        "address": "evmosvaloper1aep37tvd5yh4ydeya2a88g2tkjz6f2lcrfjumh",
+        "botAddress": "evmos1ksh2uvrvq7gftgdc8jd2n67pcwcztdxupe9y4u",
+        "runTime": "23:00",
+        "minimumReward": 1000
+      }
+    ],
+    "authzSupport": true
   }
 ]
