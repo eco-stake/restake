@@ -244,7 +244,6 @@ class Delegations extends React.Component {
     const validator = this.props.validators[validatorAddress]
     if(validator){
       const rewards = this.state.rewards && this.state.rewards[validatorAddress]
-      console.log(rewards)
       const denomRewards = rewards && this.denomRewards(rewards)
       const operator = this.operatorForValidator(validatorAddress)
       let rowVariant = operator ? 'table-warning' : undefined
