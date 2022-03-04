@@ -617,5 +617,28 @@
       }
     ],
     "authzSupport": false
+  },
+  {
+    "name": "lumnetwork",
+    "prettyName": "Lum Network",
+    "chainId": "lum-network-1",
+    "prefix": "lum",
+    "denom": "ulum",
+    "restUrl": [
+      "https://node0.mainnet.lum.network/rest"
+    ],
+    "rpcUrl": [
+      "https://node0.mainnet.lum.network/rpc"
+    ],
+    "image": "https://raw.githubusercontent.com/lum-network/mainnet/master/assets/lum.png",
+    "operators": [
+      {
+        "address": "lumvaloper1u6jr0pztvsjpvx77rfzmtw49xwzu9kash9slqs",
+        "botAddress": "lum1v9vae554q55xa4pcfdm0p3kv8nxn50jk0x6mca",
+        "runTime": "23:00",
+        "minimumReward": 1000
+      }
+    ],
+    "authzSupport": true
   }
 ]
