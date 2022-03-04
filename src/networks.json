@@ -563,7 +563,7 @@
       "https://rest.bd.evmos.org:1317"
     ],
     "rpcUrl": [
-      "https://eth.bd.evmos.org:8545/"
+      "https://tendermint.bd.evmos.org:26657"
     ],
     "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/evmos.png",
     "operators": [
@@ -572,9 +572,15 @@
         "botAddress": "evmos17va68yw35aleakz62jwqn24s22fd3k545mclkl",
         "runTime": "21:00",
         "minimumReward": 1000
+      },
+      {
+        "address": "evmosvaloper1aep37tvd5yh4ydeya2a88g2tkjz6f2lcrfjumh",
+        "botAddress": "evmos1ksh2uvrvq7gftgdc8jd2n67pcwcztdxupe9y4u",
+        "runTime": "23:00",
+        "minimumReward": 1000
       }
     ],
-    "authzSupport": false
+    "authzSupport": true
   },
   {
     "name": "sifchain",
