@@ -22,6 +22,12 @@
         "botAddress": "osmo1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczed559y",
         "runTime": "21:00",
         "minimumReward": 1000
+      },      
+      {
+        "address": "osmovaloper1vrw2c99yvu5t9gugzuj38w35vmhmazzgx7dckk",
+        "botAddress": "osmo1yl54sf2ekqsc7y7r33267vhc546trx3fwz6yld",
+        "runTime": "21:00",
+        "minimumReward": 1000
       },
       {
         "address": "osmovaloper1md9f5524vtmrn64lyv2pdfn7cnkjkklf44vtjz",
@@ -170,6 +176,12 @@
     "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/akt.svg",
     "testAddress": null,
     "operators": [
+      {
+        "address": "akashvaloper1qwpnhmdlfj6gfyh0e29fjudh0ytfe5l7tjttul",
+        "botAddress": "akash1yl54sf2ekqsc7y7r33267vhc546trx3ftzyns9",
+        "runTime": "21:00",
+        "minimumReward": 10000
+      },
       {
         "address": "akashvaloper1enhj36w6clcm5fjnp87jnffnkthfux2uj88l6h",
         "botAddress": "akash1eml7agwd5x084ennlg6apvskufzrlvnrmthsvr",
