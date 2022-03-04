@@ -77,6 +77,12 @@
         "botAddress": "osmo1mjq48r6435aewerpruwc8up3tz3rzan2yzd8h8",
         "runTime": "19:00",
         "minimumReward": 10000
+      },
+      {
+        "address": "osmovaloper1h2c47vd943scjlfum6yc5frvu2l279lwjep5d6",
+        "botAddress": "osmo1305e92ng6a9pdh3ttc3ld459ckxupxt3lhfnv4",
+        "runTime": "17:25",
+        "minimumReward": 10000
       }
     ],
     "authzSupport": true
@@ -164,6 +170,12 @@
         "botAddress": "juno1mjq48r6435aewerpruwc8up3tz3rzan26tavxf",
         "runTime": "19:00",
         "minimumReward": 10000
+      },
+      {
+        "address": "junovaloper1ncu32g0lzhk0epzdar7smd3qv9da2n8w8mwn4k",
+        "botAddress": "juno1305e92ng6a9pdh3ttc3ld459ckxupxt3p7ecam",
+        "runTime": "17:25",
+        "minimumReward": 10000
       }
     ],
     "authzSupport": true
@@ -210,6 +222,12 @@
         "botAddress": "cosmos1mjq48r6435aewerpruwc8up3tz3rzan2ve7hp4",
         "runTime": "19:00",
         "minimumReward": 500000
+      },
+      {
+        "address": "cosmosvaloper14qazscc80zgzx3m0m0aa30ths0p9hg8vdglqrc",
+        "botAddress": "cosmos1305e92ng6a9pdh3ttc3ld459ckxupxt3hv6r68",
+        "runTime": "17:25",
+        "minimumReward": 10000
       }
     ],
     "authzSupport": true
@@ -355,6 +373,12 @@
         "botAddress": "chihuahua1mjq48r6435aewerpruwc8up3tz3rzan20vneqh",
         "runTime": "19:00",
         "minimumReward": 10000000
+      },
+      {
+        "address": "chihuahuavaloper166ks8xvs36m0ggyxwavv7rj4d9nqwthgq5g7s8",
+        "botAddress": "chihuahua1305e92ng6a9pdh3ttc3ld459ckxupxt35ehdm9",
+        "runTime": "17:25",
+        "minimumReward": 10000
       }
     ],
     "authzSupport": false
@@ -376,8 +400,8 @@
       "45.138.49.222:26657"
     ],
     "image": "https://raw.githubusercontent.com/Gravity-Bridge/Gravity-Docs/main/assets/Graviton-Blue.svg",
-    "gasPrice": "0ugraviton",
     "testAddress": "gravity1yxsmtnxdt6gxnaqrg0j0nudg7et2gqcz4x4uk7",
+    "gasPrice": "0.025ugraviton",
     "operators": [
       {
         "address": "gravityvaloper187reejg4et24jpggqt55vnc47l926w0p8w70mh",
@@ -395,6 +419,12 @@
         "address": "gravityvaloper1d63hvdgwy64sfex2kyujd0xyfhmu7r7cgxt5ru",
         "botAddress": "gravity1mjq48r6435aewerpruwc8up3tz3rzan2gfv0ya",
         "runTime": "19:00",
+        "minimumReward": 10000
+      },
+      {
+        "address": "gravityvaloper1452twnqn0z4l34c9uxudeaetk6hudpqpm0w32x",
+        "botAddress": "gravity1305e92ng6a9pdh3ttc3ld459ckxupxt3nugml0",
+        "runTime": "17:25",
         "minimumReward": 10000
       }
     ],
@@ -450,12 +480,19 @@
     ],
     "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/luna.svg",
     "testAddress": "terra1rnszu7kumz5lmgdk3fv2pmzt3s8vhcddqep7d4",
+    "gasPrice": "170ukrw",
     "operators": [
       {
         "address": "terravaloper1f2t96sz9hnwsqnneux6v28xfgn07pkxjduvwjz",
         "botAddress": "terra1awqjfv0znyemkv8v89vyp3hte54ayrt97tng8d",
         "runTime": "22:00",
         "minimumReward": 1000
+      },
+      {
+        "address": "terravaloper13slfa8cc7zvmjt4wkap2lwmlkp4h3azwltlj6s",
+        "botAddress": "terra1305e92ng6a9pdh3ttc3ld459ckxupxt33gqrc8",
+        "runTime": "17:25",
+        "minimumReward": 10000
       }
     ],
     "authzSupport": true
@@ -514,6 +551,12 @@
         "botAddress": "dig1mjq48r6435aewerpruwc8up3tz3rzan25dhurw",
         "runTime": "19:00",
         "minimumReward": 100000
+      },
+      {
+        "address": "digvaloper184tx500pdv53uua98ezu2vy2zcfp5nfwrsjnz7",
+        "botAddress": "dig1305e92ng6a9pdh3ttc3ld459ckxupxt30cngcu",
+        "runTime": "17:25",
+        "minimumReward": 10000
       }
     ],
     "authzSupport": false
@@ -565,6 +608,12 @@
         "botAddress": "emoney1mjq48r6435aewerpruwc8up3tz3rzan2r6yrkg",
         "runTime": "19:00",
         "minimumReward": 2000000
+      },
+      {
+        "address": "emoneyvaloper1ggpn5jtrgf5hhzw79la6k4h9jgcws3erjzccuh",
+        "botAddress": "emoney1305e92ng6a9pdh3ttc3ld459ckxupxt3c0qhd6",
+        "runTime": "17:25",
+        "minimumReward": 10000
       }
     ],
     "authzSupport": false
