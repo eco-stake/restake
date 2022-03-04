@@ -19,6 +19,12 @@
     "ownerAddress": "osmovaloper1u5v0m74mql5nzfx2yh43s2tke4mvzghr6m2n5t",
     "operators": [
       {
+        "address": "osmovaloper1pxphtfhqnx9ny27d53z4052e3r76e7qq495ehm",
+        "botAddress": "osmo194ytn50yhh67rdha8akhs7c6zulnz4n2pv6n63",
+        "runTime": "21:00",
+        "minimumReward": 1000
+      },
+      {
         "address": "osmovaloper1u5v0m74mql5nzfx2yh43s2tke4mvzghr6m2n5t",
         "botAddress": "osmo1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczed559y",
         "runTime": "21:00",
@@ -375,7 +381,13 @@
     ],
     "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/luna.svg",
     "testAddress": "terra1rnszu7kumz5lmgdk3fv2pmzt3s8vhcddqep7d4",
-    "operators": [],
+    "operators": [
+      {
+        "address": "terravaloper1f2t96sz9hnwsqnneux6v28xfgn07pkxjduvwjz",
+        "botAddress": "terra1awqjfv0znyemkv8v89vyp3hte54ayrt97tng8d",
+        "runTime": "22:00",
+        "minimumReward": 1000
+      }
     "authzSupport": true
   },
   {
