@@ -119,7 +119,7 @@ class Delegations extends React.Component {
   }
 
   getTestGrant(){
-    this.props.restClient.getGrants(this.props.network.data.testaddress, this.props.address)
+    this.props.restClient.getGrants(this.props.network.data.testAddress, this.props.address)
       .then(
         (result) => { }, (error) => {
           if (error.response && error.response.status === 501) {

@@ -221,6 +221,7 @@
     "prefix": "akash",
     "denom": "uakt",
     "restUrl": [
+      "https://rest.cosmos.directory/akash",
       "http://135.181.60.250:1317",
       "http://135.181.181.120:1518",
       "http://135.181.181.119:1518",
@@ -229,6 +230,7 @@
       "http://135.181.181.123:1518"
     ],
     "rpcUrl": [
+      "https://rpc.cosmos.directory/akash",
       "http://135.181.60.250:26657",
       "http://rpc.akash.forbole.com:80",
       "http://akash-sentry01.skynetvalidators.com:26657",
@@ -241,7 +243,7 @@
       "http://135.181.181.123:28957"
     ],
     "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/akt.svg",
-    "testAddress": null,
+    "testAddress": "akash1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczud2r2v",
     "ownerAddress": "akashvaloper1xgnd8aach3vawsl38snpydkng2nv8a4kqgs8hf",
     "operators": [
       {
@@ -405,10 +407,12 @@
     "prefix": "regen",
     "denom": "uregen",
     "restUrl": [
+      "https://rest.cosmos.directory/regen",
       "http://public-rpc.regen.vitwit.com:1317",
       "https://regen.stakesystems.io"
     ],
     "rpcUrl": [
+      "https://rpc.cosmos.directory/regen",
       "http://public-rpc.regen.vitwit.com:26657",
       "https://regen.stakesystems.io:2053",
       "http://rpc.regen.forbole.com:80"
@@ -433,10 +437,12 @@
     "prefix": "terra",
     "denom": "uluna",
     "restUrl": [
+      "https://rest.cosmos.directory/terra",
       "http://64.227.72.101:1317",
       "https://blockdaemon-terra-lcd.api.bdnodes.net:1317"
     ],
     "rpcUrl": [
+      "https://rpc.cosmos.directory/terra",
       "https://terra-rpc.easy2stake.com:443",
       "http://64.227.72.101:26657",
       "http://public-node.terra.dev:26657",
