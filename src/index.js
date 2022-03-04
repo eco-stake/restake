@@ -1,24 +1,38 @@
+import Bugsnag from '@bugsnag/js'
+import BugsnagPluginReact from '@bugsnag/plugin-react'
 import React from 'react';
+
 import ReactDOM from 'react-dom';
 import {
   BrowserRouter,
   Routes,
   Route
 } from "react-router-dom";
+
 import NetworkFinder from './components/NetworkFinder'
 import './index.css';
 import reportWebVitals from './utils/reportWebVitals';
 
+Bugsnag.start({
+  apiKey: '5cda10bb1c98f351cd0b722a1535d8c2',
+  plugins: [new BugsnagPluginReact()]
+})
+
+const ErrorBoundary = Bugsnag.getPlugin('react')
+  .createErrorBoundary(React)
+
 ReactDOM.render(
-  <React.StrictMode>
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<NetworkFinder />} />
-        <Route path="/:network" element={<NetworkFinder />} />
-        <Route path="/:network/:operator" element={<NetworkFinder />} />
-      </Routes>
-    </BrowserRouter>
-  </React.StrictMode>,
+  <ErrorBoundary>
+    <React.StrictMode>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<NetworkFinder />} />
+          <Route path="/:network" element={<NetworkFinder />} />
+          <Route path="/:network/:operator" element={<NetworkFinder />} />
+        </Routes>
+      </BrowserRouter>
+    </React.StrictMode>
+  </ErrorBoundary>,
   document.getElementById('root')
 );
 

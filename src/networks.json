@@ -251,26 +251,11 @@
     "prefix": "akash",
     "denom": "uakt",
     "restUrl": [
-      "https://rest.cosmos.directory/akash",
-      "http://135.181.60.250:1317",
-      "http://135.181.181.120:1518",
-      "http://135.181.181.119:1518",
-      "http://135.181.181.121:1518",
-      "http://135.181.181.122:1518",
-      "http://135.181.181.123:1518"
+      "https://rest.cosmos.directory/akash"
     ],
     "rpcUrl": [
       "https://rpc.cosmos.directory/akash",
-      "http://135.181.60.250:26657",
-      "http://rpc.akash.forbole.com:80",
-      "http://akash-sentry01.skynetvalidators.com:26657",
-      "https://akash.technofractal.com:443",
-      "http://162.55.94.246:28957",
-      "http://135.181.181.120:28957",
-      "http://135.181.181.119:28957",
-      "http://135.181.181.121:28957",
-      "http://135.181.181.122:28957",
-      "http://135.181.181.123:28957"
+      "https://akash.technofractal.com:443"
     ],
     "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/akt.svg",
     "testAddress": "akash1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczud2r2v",
@@ -408,14 +393,10 @@
     "prefix": "gravity",
     "denom": "ugraviton",
     "restUrl": [
-      "https://gravitychain.io:1317",
-      "http://gravity-rpc.qwoyn.com:1317"
+      "https://gravitychain.io:1317"
     ],
     "rpcUrl": [
-      "https://gravitychain.io:26657",
-      "http://gravity-rpc.qwoyn.com:26657",
-      "gravity-bridge-1-08.nodes.amhost.net:26657",
-      "45.138.49.222:26657"
+      "https://gravitychain.io:26657"
     ],
     "image": "https://raw.githubusercontent.com/Gravity-Bridge/Gravity-Docs/main/assets/Graviton-Blue.svg",
     "testAddress": "gravity1yxsmtnxdt6gxnaqrg0j0nudg7et2gqcz4x4uk7",
@@ -456,14 +437,11 @@
     "denom": "uregen",
     "restUrl": [
       "https://rest.cosmos.directory/regen",
-      "http://public-rpc.regen.vitwit.com:1317",
       "https://regen.stakesystems.io"
     ],
     "rpcUrl": [
       "https://rpc.cosmos.directory/regen",
-      "http://public-rpc.regen.vitwit.com:26657",
-      "https://regen.stakesystems.io:2053",
-      "http://rpc.regen.forbole.com:80"
+      "https://regen.stakesystems.io:2053"
     ],
     "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/regen.png",
     "gasPrice": "0.002uregen",
@@ -485,16 +463,10 @@
     "prefix": "terra",
     "denom": "uluna",
     "restUrl": [
-      "https://rest.cosmos.directory/terra",
-      "http://64.227.72.101:1317",
-      "https://blockdaemon-terra-lcd.api.bdnodes.net:1317"
+      "https://rest.cosmos.directory/terra"
     ],
     "rpcUrl": [
-      "https://rpc.cosmos.directory/terra",
-      "https://terra-rpc.easy2stake.com:443",
-      "http://64.227.72.101:26657",
-      "http://public-node.terra.dev:26657",
-      "https://terra.technofractal.com:443"
+      "https://rpc.cosmos.directory/terra"
     ],
     "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/luna.svg",
     "testAddress": "terra1rnszu7kumz5lmgdk3fv2pmzt3s8vhcddqep7d4",
@@ -543,6 +515,12 @@
         "botAddress": "sent1mjq48r6435aewerpruwc8up3tz3rzan2hzgw96",
         "runTime": "19:00",
         "minimumReward": 1000000
+      },
+      {
+        "address": "sentvaloper1tjgec0ssfrlldmut69xsp8vzljugg0g306aae2",
+        "botAddress": "sent1e44rluarkdw56dy2turnwjtvtg4wqvs0fsran2",
+        "runTime": "21:00",
+        "minimumReward": 1000
       }
     ],
     "authzSupport": false
@@ -735,6 +713,7 @@
   },
   {
     "name": "evmos",
+    "enabled": false,
     "prettyName": "Evmos",
     "chainId": "evmos_9001-1",
     "prefix": "evmos",
@@ -803,6 +782,12 @@
         "address": "lumvaloper1u6jr0pztvsjpvx77rfzmtw49xwzu9kash9slqs",
         "botAddress": "lum1v9vae554q55xa4pcfdm0p3kv8nxn50jk0x6mca",
         "runTime": "23:00",
+        "minimumReward": 1000
+      },
+      {
+        "address": "lumvaloper1txgtzgdj90mqddhyu5gcpkkdeu9g2fu22d85d7",
+        "botAddress": "lum1e44rluarkdw56dy2turnwjtvtg4wqvs08pgdz3",
+        "runTime": "21:00",
         "minimumReward": 1000
       }
     ],
