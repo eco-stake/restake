@@ -83,15 +83,29 @@ const RestClient = async (chainId, restUrls) => {
 
   const getValidatorDelegations = (validatorAddress, maxSize) => {
     const searchParams = new URLSearchParams()
+    searchParams.append("pagination.count_total", true)
     if(maxSize) searchParams.append("pagination.limit", maxSize)
+    const delegation_responses = [];
+    try {
+        const response = await axios.get(restUrl + "/cosmos/staking/v1beta1/validators/" + validatorAddress + "/delegations?" + searchParams.toString());
+        const totalTrips = response.pagination.total;
+        const totalPages = Math.ceil(totalTrips / maxSize);
+        const promiseArray = [];
+        for (let i = 0; i < (totalPages + 1); i++) {
+            promiseArray.push(axios.get(restUrl + "/cosmos/staking/v1beta1/validators/" + validatorAddress + "/delegations?" + searchParams.toString() + "&page=${i}"));
+        };
 
-    return axios.get(restUrl + "/cosmos/staking/v1beta1/validators/" + validatorAddress + "/delegations?" + searchParams.toString())
-      .then(res => res.data)
-      .then(
-        (result) => {
-          return result.delegation_responses
+        // promise.all allows you to make multiple axios requests at the same time.
+        // It returns an array of the results of all your axios requests
+        let resolvedPromises = await Promise.all(promiseArray)
+        for (let i = 0; i < resolvedPromises.length; i++) {
+            // This will give you access to the output of each API call
+            delegation_responses.push(resolvedPromises[i].data.delegation_responses)
         }
-      )
+      }catch (err) {
+        console.log('Something went wrong.');
+      }  
+    return result.delegation_responses
   }
 
   function findAvailableUrl(urls){
