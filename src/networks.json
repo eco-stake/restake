@@ -561,6 +561,29 @@
         "minimumReward": 1000
       }
     ],
-    "authzSupport": true
+    "authzSupport": false
+  },
+  {
+    "name": "sifchain",
+    "prettyName": "Sifchain",
+    "chainId": "sifchain-1",
+    "prefix": "sifchain",
+    "denom": "rowan",
+    "restUrl": [
+      "https://api.sifchain.finance"
+    ],
+    "rpcUrl": [
+      "https://rpc.sifchain.finance"
+    ],
+    "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/rowan.png",
+    "operators": [
+      {
+        "address": "sifvaloper1uepjmgfuk6rnd0djsglu88w7d0t49lmlmxj56z",
+        "botAddress": "sif1weeu5yuj8n23hd87wsdxqqgfmzzz9zt629p9uf",
+        "runTime": "21:00",
+        "minimumReward": 1000
+      }
+    ],
+    "authzSupport": false
   }
 ]
