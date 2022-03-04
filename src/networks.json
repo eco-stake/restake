@@ -94,6 +94,12 @@
     "testAddress": "juno1yxsmtnxdt6gxnaqrg0j0nudg7et2gqcz8yyl52",
     "operators": [
       {
+        "address": "junovaloper1ej2es5fjztqjcd4pwa0zyvaevtjd2y5w2aqycm",
+        "botAddress": "juno1gvgcxwdk4j46gx3knhuackvqr2hta29zudcf56",
+        "runTime": "20:00",
+        "minimumReward": 10001
+      },
+      {
         "address": "junovaloper1x8u2ypdr35802tjyjqyxan8x85fzxe6sk0qmh8",
         "botAddress": "juno1r8egcurpwxftegr07gjv9gwffw4fk009a4v3ll",
         "runTime": "21:00",
