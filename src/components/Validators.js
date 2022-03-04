@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import _ from 'lodash'
 import FuzzySearch from 'fuzzy-search'
 
@@ -17,12 +17,33 @@ import {
 
 function Validators(props) {
   const [filter, setFilter] = useState()
+  const [orderedOperatorValidators, setOrderedOperatorValidators] = useState([])
+  const [orderedRegularValidators, setOrderedRegularValidators] = useState([])
+
+  useEffect(() => {
+    const ownerAddress = props.network && props.network.data.ownerAddress
+    setOrderedOperatorValidators(orderValidators(operatorValidators(), ownerAddress))
+    setOrderedRegularValidators(orderValidators(regularValidators()))
+  }, [props.operators, props.validators])
+
+  function orderValidators(validators, ownerAddress){
+    const random = _.shuffle(validators)
+    if(ownerAddress){
+      return _.sortBy(random, ({operator_address}) => operator_address === ownerAddress ? 0 : 1)
+    }
+    return random
+  }
+
+  function orderedRegularDelegations(){
+    const delegations = Object.values(_.omit(this.props.delegations, this.operatorAddresses()))
+    return _.shuffle(delegations)
+  }
 
   function operatorValidators(){
     return _.pick(props.validators, props.operators.map(el => el.address))
   }
 
-  function otherValidators(){
+  function regularValidators(){
     return _.omit(props.validators, props.operators.map(el => el.address))
   }
 
@@ -78,8 +99,8 @@ function Validators(props) {
     )
   }
 
-  const filteredOperators = Object.entries(filteredResults(operatorValidators()))
-  const filteredValidators = Object.entries(filteredResults(otherValidators()))
+  const filteredOperators = Object.entries(filteredResults(orderedOperatorValidators))
+  const filteredValidators = Object.entries(filteredResults(orderedRegularValidators))
 
   return (
     <>

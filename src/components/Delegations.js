@@ -23,7 +23,7 @@ import {
 class Delegations extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {operatorGrants: {}, validatorLoading: {}}
+    this.state = {operatorGrants: {}, validatorLoading: {}, orderedOperators: [], orderedRegularDelegations: []}
 
     this.setError = this.setError.bind(this)
     this.setClaimLoading = this.setClaimLoading.bind(this)
@@ -53,6 +53,8 @@ class Delegations extends React.Component {
   }
 
   refresh(){
+    this.setState({orderedOperators: this.orderedOperators()})
+    this.setState({orderedRegularDelegations: this.orderedRegularDelegations()})
     this.getRewards()
     this.refreshInterval()
     if(this.props.operators.length){
@@ -203,12 +205,18 @@ class Delegations extends React.Component {
     return Object.values(this.props.operators).length < 1 && Object.values(this.props.delegations).length < 1
   }
 
-  operatorDelegations(){
-    return _.pick(this.props.delegations, this.operatorAddresses());
+  orderedOperators(){
+    const random = _.shuffle(this.props.operators)
+    const ownerAddress = this.props.network && this.props.network.data.ownerAddress
+    if(ownerAddress){
+      return _.sortBy(random, ({address}) => address === ownerAddress ? 0 : 1)
+    }
+    return random
   }
 
-  otherDelegations(){
-    return _.omit(this.props.delegations, this.operatorAddresses())
+  orderedRegularDelegations(){
+    const delegations = Object.values(_.omit(this.props.delegations, this.operatorAddresses()))
+    return _.shuffle(delegations)
   }
 
   totalRewards(validators){
@@ -441,15 +449,15 @@ class Delegations extends React.Component {
               </tr>
             </thead>
             <tbody>
-              {this.props.operators.length > 0 && (
-                this.props.operators.map(operator => {
+              {this.state.orderedOperators.length > 0 && (
+                this.state.orderedOperators.map(operator => {
                   const delegation = this.props.delegations && this.props.delegations[operator.address]
                   return this.renderValidator(operator.address, delegation)
                 })
               )}
-              {this.props.delegations && (
-                Object.entries(this.otherDelegations()).map(([validatorAddress, item], i) => {
-                  return this.renderValidator(validatorAddress, item)
+              {this.state.orderedRegularDelegations.length > 0 && (
+                this.state.orderedRegularDelegations.map(delegation => {
+                  return this.renderValidator(delegation.delegation.validator_address, delegation)
                 })
               )}
             </tbody>
