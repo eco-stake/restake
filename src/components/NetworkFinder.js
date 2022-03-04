@@ -77,7 +77,7 @@ function NetworkFinder() {
           operators: state.network.getOperators(validators),
           loading: false
         })
-      }, error => setState({loading: false, error: error}))
+      }, error => setState({loading: false, error: 'Unable to connect right now, try again'}))
     }
   }, [state.network])
 

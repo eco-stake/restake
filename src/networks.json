@@ -16,6 +16,7 @@
     "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/osmo.svg",
     "gasPrice": "0uosmo",
     "testAddress": "osmo1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczed559y",
+    "ownerAddress": "osmovaloper1u5v0m74mql5nzfx2yh43s2tke4mvzghr6m2n5t",
     "operators": [
       {
         "address": "osmovaloper1u5v0m74mql5nzfx2yh43s2tke4mvzghr6m2n5t",
@@ -211,7 +212,14 @@
     ],
     "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/akt.svg",
     "testAddress": null,
+    "ownerAddress": "akashvaloper1xgnd8aach3vawsl38snpydkng2nv8a4kqgs8hf",
     "operators": [
+      {
+        "address": "akashvaloper1xgnd8aach3vawsl38snpydkng2nv8a4kqgs8hf",
+        "botAddress": "akash1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczud2r2v",
+        "runTime": "21:00",
+        "minimumReward": 10000
+      },
       {
         "address": "akashvaloper1qwpnhmdlfj6gfyh0e29fjudh0ytfe5l7tjttul",
         "botAddress": "akash1yl54sf2ekqsc7y7r33267vhc546trx3ftzyns9",
@@ -247,6 +255,7 @@
     ],
     "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/huahua.png",
     "gasPrice": "0.025uhuahua",
+    "ownerAddress": "chihuahuavaloper19vwcee000fhazmpt4ultvnnkhfh23ppwxll8zz",
     "testAddress": "chihuahua1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczjr22j5",
     "operators": [
       {
