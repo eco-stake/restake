@@ -539,5 +539,28 @@
       }
     ],
     "authzSupport": true
+  },
+  {
+    "name": "evmos",
+    "prettyName": "Evmos",
+    "chainId": "evmos_9001-1",
+    "prefix": "evmos",
+    "denom": "aevmos",
+    "restUrl": [
+      "https://rest.bd.evmos.org:1317"
+    ],
+    "rpcUrl": [
+      "https://eth.bd.evmos.org:8545/"
+    ],
+    "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/evmos.png",
+    "operators": [
+      {
+        "address": "evmosvaloper1pz3mcahcrglf3md4lggax5r95gvmppc6x5w7hw",
+        "botAddress": "evmos17va68yw35aleakz62jwqn24s22fd3k545mclkl",
+        "runTime": "21:00",
+        "minimumReward": 1000
+      }
+    ],
+    "authzSupport": true
   }
 ]
