@@ -515,6 +515,12 @@
         "botAddress": "sent1mjq48r6435aewerpruwc8up3tz3rzan2hzgw96",
         "runTime": "19:00",
         "minimumReward": 1000000
+      },
+      {
+        "address": "sentvaloper1tjgec0ssfrlldmut69xsp8vzljugg0g306aae2",
+        "botAddress": "sent1e44rluarkdw56dy2turnwjtvtg4wqvs0fsran2",
+        "runTime": "21:00",
+        "minimumReward": 1000
       }
     ],
     "authzSupport": false
@@ -776,6 +782,12 @@
         "address": "lumvaloper1u6jr0pztvsjpvx77rfzmtw49xwzu9kash9slqs",
         "botAddress": "lum1v9vae554q55xa4pcfdm0p3kv8nxn50jk0x6mca",
         "runTime": "23:00",
+        "minimumReward": 1000
+      },
+      {
+        "address": "lumvaloper1txgtzgdj90mqddhyu5gcpkkdeu9g2fu22d85d7",
+        "botAddress": "lum1e44rluarkdw56dy2turnwjtvtg4wqvs08pgdz3",
+        "runTime": "21:00",
         "minimumReward": 1000
       }
     ],
