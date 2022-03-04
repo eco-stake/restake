@@ -46,6 +46,14 @@ cp .env.sample .env
 
 **Populate your new .env file with your mnemonic.**
 
+### Install Docker Compose
+
+```
+sudo apt install docker
+```
+
+### Running the script (to see if everything works correctly)
+
 Running the autostake script manually is then simple:
 
 ```
@@ -53,6 +61,8 @@ docker-compose run app npm run autostake
 ```
 
 Note you might need `sudo` depending on your docker install.
+
+### Setting up Cron to make sure the script runs daily
 
 You should setup your script to run at the same time each day using `crontab`
 
@@ -64,7 +74,9 @@ crontab -e
 
 Use `git pull` to retrieve the latest version as required. The autostaking script can and will change in the near future.
 
-### Setup and submit your REStake operator
+## Submiting your operator
+
+### Setup your REStake operator
 
 You now need to update the [networks.json](./src/networks.json) file at `./src/networks.json` to add your operator to any networks you want to auto-compound for. Check the existing file for examples, but the operators array is simple:
 
