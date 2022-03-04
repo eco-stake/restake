@@ -73,7 +73,7 @@ class Delegations extends React.Component {
   }
 
   getRewards() {
-    this.props.restClient.getRewards(this.props.address)
+    this.props.restClient.getRewards(this.props.address, this.props.network.denom)
       .then(
         (rewards) => {
           this.setState({ rewards: rewards });
@@ -236,10 +236,16 @@ class Delegations extends React.Component {
     }
   }
 
+  denomRewards(rewards){
+    return rewards.reward.find(reward => reward.denom === this.props.network.denom)
+  }
+
   renderValidator(validatorAddress, delegation){
     const validator = this.props.validators[validatorAddress]
     if(validator){
       const rewards = this.state.rewards && this.state.rewards[validatorAddress]
+      console.log(rewards)
+      const denomRewards = rewards && this.denomRewards(rewards)
       const operator = this.operatorForValidator(validatorAddress)
       let rowVariant = operator ? 'table-warning' : undefined
 
@@ -292,7 +298,7 @@ class Delegations extends React.Component {
             <Coins coins={delegationBalance} />
           </td>
           <td className="d-none d-sm-table-cell">
-            {rewards && rewards.reward.map(el => <Coins key={el.denom} coins={el} />)}
+            {denomRewards && <Coins key={denomRewards.denom} coins={denomRewards} />}
           </td>
           <td>
             <div className="d-grid gap-2 d-md-flex justify-content-end">
