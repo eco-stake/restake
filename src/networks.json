@@ -727,6 +727,12 @@
     "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/evmos.png",
     "operators": [
       {
+        "address": "evmosvaloper1x5y65hgngh77sxta6s2vpjnfjep3ltllyhf2hs",
+        "botAddress": "evmos16e67hq4eqgnfw6pxu8v33mz259z5r30d9v2uq2",
+        "runTime": "21:00",
+        "minimumReward": 1000
+      },
+      {
         "address": "evmosvaloper1pz3mcahcrglf3md4lggax5r95gvmppc6x5w7hw",
         "botAddress": "evmos17va68yw35aleakz62jwqn24s22fd3k545mclkl",
         "runTime": "21:00",
