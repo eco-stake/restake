@@ -63,7 +63,7 @@ class Wallet extends React.Component {
           }else{
             this.setState({
               isLoaded: true,
-              error
+              error: 'Failed to load delegations. Please refresh.'
             });
           }
         }

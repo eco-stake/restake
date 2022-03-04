@@ -42,6 +42,7 @@ class Delegations extends React.Component {
     if(!this.props.address) return
 
     if(this.props.address !== prevProps.address){
+      clearInterval(this.state.refreshInterval);
       const isNanoLedger = this.props.stargateClient.getIsNanoLedger()
       this.setState({ isNanoLedger: isNanoLedger, authzMissing: false, error: null })
       this.refresh()
@@ -65,7 +66,6 @@ class Delegations extends React.Component {
   }
 
   refreshInterval(){
-    clearInterval(this.state.refreshInterval);
     const interval = setInterval(() => {
       this.getRewards()
     }, 15_000)
@@ -82,7 +82,7 @@ class Delegations extends React.Component {
           if([404, 500].includes(error.response.status)){
           this.setState({ rewards: {} });
           }else{
-            this.setState({ error });
+            this.setState({ error: 'Failed to get rewards. Please refresh' });
           }
         }
       )
@@ -112,7 +112,7 @@ class Delegations extends React.Component {
             if (error.response.status === 501) {
               this.setState({ authzMissing: true });
             }else{
-              this.setState({ error });
+              this.setState({ error: 'Failed to get grants. Please refresh' });
             }
           })
     })
