@@ -88,6 +88,12 @@
     "testAddress": "juno1yxsmtnxdt6gxnaqrg0j0nudg7et2gqcz8yyl52",
     "operators": [
       {
+        "address": "junovaloper1zxx8j75ngm8m38v9l5wreaavwnsuun7gcq5cu8",
+        "botAddress": "juno1n3m6rj0w9lgzg7leppnaru2xguraxhqcn4eyv6",
+        "runTime": "21:00",
+        "minimumReward": 10000
+      },
+      {
         "address": "junovaloper1x8u2ypdr35802tjyjqyxan8x85fzxe6sk0qmh8",
         "botAddress": "juno1r8egcurpwxftegr07gjv9gwffw4fk009a4v3ll",
         "runTime": "21:00",
@@ -393,7 +399,14 @@
     ],
     "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/dvpn.png",
     "testAddress": "sent1yxsmtnxdt6gxnaqrg0j0nudg7et2gqcz2d3ahe",
-    "operators": [],
+    "operators": [
+      {
+        "address": "sentvaloper10y0044zsacejntznk6eatvz7mcekqv357fhl7q",
+        "botAddress": "sent1n3m6rj0w9lgzg7leppnaru2xguraxhqc7uvx0f",
+        "runTime": "21:00",
+        "minimumReward": 100000
+      }
+    ],
     "authzSupport": false
   },
   {
