@@ -36,7 +36,7 @@ function GrantRestake(props) {
     }, (error) => {
       console.log('Failed to broadcast:', error)
       setLoading(false)
-      props.setError('Failed to broadcast TX')
+      props.setError('Failed to broadcast: ' + error.message)
     })
   }
 

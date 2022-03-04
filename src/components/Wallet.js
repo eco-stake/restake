@@ -55,7 +55,7 @@ class Wallet extends React.Component {
           });
         },
         (error) => {
-          if([404, 500].includes(error.response.status)){
+          if(error.response && [404, 500].includes(error.response.status)){
             this.setState({
               isLoaded: true,
               delegations: {},

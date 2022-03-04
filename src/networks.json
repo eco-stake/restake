@@ -436,12 +436,10 @@
     "prefix": "regen",
     "denom": "uregen",
     "restUrl": [
-      "https://rest.cosmos.directory/regen",
-      "https://regen.stakesystems.io"
+      "https://rest.cosmos.directory/regen"
     ],
     "rpcUrl": [
-      "https://rpc.cosmos.directory/regen",
-      "https://regen.stakesystems.io:2053"
+      "https://rpc.cosmos.directory/regen"
     ],
     "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/regen.png",
     "gasPrice": "0.002uregen",

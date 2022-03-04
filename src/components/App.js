@@ -149,7 +149,7 @@ class App extends React.Component {
                 }));
                 localStorage.setItem(validator.operator_address, imageUrl)
               }
-            })
+            }, error => { })
         }else{
           return null
         }
