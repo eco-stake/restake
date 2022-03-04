@@ -6,7 +6,14 @@ function Coins(props) {
   }
 
   function denom(coins){
-    return coins.denom.slice(1).toUpperCase()
+    if(!coins.denom) return
+
+    if(coins.denom.startsWith('base')){
+      return coins.denom.slice(4).toUpperCase()
+    }else if(['u', 'a'].includes(coins.denom[0])){
+      return coins.denom.slice(1).toUpperCase()
+    }
+    return coins.denom.toUpperCase()
   }
 
   if(!props.coins || !props.coins.denom){
