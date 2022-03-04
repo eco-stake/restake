@@ -807,5 +807,61 @@
       }
     ],
     "authzSupport": true
+  },
+  {
+    "name": "stargaze",
+    "prettyName": "Stargaze",
+    "chainId": "stargaze-1",
+    "prefix": "stars",
+    "denom": "ustars",
+    "restUrl": [
+      "https://rest.stargaze-apis.com",
+      "https://api.stargaze.ezstaking.io",
+      "https://api.stars.kingnodes.com"
+    ],
+    "rpcUrl": [
+      "https://rpc.stargaze-apis.com",
+      "https://rpc.stargaze.ezstaking.io",
+      "https://rpc.stars.kingnodes.com"
+    ],
+    "image": "https://raw.githubusercontent.com/public-awesome/assets/main/images/stars.png",
+    "operators": [
+      {
+        "address": "starsvaloper10wxn2lv29yqnw2uf4jf439kwy5ef00qd0jluj0",
+        "botAddress": "stars1xs023g3yj2mavwn3cjclgsh8mlk0kgsjjzetx5",
+        "runTime": "21:00",
+        "minimumReward": 1000
+      }
+    ],
+    "authzSupport": true
+  },
+  {
+    "name": "comdex",
+    "prettyName": "Comdex",
+    "chainId": "comdex-1",
+    "prefix": "comdex",
+    "denom": "ucmdx",
+    "restUrl": [
+      "https://api.comdex.audit.one/rest",
+      "https://rest.comdex.one",
+      "http://comdex.node.vitwit.com:1317",
+      "https://api-comdex.zenchainlabs.io"
+    ],
+    "rpcUrl": [
+      "https://api.comdex.audit.one/rpc/",
+      "https://rpc.comdex.one",
+      "http://comdex.node.vitwit.com:26657",
+      "https://rpc-comdex.zenchainlabs.io"
+    ],
+    "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/cmdx.png",
+    "operators": [
+      {
+        "address": "comdexvaloper19qz6sgw7llrft2x05lp4swy569e5sla6gl3cuu",
+        "botAddress": "comdex1e44rluarkdw56dy2turnwjtvtg4wqvs04yhxwj",
+        "runTime": "21:00",
+        "minimumReward": 1000
+      }
+    ],
+    "authzSupport": false
   }
 ]
