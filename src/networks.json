@@ -275,6 +275,7 @@
     "gasPrice": "0.025uhuahua",
     "ownerAddress": "chihuahuavaloper19vwcee000fhazmpt4ultvnnkhfh23ppwxll8zz",
     "testAddress": "chihuahua1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczjr22j5",
+    "gasPrice": "0.025uhuahua",
     "operators": [
       {
         "address": "chihuahuavaloper1tzk3kzjy7fj4w37hm5v48c2t8vvgukzcqgkz8k",
@@ -345,6 +346,7 @@
     ],
     "image": "https://raw.githubusercontent.com/Gravity-Bridge/Gravity-Docs/main/assets/Graviton-Blue.svg",
     "testAddress": "gravity1yxsmtnxdt6gxnaqrg0j0nudg7et2gqcz4x4uk7",
+    "gasPrice": "0.025ugraviton",
     "operators": [
       {
         "address": "gravityvaloper187reejg4et24jpggqt55vnc47l926w0p8w70mh",
@@ -359,10 +361,10 @@
         "minimumReward": 1000
       },
       {
-          "address": "gravityvaloper1452twnqn0z4l34c9uxudeaetk6hudpqpm0w32x",
-          "botAddress": "gravity1305e92ng6a9pdh3ttc3ld459ckxupxt3nugml0",
-          "runTime": "17:25",
-          "minimumReward": 10000
+        "address": "gravityvaloper1452twnqn0z4l34c9uxudeaetk6hudpqpm0w32x",
+        "botAddress": "gravity1305e92ng6a9pdh3ttc3ld459ckxupxt3nugml0",
+        "runTime": "17:25",
+        "minimumReward": 10000
       }
     ],
     "authzSupport": true
@@ -405,6 +407,7 @@
     ],
     "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/luna.svg",
     "testAddress": "terra1rnszu7kumz5lmgdk3fv2pmzt3s8vhcddqep7d4",
+    "gasPrice": "170ukrw",
     "operators": [
       {
         "address": "terravaloper13slfa8cc7zvmjt4wkap2lwmlkp4h3azwltlj6s",
@@ -491,6 +494,7 @@
       "https://emoney.validator.network"
     ],
     "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/ngm.svg",
+    "gasPrice": "0.25ungm",
     "operators": [
       {
         "address": "emoneyvaloper1ggpn5jtrgf5hhzw79la6k4h9jgcws3erjzccuh",
