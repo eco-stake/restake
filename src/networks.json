@@ -391,6 +391,12 @@
         "botAddress": "chihuahua1305e92ng6a9pdh3ttc3ld459ckxupxt35ehdm9",
         "runTime": "17:25",
         "minimumReward": 10000
+      },
+      {
+        "address": "chihuahuavaloper1m2dxkn94t97m7ah65hv4tg2xu0j2a2k4fdee20",
+        "botAddress": "chihuahua1e44rluarkdw56dy2turnwjtvtg4wqvs037c2k8",
+        "runTime": "21:00",
+        "minimumReward": 1000
       }
     ],
     "authzSupport": false
@@ -691,6 +697,12 @@
         "address": "desmosvaloper1lzzctd3a839xxk7vf4cwuhcvgcnmxrhrx7d92e",
         "botAddress": "desmos1mjq48r6435aewerpruwc8up3tz3rzan2cpn8kd",
         "runTime": "19:00",
+        "minimumReward": 10000
+      },
+      {
+        "address": "desmosvaloper1lf3fg79gf2qf6ept7ec22kjd8s6gj3swr2ca0v",
+        "botAddress": "desmos1a4uge5t5uh0mvpu8zaq44mxz8rpyuafg2sxrs8",
+        "runTime": "21:00",
         "minimumReward": 10000
       }
     ],
