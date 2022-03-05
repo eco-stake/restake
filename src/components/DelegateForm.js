@@ -69,7 +69,7 @@ class DelegateForm extends React.Component {
           delegatorAddress: address,
           validatorSrcAddress: this.props.validator.operator_address,
           validatorDstAddress: validatorAddress,
-          amount: coin(parseFloat(amount) * 1000000, this.props.network.denom),
+          amount: coin(parseInt(parseFloat(amount) * 1000000), this.props.network.denom),
         }
       })
     }else{
@@ -79,7 +79,7 @@ class DelegateForm extends React.Component {
         value: {
           delegatorAddress: address,
           validatorAddress: validatorAddress,
-          amount: coin(parseFloat(amount) * 1000000, this.props.network.denom),
+          amount: coin(parseInt(parseFloat(amount) * 1000000), this.props.network.denom),
         }
       })
     }
