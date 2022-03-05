@@ -87,7 +87,9 @@ class Autostake {
     console.log(data.prettyName, 'bot address is', botAddress)
 
     const client = await network.signingClient(wallet)
-    client.registry.register("/cosmos.authz.v1beta1.MsgExec", MsgExec)
+    if(client.connected){
+      client.registry.register("/cosmos.authz.v1beta1.MsgExec", MsgExec)
+    }
 
     const operatorData = data.operators.find(el => el.botAddress === botAddress)
     const operator = operatorData && Operator(operatorData)
