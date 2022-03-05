@@ -54,13 +54,19 @@ sudo apt install docker
 
 ### Running the script (to see if everything works correctly)
 
-Running the autostake script manually is then simple:
+Running the autostake script manually is then simple.
+
+Note you might need `sudo` depending on your docker install.
 
 ```
 docker-compose run app npm run autostake
 ```
 
-Note you might need `sudo` depending on your docker install.
+Pass a network name to run the script for a single network at a time.
+
+```
+docker-compose run app npm run autostake osmosis
+```
 
 ### Setting up Cron to make sure the script runs daily
 
