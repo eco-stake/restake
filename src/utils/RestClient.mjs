@@ -1,4 +1,5 @@
 import axios from 'axios'
+import _ from 'lodash'
 import {findAsync} from './Helpers.mjs'
 
 const RestClient = async (chainId, restUrls) => {
@@ -10,7 +11,7 @@ const RestClient = async (chainId, restUrls) => {
       .then(res => res.data)
       .then(
         (result) => {
-          const validators = result.validators.reduce((a, v) => ({ ...a, [v.operator_address]: v}), {})
+          const validators = _.shuffle(result.validators).reduce((a, v) => ({ ...a, [v.operator_address]: v}), {})
           return validators
         }
       )
@@ -32,7 +33,7 @@ const RestClient = async (chainId, restUrls) => {
       .then(res => res.data)
       .then(
         (result) => {
-          const delegations = result.delegation_responses.reduce((a, v) => ({ ...a, [v.delegation.validator_address]: v}), {})
+          const delegations = _.shuffle(result.delegation_responses).reduce((a, v) => ({ ...a, [v.delegation.validator_address]: v}), {})
           return delegations
         }
       )
