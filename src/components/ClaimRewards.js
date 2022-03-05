@@ -23,7 +23,13 @@ function ClaimRewards(props) {
     if(props.restake && perValidatorReward > 0){
       let messages = buildMessages(props.validators, perValidatorReward)
 
-      gas = await props.stargateClient.simulate(props.address, messages)
+      try {
+        gas = await props.stargateClient.simulate(props.address, messages)
+      } catch (error) {
+        props.setLoading(false)
+        props.setError('Failed to broadcast: ' + error.message)
+        return
+      }
 
       const fee = props.stargateClient.getFee(gas)
       const feeAmount = fee.amount[0].amount
@@ -38,7 +44,13 @@ function ClaimRewards(props) {
       return
     }
     let messages = buildMessages(props.validators, perValidatorReward)
-    gas = gas || await props.stargateClient.simulate(props.address, messages)
+    try {
+      gas = gas || await props.stargateClient.simulate(props.address, messages)
+    } catch (error) {
+      props.setLoading(false)
+      props.setError('Failed to broadcast: ' + error.message)
+      return
+    }
     console.log(messages, gas)
 
     signAndBroadcast(props.address, messages, gas).then((result) => {

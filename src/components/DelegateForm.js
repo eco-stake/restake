@@ -41,7 +41,13 @@ class DelegateForm extends React.Component {
     const client = this.props.stargateClient
 
     let messages = this.buildMessages(amount)
-    const gas = await client.simulate(this.props.address, messages)
+    let gas
+    try {
+       gas = await client.simulate(this.props.address, messages)
+    } catch (error) {
+      this.setState({ loading: false, error: error.message })
+      return
+    }
 
     client.signAndBroadcast(address, messages, gas, memo).then((result) => {
       console.log("Successfully broadcasted:", result);
@@ -64,7 +70,7 @@ class DelegateForm extends React.Component {
           delegatorAddress: address,
           validatorSrcAddress: this.props.validator.operator_address,
           validatorDstAddress: validatorAddress,
-          amount: coin(parseFloat(amount) * 1000000, this.props.network.denom),
+          amount: coin(parseInt(parseFloat(amount) * 1000000), this.props.network.denom),
         }
       })
     }else{
@@ -74,7 +80,7 @@ class DelegateForm extends React.Component {
         value: {
           delegatorAddress: address,
           validatorAddress: validatorAddress,
-          amount: coin(parseFloat(amount) * 1000000, this.props.network.denom),
+          amount: coin(parseInt(parseFloat(amount) * 1000000), this.props.network.denom),
         }
       })
     }
@@ -82,6 +88,7 @@ class DelegateForm extends React.Component {
   }
 
   async setAvailableAmount(){
+    this.setState({error: undefined})
     const messages = this.buildMessages(parseInt(this.props.availableBalance.amount * 0.95) / 1_000_000.0)
     this.props.stargateClient.simulate(this.props.address, messages).then(gas => {
       const saveTxFeeNum = (this.props.redelegate || this.props.undelegate) ? 0 : 10

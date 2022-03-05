@@ -32,6 +32,7 @@ const SigningClient = async (rpcUrl, chainId, defaultGasPrice, signer, key) => {
   const getFee = (gas, gasPrice) => {
     if(!gas) gas = 200_000
     if(!gasPrice) gasPrice = GasPrice.fromString(defaultGasPrice);
+    console.log(gas, gasPrice, defaultGasPrice)
     return calculateFee(gas, gasPrice);
   }
 
@@ -46,31 +47,31 @@ const SigningClient = async (rpcUrl, chainId, defaultGasPrice, signer, key) => {
   }
 
   const signAndBroadcast = async (address, msgs, gas, memo, gasPrice) => {
-    if(!gas) gas = await simulate(address, msgs, memo)
-    const fee = getFee(gas, gasPrice)
-
-    return new Promise((success, reject) => {
-        client.signAndBroadcast(address, msgs, fee, memo).then((result) => {
-          try {
-            assertIsDeliverTxSuccess(result);
-            client.disconnect();
-            success(result)
-          } catch (error) {
-            reject(error)
-          }
-        }, (error) => {
+    return new Promise(async (success, reject) => {
+      let fee
+      try {
+        if(!gas) gas = await simulate(address, msgs, memo)
+        fee = getFee(gas, gasPrice)
+      } catch (error) {
+        return reject(error)
+      }
+      client.signAndBroadcast(address, msgs, fee, memo).then((result) => {
+        try {
+          assertIsDeliverTxSuccess(result);
+          client.disconnect();
+          success(result)
+        } catch (error) {
           reject(error)
-        })
+        }
+      }, (error) => {
+        reject(error)
+      })
     });
   }
 
   const simulate = async (address, msgs, memo, modifier) => {
-    try{
-      const estimate = await client.simulate(address, msgs, memo)
-      return (parseInt(estimate * (modifier || 1.5)))
-    }catch (error){
-      return undefined
-    }
+    const estimate = await client.simulate(address, msgs, memo)
+    return (parseInt(estimate * (modifier || 1.5)))
   }
 
   function findAvailableUrl(urls){
