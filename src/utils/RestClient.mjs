@@ -82,17 +82,29 @@ const RestClient = async (chainId, restUrls) => {
       )
   }
 
-  const getValidatorDelegations = (validatorAddress, maxSize) => {
+  const getAllValidatorDelegations = async (validatorAddress, pageSize, pageCallback) => {
+    let batches = []
+    let nextKey, error
+    do {
+      try {
+        const result = await getValidatorDelegations(validatorAddress, pageSize, nextKey)
+        batches.push(result.delegation_responses)
+        nextKey = result.pagination.next_key
+        if(pageCallback) pageCallback(batches, result.pagination.total)
+      } catch (err) {
+        error = err
+      }
+    } while (nextKey && !error)
+    return batches.flat()
+  }
+
+  const getValidatorDelegations = (validatorAddress, pageSize, nextKey) => {
     const searchParams = new URLSearchParams()
-    if(maxSize) searchParams.append("pagination.limit", maxSize)
+    if(pageSize) searchParams.append("pagination.limit", pageSize)
+    if(nextKey) searchParams.append("pagination.key", nextKey)
 
     return axios.get(restUrl + "/cosmos/staking/v1beta1/validators/" + validatorAddress + "/delegations?" + searchParams.toString())
       .then(res => res.data)
-      .then(
-        (result) => {
-          return result.delegation_responses
-        }
-      )
   }
 
   function findAvailableUrl(urls){
@@ -115,6 +127,7 @@ const RestClient = async (chainId, restUrls) => {
     getDelegations,
     getRewards,
     getGrants,
+    getAllValidatorDelegations,
     getValidatorDelegations
   }
 }
