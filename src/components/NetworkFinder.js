@@ -21,10 +21,6 @@ function NetworkFinder() {
 
   const getNetworks = () => {
     let data = networksData
-    try {
-      let overrides = require('../networks.local.json')
-      if(overrides) data = overrideNetworks(data, overrides)
-    } catch (e) { }
     return data.filter(el => el.enabled !== false).reduce((a, v) => ({ ...a, [v.name]: v}), {})
   }
 
