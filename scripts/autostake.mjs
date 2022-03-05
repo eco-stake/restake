@@ -1,7 +1,7 @@
 import { DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
 import Network from '../src/utils/Network.mjs'
 import Operator from '../src/utils/Operator.mjs'
-import {filterAsync} from '../src/utils/Helpers.mjs'
+import {filterAsync, mapAsync, executeSync} from '../src/utils/Helpers.mjs'
 
 import {
   coin
@@ -23,15 +23,22 @@ class Autostake {
     }
   }
 
-  async run(){
+  async run(networkName){
     const calls = this.getNetworksData().map(data => {
       return async () => {
-        console.log('Checking', data.name)
+        if(networkName && data.name !== networkName) return
+
         const client = await this.getClient(data)
-        if(!client) return
+
+        if(!client.operator) return console.log('Not an operator')
+        if(!client.network.authzSupport) return console.log('No Authz support')
+        if(!client.network.connected) return console.log('Could not connect to REST API')
+        if(!client.signingClient.connected) return console.log('Could not connect to RPC API')
 
         console.log('Running autostake')
         await this.checkBalance(client)
+
+        console.log('Finding delegators...')
         let delegations
         const addresses = await this.getDelegations(client).then(delegations => {
           return delegations.map(delegation => {
@@ -41,38 +48,34 @@ class Autostake {
           })
         })
 
-        const grantedAddresses = await filterAsync(addresses, (address) => {
-          return this.getGrantValidators(client, address).then(validators => {
-            return !!validators
+        console.log("Checking", addresses.length, "delegators for grants...")
+        const batchSize = 250
+        const batchDelegations = _.chunk(addresses, batchSize);
+
+        let grantedAddresses = await mapAsync(batchDelegations, async (batch, index) => {
+          if(addresses.length > batchSize) console.log('...batch', index + 1)
+          return await filterAsync(batch, (address) => {
+            return this.getGrantValidators(client, address).then(validators => {
+              return !!validators
+            })
           })
         })
+        grantedAddresses = grantedAddresses.flat()
 
+        console.log("Found", grantedAddresses.length, "delegators with valid grants...")
         let calls = _.compact(grantedAddresses).map(item => {
           return async () => {
             await this.autostake(client, item, [client.operator.address])
           }
         })
-        await this.executeSync(calls, 1)
+        await executeSync(calls, 1)
       }
     })
-    await this.executeSync(calls, 1)
-  }
-
-  async executeSync(calls, count){
-    const batchCalls = _.chunk(calls, count);
-    for (const batchCall of batchCalls) {
-      await Promise.all(batchCall.map(call => call()))
-    }
-  }
-
-  getNetworksData(){
-    let response = fs.readFileSync('src/networks.json');
-    return JSON.parse(response);
+    await executeSync(calls, 1)
   }
 
   async getClient(data){
     const network = await Network(data)
-    if(!network.connected) return null
 
     const wallet = await DirectSecp256k1HdWallet.fromMnemonic(this.mnemonic, {
       prefix: network.prefix
@@ -80,19 +83,14 @@ class Autostake {
 
     const accounts = await wallet.getAccounts()
     const botAddress = accounts[0].address
-    console.log('Your bot address for', data.name, 'is', botAddress)
+
+    console.log(data.prettyName, 'bot address is', botAddress)
 
     const client = await network.signingClient(wallet)
-    if(!client.connected) return null
-
     client.registry.register("/cosmos.authz.v1beta1.MsgExec", MsgExec)
+
     const operatorData = data.operators.find(el => el.botAddress === botAddress)
-
-    if(!operatorData){
-      return null
-    }
-
-    const operator = Operator(operatorData)
+    const operator = operatorData && Operator(operatorData)
 
     return{
       network: network,
@@ -123,7 +121,6 @@ class Autostake {
     return client.restClient.getValidatorDelegations(client.operator.address, 1_000)
       .then(
         (delegations) => {
-          console.log("Checking", delegations.length, "delegators for grants..")
           return delegations
         },
         (error) => {
@@ -138,14 +135,12 @@ class Autostake {
       .then(
         (result) => {
           if(result.claimGrant || result.stakeGrant){
-            console.log(delegatorAddress, "Grants found")
             if(result.claimGrant && result.stakeGrant){
               const grantValidators = result.stakeGrant.authorization.allow_list.address
               if(!grantValidators.includes(client.operator.address)){
                 console.log(delegatorAddress, "Not autostaking for this validator, skipping")
                 return
               }
-              console.log(delegatorAddress, "Grants valid")
 
               return grantValidators
             }else{
@@ -163,38 +158,19 @@ class Autostake {
   async autostake(client, address, validators){
     const totalRewards = await this.totalRewards(client, address, validators)
     const perValidatorReward = parseInt(totalRewards / validators.length)
-    console.log(address, "Total rewards", totalRewards, client.network.denom)
-    console.log(address, "Autostaking", perValidatorReward, client.network.denom, "per validator")
 
     if(perValidatorReward < client.operator.data.minimumReward){
-      console.log(address, 'Reward is too low, skipping')
+      console.log(address, perValidatorReward, client.network.denom, 'reward is too low, skipping')
       return
     }
 
+    console.log(address, "Autostaking", perValidatorReward, client.network.denom, validators.length > 1 ? "per validator" : '')
+
     let messages = validators.map(el => {
-      return [{
-        typeUrl: "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward",
-        value: MsgWithdrawDelegatorReward.encode(MsgWithdrawDelegatorReward.fromPartial({
-          delegatorAddress: address,
-          validatorAddress: el
-        })).finish()
-      }, {
-        typeUrl: "/cosmos.staking.v1beta1.MsgDelegate",
-        value: MsgDelegate.encode(MsgDelegate.fromPartial({
-          delegatorAddress: address,
-          validatorAddress: el,
-          amount: coin(perValidatorReward, client.network.denom)
-        })).finish()
-      }]
+      return this.buildRestakeMessage(address, el, perValidatorReward, client.network.denom)
     }).flat()
 
-    let execMsg = {
-      typeUrl: "/cosmos.authz.v1beta1.MsgExec",
-      value: {
-        grantee: client.operator.botAddress,
-        msgs: messages
-      }
-    }
+    let execMsg = this.buildExecMessage(client.operator.botAddress, messages)
 
     const memo = 'REStaked by ' + client.operator.moniker
     return client.signingClient.signAndBroadcast(client.operator.botAddress, [execMsg], undefined, memo).then((result) => {
@@ -203,6 +179,33 @@ class Autostake {
       console.log(address, 'Failed to broadcast:', error)
       process.exit()
     })
+  }
+
+  buildExecMessage(botAddress, messages){
+    return {
+      typeUrl: "/cosmos.authz.v1beta1.MsgExec",
+      value: {
+        grantee: botAddress,
+        msgs: messages
+      }
+    }
+  }
+
+  buildRestakeMessage(address, validatorAddress, amount, denom){
+    return [{
+      typeUrl: "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward",
+      value: MsgWithdrawDelegatorReward.encode(MsgWithdrawDelegatorReward.fromPartial({
+        delegatorAddress: address,
+        validatorAddress: validatorAddress
+      })).finish()
+    }, {
+      typeUrl: "/cosmos.staking.v1beta1.MsgDelegate",
+      value: MsgDelegate.encode(MsgDelegate.fromPartial({
+        delegatorAddress: address,
+        validatorAddress: validatorAddress,
+        amount: coin(amount, denom)
+      })).finish()
+    }]
   }
 
   totalRewards(client, address, validators){
@@ -224,7 +227,13 @@ class Autostake {
         }
       )
   }
+
+  getNetworksData(){
+    let response = fs.readFileSync('src/networks.json');
+    return JSON.parse(response);
+  }
 }
 
 const autostake = new Autostake();
-autostake.run()
+const networkName = process.argv[2]
+autostake.run(networkName)

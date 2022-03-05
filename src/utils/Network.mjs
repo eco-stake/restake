@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import RestClient from './RestClient.mjs'
 import SigningClient from './SigningClient.mjs'
 import Operator from './Operator.mjs'
@@ -15,10 +16,18 @@ const Network = async (data) => {
   }
 
   const getOperators = (validators) => {
-    return data.operators.map(operator => {
+    return sortOperators().map(operator => {
       const validator = validators[operator.address]
       return Operator(operator, validator)
     })
+  }
+
+  const sortOperators = () => {
+    const random = _.shuffle(data.operators)
+    if(data.ownerAddress){
+      return _.sortBy(random, ({address}) => address === data.ownerAddress ? 0 : 1)
+    }
+    return random
   }
 
   const getValidators = () => {

@@ -23,7 +23,7 @@ import {
 class Delegations extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {operatorGrants: {}, validatorLoading: {}, orderedOperators: [], orderedRegularDelegations: []}
+    this.state = {operatorGrants: {}, validatorLoading: {}}
 
     this.setError = this.setError.bind(this)
     this.setClaimLoading = this.setClaimLoading.bind(this)
@@ -54,8 +54,6 @@ class Delegations extends React.Component {
   }
 
   refresh(){
-    this.setState({orderedOperators: this.orderedOperators()})
-    this.setState({orderedRegularDelegations: this.orderedRegularDelegations()})
     this.getRewards()
     this.refreshInterval()
     if(this.props.operators.length){
@@ -201,22 +199,16 @@ class Delegations extends React.Component {
     return this.props.operators.map(operator => operator.botAddress)
   }
 
+  orderedOperators(){
+    return _.sortBy(this.props.operators, ({address}) => this.props.delegations[address] ? 0 : 1)
+  }
+
+  regularDelegations(){
+    return Object.values(_.omit(this.props.delegations, this.operatorAddresses()))
+  }
+
   noDelegations(){
     return Object.values(this.props.operators).length < 1 && Object.values(this.props.delegations).length < 1
-  }
-
-  orderedOperators(){
-    const random = _.shuffle(this.props.operators)
-    const ownerAddress = this.props.network && this.props.network.data.ownerAddress
-    if(ownerAddress){
-      return _.sortBy(random, ({address}) => address === ownerAddress ? 0 : 1)
-    }
-    return random
-  }
-
-  orderedRegularDelegations(){
-    const delegations = Object.values(_.omit(this.props.delegations, this.operatorAddresses()))
-    return _.shuffle(delegations)
   }
 
   totalRewards(validators){
@@ -454,14 +446,14 @@ class Delegations extends React.Component {
               </tr>
             </thead>
             <tbody>
-              {this.state.orderedOperators.length > 0 && (
-                this.state.orderedOperators.map(operator => {
+              {this.orderedOperators().length > 0 && (
+                this.orderedOperators().map(operator => {
                   const delegation = this.props.delegations && this.props.delegations[operator.address]
                   return this.renderValidator(operator.address, delegation)
                 })
               )}
-              {this.state.orderedRegularDelegations.length > 0 && (
-                this.state.orderedRegularDelegations.map(delegation => {
+              {this.regularDelegations().length > 0 && (
+                this.regularDelegations().map(delegation => {
                   return this.renderValidator(delegation.delegation.validator_address, delegation)
                 })
               )}
