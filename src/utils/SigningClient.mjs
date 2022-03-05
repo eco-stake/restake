@@ -32,6 +32,7 @@ const SigningClient = async (rpcUrl, chainId, defaultGasPrice, signer, key) => {
   const getFee = (gas, gasPrice) => {
     if(!gas) gas = 200_000
     if(!gasPrice) gasPrice = GasPrice.fromString(defaultGasPrice);
+    console.log(gas, gasPrice, defaultGasPrice)
     return calculateFee(gas, gasPrice);
   }
 
@@ -47,9 +48,10 @@ const SigningClient = async (rpcUrl, chainId, defaultGasPrice, signer, key) => {
 
   const signAndBroadcast = async (address, msgs, gas, memo, gasPrice) => {
     return new Promise(async (success, reject) => {
+      let fee
       try {
         if(!gas) gas = await simulate(address, msgs, memo)
-        const fee = getFee(gas, gasPrice)
+        fee = getFee(gas, gasPrice)
       } catch (error) {
         return reject(error)
       }

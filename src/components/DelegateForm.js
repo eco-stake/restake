@@ -41,8 +41,9 @@ class DelegateForm extends React.Component {
     const client = this.props.stargateClient
 
     let messages = this.buildMessages(amount)
+    let gas
     try {
-      const gas = await client.simulate(this.props.address, messages)
+       gas = await client.simulate(this.props.address, messages)
     } catch (error) {
       this.setState({ loading: false, error: error.message })
       return
@@ -87,11 +88,15 @@ class DelegateForm extends React.Component {
   }
 
   async setAvailableAmount(){
+    this.setState({error: undefined})
     const messages = this.buildMessages(parseInt(this.props.availableBalance.amount * 0.95) / 1_000_000.0)
     this.props.stargateClient.simulate(this.props.address, messages).then(gas => {
+      console.log(gas)
       const saveTxFeeNum = (this.props.redelegate || this.props.undelegate) ? 0 : 10
       const gasPrice = this.props.stargateClient.getFee(gas).amount[0].amount
+      console.log(gasPrice)
       const amount = (this.props.availableBalance.amount - (gasPrice * saveTxFeeNum)) / 1_000_000.0
+      console.log(amount)
 
       this.setState({amount: amount > 0 ? amount : 0})
     }, error => {
