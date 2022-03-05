@@ -120,8 +120,8 @@ class Autostake {
   }
 
   getDelegations(client) {
-    return client.restClient.getAllValidatorDelegations(client.operator.address, 250, (batches, total) => {
-      console.log("...batch", batches.length)
+    return client.restClient.getAllValidatorDelegations(client.operator.address, 250, (pages) => {
+      console.log("...batch", pages.length)
     }).catch(error => {
       console.log("ERROR:", error)
       process.exit()
