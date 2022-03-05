@@ -41,7 +41,12 @@ class DelegateForm extends React.Component {
     const client = this.props.stargateClient
 
     let messages = this.buildMessages(amount)
-    const gas = await client.simulate(this.props.address, messages)
+    try {
+      const gas = await client.simulate(this.props.address, messages)
+    } catch (error) {
+      this.setState({ loading: false, error: error.message })
+      return
+    }
 
     client.signAndBroadcast(address, messages, gas, memo).then((result) => {
       console.log("Successfully broadcasted:", result);
