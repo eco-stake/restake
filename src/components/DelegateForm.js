@@ -86,8 +86,9 @@ class DelegateForm extends React.Component {
     this.props.stargateClient.simulate(this.props.address, messages).then(gas => {
       const saveTxFeeNum = (this.props.redelegate || this.props.undelegate) ? 0 : 10
       const gasPrice = this.props.stargateClient.getFee(gas).amount[0].amount
-      const amount = (this.props.availableBalance.amount - (gasPrice * saveTxFeeNum))
-      this.setState({amount: amount / 1_000_000.0})
+      const amount = (this.props.availableBalance.amount - (gasPrice * saveTxFeeNum)) / 1_000_000.0
+
+      this.setState({amount: amount > 0 ? amount : 0})
     }, error => {
       this.setState({error: error.message})
     })
