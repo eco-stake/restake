@@ -6,10 +6,11 @@ services:
     image: ghcr.io/eco-stake/restake:latest
     expose:
       - port: 80
-        to:
-          - global: true
         accept:
           - restake.ecostake.com
+          - restake.app
+        to:
+          - global: true
 
 profiles:
   compute:

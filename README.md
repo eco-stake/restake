@@ -34,7 +34,19 @@ You only need a single mnemonic for multiple Cosmos chains, and the script will 
 
 ### Setup the autostaking script and run daily
 
-You can run the autostaking script using `docker-compose` or using `npm` directly. In both cases you will need to provide your mnemonic in a `MNEMONIC` environment variable. Instructions are provided for Docker Compose and will be expanded later.
+You can run the autostaking script using `docker-compose` or using `npm` directly. In both cases you will need to provide your mnemonic in a `MNEMONIC` environment variable. 
+
+Instructions are provided for Docker Compose and will be expanded later.
+
+### Install Docker and Docker Compose
+
+Best bet is to follow the Docker official guides. Install Docker first, then Docker Compose.
+
+Docker: [docs.docker.com/get-docker](https://docs.docker.com/get-docker/)
+
+Docker Compose: [docs.docker.com/compose/install](https://docs.docker.com/compose/install/)
+
+### Clone the repository and setup .env
 
 Clone the repository and copy the sample `.env` file ready for your mnemonic.
 
@@ -45,12 +57,6 @@ cp .env.sample .env
 ```
 
 **Populate your new .env file with your mnemonic.**
-
-### Install Docker Compose
-
-```
-sudo apt install docker
-```
 
 ### Running the script (to see if everything works correctly)
 
@@ -68,6 +74,17 @@ Pass a network name to run the script for a single network at a time.
 docker-compose run app npm run autostake osmosis
 ```
 
+### Updating your local version
+
+REStake is MVP. Very MVP. Updates are happening all the time and there are bugs that still need fixing. Make sure you update often.
+
+Update your local repository and pre-build your Docker containers with the following commands:
+
+```
+git pull
+docker-compose build
+```
+
 ### Setting up Cron to make sure the script runs daily
 
 You should setup your script to run at the same time each day using `crontab`
@@ -78,7 +95,7 @@ crontab -e
 0 21 * * * /bin/bash -c "cd restake && docker-compose run app npm run autostake" > ./restake.log 2>&1
 ```
 
-Use `git pull` to retrieve the latest version as required. The autostaking script can and will change in the near future.
+Don't forget to [update often](#updating-your-local-version)!
 
 ## Submiting your operator
 
