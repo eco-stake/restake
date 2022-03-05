@@ -1,7 +1,7 @@
 import { DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
 import Network from '../src/utils/Network.mjs'
 import Operator from '../src/utils/Operator.mjs'
-import {filterAsync, mapAsync, executeSync} from '../src/utils/Helpers.mjs'
+import {filterAsync, mapAsync, executeSync, overrideNetworks} from '../src/utils/Helpers.mjs'
 
 import {
   coin
@@ -227,8 +227,15 @@ class Autostake {
   }
 
   getNetworksData(){
-    let response = fs.readFileSync('src/networks.json');
-    return JSON.parse(response);
+    const networksData = fs.readFileSync('src/networks.json');
+    const networks = JSON.parse(networksData);
+    try {
+      const overridesData = fs.readFileSync('src/networks.local.json');
+      const overrides = overridesData && JSON.parse(overridesData)
+      return overrideNetworks(networks, overrides)
+    } catch {
+      return networks
+    }
   }
 }
 
