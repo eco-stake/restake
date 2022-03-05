@@ -118,16 +118,12 @@ class Autostake {
   }
 
   getDelegations(client) {
-    return client.restClient.getValidatorDelegations(client.operator.address, 1_000)
-      .then(
-        (delegations) => {
-          return delegations
-        },
-        (error) => {
-          console.log("ERROR:", error)
-          process.exit()
-        }
-      )
+    return client.restClient.getAllValidatorDelegations(client.operator.address, 250, (batches, total) => {
+      console.log("...batch", batches.length)
+    }).catch(error => {
+      console.log("ERROR:", error)
+      process.exit()
+    })
   }
 
   getGrantValidators(client, delegatorAddress) {
