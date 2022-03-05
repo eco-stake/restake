@@ -97,6 +97,28 @@ crontab -e
 
 Don't forget to [update often](#updating-your-local-version)!
 
+### Overriding networks config locally
+
+You will likely want to customise your networks config, e.g. to set your own node URLs to ensure your autocompounding script completes successfully.
+
+Create a `src/networks.local.json` file with JSON in the following format:
+
+```
+{
+  "osmosis": {
+    "prettyName": "Foobar",
+    "restUrl": [
+      "https://rest.validator.com/osmosis"
+    ],
+    "rpcUrl": [
+      "https://rpc.validator.com/osmosis"
+    ]
+  }
+}
+```
+
+Any values you specify will override the `networks.json` file. Arrays will not be merged. The file is `.gitignore`'d so it won't affect updates.
+
 ## Submiting your operator
 
 ### Setup your REStake operator
