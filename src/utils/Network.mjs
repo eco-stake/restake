@@ -31,7 +31,7 @@ const Network = async (data) => {
   }
 
   const getValidators = () => {
-    return restClient.getValidators()
+    return restClient.getAllValidators(150)
   }
 
   return {

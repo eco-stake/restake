@@ -32,7 +32,6 @@ const SigningClient = async (rpcUrl, chainId, defaultGasPrice, signer, key) => {
   const getFee = (gas, gasPrice) => {
     if(!gas) gas = 200_000
     if(!gasPrice) gasPrice = GasPrice.fromString(defaultGasPrice);
-    console.log(gas, gasPrice, defaultGasPrice)
     return calculateFee(gas, gasPrice);
   }
 

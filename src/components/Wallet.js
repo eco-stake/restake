@@ -23,7 +23,14 @@ class Wallet extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
+    if(this.props.network !== prevProps.network){
+      clearInterval(this.state.refreshInterval);
+    }
+
+    if(!this.props.address) return
+
     if(this.props.address !== prevProps.address){
+      clearInterval(this.state.refreshInterval);
       this.getDelegations()
       this.refreshInterval()
     }
@@ -34,7 +41,6 @@ class Wallet extends React.Component {
   }
 
   refreshInterval(){
-    clearInterval(this.state.refreshInterval);
     const interval = setInterval(() => {
       this.getDelegations()
     }, 30_000)
@@ -55,7 +61,7 @@ class Wallet extends React.Component {
           });
         },
         (error) => {
-          if(error.response && [404, 500].includes(error.response.status)){
+          if([404, 500].includes(error.response && error.response.status)){
             this.setState({
               isLoaded: true,
               delegations: {},

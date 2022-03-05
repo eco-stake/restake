@@ -6,15 +6,22 @@ const RestClient = async (chainId, restUrls) => {
 
   const restUrl = await findAvailableUrl(Array.isArray(restUrls) ? restUrls : [restUrls])
 
-  const getValidators = () => {
-    return axios.get(restUrl + "/cosmos/staking/v1beta1/validators?status=BOND_STATUS_BONDED&pagination.limit=500")
+  const getAllValidators = (pageSize, pageCallback) => {
+    return getAllPages((nextKey) => {
+      return getValidators(pageSize, nextKey)
+    }, pageCallback).then(pages => {
+      const validators = _.shuffle(pages.map(el => el.validators).flat())
+      return validators.reduce((a, v) => ({ ...a, [v.operator_address]: v}), {})
+    })
+  }
+
+  const getValidators = (pageSize, nextKey) => {
+    const searchParams = new URLSearchParams()
+    searchParams.append('status', 'BOND_STATUS_BONDED')
+    if(pageSize) searchParams.append('pagination.limit', pageSize)
+    if(nextKey) searchParams.append('pagination.key', nextKey)
+    return axios.get(restUrl + "/cosmos/staking/v1beta1/validators?" + searchParams.toString())
       .then(res => res.data)
-      .then(
-        (result) => {
-          const validators = _.shuffle(result.validators).reduce((a, v) => ({ ...a, [v.operator_address]: v}), {})
-          return validators
-        }
-      )
   }
 
   const getBalance = (address, denom) => {
@@ -82,20 +89,12 @@ const RestClient = async (chainId, restUrls) => {
       )
   }
 
-  const getAllValidatorDelegations = async (validatorAddress, pageSize, pageCallback) => {
-    let batches = []
-    let nextKey, error
-    do {
-      try {
-        const result = await getValidatorDelegations(validatorAddress, pageSize, nextKey)
-        batches.push(result.delegation_responses)
-        nextKey = result.pagination.next_key
-        if(pageCallback) pageCallback(batches, result.pagination.total)
-      } catch (err) {
-        error = err
-      }
-    } while (nextKey && !error)
-    return batches.flat()
+  const getAllValidatorDelegations = (validatorAddress, pageSize, pageCallback) => {
+    return getAllPages((nextKey) => {
+      return getValidatorDelegations(validatorAddress, pageSize, nextKey)
+    }, pageCallback).then(pages => {
+      return pages.map(el => el.delegation_responses).flat()
+    })
   }
 
   const getValidatorDelegations = (validatorAddress, pageSize, nextKey) => {
@@ -105,6 +104,22 @@ const RestClient = async (chainId, restUrls) => {
 
     return axios.get(restUrl + "/cosmos/staking/v1beta1/validators/" + validatorAddress + "/delegations?" + searchParams.toString())
       .then(res => res.data)
+  }
+
+  const getAllPages = async (getPage, pageCallback) => {
+    let pages = []
+    let nextKey, error
+    do {
+      try {
+        const result = await getPage(nextKey)
+        pages.push(result)
+        nextKey = result.pagination.next_key
+        if(pageCallback) pageCallback(pages)
+      } catch (err) {
+        error = err
+      }
+    } while (nextKey && !error)
+    return pages
   }
 
   function findAvailableUrl(urls){
@@ -122,13 +137,14 @@ const RestClient = async (chainId, restUrls) => {
   return {
     connected: !!restUrl,
     restUrl,
+    getAllValidators,
     getValidators,
+    getAllValidatorDelegations,
+    getValidatorDelegations,
     getBalance,
     getDelegations,
     getRewards,
-    getGrants,
-    getAllValidatorDelegations,
-    getValidatorDelegations
+    getGrants
   }
 }
 

@@ -39,6 +39,10 @@ class Delegations extends React.Component {
   }
 
   async componentDidUpdate(prevProps){
+    if(this.props.network !== prevProps.network){
+      clearInterval(this.state.refreshInterval);
+    }
+
     if(!this.props.address) return
 
     if(this.props.address !== prevProps.address){
@@ -77,7 +81,7 @@ class Delegations extends React.Component {
           this.setState({ rewards: rewards });
         },
         (error) => {
-          if([404, 500].includes(error.response.status)){
+          if([404, 500].includes(error.response && error.response.status)){
           this.setState({ rewards: {} });
           }else{
             this.setState({ error: 'Failed to get rewards. Please refresh' });
@@ -107,7 +111,7 @@ class Delegations extends React.Component {
               operatorGrants: _.set(state.operatorGrants, botAddress, operatorGrant)
             }))
           }, (error) => {
-            if (error.response.status === 501) {
+            if (error.response && error.response.status === 501) {
               this.setState({ authzMissing: true });
             }else{
               this.setState({ error: 'Failed to get grants. Please refresh' });
