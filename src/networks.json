@@ -349,6 +349,13 @@
         "minimumReward": 1000
       },
       {
+        "address": "chihuahuavaloper1t85yx95l5pajl9hwkeztawqf8sg9uh4lglgu9w",
+        "botAddress": "chihuahua1h43hjfxlz8t6y5wewma63jz7melv46gj803735",
+        "runTime": "21:00",
+        "minimumReward": 1000
+      },
+
+      {
         "address": "chihuahuavaloper140l6y2gp3gxvay6qtn70re7z2s0gn57zum7h5l",
         "botAddress": "chihuahua12xpq68caw2aqdu70jm4k792g0v9prhrprkt2p6",
         "runTime": "22:00",
@@ -844,6 +851,12 @@
       {
         "address": "comdexvaloper19qz6sgw7llrft2x05lp4swy569e5sla6gl3cuu",
         "botAddress": "comdex1e44rluarkdw56dy2turnwjtvtg4wqvs04yhxwj",
+        "runTime": "21:00",
+        "minimumReward": 1000
+      },
+      {
+        "address": "comdexvaloper14yh3sqetnphupx2r4jrjctpsqqg7jqmnmzpxc4",
+        "botAddress": "comdex1h43hjfxlz8t6y5wewma63jz7melv46gjr47jfp",
         "runTime": "21:00",
         "minimumReward": 1000
       }
