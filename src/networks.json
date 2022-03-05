@@ -704,9 +704,9 @@
     "operators": [
       {
         "address": "crocncl15m2ae4c2ajpkz6hw0d4ucvwfyuwq8ns5z369u8",
-        "botAddress": "cro1lwh80rs0m3rz5qrar46jz72eg8ykakukz7tdmc",
+        "botAddress": "cro1v9vae554q55xa4pcfdm0p3kv8nxn50jkzh0t3c",
         "runTime": "23:00",
-        "minimumReward": 1000
+        "minimumReward": 100000
       }
     ],
     "authzSupport": true
