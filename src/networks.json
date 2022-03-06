@@ -209,6 +209,12 @@
         "botAddress": "juno1w0x989dzm4kvjm30fqsn3qulznhyx3f0xy9cgc",
         "runTime": "10:30",
         "minimumReward": 10000
+      },
+      {
+        "address": "junovaloper1297950qqq6yxhgsms6t5dks66gyk6sctplnyd7",
+        "botAddress": "juno1q200ut9chx7t0nnde4h526vdxwudktgkfhxfw7",
+        "runTime": "19:00",
+        "minimumReward": 10000
       }
     ],
     "authzSupport": true
@@ -437,6 +443,12 @@
         "address": "chihuahuavaloper1cy9jhuf3cx2z33duxld7p57gtege6hfh6fyc4w",
         "botAddress": "chihuahua1w0x989dzm4kvjm30fqsn3qulznhyx3f0nrtdwx",
         "runTime": "10:40",
+        "minimumReward": 1000
+      },
+      {
+        "address": "chihuahuavaloper1jdlfdu2gaj0tlchzjhdnh5r7lfzt6l0zxlhkr6",
+        "botAddress": "chihuahua1q200ut9chx7t0nnde4h526vdxwudktgkusgugq",
+        "runTime": "19:00",
         "minimumReward": 1000
       }
     ],
