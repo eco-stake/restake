@@ -906,7 +906,6 @@
         "runTime": "19:00",
         "minimumReward": 1000
       }
-      
     ],
     "authzSupport": true
   },
@@ -987,7 +986,6 @@
         "runTime": "19:00",
         "minimumReward": 1000
       }
-      
     ],
     "authzSupport": false
   }
