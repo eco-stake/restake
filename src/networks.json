@@ -751,7 +751,8 @@
   },
   {
     "name": "evmos",
-    "enabled": false,
+    "enabled": true,
+    "decimals": 1e18,
     "prettyName": "Evmos",
     "chainId": "evmos_9001-1",
     "prefix": "evmos",
@@ -781,7 +782,13 @@
         "botAddress": "evmos17xyeczwsax3st6aykyu4f28s5n3zg6r7eyzu3t",
         "runTime": "21:00",
         "minimumReward": 1000
-      }
+      },
+      {
+         "address": "evmosvaloper1qp49y6vh8vvv5yf8ule8fwx6sss82ncz39tunl",
+         "botAddress": "evmos10g8dt086qsfw0s27us8uvhnnftf9aanx4afg3h",
+         "runTime": "21:05",
+         "minimumReward": 1000000000000000000
+       }
     ],
     "authzSupport": true
   },
