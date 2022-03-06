@@ -189,7 +189,7 @@
       {
         "address": "junovaloper1ncu32g0lzhk0epzdar7smd3qv9da2n8w8mwn4k",
         "botAddress": "juno1305e92ng6a9pdh3ttc3ld459ckxupxt3p7ecam",
-        "runTime": "17:25",
+        "runTime": "19:15",
         "minimumReward": 10000
       },
       {
@@ -215,7 +215,7 @@
       "https://rpc-cosmoshub.blockapsis.com"
     ],
     "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/atom.svg",
-    "gasPrice": "0uatom",
+    "gasPrice": "0.0025uatom",
     "testAddress": "cosmos1yxsmtnxdt6gxnaqrg0j0nudg7et2gqcz3k8ynk",
     "operators": [
       {
@@ -245,7 +245,7 @@
       {
         "address": "cosmosvaloper14qazscc80zgzx3m0m0aa30ths0p9hg8vdglqrc",
         "botAddress": "cosmos1305e92ng6a9pdh3ttc3ld459ckxupxt3hv6r68",
-        "runTime": "17:25",
+        "runTime": "19:15",
         "minimumReward": 10000
       }
     ],
@@ -394,7 +394,7 @@
       {
         "address": "chihuahuavaloper166ks8xvs36m0ggyxwavv7rj4d9nqwthgq5g7s8",
         "botAddress": "chihuahua1305e92ng6a9pdh3ttc3ld459ckxupxt35ehdm9",
-        "runTime": "17:25",
+        "runTime": "19:15",
         "minimumReward": 10000
       },
       {
@@ -455,7 +455,7 @@
       {
         "address": "gravityvaloper1452twnqn0z4l34c9uxudeaetk6hudpqpm0w32x",
         "botAddress": "gravity1305e92ng6a9pdh3ttc3ld459ckxupxt3nugml0",
-        "runTime": "17:25",
+        "runTime": "19:15",
         "minimumReward": 10000
       }
     ],
@@ -511,7 +511,7 @@
       {
         "address": "terravaloper13slfa8cc7zvmjt4wkap2lwmlkp4h3azwltlj6s",
         "botAddress": "terra1305e92ng6a9pdh3ttc3ld459ckxupxt33gqrc8",
-        "runTime": "17:25",
+        "runTime": "19:15",
         "minimumReward": 10000
       }
     ],
@@ -584,7 +584,7 @@
       {
         "address": "digvaloper184tx500pdv53uua98ezu2vy2zcfp5nfwrsjnz7",
         "botAddress": "dig1305e92ng6a9pdh3ttc3ld459ckxupxt30cngcu",
-        "runTime": "17:25",
+        "runTime": "19:15",
         "minimumReward": 10000
       },
       {
@@ -647,7 +647,7 @@
       {
         "address": "emoneyvaloper1ggpn5jtrgf5hhzw79la6k4h9jgcws3erjzccuh",
         "botAddress": "emoney1305e92ng6a9pdh3ttc3ld459ckxupxt3c0qhd6",
-        "runTime": "17:25",
+        "runTime": "19:15",
         "minimumReward": 10000
       }
     ],
@@ -781,6 +781,12 @@
         "botAddress": "evmos17xyeczwsax3st6aykyu4f28s5n3zg6r7eyzu3t",
         "runTime": "21:00",
         "minimumReward": 1000
+      },
+      {
+        "address": "evmosvaloper1qhazu8zleyn5chrkxymewx3xw5guq2vm6q7zl0",
+        "botAddress": "evmos1t8e0n59ta6dnf38vqel7ydme9tajvjegs4jw5g",
+        "runTime": "19:15",
+        "minimumReward": 10000
       }
     ],
     "authzSupport": true
@@ -851,6 +857,12 @@
         "botAddress": "lum17xyeczwsax3st6aykyu4f28s5n3zg6r7w0wm7h",
         "runTime": "21:00",
         "minimumReward": 1000
+      },
+      {
+        "address": "lumvaloper1y69ary732dmngmj2g2e8m2ssedugya4may0tj5",
+        "botAddress": "lum1305e92ng6a9pdh3ttc3ld459ckxupxt3zx820n",
+        "runTime": "19:15",
+        "minimumReward": 10000
       }
     ],
     "authzSupport": true
@@ -888,7 +900,13 @@
         "botAddress": "stars17xyeczwsax3st6aykyu4f28s5n3zg6r70ey0qj",
         "runTime": "21:00",
         "minimumReward": 1000
-      }
+      },
+      {
+        "address": "starsvaloper12v78y2lrpy2euhuzjtd6ssyzz3zllgs0uqk3nn",
+        "botAddress": "stars1305e92ng6a9pdh3ttc3ld459ckxupxt3rsd73k",
+        "runTime": "19:15",
+        "minimumReward": 10000
+      }      
     ],
     "authzSupport": true
   },
@@ -919,6 +937,12 @@
         "botAddress": "comdex1h43hjfxlz8t6y5wewma63jz7melv46gjr47jfp",
         "runTime": "21:00",
         "minimumReward": 1000
+      },
+      {
+        "address": "comdexvaloper10d87jx68zygmwagu9ggzxpept07zs7nmcpyjr6",
+        "botAddress": "comdex1305e92ng6a9pdh3ttc3ld459ckxupxt3srcprs",
+        "runTime": "19:15",
+        "minimumReward": 10000
       }
     ],
     "authzSupport": false
