@@ -337,6 +337,12 @@
         "minimumReward": 1000
       },
       {
+        "address": "chihuahuavaloper1ej2es5fjztqjcd4pwa0zyvaevtjd2y5wnscrkq",
+        "botAddress": "chihuahua1gvgcxwdk4j46gx3knhuackvqr2hta29zf2kujy",
+        "runTime": "21:00",
+        "minimumReward": 1001
+      },
+      {
         "address": "chihuahuavaloper10wxn2lv29yqnw2uf4jf439kwy5ef00qdqj3xsc",
         "botAddress": "chihuahua1xs023g3yj2mavwn3cjclgsh8mlk0kgsj9trcv8",
         "runTime": "21:00",
@@ -771,6 +777,12 @@
         "minimumReward": 1000
       },
       {
+        "address": "evmosvaloper14zatq4jagqtm9ejgvglnv0t364d88u80futp65",
+        "botAddress": "evmos1xul3g9w27tlns7k3d2reqjxqdsgyknkx74prwv",
+        "runTime": "21:00",
+        "minimumReward": 1001
+      },
+      {
         "address": "evmosvaloper1pz3mcahcrglf3md4lggax5r95gvmppc6x5w7hw",
         "botAddress": "evmos17va68yw35aleakz62jwqn24s22fd3k545mclkl",
         "runTime": "21:00",
@@ -804,6 +816,12 @@
         "botAddress": "sif1weeu5yuj8n23hd87wsdxqqgfmzzz9zt629p9uf",
         "runTime": "21:00",
         "minimumReward": 1000
+      },
+      {
+        "address": "sifvaloper1ej2es5fjztqjcd4pwa0zyvaevtjd2y5w0djvt91",
+        "botAddress": "sif1gvgcxwdk4j46gx3knhuackvqr2hta29z0z5yud",
+        "runTime": "21:00",
+        "minimumReward": 1001
       }
     ],
     "authzSupport": false
@@ -827,6 +845,12 @@
         "botAddress": "lum1v9vae554q55xa4pcfdm0p3kv8nxn50jk0x6mca",
         "runTime": "23:00",
         "minimumReward": 1000
+      },
+      {
+        "address": "lumvaloper1ej2es5fjztqjcd4pwa0zyvaevtjd2y5wf0p22w",
+        "botAddress": "lum1gvgcxwdk4j46gx3knhuackvqr2hta29zl4xmxj",
+        "runTime": "23:00",
+        "minimumReward": 1001
       },
       {
         "address": "lumvaloper1txgtzgdj90mqddhyu5gcpkkdeu9g2fu22d85d7",
@@ -913,6 +937,12 @@
         "botAddress": "comdex1e44rluarkdw56dy2turnwjtvtg4wqvs04yhxwj",
         "runTime": "21:00",
         "minimumReward": 1000
+      },
+      {
+        "address": "comdexvaloper1ej2es5fjztqjcd4pwa0zyvaevtjd2y5wh2dqrg",
+        "botAddress": "comdex1gvgcxwdk4j46gx3knhuackvqr2hta29zdses23",
+        "runTime": "21:00",
+        "minimumReward": 1001
       },
       {
         "address": "comdexvaloper14yh3sqetnphupx2r4jrjctpsqqg7jqmnmzpxc4",
