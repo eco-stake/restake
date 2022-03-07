@@ -63,6 +63,7 @@ class DelegateForm extends React.Component {
     const address = this.props.address
     const validatorAddress = this.props.selectedValidator.operator_address
     let messages = []
+    const decimals = Math.pow(10, this.props.network.data.decimals || 6)
     if(this.props.redelegate){
       messages.push({
         typeUrl: "/cosmos.staking.v1beta1.MsgBeginRedelegate",
@@ -70,7 +71,7 @@ class DelegateForm extends React.Component {
           delegatorAddress: address,
           validatorSrcAddress: this.props.validator.operator_address,
           validatorDstAddress: validatorAddress,
-          amount: coin(parseInt(parseFloat(amount) * 1000000), this.props.network.denom),
+          amount: coin(parseInt(parseFloat(amount) * decimals), this.props.network.denom),
         }
       })
     }else{
@@ -80,7 +81,7 @@ class DelegateForm extends React.Component {
         value: {
           delegatorAddress: address,
           validatorAddress: validatorAddress,
-          amount: coin(parseInt(parseFloat(amount) * 1000000), this.props.network.denom),
+          amount: coin(parseInt(parseFloat(amount) * decimals), this.props.network.denom),
         }
       })
     }
@@ -89,11 +90,12 @@ class DelegateForm extends React.Component {
 
   async setAvailableAmount(){
     this.setState({error: undefined})
-    const messages = this.buildMessages(parseInt(this.props.availableBalance.amount * 0.95) / 1_000_000.0)
+    const decimals = Math.pow(10, this.props.network.data.decimals || 6)
+    const messages = this.buildMessages(parseInt(this.props.availableBalance.amount * 0.95) / decimals)
     this.props.stargateClient.simulate(this.props.address, messages).then(gas => {
       const saveTxFeeNum = (this.props.redelegate || this.props.undelegate) ? 0 : 10
       const gasPrice = this.props.stargateClient.getFee(gas).amount[0].amount
-      const amount = (this.props.availableBalance.amount - (gasPrice * saveTxFeeNum)) / 1_000_000.0
+      const amount = (this.props.availableBalance.amount - (gasPrice * saveTxFeeNum)) / decimals
 
       this.setState({amount: amount > 0 ? amount : 0})
     }, error => {
@@ -129,7 +131,7 @@ class DelegateForm extends React.Component {
               </div>
               {this.props.availableBalance &&
               <div className="form-text text-end"><span role="button" onClick={() => this.setAvailableAmount()}>
-                Available: <Coins coins={this.props.availableBalance} />
+                Available: <Coins coins={this.props.availableBalance} decimals={this.props.network.data.decimals} />
               </span></div>
               }
             </div>

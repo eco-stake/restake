@@ -219,7 +219,12 @@ class App extends React.Component {
             </li>
             <li className="nav-item d-none d-md-block">
               <span className="nav-link">
-                <Badge><Coins coins={this.state.balance} /></Badge>
+                <Badge>
+                  <Coins
+                    coins={this.state.balance}
+                    decimals={this.props.network.data.decimals}
+                  />
+                </Badge>
               </span>
             </li>
             {false && (
