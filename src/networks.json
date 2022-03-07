@@ -680,6 +680,12 @@
     "gasPrice": "0.0025udig",
     "operators": [
       {
+        "address": "digvaloper136avwnuvvy94dqmtnaue2nfvjes8xr37h9rzay",
+        "botAddress": "dig1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczfzw03d",
+        "runTime": "21:00",
+        "minimumReward": 1000
+      },
+      {
         "address": "digvaloper1mcm5pj79epddgms7e4r4f93w2m5lxh496tv8h2",
         "botAddress": "dig1mjq48r6435aewerpruwc8up3tz3rzan25dhurw",
         "runTime": "19:00",
