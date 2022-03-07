@@ -1,8 +1,11 @@
 import _ from 'lodash'
 
 function Coins(props) {
-  function amount(coins){
-    return _.round(coins.amount / 1000000.0, 6)
+  function amount(coins, decimals){
+    if (!decimals) {
+      decimals = 6
+    }
+    return _.round(coins.amount / Math.pow(10, decimals), 6)
   }
 
   function denom(coins){
@@ -22,8 +25,8 @@ function Coins(props) {
 
   return (
     <span className="coins">
-      <span className="amount">{amount(props.coins)}</span>&nbsp;
-      <span className="denom">{denom(props.coins)}</span>
+      <span className="amount">{amount(props.coins, props.decimals)}</span>&nbsp;
+      <span className="denom">{denom(props.coins, props.decimals)}</span>
     </span>
   )
 }
