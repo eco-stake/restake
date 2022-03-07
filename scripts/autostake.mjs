@@ -54,7 +54,7 @@ class Autostake {
         })
 
         console.log("Checking", addresses.length, "delegators for grants...")
-        const batchSize = 250
+        const batchSize = 100
         const batchDelegations = _.chunk(addresses, batchSize);
 
         let grantedAddresses = await mapAsync(batchDelegations, async (batch, index) => {
