@@ -123,27 +123,32 @@ class App extends React.Component {
     })
   }
 
-  getValidatorImage(network, validatorAddress){
+  getValidatorImage(network, validatorAddress, expireCache){
     const images = this.state.validatorImages[network.name] || {}
     if(images[validatorAddress]){
       return images[validatorAddress]
     }
-    return this.getValidatorImageCache(validatorAddress)
+    return this.getValidatorImageCache(validatorAddress, expireCache)
   }
 
-  getValidatorImageCache(validatorAddress){
+  getValidatorImageCache(validatorAddress, expireCache){
     const cache = localStorage.getItem(validatorAddress)
     if(!cache) return
 
     let cacheData = {}
     try {
       cacheData = JSON.parse(cache)
-    } catch { }
+    } catch {
+      cacheData.url = cache
+    }
+    if(!cacheData.url) return
+    if(!expireCache) return cacheData.url
+
     const cacheTime = cacheData.time && new Date(cacheData.time)
-    if(!cacheTime || !cacheData.url) return
+    if(!cacheData.time) return
 
     const expiry = new Date() - 1000 * 60 * 60 * 24 * 3
-    return cacheTime >= expiry ? cacheData.url : undefined
+    if(cacheTime >= expiry) return cacheData.url
   }
 
   async loadValidatorImages(network, validators) {
@@ -152,7 +157,7 @@ class App extends React.Component {
     }));
     const calls = Object.values(validators).map(validator => {
       return () => {
-        if(validator.description.identity && !this.getValidatorImage(network, validator.operator_address)){
+        if(validator.description.identity && !this.getValidatorImage(network, validator.operator_address, true)){
           return fetch("https://keybase.io/_/api/1.0/user/lookup.json?fields=pictures&key_suffix=" + validator.description.identity)
             .then((response) => {
               return response.json();
