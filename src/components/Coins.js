@@ -3,10 +3,9 @@ import _ from 'lodash'
 function Coins(props) {
   function amount(coins, decimals){
     if (!decimals) {
-      return _.round(coins.amount / 1e6, 6)
-    } else {
-      return _.round(coins.amount / decimals, 6)
+      decimals = 6
     }
+    return _.round(coins.amount / Math.pow(10, decimals), 6)
   }
 
   function denom(coins){
