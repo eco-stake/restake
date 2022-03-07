@@ -47,7 +47,7 @@ class App extends React.Component {
     }
     window.addEventListener("keplr_keystorechange", this.connect)
     if(this.props.operators){
-      this.loadValidatorImages(this.props.network, this.props.operators.map(el => el.validatorData))
+      this.loadValidatorImages(this.props.network, _.compact(this.props.operators.map(el => el.validatorData)))
     }
     this.loadValidatorImages(this.props.network, this.props.validators)
   }
