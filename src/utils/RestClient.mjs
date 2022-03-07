@@ -46,6 +46,28 @@ const RestClient = async (chainId, restUrls) => {
       )
   }
 
+  const getInflation = () => {
+    return axios.get(restUrl + "/minting/inflation")
+      .then(res => res.data)
+      .then(
+        (result) => {
+          const inflation = result.result;
+          return inflation
+        }
+      )
+  }
+
+  const getBlocksPerYear = () => {
+    return axios.get(restUrl + "/minting/parameters")
+      .then(res => res.data)
+      .then(
+        (result) => {
+          const blocksPerYear = result.result.blocks_per_year;
+          return blocksPerYear
+        }
+      )
+  }
+
   const getRewards = (address) => {
     return axios.get(restUrl + "/cosmos/distribution/v1beta1/delegators/" + address + "/rewards")
       .then(res => res.data)
@@ -137,6 +159,8 @@ const RestClient = async (chainId, restUrls) => {
   return {
     connected: !!restUrl,
     restUrl,
+    getInflation,
+    getBlocksPerYear,
     getAllValidators,
     getValidators,
     getAllValidatorDelegations,
