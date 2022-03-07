@@ -128,7 +128,22 @@ class App extends React.Component {
     if(images[validatorAddress]){
       return images[validatorAddress]
     }
-    return localStorage.getItem(validatorAddress)
+    return this.getValidatorImageCache(validatorAddress)
+  }
+
+  getValidatorImageCache(validatorAddress){
+    const cache = localStorage.getItem(validatorAddress)
+    if(!cache) return
+
+    let cacheData = {}
+    try {
+      cacheData = JSON.parse(cache)
+    } catch { }
+    const cacheTime = cacheData.time && new Date(cacheData.time)
+    if(!cacheTime || !cacheData.url) return
+
+    const expiry = new Date() - 1000 * 60 * 60 * 24 * 3
+    return cacheTime >= expiry ? cacheData.url : undefined
   }
 
   async loadValidatorImages(network, validators) {
@@ -147,7 +162,7 @@ class App extends React.Component {
                 this.setState((state, props) => ({
                   validatorImages: _.set(state.validatorImages, [network.name, validator.operator_address], imageUrl)
                 }));
-                localStorage.setItem(validator.operator_address, imageUrl)
+                localStorage.setItem(validator.operator_address, JSON.stringify({url: imageUrl, time: +new Date()}))
               }
             }, error => { })
         }else{
