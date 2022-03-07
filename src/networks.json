@@ -1225,6 +1225,7 @@
     "chainId": "cheqd-mainnet-1",
     "prefix": "cheq",
     "denom": "ncheq",
+    "decimal": 9,
     "restUrl": [
       "https://api.cheqd.net",
       "https://api.cheqd.blockfend.com"

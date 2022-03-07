@@ -13,7 +13,7 @@ function Coins(props) {
 
     if(coins.denom.startsWith('base')){
       return coins.denom.slice(4).toUpperCase()
-    }else if(['u', 'a'].includes(coins.denom[0])){
+    }else if(['u', 'a', 'n'].includes(coins.denom[0])){
       return coins.denom.slice(1).toUpperCase()
     }
     return coins.denom.toUpperCase()
