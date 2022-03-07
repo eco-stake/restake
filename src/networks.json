@@ -1209,5 +1209,30 @@
       }
     ],
     "authzSupport": false
+  },
+  {
+    "name": "cheqd",
+    "prettyName": "cheqd",
+    "chainId": "cheqd-mainnet-1",
+    "prefix": "cheq",
+    "denom": "ncheq",
+    "restUrl": [
+      "https://api.cheqd.net",
+      "https://api.cheqd.blockfend.com"
+    ],
+    "rpcUrl": [
+      "https://rpc.cheqd.net",
+      "https://rpc.cheqd.blockfend.com"
+    ],
+    "image": "https://raw.githubusercontent.com/osmosis-labs/osmosis-frontend/master/public/assets/tokens/cheq.svg",
+    "operators": [
+         {
+        "address": "cheqdvaloper1m0f5mdkusqq24zhf8azjn2j5v2jqwqlt3ukrc0",
+        "botAddress": "cheqd1ypntyymvjg90ntxwes3hxtmuvvh4fcr8w082sd",
+        "runTime": "21:00",
+        "minimumReward": 1000
+      }
+    ],
+    "authzSupport": true
   }
 ]
