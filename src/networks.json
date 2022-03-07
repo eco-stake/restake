@@ -885,6 +885,7 @@
     "chainId": "crypto-org-chain-mainnet-1",
     "prefix": "cro",
     "denom": "basecro",
+    "decimals": 8,
     "restUrl": [
       "https://rest.cosmos.directory/cryptoorgchain",
       "https://lcd-crypto-org.keplr.app/"
@@ -908,12 +909,12 @@
   },
   {
     "name": "evmos",
-    "enabled": true,
-    "decimals": 1e18,
+    "enabled": false,
     "prettyName": "Evmos",
     "chainId": "evmos_9001-1",
     "prefix": "evmos",
     "denom": "aevmos",
+    "decimals": 18,
     "restUrl": [
       "https://rest.cosmos.directory/evmos",
       "https://rest.bd.evmos.org:1317"
@@ -987,6 +988,7 @@
     "chainId": "sifchain-1",
     "prefix": "sifchain",
     "denom": "rowan",
+    "decimals": 18,
     "restUrl": [
       "https://rest.cosmos.directory/sifchain",
       "https://api.sifchain.finance"
