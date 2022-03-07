@@ -708,6 +708,12 @@
         "botAddress": "dig1uwqjtgjhjctjc45ugy7ev5prprhehc7wpfu947",
         "runTime": "21:00",
         "minimumReward": 1000
+      },
+      {
+        "address": "digvaloper1s8kaf75yr6v693lhcdwx9r6d3z0sgs2nns36pq",
+        "botAddress": "dig1e44rluarkdw56dy2turnwjtvtg4wqvs02lu047",
+        "runTime": "21:00",
+        "minimumReward": 1000
       }
     ],
     "authzSupport": false
@@ -866,7 +872,7 @@
       },
       {
         "address": "desmosvaloper1lf3fg79gf2qf6ept7ec22kjd8s6gj3swr2ca0v",
-        "botAddress": "desmos1a4uge5t5uh0mvpu8zaq44mxz8rpyuafg2sxrs8",
+        "botAddress": "desmos1e44rluarkdw56dy2turnwjtvtg4wqvs0xnc5qa",
         "runTime": "21:00",
         "minimumReward": 10000
       },
