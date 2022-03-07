@@ -383,8 +383,8 @@
     ],
     "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/huahua.png",
     "gasPrice": "0.025uhuahua",
-    "ownerAddress": "chihuahuavaloper19vwcee000fhazmpt4ultvnnkhfh23ppwxll8zz",
     "testAddress": "chihuahua1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczjr22j5",
+    "ownerAddress": "chihuahuavaloper19vwcee000fhazmpt4ultvnnkhfh23ppwxll8zz",
     "operators": [
       {
         "address": "chihuahuavaloper1tzk3kzjy7fj4w37hm5v48c2t8vvgukzcqgkz8k",
@@ -678,6 +678,8 @@
     ],
     "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/dig.png",
     "gasPrice": "0.0025udig",
+    "testAddress": "dig1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczfzw03d",
+    "ownerAddress": "digvaloper136avwnuvvy94dqmtnaue2nfvjes8xr37h9rzay",
     "operators": [
       {
         "address": "digvaloper136avwnuvvy94dqmtnaue2nfvjes8xr37h9rzay",
