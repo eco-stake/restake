@@ -231,6 +231,12 @@
         "botAddress": "juno1uwqjtgjhjctjc45ugy7ev5prprhehc7w00k4se",
         "runTime": "21:00",
         "minimumReward": 1000
+      },
+      {
+        "address": "junovaloper1gp957czryfgyvxwn3tfnyy2f0t9g2p4pvzc6k3",
+        "botAddress": "juno1xrrfek3qpz4ja8ccrjklfy064asyqq9k9q45nn",
+        "runTime": "21:00",
+        "minimumReward": 10000
       }
     ],
     "authzSupport": true
@@ -1089,7 +1095,7 @@
         "botAddress": "stars1305e92ng6a9pdh3ttc3ld459ckxupxt3rsd73k",
         "runTime": "19:15",
         "minimumReward": 10000
-      }      
+      }
     ],
     "authzSupport": true
   },
