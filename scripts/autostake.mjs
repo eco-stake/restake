@@ -28,7 +28,12 @@ class Autostake {
       return async () => {
         if(networkName && data.name !== networkName) return
 
-        const client = await this.getClient(data)
+        let client
+        try {
+          client = await this.getClient(data)
+        } catch (error) {
+          return console.log('Failed to connect')
+        }
 
         if(!client.operator) return console.log('Not an operator')
         if(!client.network.authzSupport) return console.log('No Authz support')
