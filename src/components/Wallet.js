@@ -156,7 +156,7 @@ class Wallet extends React.Component {
             date={this.nextRun(true)}
             renderer={this.countdownRenderer}
           />
-        <p><em>The minimum reward is <Coins coins={this.minimumReward()} decimals={this.props.network.data.decimals} /></em></p>
+          <p><em>The minimum reward is <Coins coins={this.minimumReward()} decimals={this.props.network.data.decimals} /></em></p>
         </div>
         }
       </div>
