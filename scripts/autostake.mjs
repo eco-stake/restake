@@ -118,7 +118,7 @@ class Autostake {
           }
         },
         (error) => {
-          console.log("ERROR:", error)
+          console.log("ERROR:", error.code)
           process.exit()
         }
       )
@@ -128,7 +128,7 @@ class Autostake {
     return client.restClient.getAllValidatorDelegations(client.operator.address, 250, (pages) => {
       console.log("...batch", pages.length)
     }).catch(error => {
-      console.log("ERROR:", error)
+      console.log("ERROR:", error.code)
       process.exit()
     })
   }
@@ -152,7 +152,7 @@ class Autostake {
           }
         },
         (error) => {
-          console.log("ERROR:", error)
+          console.log("ERROR:", error.code)
           process.exit()
         }
       )
@@ -225,7 +225,7 @@ class Autostake {
           return total
         },
         (error) => {
-          console.log(address, "ERROR:", error)
+          console.log(address, "ERROR:", error.code)
           process.exit()
         }
       )
