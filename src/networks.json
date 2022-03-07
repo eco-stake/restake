@@ -6,9 +6,11 @@
     "prefix": "osmo",
     "denom": "uosmo",
     "restUrl": [
+      "https://rest.cosmos.directory/osmosis",
       "https://lcd-osmosis.blockapsis.com"
     ],
     "rpcUrl": [
+      "https://rpc.cosmos.directory/osmosis",
       "https://osmosis.validator.network",
       "https://rpc-osmosis.blockapsis.com"
     ],
@@ -111,9 +113,11 @@
     "prefix": "juno",
     "denom": "ujuno",
     "restUrl": [
+      "https://rest.cosmos.directory/juno",
       "https://lcd-juno.itastakers.com"
     ],
     "rpcUrl": [
+      "https://rpc.cosmos.directory/juno",
       "https://rpc-juno.itastakers.com"
     ],
     "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/juno.svg",
@@ -226,9 +230,11 @@
     "prefix": "cosmos",
     "denom": "uatom",
     "restUrl": [
+      "https://rest.cosmos.directory/cosmoshub",
       "https://lcd-cosmoshub.blockapsis.com"
     ],
     "rpcUrl": [
+      "https://rpc.cosmos.directory/cosmoshub",
       "https://cosmoshub.validator.network",
       "https://rpc-cosmoshub.blockapsis.com"
     ],
@@ -338,9 +344,11 @@
     "prefix": "chihuahua",
     "denom": "uhuahua",
     "restUrl": [
+      "https://rest.cosmos.directory/chihuahua",
       "https://api.chihuahua.wtf/"
     ],
     "rpcUrl": [
+      "https://rpc.cosmos.directory/chihuahua",
       "https://rpc.chihuahua.wtf"
     ],
     "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/huahua.png",
@@ -461,9 +469,11 @@
     "prefix": "gravity",
     "denom": "ugraviton",
     "restUrl": [
+      "https://rest.cosmos.directory/gravitybridge",
       "https://gravitychain.io:1317"
     ],
     "rpcUrl": [
+      "https://rpc.cosmos.directory/gravitybridge",
       "https://gravitychain.io:26657"
     ],
     "image": "https://raw.githubusercontent.com/Gravity-Bridge/Gravity-Docs/main/assets/Graviton-Blue.svg",
@@ -560,9 +570,11 @@
     "prefix": "sent",
     "denom": "udvpn",
     "restUrl": [
+      "https://rest.cosmos.directory/sentinel",
       "https://lcd-sentinel.keplr.app"
     ],
     "rpcUrl": [
+      "https://rpc.cosmos.directory/sentinel",
       "https://rpc-sentinel.keplr.app"
     ],
     "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/dvpn.png",
@@ -603,9 +615,11 @@
     "prefix": "dig",
     "denom": "udig",
     "restUrl": [
+      "https://rest.cosmos.directory/dig",
       "https://api-1-dig.notional.ventures"
     ],
     "rpcUrl": [
+      "https://rpc.cosmos.directory/dig",
       "https://rpc-1-dig.notional.ventures"
     ],
     "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/dig.png",
@@ -645,9 +659,11 @@
     "prefix": "bcna",
     "denom": "ubcna",
     "restUrl": [
+      "https://rest.cosmos.directory/bitcanna",
       "https://lcd.bitcanna.io"
     ],
     "rpcUrl": [
+      "https://rpc.cosmos.directory/bitcanna",
       "https://rpc.bitcanna.io",
       "https://rpc-bitcanna.itastakers.com"
     ],
@@ -670,10 +686,12 @@
     "prefix": "emoney",
     "denom": "ungm",
     "restUrl": [
+      "https://rest.cosmos.directory/emoney",
       "https://lcd-emoney.keplr.app",
       "https://emoney.validator.network/api/"
     ],
     "rpcUrl": [
+      "https://rpc.cosmos.directory/emoney",
       "https://rpc-emoney.keplr.app",
       "https://emoney.validator.network"
     ],
@@ -708,9 +726,11 @@
     "prefix": "kava",
     "denom": "ukava",
     "restUrl": [
+      "https://rest.cosmos.directory/kava",
       "https://api.data.kava.io/"
     ],
     "rpcUrl": [
+      "https://rpc.cosmos.directory/kava",
       "https://rpc.kava.io"
     ],
     "image": "https://raw.githubusercontent.com/Kava-Labs/kava/master/kava-logo.svg",
@@ -738,9 +758,11 @@
     "prefix": "desmos",
     "denom": "udsm",
     "restUrl": [
+      "https://rest.cosmos.directory/desmos",
       "https://api.mainnet.desmos.network"
     ],
     "rpcUrl": [
+      "https://rpc.cosmos.directory/desmos",
       "https://rpc.mainnet.desmos.network"
     ],
     "image": "https://raw.githubusercontent.com/cosmos/chain-registry/master/desmos/images/dsm.png",
@@ -780,9 +802,11 @@
     "prefix": "cro",
     "denom": "basecro",
     "restUrl": [
+      "https://rest.cosmos.directory/cryptoorgchain",
       "https://lcd-crypto-org.keplr.app/"
     ],
     "rpcUrl": [
+      "https://rpc.cosmos.directory/cryptoorgchain",
       "https://mainnet.crypto.org",
       "https://rpc-crypto-org.keplr.app"
     ],
@@ -806,9 +830,11 @@
     "prefix": "evmos",
     "denom": "aevmos",
     "restUrl": [
+      "https://rest.cosmos.directory/evmos",
       "https://rest.bd.evmos.org:1317"
     ],
     "rpcUrl": [
+      "https://rpc.cosmos.directory/evmos",
       "https://tendermint.bd.evmos.org:26657"
     ],
     "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/evmos.png",
@@ -865,9 +891,11 @@
     "prefix": "sifchain",
     "denom": "rowan",
     "restUrl": [
+      "https://rest.cosmos.directory/sifchain",
       "https://api.sifchain.finance"
     ],
     "rpcUrl": [
+      "https://rpc.cosmos.directory/sifchain",
       "https://rpc.sifchain.finance"
     ],
     "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/rowan.png",
@@ -900,9 +928,11 @@
     "prefix": "lum",
     "denom": "ulum",
     "restUrl": [
+      "https://rest.cosmos.directory/lumnetwork",
       "https://node0.mainnet.lum.network/rest"
     ],
     "rpcUrl": [
+      "https://rpc.cosmos.directory/lumnetwork",
       "https://node0.mainnet.lum.network/rpc"
     ],
     "image": "https://raw.githubusercontent.com/lum-network/mainnet/master/assets/lum.png",
@@ -971,10 +1001,12 @@
     "prefix": "stars",
     "denom": "ustars",
     "restUrl": [
+      "https://rest.cosmos.directory/stargaze",
       "https://rest.stargaze-apis.com",
       "https://api.stargaze.ezstaking.io"
     ],
     "rpcUrl": [
+      "https://rpc.cosmos.directory/stargaze",
       "https://rpc.stargaze-apis.com",
       "https://rpc.stargaze.ezstaking.io"
     ],
@@ -1014,10 +1046,12 @@
     "prefix": "comdex",
     "denom": "ucmdx",
     "restUrl": [
+      "https://rest.cosmos.directory/comdex",
       "https://api.comdex.audit.one/rest",
       "https://rest.comdex.one"
     ],
     "rpcUrl": [
+      "https://rpc.cosmos.directory/comdex",
       "https://api.comdex.audit.one/rpc/",
       "https://rpc.comdex.one"
     ],
