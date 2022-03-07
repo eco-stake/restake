@@ -102,6 +102,12 @@
         "botAddress": "osmo1uecj925gwmagk8je8c2exmnty6t2jm7xk9shdp",
         "runTime": "21:00",
         "minimumReward": 1000
+      },
+      {
+        "address": "osmovaloper10ymws40tepmjcu3a2wuy266ddna4ktas0zuzm4",
+        "botAddress": "osmo1uwqjtgjhjctjc45ugy7ev5prprhehc7w3xx7ph",
+        "runTime": "21:00",
+        "minimumReward": 1000
       }
     ],
     "authzSupport": true
@@ -219,6 +225,12 @@
         "botAddress": "juno1q200ut9chx7t0nnde4h526vdxwudktgkfhxfw7",
         "runTime": "19:00",
         "minimumReward": 10000
+      },
+      {
+        "address": "junovaloper106y6thy7gphzrsqq443hl69vfdvntgz260uxlc",
+        "botAddress": "juno1uwqjtgjhjctjc45ugy7ev5prprhehc7w00k4se",
+        "runTime": "21:00",
+        "minimumReward": 1000
       }
     ],
     "authzSupport": true
@@ -333,6 +345,12 @@
         "botAddress": "akash17xyeczwsax3st6aykyu4f28s5n3zg6r7k774je",
         "runTime": "21:00",
         "minimumReward": 10000
+      },
+      {
+        "address": "akashvaloper1lxh0u07haj646pt9e0l2l4qc3d8htfx5kk698d",
+        "botAddress": "akash1uwqjtgjhjctjc45ugy7ev5prprhehc7w5xcfwl",
+        "runTime": "21:00",
+        "minimumReward": 1000
       }
     ],
     "authzSupport": false
@@ -458,6 +476,12 @@
         "botAddress": "chihuahua1q200ut9chx7t0nnde4h526vdxwudktgkusgugq",
         "runTime": "19:00",
         "minimumReward": 1000
+      },
+      {
+        "address": "chihuahuavaloper1lxh0u07haj646pt9e0l2l4qc3d8htfx5pd5hur",
+        "botAddress": "chihuahua1uwqjtgjhjctjc45ugy7ev5prprhehc7w6gcqk8",
+        "runTime": "21:00",
+        "minimumReward": 1000
       }
     ],
     "authzSupport": false
@@ -503,6 +527,12 @@
         "botAddress": "gravity1305e92ng6a9pdh3ttc3ld459ckxupxt3nugml0",
         "runTime": "19:15",
         "minimumReward": 10000
+      },
+      {
+        "address": "gravityvaloper1728s3k0mgzmc38eswpu9seghl0yczupyhc695s",
+        "botAddress": "gravity1uwqjtgjhjctjc45ugy7ev5prprhehc7wad8kjd",
+        "runTime": "21:00",
+        "minimumReward": 1000
       }
     ],
     "authzSupport": true
@@ -604,6 +634,12 @@
         "botAddress": "sent17xyeczwsax3st6aykyu4f28s5n3zg6r7q79t0v",
         "runTime": "21:00",
         "minimumReward": 1000
+      },
+      {
+        "address": "sentvaloper1lxh0u07haj646pt9e0l2l4qc3d8htfx543ss9m",
+        "botAddress": "sent1uwqjtgjhjctjc45ugy7ev5prprhehc7wzxrhn2",
+        "runTime": "21:00",
+        "minimumReward": 1000
       }
     ],
     "authzSupport": false
@@ -648,6 +684,12 @@
         "botAddress": "dig1v9vae554q55xa4pcfdm0p3kv8nxn50jkzcwe0j",
         "runTime": "23:00",
         "minimumReward": 10000
+      },
+      {
+        "address": "digvaloper1dv3v662kd3pp6pxfagck4zyysas82adspfvtw4",
+        "botAddress": "dig1uwqjtgjhjctjc45ugy7ev5prprhehc7wpfu947",
+        "runTime": "21:00",
+        "minimumReward": 1000
       }
     ],
     "authzSupport": false
@@ -715,6 +757,12 @@
         "botAddress": "emoney1v9vae554q55xa4pcfdm0p3kv8nxn50jk40ax65",
         "runTime": "23:00",
         "minimumReward": 10000
+      },
+      {
+        "address": "emoneyvaloper1lxh0u07haj646pt9e0l2l4qc3d8htfx5ev9y8d",
+        "botAddress": "emoney1uwqjtgjhjctjc45ugy7ev5prprhehc7wk706qc",
+        "runTime": "21:00",
+        "minimumReward": 1000
       }
     ],
     "authzSupport": false
@@ -880,6 +928,12 @@
         "botAddress": "evmos1t8e0n59ta6dnf38vqel7ydme9tajvjegs4jw5g",
         "runTime": "19:15",
         "minimumReward": 10000
+      },
+      {
+        "address": "evmosvaloper18zt355ccyxd3kj23mz5hdz00qqn5lk5kjnj74m",
+        "botAddress": "evmos1uwqjtgjhjctjc45ugy7ev5prprhehc7wmuyqdd",
+        "runTime": "21:00",
+        "minimumReward": 1000
       }
     ],
     "authzSupport": true
@@ -1092,6 +1146,12 @@
         "botAddress": "comdex1305e92ng6a9pdh3ttc3ld459ckxupxt3srcprs",
         "runTime": "19:15",
         "minimumReward": 10000
+      },
+      {
+        "address": "comdexvaloper1lxh0u07haj646pt9e0l2l4qc3d8htfx59hp5ft",
+        "botAddress": "comdex1uwqjtgjhjctjc45ugy7ev5prprhehc7w7jhvwj",
+        "runTime": "21:00",
+        "minimumReward": 1000
       }
     ],
     "authzSupport": false
