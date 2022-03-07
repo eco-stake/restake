@@ -1089,7 +1089,13 @@
         "botAddress": "stars1305e92ng6a9pdh3ttc3ld459ckxupxt3rsd73k",
         "runTime": "19:15",
         "minimumReward": 10000
-      }      
+      },
+      {
+        "address": "starsvaloper1mz2qks48v486d9m8wp4l9fxm2e9l0e0kzk79m5",
+        "botAddress": "stars1mjq48r6435aewerpruwc8up3tz3rzan2c9f22y",
+        "runTime": "19:00",
+        "minimumReward": 1000
+      }
     ],
     "authzSupport": true
   },
