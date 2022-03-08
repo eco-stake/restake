@@ -32,6 +32,12 @@
         "minimumReward": 1000
       },
       {
+        "address": "osmovaloper1zfcmwh56kmz4wqqg2t8pxrm228dx2c6hhzhtx7",
+        "botAddress": "osmo1z0xzvw999jh7ekce7eqnex2fj7cnn6xwxqfugk",
+        "runTime": "21:00",
+        "minimumReward": 1000
+      },
+      {
         "address": "osmovaloper1vrw2c99yvu5t9gugzuj38w35vmhmazzgx7dckk",
         "botAddress": "osmo1yl54sf2ekqsc7y7r33267vhc546trx3fwz6yld",
         "runTime": "21:00",
@@ -329,6 +335,12 @@
         "minimumReward": 10000
       },
       {
+        "address": "akashvaloper1zfcmwh56kmz4wqqg2t8pxrm228dx2c6hzh0ewm",
+        "botAddress": "akash1z0xzvw999jh7ekce7eqnex2fj7cnn6xwrqht87",
+        "runTime": "21:00",
+        "minimumReward": 10000
+      },
+      {
         "address": "akashvaloper1enhj36w6clcm5fjnp87jnffnkthfux2uj88l6h",
         "botAddress": "akash1eml7agwd5x084ennlg6apvskufzrlvnrmthsvr",
         "runTime": "21:00",
@@ -395,6 +407,12 @@
       {
         "address": "chihuahuavaloper1ej2es5fjztqjcd4pwa0zyvaevtjd2y5wnscrkq",
         "botAddress": "chihuahua1gvgcxwdk4j46gx3knhuackvqr2hta29zf2kujy",
+        "runTime": "21:00",
+        "minimumReward": 1001
+      },
+      {
+        "address": "chihuahuavaloper1y6m72uxs6hhsudxqpq73rsdgkjh6nhkqef8pej",
+        "botAddress": "chihuahua1z0xzvw999jh7ekce7eqnex2fj7cnn6xwdwhzlx",
         "runTime": "21:00",
         "minimumReward": 1001
       },
@@ -519,6 +537,12 @@
       {
         "address": "gravityvaloper187reejg4et24jpggqt55vnc47l926w0p8w70mh",
         "botAddress": "gravity1v9vae554q55xa4pcfdm0p3kv8nxn50jk7u42gp",
+        "runTime": "23:00",
+        "minimumReward": 1000
+      },
+      {
+        "address": "gravityvaloper1zfcmwh56kmz4wqqg2t8pxrm228dx2c6hs487gh",
+        "botAddress": "gravity1z0xzvw999jh7ekce7eqnex2fj7cnn6xw2tg5mv",
         "runTime": "23:00",
         "minimumReward": 1000
       },
@@ -863,6 +887,12 @@
       {
         "address": "desmosvaloper1xwazl8ftks4gn00y5x3c47auquc62ssu07r7m6",
         "botAddress": "desmos1hcuv07593sxu4luumnh4dy2fujaxyh7xd9rya5",
+        "runTime": "22:00",
+        "minimumReward": 1000
+      },
+      {
+        "address": "desmosvaloper17ue85ck027c4grv7nuks7k7p4fqnlc55uqhskj",
+        "botAddress": "desmos1z0xzvw999jh7ekce7eqnex2fj7cnn6xw6rhufu",
         "runTime": "22:00",
         "minimumReward": 1000
       },
