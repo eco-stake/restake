@@ -42,7 +42,7 @@ class Wallet extends React.Component {
 
   refreshInterval(){
     const interval = setInterval(() => {
-      this.getDelegations()
+      this.getDelegations(true)
     }, 30_000)
     this.setState({refreshInterval: interval})
   }
@@ -51,7 +51,7 @@ class Wallet extends React.Component {
     setTimeout(() => this.getDelegations(), 3_000)
   }
 
-  async getDelegations() {
+  async getDelegations(hideError) {
     this.props.restClient.getDelegations(this.props.address)
       .then(
         (delegations) => {
@@ -61,14 +61,13 @@ class Wallet extends React.Component {
           });
         },
         (error) => {
+          this.setState({ isLoaded: true })
           if([404, 500].includes(error.response && error.response.status)){
             this.setState({
-              isLoaded: true,
-              delegations: {},
+              delegations: {}
             });
-          }else{
+          }else if(!hideError){
             this.setState({
-              isLoaded: true,
               error: 'Failed to load delegations. Please refresh.'
             });
           }
@@ -156,7 +155,7 @@ class Wallet extends React.Component {
             date={this.nextRun(true)}
             renderer={this.countdownRenderer}
           />
-          <p><em>The minimum reward is <Coins coins={this.minimumReward()} /></em></p>
+          <p><em>The minimum reward is <Coins coins={this.minimumReward()} decimals={this.props.network.data.decimals} /></em></p>
         </div>
         }
       </div>

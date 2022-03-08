@@ -28,7 +28,12 @@ class Autostake {
       return async () => {
         if(networkName && data.name !== networkName) return
 
-        const client = await this.getClient(data)
+        let client
+        try {
+          client = await this.getClient(data)
+        } catch (error) {
+          return console.log('Failed to connect')
+        }
 
         if(!client.operator) return console.log('Not an operator')
         if(!client.network.authzSupport) return console.log('No Authz support')
@@ -49,7 +54,7 @@ class Autostake {
         })
 
         console.log("Checking", addresses.length, "delegators for grants...")
-        const batchSize = 250
+        const batchSize = 100
         const batchDelegations = _.chunk(addresses, batchSize);
 
         let grantedAddresses = await mapAsync(batchDelegations, async (batch, index) => {
@@ -113,7 +118,7 @@ class Autostake {
           }
         },
         (error) => {
-          console.log("ERROR:", error)
+          console.log("ERROR:", error.code)
           process.exit()
         }
       )
@@ -123,7 +128,7 @@ class Autostake {
     return client.restClient.getAllValidatorDelegations(client.operator.address, 250, (pages) => {
       console.log("...batch", pages.length)
     }).catch(error => {
-      console.log("ERROR:", error)
+      console.log("ERROR:", error.code)
       process.exit()
     })
   }
@@ -147,7 +152,7 @@ class Autostake {
           }
         },
         (error) => {
-          console.log("ERROR:", error)
+          console.log("ERROR:", error.code)
           process.exit()
         }
       )
@@ -220,7 +225,7 @@ class Autostake {
           return total
         },
         (error) => {
-          console.log(address, "ERROR:", error)
+          console.log(address, "ERROR:", error.code)
           process.exit()
         }
       )
