@@ -107,6 +107,7 @@ class App extends React.Component {
           //coinGeckoId: this.props.network.coinGeckoId
         },
         bip44: { coinType: 118 },// implement coin type in networks.json
+        walletUrlForStaking: "https://restake.app/" + this.props.network.prettyName,
         bech32Config: {
           bech32PrefixAccAddr: this.props.network.prefix,
           bech32PrefixAccPub: this.props.network.prefix + "pub",
