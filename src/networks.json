@@ -317,6 +317,12 @@
     "ownerAddress": "akashvaloper1xgnd8aach3vawsl38snpydkng2nv8a4kqgs8hf",
     "operators": [
       {
+        "address": "akashvaloper1strxz39h5fapp7zvn5mvf8xm0ea9aajqjstv6g",
+        "botAddress": "akash194ytn50yhh67rdha8akhs7c6zulnz4n2yvyy4e",
+        "runTime": "21:00",
+        "minimumReward": 10000
+      },
+      {
         "address": "akashvaloper1xgnd8aach3vawsl38snpydkng2nv8a4kqgs8hf",
         "botAddress": "akash1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczud2r2v",
         "runTime": "21:00",
@@ -592,8 +598,8 @@
     "operators": [
       {
         "address": "terravaloper1f2t96sz9hnwsqnneux6v28xfgn07pkxjduvwjz",
-        "botAddress": "terra1awqjfv0znyemkv8v89vyp3hte54ayrt97tng8d",
-        "runTime": "22:00",
+        "botAddress": "terra194ytn50yhh67rdha8akhs7c6zulnz4n20nnrwr",
+        "runTime": "21:00",
         "minimumReward": 1000
       },
       {
@@ -623,6 +629,12 @@
     "gasPrice": "0.02udvpn",
     "testAddress": "sent1yxsmtnxdt6gxnaqrg0j0nudg7et2gqcz2d3ahe",
     "operators": [
+      {
+        "address": "sentvaloper138dhtmfslt0ls4ec0jumj8tyajry4dfuv27jay",
+        "botAddress": "sent194ytn50yhh67rdha8akhs7c6zulnz4n2jvl6gv",
+        "runTime": "21:00",
+        "minimumReward": 1000
+      },
       {
         "address": "sentvaloper10y0044zsacejntznk6eatvz7mcekqv357fhl7q",
         "botAddress": "sent1n3m6rj0w9lgzg7leppnaru2xguraxhqc7uvx0f",
@@ -779,6 +791,12 @@
     "gasPrice": "0.08ungm",
     "operators": [
       {
+        "address": "emoneyvaloper1z0cwp2wezmaehlhzdmqpx55vhxupuk52d7ucjy",
+        "botAddress": "emoney194ytn50yhh67rdha8akhs7c6zulnz4n2x5nhm7",
+        "runTime": "21:00",
+        "minimumReward": 1000
+      },
+      {
         "address": "emoneyvaloper1fskgtauswg2d0p79d9gdqj2yjyfulg3d65dtue",
         "botAddress": "emoney1mjq48r6435aewerpruwc8up3tz3rzan2r6yrkg",
         "runTime": "19:00",
@@ -828,6 +846,12 @@
     "image": "https://raw.githubusercontent.com/Kava-Labs/kava/master/kava-logo.svg",
     "gasPrice": "0.00008ukava",
     "operators": [
+      {
+        "address": "kavavaloper1hztgl202pvetspxch0pcchaqzrduw4qq64q08u",
+        "botAddress": "kava194ytn50yhh67rdha8akhs7c6zulnz4n24za76y",
+        "runTime": "21:00",
+        "minimumReward": 1000
+      },
       {
         "address": "kavavaloper17jr6wyhm2twyph6d88l5ux945gwmf8vfkhckda",
         "botAddress": "kava1avq4zm9cyrhc2cv9e4pn6p2l97y8aaucu0r733",
@@ -940,6 +964,12 @@
     "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/evmos.png",
     "operators": [
       {
+        "address": "evmosvaloper1shvcjzhcxau6qtlz9w82a646ecwp4hq7ayqt0w",
+        "botAddress": "evmos194ytn50yhh67rdha8akhs7c6zulnz4n2tkcdkt",
+        "runTime": "21:00",
+        "minimumReward": 1000
+      },
+      {
         "address": "evmosvaloper1x5y65hgngh77sxta6s2vpjnfjep3ltllyhf2hs",
         "botAddress": "evmos16e67hq4eqgnfw6pxu8v33mz259z5r30d9v2uq2",
         "runTime": "21:00",
@@ -1013,6 +1043,12 @@
     ],
     "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/rowan.png",
     "operators": [
+       {
+        "address": "sifvaloper1lnhxf6war6qlldemkqzp0t3g57hpe9a6nh3tyv",
+        "botAddress": "sifchain194ytn50yhh67rdha8akhs7c6zulnz4n2zjs8hn",
+        "runTime": "21:00",
+        "minimumReward": 1000
+      },
       {
         "address": "sifvaloper1uepjmgfuk6rnd0djsglu88w7d0t49lmlmxj56z",
         "botAddress": "sif1weeu5yuj8n23hd87wsdxqqgfmzzz9zt629p9uf",
@@ -1182,6 +1218,12 @@
     ],
     "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/cmdx.png",
     "operators": [
+      {
+        "address": "comdexvaloper195re7mhwh9urewm3rvaj9r7vm6j63c4sd78njd",
+        "botAddress": "comdex194ytn50yhh67rdha8akhs7c6zulnz4n2wctp45",
+        "runTime": "21:00",
+        "minimumReward": 1000
+      },
       {
         "address": "comdexvaloper19qz6sgw7llrft2x05lp4swy569e5sla6gl3cuu",
         "botAddress": "comdex1e44rluarkdw56dy2turnwjtvtg4wqvs04yhxwj",
