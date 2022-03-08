@@ -71,34 +71,12 @@ class Delegations extends React.Component {
 
   refreshInterval(){
     const interval = setInterval(() => {
-      this.getRewards()
+      this.getRewards(true)
     }, 15_000)
     this.setState({refreshInterval: interval})
   }
 
-  getInflation() { 
-    this.props.restClient.getInflation().then((inflation) => { this.setState({inflation: inflation})},
-        (error) => {
-          if([404, 500].includes(error.response && error.response.status)){
-          this.setState({ rewards: {} });
-          }else{
-            this.setState({ error: 'Failed to get inflation. Please refresh' });
-          }
-        })
-  }
-
-  getBlocksPerYear() { 
-    this.props.restClient.getBlocksPerYear().then((blocksPerYear) => { this.setState({blocksPerYear: blocksPerYear})},
-        (error) => {
-          if([404, 500].includes(error.response && error.response.status)){
-          this.setState({ rewards: {} });
-          }else{
-            this.setState({ error: 'Failed to get number of blocks. Please refresh' });
-          }
-        })
-  }
-
-  getRewards() {
+  getRewards(hideError) {
     this.props.restClient.getRewards(this.props.address, this.props.network.denom)
       .then(
         (rewards) => {
@@ -108,7 +86,7 @@ class Delegations extends React.Component {
           if([404, 500].includes(error.response && error.response.status)){
           this.setState({ rewards: {} });
           }else{
-            this.setState({ error: 'Failed to get rewards. Please refresh' });
+            if(!hideError) this.setState({ error: 'Failed to get rewards. Please refresh' });
           }
         }
       )
@@ -321,10 +299,10 @@ class Delegations extends React.Component {
           <td className="d-none d-lg-table-cell">{validator.commission.commission_rates.rate * 100}%</td>
           <td className="d-none d-lg-table-cell">{this.calculateApy(validator.commission.commission_rates.rate,365)}%</td>
           <td className="d-none d-sm-table-cell">
-            <Coins coins={delegationBalance} />
+            <Coins coins={delegationBalance} decimals={this.props.network.data.decimals} />
           </td>
           <td className="d-none d-sm-table-cell">
-            {denomRewards && <Coins key={denomRewards.denom} coins={denomRewards} />}
+            {denomRewards && <Coins key={denomRewards.denom} coins={denomRewards} decimals={this.props.network.data.decimals} />}
           </td>
           <td>
             <div className="d-grid gap-2 d-md-flex justify-content-end">

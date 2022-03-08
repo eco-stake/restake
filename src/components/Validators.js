@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import _ from 'lodash'
 import FuzzySearch from 'fuzzy-search'
-
-import Coins from './Coins'
 import ValidatorImage from './ValidatorImage'
 import TooltipIcon from './TooltipIcon'
 
