@@ -37,12 +37,12 @@ const Network = async (data) => {
 
   // Get Chain Registry to extract more information
   const chainData = () => {
-    return axios.get('https://raw.githubusercontent.com/cosmos/chain-registry/master/' + data.name + '/chain.json')
+    return axios.get('https://registry.cosmos.directory/' + data.name)
       .then(res => res.data)
   }
 
   const tokenData = async () => {
-    return axios.get('https://raw.githubusercontent.com/cosmos/chain-registry/master/' + data.name + '/assetlist.json')
+    return axios.get('https://registry.cosmos.directory/' + data.name + '/assetlist')
       .then(res => res.data)
   }
 
