@@ -92,6 +92,28 @@ class Delegations extends React.Component {
       )
   }
 
+    getInflation() { 
+    this.props.restClient.getInflation().then((inflation) => { this.setState({inflation: inflation})},
+        (error) => {
+          if([404, 500].includes(error.response && error.response.status)){
+          this.setState({ rewards: {} });
+          }else{
+            this.setState({ error: 'Failed to get inflation. Please refresh' });
+          }
+        })
+  }
+
+  getBlocksPerYear() { 
+    this.props.restClient.getBlocksPerYear().then((blocksPerYear) => { this.setState({blocksPerYear: blocksPerYear})},
+        (error) => {
+          if([404, 500].includes(error.response && error.response.status)){
+          this.setState({ rewards: {} });
+          }else{
+            this.setState({ error: 'Failed to get number of blocks. Please refresh' });
+          }
+        })
+  }
+
   getGrants() {
     this.props.operators.forEach(operator => {
       const {botAddress, address} = operator
