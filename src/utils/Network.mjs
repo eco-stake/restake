@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import axios from 'axios'
 import RestClient from './RestClient.mjs'
 import SigningClient from './SigningClient.mjs'
 import Operator from './Operator.mjs'
@@ -34,6 +35,20 @@ const Network = async (data) => {
     return restClient.getAllValidators(150)
   }
 
+  // Get Chain Registry to extract more information
+  const chainData = () => {
+    return axios.get('https://raw.githubusercontent.com/cosmos/chain-registry/master/' + data.name + '/chain.json')
+      .then(res => res.data)
+  }
+
+  const tokenData = async () => {
+    return axios.get('https://raw.githubusercontent.com/cosmos/chain-registry/master/' + data.name + '/assetlist.json')
+      .then(res => res.data)
+  }
+
+  const chainRegistry = await chainData();
+  const tokenRegistry = await tokenData();
+
   return {
     connected: restClient.connected,
     name: data.name,
@@ -46,6 +61,8 @@ const Network = async (data) => {
     rpcUrl: data.rpcUrl,
     operators: data.operators,
     authzSupport: data.authzSupport,
+    chainRegistry,
+    tokenRegistry,
     data,
     restClient,
     signingClient,

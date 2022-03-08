@@ -434,7 +434,6 @@
         "runTime": "21:00",
         "minimumReward": 1000
       },
-
       {
         "address": "chihuahuavaloper140l6y2gp3gxvay6qtn70re7z2s0gn57zum7h5l",
         "botAddress": "chihuahua12xpq68caw2aqdu70jm4k792g0v9prhrprkt2p6",
@@ -964,11 +963,11 @@
         "minimumReward": 1000
       },
       {
-         "address": "evmosvaloper1qp49y6vh8vvv5yf8ule8fwx6sss82ncz39tunl",
-         "botAddress": "evmos10g8dt086qsfw0s27us8uvhnnftf9aanx4afg3h",
-         "runTime": "21:05",
-         "minimumReward": 1000000000000000000
-       },
+        "address": "evmosvaloper1qp49y6vh8vvv5yf8ule8fwx6sss82ncz39tunl",
+        "botAddress": "evmos10g8dt086qsfw0s27us8uvhnnftf9aanx4afg3h",
+        "runTime": "21:05",
+        "minimumReward": 1000000000000000000
+      },
       {
         "address": "evmosvaloper1f6m9d94lkenw9fy5wmytatt76l849kx6ugdz70",
         "botAddress": "evmos175l97fdm2a6x5xp82psec52elzu8nsl7dmc7an",
@@ -1232,5 +1231,30 @@
       }
     ],
     "authzSupport": false
+  },
+  {
+    "name": "cheqd",
+    "prettyName": "cheqd",
+    "chainId": "cheqd-mainnet-1",
+    "prefix": "cheq",
+    "denom": "ncheq",
+    "restUrl": [
+      "https://api.cheqd.net",
+      "https://api.cheqd.blockfend.com"
+    ],
+    "rpcUrl": [
+      "https://rpc.cheqd.net",
+      "https://rpc.cheqd.blockfend.com"
+    ],
+    "image": "https://raw.githubusercontent.com/osmosis-labs/osmosis-frontend/master/public/assets/tokens/cheq.svg",
+    "operators": [
+      {
+        "address": "cheqdvaloper1m0f5mdkusqq24zhf8azjn2j5v2jqwqlt3ukrc0",
+        "botAddress": "cheqd1ypntyymvjg90ntxwes3hxtmuvvh4fcr8w082sd",
+        "runTime": "21:00",
+        "minimumReward": 1000
+      }
+    ],
+    "authzSupport": true
   }
 ]

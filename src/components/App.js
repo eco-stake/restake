@@ -101,12 +101,12 @@ class App extends React.Component {
         chainId: this.state.chainId,
         chainName: this.props.network.prettyName,
         stakeCurrency: {
-          coinDenom: this.props.network.denom, // Implement basedenom in networks.json
+          coinDenom: this.props.network.tokenRegistry.assets[0].symbol, 
           coinMinimalDenom: this.props.network.denom,
           coinDecimals: false ? this.props.network.decimals: 6,
-          //coinGeckoId: this.props.network.coinGeckoId
+          coinGeckoId: this.props.network.tokenRegistry.assets[0].coingecko_id
         },
-        bip44: { coinType: 118 },// implement coin type in networks.json
+        bip44: { coinType: this.props.network.chainRegistry.slip44 },
         walletUrlForStaking: "https://restake.app/" + this.props.network.prettyName,
         bech32Config: {
           bech32PrefixAccAddr: this.props.network.prefix,
@@ -117,16 +117,16 @@ class App extends React.Component {
           bech32PrefixConsPub: this.props.network.prefix + "valconspub"
         },
         currencies: [{
-          coinDenom: this.props.network.denom, // Implement basedenom in networks.json
+          coinDenom: this.props.network.tokenRegistry.assets[0].symbol, 
           coinMinimalDenom: this.props.network.denom,
           coinDecimals: false ? this.props.network.decimals: 6,
-          //coinGeckoId: this.props.network.coinGeckoId
+          coinGeckoId: this.props.network.tokenRegistry.assets[0].coingecko_id
         }],
         feeCurrencies:[{
-          coinDenom: this.props.network.denom, // Implement basedenom in networks.json
+          coinDenom: this.props.network.tokenRegistry.assets[0].symbol, 
           coinMinimalDenom: this.props.network.denom,
           coinDecimals: false ? this.props.network.decimals: 6,
-          //coinGeckoId: this.props.network.coinGeckoId
+          coinGeckoId: this.props.network.tokenRegistry.assets[0].coingecko_id
         }],
       })
     }
