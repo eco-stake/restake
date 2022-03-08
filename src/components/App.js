@@ -91,10 +91,46 @@ class App extends React.Component {
         error: 'Could not connect to any available API servers'
       })
     }
-    await window.keplr.enable(this.state.chainId);
+    try {
+      await window.keplr.enable(this.state.chainId);
+    } catch (e) { 
+      console.log(e.message, e)
+      await window.keplr.experimentalSuggestChain({
+        rpc: this.props.network.rpcUrl[0],
+        rest: this.props.network.restUrl,
+        chainId: this.state.chainId,
+        chainName: this.props.network.prettyName,
+        stakeCurrency: {
+          coinDenom: this.props.network.denom, // Implement basedenom in networks.json
+          coinMinimalDenom: this.props.network.denom,
+          coinDecimals: false ? this.props.network.decimals: 6,
+          //coinGeckoId: this.props.network.coinGeckoId
+        },
+        bip44: { coinType: 118 },// implement coin type in networks.json
+        bech32Config: {
+          bech32PrefixAccAddr: this.props.network.prefix,
+          bech32PrefixAccPub: this.props.network.prefix + "pub",
+          bech32PrefixValAddr: this.props.network.prefix + "valoper",
+          bech32PrefixValPub: this.props.network.prefix + "valoperpub",
+          bech32PrefixConsAddr: this.props.network.prefix + "valcons",
+          bech32PrefixConsPub: this.props.network.prefix + "valconspub"
+        },
+        currencies: [{
+          coinDenom: this.props.network.denom, // Implement basedenom in networks.json
+          coinMinimalDenom: this.props.network.denom,
+          coinDecimals: false ? this.props.network.decimals: 6,
+          //coinGeckoId: this.props.network.coinGeckoId
+        }],
+        feeCurrencies:[{
+          coinDenom: this.props.network.denom, // Implement basedenom in networks.json
+          coinMinimalDenom: this.props.network.denom,
+          coinDecimals: false ? this.props.network.decimals: 6,
+          //coinGeckoId: this.props.network.coinGeckoId
+        }],
+      })
+    }
     if (window.getOfflineSigner){
       const offlineSigner = await window.getOfflineSignerAuto(this.state.chainId)
-      const key = await window.keplr.getKey(this.state.chainId);
       const stargateClient = await this.props.network.signingClient(offlineSigner, key)
       if(!stargateClient.connected){
         this.setState({
