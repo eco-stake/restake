@@ -105,7 +105,9 @@ function Delegate(props) {
         </Modal.Header>
         <Modal.Body>
           {!selectedValidator &&
-          <Validators
+            <Validators
+            inflation={props.inflation}
+            blocksPerYear={ props.blocksPerYear}
             redelegate={props.redelegate}
             network={props.network}
             operators={props.operators}

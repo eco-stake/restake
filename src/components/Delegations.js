@@ -39,7 +39,7 @@ class Delegations extends React.Component {
   }
 
   async componentDidUpdate(prevProps){
-    if(this.props.network !== prevProps.network){
+    if (this.props.network !== prevProps.network) {
       clearInterval(this.state.refreshInterval);
     }
 
@@ -92,15 +92,15 @@ class Delegations extends React.Component {
       )
   }
 
-    getInflation() { 
-    this.props.restClient.getInflation().then((inflation) => { this.setState({inflation: inflation})},
-        (error) => {
-          if([404, 500].includes(error.response && error.response.status)){
-          this.setState({ rewards: {} });
-          }else{
-            this.setState({ error: 'Failed to get inflation. Please refresh' });
-          }
-        })
+  getInflation() { 
+  this.props.restClient.getInflation().then((inflation) => { this.setState({inflation: inflation})},
+      (error) => {
+        if([404, 500].includes(error.response && error.response.status)){
+        this.setState({ rewards: {} });
+        }else{
+          this.setState({ error: 'Failed to get inflation. Please refresh' });
+        }
+      })
   }
 
   getBlocksPerYear() { 
@@ -108,10 +108,10 @@ class Delegations extends React.Component {
         (error) => {
           if([404, 500].includes(error.response && error.response.status)){
           this.setState({ rewards: {} });
-          }else{
-            this.setState({ error: 'Failed to get number of blocks. Please refresh' });
-          }
-        })
+        } else {
+          this.setState({ error: 'Failed to get number of blocks. Please refresh' });
+        }
+      })
   }
 
   getGrants() {
@@ -319,7 +319,7 @@ class Delegations extends React.Component {
             )}
           </td>
           <td className="d-none d-lg-table-cell">{validator.commission.commission_rates.rate * 100}%</td>
-          <td className="d-none d-lg-table-cell">{this.calculateApy(validator.commission.commission_rates.rate,365)}%</td>
+          <td className="d-none d-lg-table-cell">{isNaN(this.calculateApy(validator.commission.commission_rates.rate,365))?"": this.calculateApy(validator.commission.commission_rates.rate,365).toString() + "%"}</td>
           <td className="d-none d-sm-table-cell">
             <Coins coins={delegationBalance} decimals={this.props.network.data.decimals} />
           </td>
@@ -499,6 +499,8 @@ class Delegations extends React.Component {
           <div className="col">
             <Delegate
               button={true}
+              blocksPerYear={this.state.blocksPerYear}
+              inflation={ this.state.inflation}
               network={this.props.network}
               operators={this.props.operators}
               address={this.props.address}
