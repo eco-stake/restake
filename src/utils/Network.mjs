@@ -4,7 +4,7 @@ import SigningClient from './SigningClient.mjs'
 import Operator from './Operator.mjs'
 
 const Network = async (data) => {
-  const restClient = await RestClient(data.chainId, data.restUrl)
+  const restClient = await RestClient(data.chainId, data.rpcUrl, data.restUrl)
 
   const signingClient = (wallet, key) => {
     const gasPrice = data.gasPrice || '0.0025' + data.denom
@@ -42,7 +42,6 @@ const Network = async (data) => {
     prefix: data.prefix,
     gasPrice: data.gasPrice,
     denom: data.denom,
-    restUrl: restClient.restUrl,
     rpcUrl: data.rpcUrl,
     operators: data.operators,
     authzSupport: data.authzSupport,
