@@ -1463,5 +1463,81 @@
       }
     ],
     "authzSupport": true
+  },
+  {
+    "name": "impacthub",
+    "prettyName": "Impact Hub",
+    "chainId": "impacthub-3",
+    "prefix": "ixo",
+    "denom": "uixo",
+    "restUrl": [
+      "https://lcd-impacthub.keplr.app",
+      "https://proxies.sifchain.finance/api/impacthub-3/rest",
+      "http://18.220.101.192:1317/",
+      "https://impacthub.ixo.world/rest/"
+    ],
+    "rpcUrl": [
+      "https://rpc-impacthub.keplr.app",
+      "https://proxies.sifchain.finance/api/impacthub-3/rpc",
+      "http://18.220.101.192:26657",
+      "https://impacthub.ixo.world/rpc"
+    ],
+    "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/ixo.png",
+    "gasPrice": "0.025uixo",
+    "operators": [
+        {
+            "address": "ixovaloper1m3kz9q3hp50udyq5tt4rawrexnay4y7jpyvtr9",
+            "botAddress": "ixo1vqhz5g5sq8ku0ka5x9ygal9flkg5vzr9qlc5jx",
+            "runTime": "20:00",
+            "minimumReward": 1000000
+        }
+    ],
+    "authzSupport": false
+  },
+  {
+    "name": "kichain",
+    "prettyName": "Ki",
+    "chainId": "kichain-2",
+    "prefix": "ki",
+    "denom": "uxki",
+    "restUrl": [
+      "https://api-mainnet.blockchain.ki"
+    ],
+    "rpcUrl": [
+      "https://rpc-mainnet.blockchain.ki"
+    ],
+    "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/xki.svg",
+    "gasPrice": "0.025uxki",
+    "operators": [
+        {
+            "address": "kivaloper1n5cpxhwm5rpgellky5njz67sx8sp0t6ejyxevq",
+            "botAddress": "ki1vqhz5g5sq8ku0ka5x9ygal9flkg5vzr9w8hfjp",
+            "runTime": "20:00",
+            "minimumReward": 1000000
+        }
+    ],
+    "authzSupport": false
+  },
+  {
+    "name": "sommelier",
+    "prettyName": "Sommelier",
+    "chainId": "sommelier-3",
+    "prefix": "somm",
+    "denom": "usomm",
+    "restUrl": [
+      "https://lcd-sommelier.keplr.app"
+    ],
+    "rpcUrl": [
+      "https://rpc-sommelier.keplr.app"
+    ],
+    "image": "https://github.com/osmosis-labs/assetlists/raw/main/images/somm.png",
+    "operators": [
+        {
+            "address": "sommvaloper1cgdlryczzgrk7d4kkeawqg7t6ldz4x84yu305c",
+            "botAddress": "somm1vqhz5g5sq8ku0ka5x9ygal9flkg5vzr9nkf28l",
+            "runTime": "20:00",
+            "minimumReward": 1000000
+        }
+    ]
   }
 ]
