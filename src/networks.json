@@ -157,8 +157,8 @@
       {
         "address": "junovaloper10wxn2lv29yqnw2uf4jf439kwy5ef00qdelfp7r",
         "botAddress": "juno1xs023g3yj2mavwn3cjclgsh8mlk0kgsjsvdd2e",
-        "runTime": "21:00",
-        "minimumReward": 1000
+        "runTime": "00:00",
+        "minimumReward": 10000
       },
       {
         "address": "junovaloper193xl2tqh2tjkld2zv49ku5s44ee4qmgr65jcep",
@@ -1212,8 +1212,8 @@
       {
         "address": "starsvaloper10wxn2lv29yqnw2uf4jf439kwy5ef00qd0jluj0",
         "botAddress": "stars1xs023g3yj2mavwn3cjclgsh8mlk0kgsjjzetx5",
-        "runTime": "21:00",
-        "minimumReward": 1000
+        "runTime": "00:00",
+        "minimumReward": 10000
       },
       {
         "address": "starsvaloper1y3cxrze7kmktj93atd42g9rffyg823g0qjqelc",
