@@ -37,8 +37,25 @@ const RestClient = async (chainId, rpcUrls, restUrls) => {
   };
 
   const getAllValidators = async () => {
+
+    // Create queryClient
     const client = await makeClient();
-    return (await client?.staking.validators("BOND_STATUS_BONDED")).validators;
+
+    // Validators
+    const allValidators = [];
+
+    // Loop through pagination
+    let startAtKey;
+    do {
+      const response = await client?.staking.validators("BOND_STATUS_BONDED", startAtKey);
+      const { validators, pagination } = response;
+      const loadedValidators = (validators || []);
+      loadedValidators.reverse();
+      allValidators.unshift(...loadedValidators);
+      startAtKey = pagination?.nextKey;
+    } while (startAtKey?.length !== 0);
+
+    return allValidators;
   };
 
   const getAllValidatorDelegations = async (validatorAddress) => {
