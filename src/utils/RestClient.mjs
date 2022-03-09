@@ -7,8 +7,7 @@ import {
   setupDistributionExtension,
 } from "@cosmjs/stargate";
 import { Tendermint34Client } from "@cosmjs/tendermint-rpc";
-import _ from 'lodash'
-
+import _ from "lodash";
 
 const RestClient = async (chainId, rpcUrls, restUrls) => {
   // Find available rpcUrl
@@ -39,7 +38,6 @@ const RestClient = async (chainId, rpcUrls, restUrls) => {
   };
 
   const getAllValidators = async () => {
-
     // Create queryClient
     const client = await makeClient();
 
@@ -49,9 +47,12 @@ const RestClient = async (chainId, rpcUrls, restUrls) => {
     // Loop through pagination
     let startAtKey;
     do {
-      const response = await client?.staking.validators("BOND_STATUS_BONDED", startAtKey);
+      const response = await client?.staking.validators(
+        "BOND_STATUS_BONDED",
+        startAtKey
+      );
       const { validators, pagination } = response;
-      const loadedValidators = (validators || []);
+      const loadedValidators = validators || [];
       loadedValidators.reverse();
       allValidators.unshift(...loadedValidators);
       startAtKey = pagination?.nextKey;
@@ -62,15 +63,51 @@ const RestClient = async (chainId, rpcUrls, restUrls) => {
   };
 
   const getAllValidatorDelegations = async (validatorAddress) => {
+    // Create queryClient
     const client = await makeClient();
-    return (await client?.staking.validatorDelegations(validatorAddress))
-      .delegationResponses;
+
+    // ValidatorDelegations
+    const allValidatorDelegations = [];
+
+    // Loop through pagination
+    let startAtKey;
+    do {
+      const response = await client?.staking.validatorDelegations(
+        validatorAddress,
+        startAtKey
+      );
+      const { validatorDelegations, pagination } = response;
+      const loadedValidatorDelegations = validatorDelegations || [];
+      loadedValidatorDelegations.reverse();
+      allValidatorDelegations.unshift(...loadedValidatorDelegations);
+      startAtKey = pagination?.nextKey;
+    } while (startAtKey?.length !== 0);
+
+    return allValidatorDelegations;
   };
 
   const getDelegations = async (address) => {
+    // Create queryClient
     const client = await makeClient();
-    return (await client?.staking.delegatorDelegations(address))
-      .delegationResponses;
+
+    // DelegatorDelegations
+    const allDelegatorDelegations = [];
+
+    // Loop through pagination
+    let startAtKey;
+    do {
+      const response = await client?.staking.delegatorDelegations(
+        address,
+        startAtKey
+      );
+      const { delegatorDelegations, pagination } = response;
+      const loadedDelegatorDelegations = delegatorDelegations || [];
+      loadedDelegatorDelegations.reverse();
+      allDelegatorDelegations.unshift(...loadedDelegatorDelegations);
+      startAtKey = pagination?.nextKey;
+    } while (startAtKey?.length !== 0);
+
+    return allDelegatorDelegations;
   };
 
   const getBalance = async (address, denom) => {
@@ -129,7 +166,9 @@ const RestClient = async (chainId, rpcUrls, restUrls) => {
     return findAsync(urls, async (url) => {
       try {
         const res = await axios.get(url + urlParam, { timeout: 1000 });
-        const nodeInfo = res.data.result ? res.data.result.node_info : res.data.node_info;
+        const nodeInfo = res.data.result
+          ? res.data.result.node_info
+          : res.data.node_info;
         return nodeInfo.network === chainId;
       } catch (error) {
         return false;
