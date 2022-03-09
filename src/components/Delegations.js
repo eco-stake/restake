@@ -69,12 +69,12 @@ class Delegations extends React.Component {
 
   refreshInterval(){
     const interval = setInterval(() => {
-      this.getRewards()
+      this.getRewards(true)
     }, 15_000)
     this.setState({refreshInterval: interval})
   }
 
-  getRewards() {
+  getRewards(hideError) {
     this.props.restClient.getRewards(this.props.address, this.props.network.denom)
       .then(
         (rewards) => {
@@ -84,7 +84,7 @@ class Delegations extends React.Component {
           if([404, 500].includes(error.response && error.response.status)){
           this.setState({ rewards: {} });
           }else{
-            this.setState({ error: 'Failed to get rewards. Please refresh' });
+            if(!hideError) this.setState({ error: 'Failed to get rewards. Please refresh' });
           }
         }
       )

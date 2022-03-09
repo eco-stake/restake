@@ -28,10 +28,16 @@ class Autostake {
       return async () => {
         if(networkName && data.name !== networkName) return
 
-        const client = await this.getClient(data)
+        let client
+        try {
+          client = await this.getClient(data)
+        } catch (error) {
+          return console.log('Failed to connect')
+        }
 
         if(!client.operator) return console.log('Not an operator')
         if(!client.network.authzSupport) return console.log('No Authz support')
+        if(!data.overriden) console.log('You are using public nodes, script may fail with many delegations. Check the README to use your own')
         if(!client.network.connected) return console.log('Could not connect to REST API')
         if(!client.signingClient.connected) return console.log('Could not connect to RPC API')
 
@@ -49,7 +55,7 @@ class Autostake {
         })
 
         console.log("Checking", addresses.length, "delegators for grants...")
-        const batchSize = 250
+        const batchSize = 100
         const batchDelegations = _.chunk(addresses, batchSize);
 
         let grantedAddresses = await mapAsync(batchDelegations, async (batch, index) => {
@@ -65,7 +71,11 @@ class Autostake {
         console.log("Found", grantedAddresses.length, "delegators with valid grants...")
         let calls = _.compact(grantedAddresses).map(item => {
           return async () => {
-            await this.autostake(client, item, [client.operator.address])
+            try {
+              await this.autostake(client, item, [client.operator.address])
+            } catch (error) {
+              console.log(item, 'Skipping this run')
+            }
           }
         })
         await executeSync(calls, 1)
@@ -113,7 +123,7 @@ class Autostake {
           }
         },
         (error) => {
-          console.log("ERROR:", error)
+          console.log("ERROR:", error.message || error)
           process.exit()
         }
       )
@@ -123,7 +133,7 @@ class Autostake {
     return client.restClient.getAllValidatorDelegations(client.operator.address, 250, (pages) => {
       console.log("...batch", pages.length)
     }).catch(error => {
-      console.log("ERROR:", error)
+      console.log("ERROR:", error.message || error)
       process.exit()
     })
   }
@@ -147,7 +157,7 @@ class Autostake {
           }
         },
         (error) => {
-          console.log("ERROR:", error)
+          console.log("ERROR:", error.message || error)
           process.exit()
         }
       )
@@ -174,8 +184,9 @@ class Autostake {
     return client.signingClient.signAndBroadcast(client.operator.botAddress, [execMsg], undefined, memo).then((result) => {
       console.log(address, "Successfully broadcasted");
     }, (error) => {
-      console.log(address, 'Failed to broadcast:', error)
-      process.exit()
+      console.log(address, 'Failed to broadcast:', error.message)
+      // Skip on failure
+      // process.exit()
     })
   }
 
@@ -220,7 +231,7 @@ class Autostake {
           return total
         },
         (error) => {
-          console.log(address, "ERROR:", error)
+          console.log(address, "ERROR:", error.message || error)
           process.exit()
         }
       )
