@@ -51,8 +51,7 @@ const RestClient = async (chainId, restUrls) => {
       .then(res => res.data)
       .then(
         (result) => {
-          const inflation = result.result;
-          return inflation
+          return result.result;
         }
       )
   }
@@ -62,8 +61,7 @@ const RestClient = async (chainId, restUrls) => {
       .then(res => res.data)
       .then(
         (result) => {
-          const blocksPerYear = result.result.blocks_per_year;
-          return blocksPerYear
+          return result.result.blocks_per_year;
         }
       )
   }

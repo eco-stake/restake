@@ -109,7 +109,7 @@ class Delegations extends React.Component {
           if([404, 500].includes(error.response && error.response.status)){
           this.setState({ rewards: {} });
         } else {
-          this.setState({ error: 'Failed to get number of blocks. Please refresh' });
+          this.setState({ error: 'Failed to get number of blocks per year. Please refresh' });
         }
       })
   }
