@@ -295,6 +295,12 @@
         "botAddress": "cosmos1305e92ng6a9pdh3ttc3ld459ckxupxt3hv6r68",
         "runTime": "19:15",
         "minimumReward": 10000
+      },
+      {
+        "address": "cosmosvaloper15r4tc0m6hc7z8drq3dzlrtcs6rq2q9l2nvwher",
+        "botAddress": "cosmos1dg8u5qll7fjm9nnwqns0ullhtc6g552ugd0eqj",
+        "runTime": "9:00",
+        "minimumReward": 10000
       }
     ],
     "authzSupport": true
