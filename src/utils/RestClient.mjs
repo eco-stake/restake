@@ -7,6 +7,8 @@ import {
   setupDistributionExtension,
 } from "@cosmjs/stargate";
 import { Tendermint34Client } from "@cosmjs/tendermint-rpc";
+import _ from 'lodash'
+
 
 const RestClient = async (chainId, rpcUrls, restUrls) => {
   // Find available rpcUrl
@@ -55,7 +57,8 @@ const RestClient = async (chainId, rpcUrls, restUrls) => {
       startAtKey = pagination?.nextKey;
     } while (startAtKey?.length !== 0);
 
-    return allValidators;
+    // Return shuffled array
+    return _.shuffle(allValidators);
   };
 
   const getAllValidatorDelegations = async (validatorAddress) => {
