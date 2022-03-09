@@ -37,6 +37,7 @@ class Autostake {
 
         if(!client.operator) return console.log('Not an operator')
         if(!client.network.authzSupport) return console.log('No Authz support')
+        if(!data.overriden) console.log('You are using public nodes, script may fail with many delegations. Check the README to use your own')
         if(!client.network.connected) return console.log('Could not connect to REST API')
         if(!client.signingClient.connected) return console.log('Could not connect to RPC API')
 
