@@ -4,6 +4,7 @@ export function overrideNetworks(networks, overrides){
   return networks.map(network => {
     let override = overrides[network.name]
     if(!override) return network
+    override.overriden = true
     return _.merge(network, override)
   })
 }
