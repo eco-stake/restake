@@ -114,6 +114,12 @@
         "botAddress": "osmo1uwqjtgjhjctjc45ugy7ev5prprhehc7w3xx7ph",
         "runTime": "21:00",
         "minimumReward": 1000
+      },
+      {
+        "address": "osmovaloper1feh2keupglep6mvxf5c96eulh3puujjryj2h8v",
+        "botAddress": "osmo1vqhz5g5sq8ku0ka5x9ygal9flkg5vzr9h34kq8",
+        "runTime": "20:00",
+        "minimumReward": 1000000
       }
     ],
     "authzSupport": true
@@ -249,6 +255,12 @@
         "botAddress": "juno1xrrfek3qpz4ja8ccrjklfy064asyqq9k9q45nn",
         "runTime": "21:00",
         "minimumReward": 10000
+      },
+      {
+        "address": "junovaloper124maqmcqv8tquy764ktz7cu0gxnzfw54l2d073",
+        "botAddress": "juno1vqhz5g5sq8ku0ka5x9ygal9flkg5vzr9fc9a3f",
+        "runTime": "20:00",
+        "minimumReward": 1000000
       }
     ],
     "authzSupport": true
@@ -307,6 +319,12 @@
         "botAddress": "cosmos1dg8u5qll7fjm9nnwqns0ullhtc6g552ugd0eqj",
         "runTime": "9:00",
         "minimumReward": 10000
+      },
+      {
+        "address": "cosmosvaloper124maqmcqv8tquy764ktz7cu0gxnzfw54n3vww8",
+        "botAddress": "cosmos1vqhz5g5sq8ku0ka5x9ygal9flkg5vzr9l2xxk4",
+        "runTime": "20:00",
+        "minimumReward": 1000000
       }
     ],
     "authzSupport": true
@@ -387,6 +405,12 @@
         "botAddress": "akash1uwqjtgjhjctjc45ugy7ev5prprhehc7w5xcfwl",
         "runTime": "21:00",
         "minimumReward": 1000
+      },
+      {
+        "address": "akashvaloper1epnrvkylqpk0f2d3us3cvx7x9tlycz42lwf0v6",
+        "botAddress": "akash1vqhz5g5sq8ku0ka5x9ygal9flkg5vzr9j3tp00",
+        "runTime": "20:00",
+        "minimumReward": 1000000
       }
     ],
     "authzSupport": false
@@ -587,6 +611,12 @@
         "botAddress": "gravity1uwqjtgjhjctjc45ugy7ev5prprhehc7wad8kjd",
         "runTime": "21:00",
         "minimumReward": 1000
+      },
+      {
+        "address": "gravityvaloper14vaak0zdjtnvh92hw9ypwxj76093yrgzmuguar",
+        "botAddress": "gravity1vqhz5g5sq8ku0ka5x9ygal9flkg5vzr9m657na",
+        "runTime": "20:00",
+        "minimumReward": 1000000
       }
     ],
     "authzSupport": true
@@ -612,6 +642,12 @@
         "botAddress": "regen1mjq48r6435aewerpruwc8up3tz3rzan2nm4th3",
         "runTime": "19:00",
         "minimumReward": 10000
+      },
+      {
+        "address": "regenvaloper1ceunjpth8nds7sfmfd9yjmh97vxmwqfyf7r2cn",
+        "botAddress": "regen1vqhz5g5sq8ku0ka5x9ygal9flkg5vzr9qgd6q3",
+        "runTime": "20:00",
+        "minimumReward": 1000000
       }
     ],
     "authzSupport": true
@@ -770,6 +806,12 @@
         "botAddress": "dig1e44rluarkdw56dy2turnwjtvtg4wqvs02lu047",
         "runTime": "21:00",
         "minimumReward": 1000
+      },
+      {
+        "address": "digvaloper1uc8nz85axexc9svkxjy0ccm28cc0uctvs33ewg",
+        "botAddress": "dig1vqhz5g5sq8ku0ka5x9ygal9flkg5vzr9870d5w",
+        "runTime": "20:00",
+        "minimumReward": 1000000
       }
     ],
     "authzSupport": false
@@ -861,6 +903,12 @@
         "botAddress": "emoney1m5hgzum68rjf4c7zhezgkj8hlnmr0kghezplad",
         "runTime": "10:00",
         "minimumReward": 1000
+      },
+      {
+        "address": "emoneyvaloper1sz7rp920hgupfl0p6c7kwkaes8q8tx3lmzhcrc",
+        "botAddress": "emoney1vqhz5g5sq8ku0ka5x9ygal9flkg5vzr9sfujpg",
+        "runTime": "20:00",
+        "minimumReward": 1000000
       }
     ],
     "authzSupport": false
@@ -955,6 +1003,12 @@
         "botAddress": "desmos1az6huqur4g2u29fa6c5zzxmtljp0euqmnla6x5",
         "runTime": "10:00",
         "minimumReward": 10000
+      },
+      {
+        "address": "desmosvaloper1zm3l7p8n5dxqeadsfxy3rd0j3c2knnx3chg77a",
+        "botAddress": "desmos19n0raswpfd9f7779ah637h20ltae0g7ussa8at",
+        "runTime": "20:00",
+        "minimumReward": 1000000
       }
     ],
     "authzSupport": true
@@ -1064,6 +1118,12 @@
         "botAddress": "evmos1uwqjtgjhjctjc45ugy7ev5prprhehc7wmuyqdd",
         "runTime": "21:00",
         "minimumReward": 1000
+      },
+      {
+        "address": "evmosvaloper1a36r4jvcprvewxnr2qhfs0h4spec35238s2h7t",
+        "botAddress": "evmos1axp36fwjy2vzlaym52urh80wq9l7z2t0shrj2y",
+        "runTime": "20:00",
+        "minimumReward": 1000000
       }
     ],
     "authzSupport": true
@@ -1187,6 +1247,12 @@
         "botAddress": "lum1305e92ng6a9pdh3ttc3ld459ckxupxt3zx820n",
         "runTime": "19:15",
         "minimumReward": 10000
+      },
+      {
+        "address": "lumvaloper1uqw4e63xwwjmxt6ympdl20dsxtjr7lzx2p20hu",
+        "botAddress": "lum1vqhz5g5sq8ku0ka5x9ygal9flkg5vzr92qm0rp",
+        "runTime": "20:00",
+        "minimumReward": 1000000
       }
     ],
     "authzSupport": true
@@ -1244,6 +1310,12 @@
         "botAddress": "stars1m5hgzum68rjf4c7zhezgkj8hlnmr0kghzavkpp",
         "runTime": "10:00",
         "minimumReward": 10000
+      },
+      {
+        "address": "starsvaloper13agg47uffkehwqpvqeqp86aamjmkvmt4hyt9z7",
+        "botAddress": "stars1vqhz5g5sq8ku0ka5x9ygal9flkg5vzr9tk3may",
+        "runTime": "20:00",
+        "minimumReward": 1000000
       }
     ],
     "authzSupport": true
@@ -1322,5 +1394,74 @@
       }
     ],
     "authzSupport": false
+  },
+  {
+    "name": "bitsong",
+    "prettyName": "BitSong",
+    "chainId": "bitsong-2b",
+    "prefix": "bitsong",
+    "denom": "ubtsg",
+    "restUrl": [
+      "https://lcd-bitsong.itastakers.com"
+    ],
+    "rpcUrl": [
+      "https://rpc-bitsong.itastakers.com"
+    ],
+    "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/btsg.svg",
+    "operators": [
+      {
+        "address": "bitsongvaloper129y6g55wz7mz9vs2nudfvfdaun80fuphnltfpf",
+        "botAddress": "bitsong14td30sayes36tm042gcrwpynky927x2c434c06",
+        "runTime": "20:00",
+        "minimumReward": 1000000
+      }
+    ],
+    "authzSupport": true
+  },
+  {
+    "name": "persistence",
+    "prettyName": "Persistence",
+    "chainId": "core-1",
+    "prefix": "persistence",
+    "denom": "uxprt",
+    "restUrl": [
+      "https://rest.core.persistence.one"
+    ],
+    "rpcUrl": [
+      "https://rpc.core.persistence.one"
+    ],
+    "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/xprt.png",
+    "operators": [
+      {
+        "address": "persistencevaloper1pdse5rr5njkkka6qeu5m8u704h6z67w5r700vn",
+        "botAddress": "persistence1atgss2zpwl9m8fmm32gzrkjtqw3tdawguqw6tk",
+        "runTime": "20:00",
+        "minimumReward": 1000000
+      }
+    ],
+    "authzSupport": true
+  },
+  {
+    "name": "agoric",
+    "prettyName": "Agoric",
+    "chainId": "agoric-3",
+    "prefix": "agoric",
+    "denom": "ubld",
+    "restUrl": [
+      "https://main.api.agoric.net:443"
+    ],
+    "rpcUrl": [
+      "https://main.rpc.agoric.net:443"
+    ],
+    "image": "https://raw.githubusercontent.com/cosmos/chain-registry/master/agoric/images/bld.png",
+    "operators": [
+      {
+        "address": "agoricvaloper1kh8nwuee2y353u6nmv8jffpvhtzs7xu8f4klam",
+        "botAddress": "agoric148kutx4cag3js995cesc0rpuwpe85hq7zk5ry3",
+        "runTime": "20:00",
+        "minimumReward": 1000000
+      }
+    ],
+    "authzSupport": true
   }
 ]
