@@ -1210,12 +1210,6 @@
     "image": "https://raw.githubusercontent.com/public-awesome/assets/main/images/stars.png",
     "operators": [
       {
-        "address": "starsvaloper12cqfrj8nphzq230nt42zyxq07m0ja0xjxlxd77",
-        "botAddress": "stars1lec95y43ywuymgc66j8dypsh99pkawrmvtxg3m",
-        "runTime": "22:00",
-        "minimumReward": 10000
-      },
-      {
         "address": "starsvaloper10wxn2lv29yqnw2uf4jf439kwy5ef00qd0jluj0",
         "botAddress": "stars1xs023g3yj2mavwn3cjclgsh8mlk0kgsjjzetx5",
         "runTime": "00:00",
