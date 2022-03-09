@@ -61,6 +61,11 @@ const RestClient = async (chainId, rpcUrls, restUrls) => {
     return await (client?.distribution.delegationTotalRewards(address)).rewards;
   };
 
+
+  /**
+   * @TODO Since authz features are not implemented in queryClient yet, we need to leave this like it is.
+   * See https://github.com/cosmos/cosmjs/issues/1080 for further details.
+   */
   const getGrants = async (botAddress, address) => {
     const searchParams = new URLSearchParams();
     searchParams.append("grantee", botAddress);
