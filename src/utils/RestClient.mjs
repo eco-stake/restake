@@ -10,13 +10,15 @@ import { Tendermint34Client } from "@cosmjs/tendermint-rpc";
 
 const RestClient = async (chainId, rpcUrls, restUrls) => {
   // Find available rpcUrl
-  const rpcUrl = await findAvailableRpcUrl(
-    Array.isArray(rpcUrls) ? rpcUrls : [rpcUrls]
+  const rpcUrl = await findAvailableUrl(
+    Array.isArray(rpcUrls) ? rpcUrls : [rpcUrls],
+    "rpc"
   );
 
   // Find available restUrl
-  const restUrl = await findAvailableRestUrl(
-    Array.isArray(restUrls) ? restUrls : [restUrls]
+  const restUrl = await findAvailableUrl(
+    Array.isArray(restUrls) ? restUrls : [restUrls],
+    "rest"
   );
 
   /**
@@ -61,7 +63,6 @@ const RestClient = async (chainId, rpcUrls, restUrls) => {
     return await (client?.distribution.delegationTotalRewards(address)).rewards;
   };
 
-
   /**
    * @TODO Since authz features are not implemented in queryClient yet, we need to leave this like it is.
    * See https://github.com/cosmos/cosmjs/issues/1080 for further details.
@@ -103,24 +104,13 @@ const RestClient = async (chainId, rpcUrls, restUrls) => {
     };
   };
 
-  function findAvailableRpcUrl(urls) {
+  function findAvailableUrl(urls, urlType) {
+    const urlParam = urlType === "rpc" ? "/status?" : "/node_info";
     return findAsync(urls, async (url) => {
       try {
-        const res = await axios.get(url + "/status?", { timeout: 1000 });
-        const data = res.data;
-        return data.result.node_info.network === chainId;
-      } catch (error) {
-        return false;
-      }
-    });
-  }
-
-  function findAvailableRestUrl(urls) {
-    return findAsync(urls, async (url) => {
-      try {
-        const res = await axios.get(url + "/node_info", { timeout: 2000 });
-        const data = res.data;
-        return data.node_info.network === chainId;
+        const res = await axios.get(url + urlParam, { timeout: 1000 });
+        const nodeInfo = res.data.result ? res.data.result.node_info : res.data.node_info;
+        return nodeInfo.network === chainId;
       } catch (error) {
         return false;
       }
