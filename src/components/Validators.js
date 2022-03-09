@@ -56,7 +56,6 @@ function Validators(props) {
   function renderItem(item, isOperator){
     let variant = isOperator ? 'warning' : null
     variant = variant ? 'table-' + variant : ''
-    console.log(item)
     return (
       <tr key={item.operator_address} className={variant}>
         <td>
