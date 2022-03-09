@@ -71,7 +71,11 @@ class Autostake {
         console.log("Found", grantedAddresses.length, "delegators with valid grants...")
         let calls = _.compact(grantedAddresses).map(item => {
           return async () => {
-            await this.autostake(client, item, [client.operator.address])
+            try {
+              await this.autostake(client, item, [client.operator.address])
+            } catch (error) {
+              console.log(item, 'Skipping this run')
+            }
           }
         })
         await executeSync(calls, 1)
