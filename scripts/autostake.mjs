@@ -180,8 +180,9 @@ class Autostake {
     return client.signingClient.signAndBroadcast(client.operator.botAddress, [execMsg], undefined, memo).then((result) => {
       console.log(address, "Successfully broadcasted");
     }, (error) => {
-      console.log(address, 'Failed to broadcast:', error)
-      process.exit()
+      console.log(address, 'Failed to broadcast:', error.message)
+      // Skip on failure
+      // process.exit()
     })
   }
 
