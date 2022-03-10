@@ -121,6 +121,7 @@
         "runTime": "20:00",
         "minimumReward": 1000000
       },
+      {
         "address": "osmovaloper125kjmvuv5sv7qct2t6wc99h3mp7hpyxw37dcgg",
         "botAddress": "osmo1tah24yf5pndrwwc8hsdmjahgyf4s5s7nherfmw",
         "runTime": "1:00",
