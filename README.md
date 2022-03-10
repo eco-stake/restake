@@ -87,7 +87,10 @@ docker-compose build
 
 ### Setting up Cron to make sure the script runs daily
 
-You should setup your script to run at the same time each day using `crontab`
+You should setup your script to run at the same time each day.
+2 methodes are described bellow, The `crontab` one, and the `systemd-timer` one.
+
+####  **using `crontab` (deprecated)**
 
 ```
 crontab -e
@@ -95,7 +98,82 @@ crontab -e
 0 21 * * * /bin/bash -c "cd restake && docker-compose run app npm run autostake" > ./restake.log 2>&1
 ```
 
+#### **using `systemd-timer` (prefered)**
+
+Systemd-timer allow to run a onshot service with specified rules.
+
+  * Create a systemd unit file:
+
+The unit file describe the application to run.
+We define a dependency with the timer with the `Wants` statement.
+
+```bash
+$ sudo vim /etc/systemd/system/restake.service
+```
+
+```
+[Unit]
+Description=stakebot service with docker compose
+Requires=docker.service
+After=docker.service
+Wants=restake.timer
+
+[Service]
+Type=oneshot
+WorkingDirectory=/path/to/restake
+ExecStart=/usr/bin/docker-compose run --rm app npm run autostake
+
+[Install]
+WantedBy=multi-user.target
+```
+
+  * Create a systemd timer file:
+
+The timer file defines the rules for running the restake service every day. All rules are described in the [systemd documentation](https://www.freedesktop.org/software/systemd/man/systemd.timer.html). 
+
+```bash
+$ sudo vim /etc/systemd/system/restake.timer
+```
+
+```
+[Unit]
+Description=Restake bot timer
+
+[Timer]
+AccuracySec=1min
+OnCalendar=*-*-* 21:00:00
+
+[Install]
+WantedBy=timers.target
+```
+
+  * Enable and start everything
+```bash
+$ systemctl enable restake.service
+$ systemctl enable restake.timer
+$ systemctl start restake.timer
+```
+  * Check your timer
+
+`$ systemctl status restake.timer`
+<pre><font color="#8AE234"><b>●</b></font> restake.timer - Restake bot timer
+     Loaded: loaded (/etc/systemd/system/restake.timer; enabled; vendor preset: enabled)
+     Active: <font color="#8AE234"><b>active (waiting)</b></font> since Sun 2022-03-06 22:29:48 UTC; 2 days ago
+    Trigger: Wed 2022-03-09 21:00:00 UTC; 7h left
+   Triggers: ● restake.service
+</pre>
+`$ systemctl status restake.service`
+<pre>● restake.service - stakebot service with docker compose
+     Loaded: loaded (/etc/systemd/system/restake.service; enabled; vendor preset: enabled)
+     Active: inactive (dead) since Tue 2022-03-08 21:00:22 UTC; 16h ago
+TriggeredBy: <font color="#8AE234"><b>●</b></font> restake.timer
+    Process: 86925 ExecStart=/usr/bin/docker-compose run --rm app npm run autostake (code=exited, status=0/SUCCESS)
+   Main PID: 86925 (code=exited, status=0/SUCCESS)
+</pre>
+
+
 Don't forget to [update often](#updating-your-local-version)!
+
 
 ### Overriding networks config locally
 
