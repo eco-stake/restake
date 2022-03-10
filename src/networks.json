@@ -116,6 +116,12 @@
         "minimumReward": 1000
       },
       {
+        "address": "osmovaloper125kjmvuv5sv7qct2t6wc99h3mp7hpyxw37dcgg",
+        "botAddress": "osmo1tah24yf5pndrwwc8hsdmjahgyf4s5s7nherfmw",
+        "runTime": "1:00",
+        "minimumReward": 1000
+      },
+      {
         "address": "osmovaloper1z5xyynz9ewuf044uaweswldut34z34z3cwpt7y",
         "botAddress": "osmo1hl0jgxre5z0nkyjj07c5vfdy44yk44at3y3ue0",
         "runTime": "22:30",
