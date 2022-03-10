@@ -1,7 +1,7 @@
 import { DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
 import Network from '../src/utils/Network.mjs'
 import Operator from '../src/utils/Operator.mjs'
-import {filterAsync, mapAsync, executeSync, overrideNetworks} from '../src/utils/Helpers.mjs'
+import {mapSync, executeSync, overrideNetworks} from '../src/utils/Helpers.mjs'
 
 import {
   coin
@@ -41,6 +41,9 @@ class Autostake {
         if(!client.network.connected) return console.log('Could not connect to REST API')
         if(!client.signingClient.connected) return console.log('Could not connect to RPC API')
 
+        console.log('Using REST URL', client.network.restUrl)
+        console.log('Using RPC URL', client.signingClient.rpcUrl)
+
         console.log('Running autostake')
         await this.checkBalance(client)
 
@@ -55,18 +58,20 @@ class Autostake {
         })
 
         console.log("Checking", addresses.length, "delegators for grants...")
-        const batchSize = 100
-        const batchDelegations = _.chunk(addresses, batchSize);
-
-        let grantedAddresses = await mapAsync(batchDelegations, async (batch, index) => {
-          if(addresses.length > batchSize) console.log('...batch', index + 1)
-          return await filterAsync(batch, (address) => {
-            return this.getGrantValidators(client, address).then(validators => {
-              return !!validators
-            })
-          })
+        let grantCalls = addresses.map(item => {
+          return async () => {
+            try {
+              const validators = await this.getGrantValidators(client, item)
+              return validators ? item : undefined
+            } catch (error) {
+              console.log(item, 'Failed to get address')
+            }
+          }
         })
-        grantedAddresses = grantedAddresses.flat()
+        let grantedAddresses = await mapSync(grantCalls, 100, (batch, index) => {
+          console.log('...batch', index + 1)
+        })
+        grantedAddresses = _.compact(grantedAddresses.flat())
 
         console.log("Found", grantedAddresses.length, "delegators with valid grants...")
         let calls = _.compact(grantedAddresses).map(item => {
@@ -74,7 +79,7 @@ class Autostake {
             try {
               await this.autostake(client, item, [client.operator.address])
             } catch (error) {
-              console.log(item, 'Skipping this run')
+              console.log(item, 'ERROR: Skipping this run -', error.message)
             }
           }
         })
@@ -101,8 +106,9 @@ class Autostake {
       client.registry.register("/cosmos.authz.v1beta1.MsgExec", MsgExec)
     }
 
-    const operatorData = data.operators.find(el => el.botAddress === botAddress)
-    const operator = operatorData && Operator(operatorData)
+    const validators = await network.getValidators()
+    const operators = network.getOperators(validators)
+    const operator = operators.find(el => el.botAddress === botAddress)
 
     return{
       network: network,
@@ -142,18 +148,14 @@ class Autostake {
     return client.restClient.getGrants(client.operator.botAddress, delegatorAddress)
       .then(
         (result) => {
-          if(result.claimGrant || result.stakeGrant){
-            if(result.claimGrant && result.stakeGrant){
-              const grantValidators = result.stakeGrant.authorization.allow_list.address
-              if(!grantValidators.includes(client.operator.address)){
-                console.log(delegatorAddress, "Not autostaking for this validator, skipping")
-                return
-              }
-
-              return grantValidators
-            }else{
-              console.log(delegatorAddress, "Grants invalid")
+          if(result.claimGrant && result.stakeGrant){
+            const grantValidators = result.stakeGrant.authorization.allow_list.address
+            if(!grantValidators.includes(client.operator.address)){
+              console.log(delegatorAddress, "Not autostaking for this validator, skipping")
+              return
             }
+
+            return grantValidators
           }
         },
         (error) => {

@@ -25,6 +25,19 @@ export function filterAsync(array, callbackfn) {
   });
 }
 
+export async function mapSync(calls, count, batchCallback){
+  const batchCalls = _.chunk(calls, count);
+  let results = []
+  let index = 0
+  for (const batchCall of batchCalls) {
+    const batchResults =  await mapAsync(batchCall, call => call())
+    results.push(batchResults)
+    if(batchCallback) batchCallback(batchResults, index)
+    index++
+  }
+  return results.flat()
+}
+
 export async function executeSync(calls, count){
   const batchCalls = _.chunk(calls, count);
   for (const batchCall of batchCalls) {
