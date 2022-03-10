@@ -106,7 +106,10 @@ class Autostake {
       client.registry.register("/cosmos.authz.v1beta1.MsgExec", MsgExec)
     }
 
-    const validators = await network.getValidators()
+    let validators = {}
+    if(data.operators.find(el => el.botAddress === botAddress)){
+      validators = await network.getValidators()
+    }
     const operators = network.getOperators(validators)
     const operator = operators.find(el => el.botAddress === botAddress)
 
