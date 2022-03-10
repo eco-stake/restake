@@ -162,14 +162,14 @@ class Autostake {
           }
         },
         (error) => {
-          console.log("ERROR:", error.message || error)
-          process.exit()
+          console.log(delegatorAddress, "ERROR skipping this run:", error.message || error)
         }
       )
   }
 
   async autostake(client, address, validators){
     const totalRewards = await this.totalRewards(client, address, validators)
+
     const perValidatorReward = parseInt(totalRewards / validators.length)
 
     if(perValidatorReward < client.operator.data.minimumReward){
@@ -236,8 +236,8 @@ class Autostake {
           return total
         },
         (error) => {
-          console.log(address, "ERROR:", error.message || error)
-          process.exit()
+          console.log(address, "ERROR skipping this run:", error.message || error)
+          return 0
         }
       )
   }
