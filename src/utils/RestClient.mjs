@@ -110,15 +110,11 @@ const RestClient = async (chainId, restUrls) => {
     let pages = []
     let nextKey, error
     do {
-      try {
-        const result = await getPage(nextKey)
-        pages.push(result)
-        nextKey = result.pagination.next_key
-        if(pageCallback) pageCallback(pages)
-      } catch (err) {
-        error = err
-      }
-    } while (nextKey && !error)
+      const result = await getPage(nextKey)
+      pages.push(result)
+      nextKey = result.pagination.next_key
+      if(pageCallback) pageCallback(pages)
+    } while (nextKey)
     return pages
   }
 

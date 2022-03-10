@@ -58,20 +58,7 @@ class Autostake {
         })
 
         console.log("Checking", addresses.length, "delegators for grants...")
-        let grantCalls = addresses.map(item => {
-          return async () => {
-            try {
-              const validators = await this.getGrantValidators(client, item)
-              return validators ? item : undefined
-            } catch (error) {
-              console.log(item, 'Failed to get address')
-            }
-          }
-        })
-        let grantedAddresses = await mapSync(grantCalls, 100, (batch, index) => {
-          console.log('...batch', index + 1)
-        })
-        grantedAddresses = _.compact(grantedAddresses.flat())
+        let grantedAddresses = await this.getGrantedAddresses(addresses)
 
         console.log("Found", grantedAddresses.length, "delegators with valid grants...")
         let calls = _.compact(grantedAddresses).map(item => {
@@ -145,6 +132,23 @@ class Autostake {
       console.log("ERROR:", error.message || error)
       process.exit()
     })
+  }
+
+  async getGrantedAddresses(client, addresses){
+    let grantCalls = addresses.map(item => {
+      return async () => {
+        try {
+          const validators = await this.getGrantValidators(client, item)
+          return validators ? item : undefined
+        } catch (error) {
+          console.log(item, 'Failed to get address')
+        }
+      }
+    })
+    let grantedAddresses = await mapSync(grantCalls, 100, (batch, index) => {
+      console.log('...batch', index + 1)
+    })
+    return _.compact(grantedAddresses.flat())
   }
 
   getGrantValidators(client, delegatorAddress) {
