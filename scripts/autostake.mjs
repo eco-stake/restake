@@ -58,7 +58,7 @@ class Autostake {
         })
 
         console.log("Checking", addresses.length, "delegators for grants...")
-        let grantedAddresses = await this.getGrantedAddresses(addresses)
+        let grantedAddresses = await this.getGrantedAddresses(client, addresses)
 
         console.log("Found", grantedAddresses.length, "delegators with valid grants...")
         let calls = _.compact(grantedAddresses).map(item => {
