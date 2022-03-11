@@ -122,14 +122,6 @@ class Delegations extends React.Component {
     const total = await axios.get(
       this.props.network.restUrl + "/bank/total/" + this.props.network.denom
     );
-    console.log(
-      osmosisParams,
-      osmosisEpoch,
-      epochProvisions,
-      pool,
-      "total",
-      total
-    );
     let data = {
       params: osmosisParams.data.params,
       epoch: osmosisEpoch.data.epochs,
@@ -150,10 +142,12 @@ class Delegations extends React.Component {
 
   async getInflation() {
     if (this.props.network.chainId.startsWith("osmosis")) {
-      console.log("Osmosis Inflation");
       return this.getOsmosisInflation();
     } else if (this.props.network.chainId.startsWith("sifchain")) {
-      console.log("Sifchain inflation");
+      let inflation = await axios.get(
+        "https://data.sifchain.finance/beta/validator/stakingRewards"
+      );
+      return inflation.data.rate;
     } else {
       return await this.props.restClient.getInflation();
     }
@@ -164,7 +158,6 @@ class Delegations extends React.Component {
       const params = await axios.get(
         this.props.network.restUrl + "/cosmos/mint/v1beta1/params"
       );
-      console.log(params);
     }
     const { validators } = this.props;
     const periodPerYear = 365;
@@ -174,11 +167,19 @@ class Delegations extends React.Component {
       for (const [address, validator] of Object.entries(validators)) {
         const realApr = chainApr * (1 - parseCommissionRate(validator));
         const apy = (1 + realApr / periodPerYear) ** periodPerYear - 1;
-        console.log(chainApr, realApr, apy);
         validatorApy[address] = apy;
       }
       this.setState({ validatorApy });
-      console.log("Osmosis Inflation");
+    } else if (this.props.network.chainId.startsWith("sifchain")) {
+      const chainApr = await this.getInflation();
+      let validatorApy = {};
+      for (const [address, validator] of Object.entries(validators)) {
+        const realApr = chainApr * (1 - parseCommissionRate(validator));
+        const apy = (1 + realApr / periodPerYear) ** periodPerYear - 1;
+        //console.log(chainApr, realApr, apy);
+        validatorApy[address] = apy;
+      }
+      this.setState({ validatorApy });
     } else {
       const total = await axios.get(
         this.props.network.restUrl + "/bank/total/" + this.props.network.denom
@@ -196,7 +197,6 @@ class Delegations extends React.Component {
       for (const [address, validator] of Object.entries(validators)) {
         const realApr = chainApr * (1 - parseCommissionRate(validator));
         const apy = (1 + realApr / periodPerYear) ** periodPerYear - 1;
-        console.log(chainApr, realApr, apy);
         validatorApy[address] = apy;
       }
       this.setState({ validatorApy });
