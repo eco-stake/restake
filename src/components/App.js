@@ -75,8 +75,6 @@ class App extends React.Component {
 
     return this.setState({
       error: false,
-      chainId: network.chainId,
-      denom: network.denom,
       restClient: network.restClient
     })
   }
@@ -91,10 +89,16 @@ class App extends React.Component {
         error: 'Could not connect to any available API servers'
       })
     }
-    await window.keplr.enable(this.state.chainId);
+    const chainId = this.props.network.chainId
+    try {
+      await window.keplr.enable(chainId);
+    } catch (e) {
+      console.log(e.message, e)
+      await this.suggestChain(this.props.network)
+    }
     if (window.getOfflineSigner){
-      const offlineSigner = await window.getOfflineSignerAuto(this.state.chainId)
-      const key = await window.keplr.getKey(this.state.chainId);
+      const offlineSigner = await window.getOfflineSignerAuto(chainId)
+      const key = await window.keplr.getKey(chainId);
       const stargateClient = await this.props.network.signingClient(offlineSigner, key)
       if(!stargateClient.connected){
         this.setState({
@@ -120,6 +124,34 @@ class App extends React.Component {
     this.setState({
       address: null,
       stargateClient: null
+    })
+  }
+
+  suggestChain(network){
+    const currency = {
+      coinDenom: network.symbol,
+      coinMinimalDenom: network.denom,
+      coinDecimals: network.decimals,
+      coinGeckoId: network.coinGeckoId
+    }
+    return window.keplr.experimentalSuggestChain({
+      rpc: network.rpcUrl[0],
+      rest: network.restUrl,
+      chainId: network.chainId,
+      chainName: network.prettyName,
+      stakeCurrency: currency,
+      bip44: { coinType: network.slip44 },
+      walletUrlForStaking: "https://restake.app/" + network.name,
+      bech32Config: {
+        bech32PrefixAccAddr: network.prefix,
+        bech32PrefixAccPub: network.prefix + "pub",
+        bech32PrefixValAddr: network.prefix + "valoper",
+        bech32PrefixValPub: network.prefix + "valoperpub",
+        bech32PrefixConsAddr: network.prefix + "valcons",
+        bech32PrefixConsPub: network.prefix + "valconspub"
+      },
+      currencies: [currency],
+      feeCurrencies:[currency]
     })
   }
 
@@ -222,7 +254,7 @@ class App extends React.Component {
                 <Badge>
                   <Coins
                     coins={this.state.balance}
-                    decimals={this.props.network.data.decimals}
+                    decimals={this.props.network.decimals}
                   />
                 </Badge>
               </span>
@@ -259,17 +291,17 @@ class App extends React.Component {
               )
           )}
           {this.state.address &&
-          <>
-            <Wallet
-              network={this.props.network}
-              address={this.state.address}
-              operators={this.props.operators}
-              validators={this.props.validators}
-              balance={this.state.balance}
-              getValidatorImage={this.getValidatorImage}
-              restClient={this.state.restClient}
-              stargateClient={this.state.stargateClient} />
-          </>
+            <>
+              <Wallet
+                network={this.props.network}
+                address={this.state.address}
+                operators={this.props.operators}
+                validators={this.props.validators}
+                balance={this.state.balance}
+                getValidatorImage={this.getValidatorImage}
+                restClient={this.state.restClient}
+                stargateClient={this.state.stargateClient} />
+            </>
           }
           <hr />
           <p className="mt-5 text-center">
