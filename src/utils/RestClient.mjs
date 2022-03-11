@@ -12,6 +12,16 @@ import {
 import { Tendermint34Client } from "@cosmjs/tendermint-rpc";
 import { Decimal } from "@cosmjs/math";
 
+function duration(epochs, epochIdentifier) {
+  const epoch = epochs.find((epoch) => epoch.identifier === epochIdentifier);
+  if (!epoch) {
+    return 0;
+  }
+
+  // Actually, the date type of golang protobuf is returned by the unit of seconds.
+  return parseInt(epoch.duration.replace("s", ""));
+}
+
 const RestClient = async (chainId, restUrls, rpcUrls) => {
   // Find available rpcUrl
   const rpcUrl = await findAvailableUrl(
@@ -172,6 +182,118 @@ const RestClient = async (chainId, restUrls, rpcUrls) => {
     const inflation = await client.mint.inflation();
     return inflation.toFloatApproximation();
   };
+
+  const getChainApr = async (denom) => {
+    const client = await makeClient();
+    const pool = await client.staking.pool();
+    const totalSupply = await client.bank.supplyOf(denom);
+    console.log("pool", pool, "total supply", totalSupply);
+    if (chainId.startsWith("osmosis")) {
+      const apr = calcOsmosisApr(totalSupply.amount, pool.bondedTokens);
+      console.log(apr);
+      return apr;
+    } else if (chainId.startWith("sifchain")) {
+      // sifchain APR
+    } else {
+      //other APRS
+      const req = await client.mint.inflation();
+      const inflation = req.toFloatApproximation();
+    }
+  };
+
+  const calcOsmosisApr = async (totalSupply, bondedTokens) => {
+    const mintParams = await axios.get(
+      restUrl + "/osmosis/mint/v1beta1/params"
+    );
+    const osmosisEpochs = await axios.get(
+      restUrl + "/osmosis/epochs/v1beta1/epochs"
+    );
+    const epochProvisions = await axios.get(
+      restUrl + "/osmosis/mint/v1beta1/epoch_provisions"
+    );
+
+    const { params } = mintParams.data;
+    const { epochs } = osmosisEpochs.data;
+    const { epoch_provisions } = epochProvisions.data;
+
+    const mintingEpochProvision =
+      parseFloat(params.distribution_proportions.staking) * epoch_provisions;
+
+    const epochDuration = duration(epochs, params.epoch_identifier);
+    const yearMintingProvision =
+      (mintingEpochProvision * (365 * 24 * 3600)) / epochDuration;
+
+    return yearMintingProvision / totalSupply / (bondedTokens / totalSupply);
+  };
+  getChainApr("uosmo");
+
+  /*   
+  
+
+
+
+  const getInflation = async () => {
+    if (this.props.network.chainId.startsWith("osmosis")) {
+      return this.getOsmosisInflation();
+    } else if (this.props.network.chainId.startsWith("sifchain")) {
+      let inflation = await axios.get(
+        "https://data.sifchain.finance/beta/validator/stakingRewards"
+      );
+      return inflation.data.rate;
+    } else {
+      return await this.props.restClient.getInflation();
+    }
+  };
+
+  const calculateApy = async () => {
+    if (this.props.network.chainId.startsWith("juno")) {
+      const params = await axios.get(
+        this.props.network.restUrl + "/cosmos/mint/v1beta1/params"
+      );
+    }
+    const { validators } = this.props;
+    const periodPerYear = 365;
+    if (this.props.network.chainId.startsWith("osmosis")) {
+      const chainApr = await this.getInflation();
+      let validatorApy = {};
+      for (const [address, validator] of Object.entries(validators)) {
+        const realApr = chainApr * (1 - parseCommissionRate(validator));
+        const apy = (1 + realApr / periodPerYear) ** periodPerYear - 1;
+        validatorApy[address] = apy;
+      }
+      this.setState({ validatorApy });
+    } else if (this.props.network.chainId.startsWith("sifchain")) {
+      const chainApr = await this.getInflation();
+      let validatorApy = {};
+      for (const [address, validator] of Object.entries(validators)) {
+        const realApr = chainApr * (1 - parseCommissionRate(validator));
+        const apy = (1 + realApr / periodPerYear) ** periodPerYear - 1;
+        //console.log(chainApr, realApr, apy);
+        validatorApy[address] = apy;
+      }
+      this.setState({ validatorApy });
+    } else {
+      const total = await axios.get(
+        this.props.network.restUrl + "/bank/total/" + this.props.network.denom
+      );
+      const pool = await axios.get(
+        this.props.network.restUrl + "/cosmos/staking/v1beta1/pool"
+      );
+      const bondedTokens = parseInt(pool.data.pool.bonded_tokens);
+      const totalSupply = parseInt(total.data.result.amount);
+
+      const ratio = bondedTokens / totalSupply;
+      const inflation = await this.getInflation();
+      const chainApr = inflation / ratio;
+      let validatorApy = {};
+      for (const [address, validator] of Object.entries(validators)) {
+        const realApr = chainApr * (1 - parseCommissionRate(validator));
+        const apy = (1 + realApr / periodPerYear) ** periodPerYear - 1;
+        validatorApy[address] = apy;
+      }
+      this.setState({ validatorApy });
+    }
+  }; */
 
   function findAvailableUrl(urls, urlType) {
     const urlParam = urlType === "rpc" ? "/status?" : "/node_info";
