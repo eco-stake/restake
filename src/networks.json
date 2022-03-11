@@ -20,6 +20,12 @@
     "ownerAddress": "osmovaloper1u5v0m74mql5nzfx2yh43s2tke4mvzghr6m2n5t",
     "operators": [
       {
+        "address": "osmovaloper17mggn4znyeyg25wd7498qxl7r2jhgue8td054x",
+        "botAddress": "osmo1ks0uf2zxgv6qjyzjwfvfxyv5vp2m6nk5p5wwvc",
+        "runTime": "18:00",
+        "minimumReward": 1000
+      },
+      {
         "address": "osmovaloper1pxphtfhqnx9ny27d53z4052e3r76e7qq495ehm",
         "botAddress": "osmo194ytn50yhh67rdha8akhs7c6zulnz4n2pv6n63",
         "runTime": "21:00",
@@ -154,6 +160,12 @@
     "gasPrice": "0.0025ujuno",
     "testAddress": "juno1yxsmtnxdt6gxnaqrg0j0nudg7et2gqcz8yyl52",
     "operators": [
+      {
+        "address": "junovaloper17mggn4znyeyg25wd7498qxl7r2jhgue8swpngk",
+        "botAddress": "juno1ks0uf2zxgv6qjyzjwfvfxyv5vp2m6nk5la79ak",
+        "runTime": "18:00",
+        "minimumReward": 1000
+      },
       {
         "address": "junovaloper1zxx8j75ngm8m38v9l5wreaavwnsuun7gcq5cu8",
         "botAddress": "juno1n3m6rj0w9lgzg7leppnaru2xguraxhqcn4eyv6",
@@ -296,6 +308,12 @@
     "gasPrice": "0.0025uatom",
     "testAddress": "cosmos1yxsmtnxdt6gxnaqrg0j0nudg7et2gqcz3k8ynk",
     "operators": [
+      {
+        "address": "cosmosvaloper17mggn4znyeyg25wd7498qxl7r2jhgue8u4qjcq",
+        "botAddress": "cosmos1ks0uf2zxgv6qjyzjwfvfxyv5vp2m6nk5f0a762",
+        "runTime": "18:00",
+        "minimumReward": 1000
+      },
       {
         "address": "cosmosvaloper1vvwtk805lxehwle9l4yudmq6mn0g32px9xtkhc",
         "botAddress": "cosmos1eml7agwd5x084ennlg6apvskufzrlvnrks6h4e",
