@@ -20,6 +20,10 @@ import {
   CheckCircle, XCircle
 } from 'react-bootstrap-icons'
 
+function parseCommissionRate(validator) {
+  return parseInt(validator.commission.commissionRates.rate) / 1000000000000000000
+}
+
 class Delegations extends React.Component {
   constructor(props) {
     super(props);
@@ -267,7 +271,7 @@ class Delegations extends React.Component {
     return (apy*100).toFixed(2)
   }
 
-  renderValidator(validatorAddress, delegation){
+  renderValidator(validatorAddress, delegation) {
     const validator = this.props.validators[validatorAddress]
     if(validator){
       const rewards = this.state.rewards && this.state.rewards[validatorAddress]
@@ -318,8 +322,8 @@ class Delegations extends React.Component {
               <TooltipIcon icon={<XCircle className="opacity-50" />} identifier={validatorAddress} tooltip="This validator is not a REStake operator" />
             )}
           </td>
-          <td className="d-none d-lg-table-cell">{validator.commission.commission_rates.rate * 100}%</td>
-          <td className="d-none d-lg-table-cell">{isNaN(this.calculateApy(validator.commission.commission_rates.rate,365))?"": this.calculateApy(validator.commission.commission_rates.rate,365).toString() + "%"}</td>
+          <td className="d-none d-lg-table-cell">{parseCommissionRate(validator)*100}%</td>
+          <td className="d-none d-lg-table-cell">{isNaN(this.calculateApy(parseCommissionRate(validator),365))?"": this.calculateApy(parseCommissionRate(validator),365).toString() + "%"}</td>
           <td className="d-none d-sm-table-cell">
             <Coins coins={delegationBalance} decimals={this.props.network.data.decimals} />
           </td>
