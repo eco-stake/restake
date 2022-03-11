@@ -132,6 +132,12 @@
         "botAddress": "osmo14gra89zm8753pfuhvujjulmtkf2qq70f3l9gtx",
         "runTime": "21:28",
         "minimumReward": 1000
+      },
+      {
+        "address": "osmovaloper1xf9zpq5kpxks49cg606tzd8qstaykxgt2vs0d5",
+        "botAddress": "osmo19pqrxrl6n0g0mky4y79hlfzchprmsp5jmu2t6g",
+        "runTime": "19:00",
+        "minimumReward": 1000
       }
     ],
     "authzSupport": true
@@ -336,6 +342,12 @@
         "address": "cosmosvaloper15r4tc0m6hc7z8drq3dzlrtcs6rq2q9l2nvwher",
         "botAddress": "cosmos1dg8u5qll7fjm9nnwqns0ullhtc6g552ugd0eqj",
         "runTime": "9:00",
+        "minimumReward": 10000
+      },
+      {
+        "address": "cosmosvaloper199mlc7fr6ll5t54w7tts7f4s0cvnqgc59nmuxf",
+        "botAddress": "cosmos19pqrxrl6n0g0mky4y79hlfzchprmsp5jn8emv6",
+        "runTime": "19:30",
         "minimumReward": 10000
       }
     ],
