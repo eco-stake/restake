@@ -130,8 +130,8 @@
       {
         "address": "osmovaloper17h2x3j7u44qkrq0sk8ul0r2qr440rwgjp38f93",
         "botAddress": "osmo14gra89zm8753pfuhvujjulmtkf2qq70f3l9gtx",
-        "runTime": "21:28",
-        "minimumReward": 1000
+        "runTime": "17:28",
+        "minimumReward": 10000
       }
     ],
     "authzSupport": true
@@ -273,6 +273,12 @@
         "botAddress": "juno1hl0jgxre5z0nkyjj07c5vfdy44yk44at0dphgp",
         "runTime": "22:30",
         "minimumReward": 1000
+      },
+      {
+        "address": "junovaloper17h2x3j7u44qkrq0sk8ul0r2qr440rwgj6jfwcp",
+        "botAddress": "juno14gra89zm8753pfuhvujjulmtkf2qq70f0k4r6g",
+        "runTime": "17:28",
+        "minimumReward": 10000
       }
     ],
     "authzSupport": true
@@ -336,6 +342,12 @@
         "address": "cosmosvaloper15r4tc0m6hc7z8drq3dzlrtcs6rq2q9l2nvwher",
         "botAddress": "cosmos1dg8u5qll7fjm9nnwqns0ullhtc6g552ugd0eqj",
         "runTime": "9:00",
+        "minimumReward": 10000
+      },
+      {
+        "address": "cosmosvaloper17h2x3j7u44qkrq0sk8ul0r2qr440rwgjkfg0gh",
+        "botAddress": "cosmos14gra89zm8753pfuhvujjulmtkf2qq70feykca5",
+        "runTime": "17:28",
         "minimumReward": 10000
       }
     ],
@@ -685,6 +697,12 @@
         "botAddress": "terra1hl0jgxre5z0nkyjj07c5vfdy44yk44atlmcvda",
         "runTime": "22:30",
         "minimumReward": 1000
+      },
+      {
+        "address": "terravaloper1audgfvmgt0js54p3s8kj3r40uwej6vy2tv6rrw",
+        "botAddress": "terra1hz2dutqm7e0t7q3h5cm9d8lchztskm8pekadus",
+        "runTime": "17:28",
+        "minimumReward": 5000
       }
     ],
     "authzSupport": true
@@ -1309,6 +1327,12 @@
         "address": "starsvaloper1hr4ag3mdzy08rl6r7pga832kvchqctvmzdneds",
         "botAddress": "stars1m5hgzum68rjf4c7zhezgkj8hlnmr0kghzavkpp",
         "runTime": "10:00",
+        "minimumReward": 10000
+      },
+      {
+        "address": "starsvaloper17h2x3j7u44qkrq0sk8ul0r2qr440rwgjvlln5d",
+        "botAddress": "stars14gra89zm8753pfuhvujjulmtkf2qq70fdcp9k9",
+        "runTime": "17:28",
         "minimumReward": 10000
       }
     ],
