@@ -94,8 +94,12 @@ class Delegations extends React.Component {
       )
   }
 
-  async getInflation() { 
-    return await this.props.restClient.getInflation();
+  async getInflation() {
+    if (this.props.network.chainId.startsWith("osmosis")) {
+      console.log("Osmosis Inflation");
+    } else {
+      return await this.props.restClient.getInflation();
+    }
   }
 
   async getBlocksPerYear() { 
