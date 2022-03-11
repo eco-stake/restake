@@ -163,7 +163,7 @@ class Delegations extends React.Component {
     setTimeout(() => {
       this.props.getDelegations()
       this.getRewards()
-    }, 5_000)
+    }, 6_000)
   }
 
   setClaimLoading(value){
