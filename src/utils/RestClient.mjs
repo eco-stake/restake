@@ -1,173 +1,215 @@
 import axios from 'axios'
 import _ from 'lodash'
-import {findAsync} from './Helpers.mjs'
+import { findAsync } from './Helpers.mjs'
+import {
+  setupStakingExtension,
+  QueryClient,
+  setupBankExtension,
+  setupDistributionExtension,
+  setupMintExtension,
+  setupGovExtension,
+} from "@cosmjs/stargate";
+import { Tendermint34Client } from "@cosmjs/tendermint-rpc";
 
-const RestClient = async (chainId, restUrls) => {
+const RestClient = async (chainId, restUrls,rpcUrls) => {
+  // Find available rpcUrl
+  const rpcUrl = await findAvailableUrl(
+    Array.isArray(rpcUrls) ? rpcUrls : [rpcUrls],
+    "rpc"
+  );
 
-  const restUrl = await findAvailableUrl(Array.isArray(restUrls) ? restUrls : [restUrls])
+  // Find available restUrl
+  const restUrl = await findAvailableUrl(
+    Array.isArray(restUrls) ? restUrls : [restUrls],
+    "rest"
+  );
 
-  const getAllValidators = (pageSize, pageCallback) => {
-    return getAllPages((nextKey) => {
-      return getValidators(pageSize, nextKey)
-    }, pageCallback).then(pages => {
-      const validators = _.shuffle(pages.map(el => el.validators).flat())
-      return validators.reduce((a, v) => ({ ...a, [v.operator_address]: v}), {})
-    })
-  }
+  /**
+   * Make Client
+   *
+   * @returns QueryClient with necessary extensions
+   */
+  const makeClient = async () => {
+    const tmClient = await Tendermint34Client.connect(rpcUrl);
+    return QueryClient.withExtensions(
+      tmClient,
+      setupStakingExtension,
+      setupBankExtension,
+      setupDistributionExtension,
+      setupMintExtension,
+      setupGovExtension
+    );
+  };
 
-  const getValidators = (pageSize, nextKey) => {
-    const searchParams = new URLSearchParams()
-    searchParams.append('status', 'BOND_STATUS_BONDED')
-    if(pageSize) searchParams.append('pagination.limit', pageSize)
-    if(nextKey) searchParams.append('pagination.key', nextKey)
-    return axios.get(restUrl + "/cosmos/staking/v1beta1/validators?" + searchParams.toString())
-      .then(res => res.data)
-  }
+  const getAllValidators = async () => {
+    // Create queryClient
+    const client = await makeClient();
 
-  const getBalance = (address, denom) => {
-    return axios.get(restUrl + "/cosmos/bank/v1beta1/balances/" + address)
-      .then(res => res.data)
-      .then(
-        (result) => {
-          const balance = result.balances.find(element => element.denom === denom) || {denom: denom, amount: 0}
-          return balance
-        }
-      )
-  }
+    // Validators
+    const allValidators = [];
 
-  const getDelegations = (address) => {
-    return axios.get(restUrl + "/cosmos/staking/v1beta1/delegations/" + address)
-      .then(res => res.data)
-      .then(
-        (result) => {
-          const delegations = _.shuffle(result.delegation_responses).reduce((a, v) => ({ ...a, [v.delegation.validator_address]: v}), {})
-          return delegations
-        }
-      )
-  }
+    // Loop through pagination
+    let startAtKey;
+    do {
+      const response = await client?.staking.validators(
+        "BOND_STATUS_BONDED",
+        startAtKey
+      );
+      const { validators, pagination } = response;
+      const loadedValidators = validators || [];
+      loadedValidators.reverse();
+      allValidators.unshift(...loadedValidators);
+      startAtKey = pagination?.nextKey;
+    } while (startAtKey?.length !== 0);
+    const validators = _.shuffle(allValidators);
 
-  const getInflation = () => {
-    return axios.get(restUrl + "/minting/inflation")
-      .then(res => res.data)
-      .then(
-        (result) => {
-          return result.result;
-        }
-      )
-  }
+    // Return shuffled array
+    return validators.reduce((a, v) => ({ ...a, [v.operatorAddress]: v}), {})
+  };
 
-  const getBlocksPerYear = () => {
-    return axios.get(restUrl + "/minting/parameters")
-      .then(res => res.data)
-      .then(
-        (result) => {
-          return result.result.blocks_per_year;
-        }
-      )
-  }
+  const getAllValidatorDelegations = async (validatorAddress) => {
+    // Create queryClient
+    const client = await makeClient();
 
-  const getRewards = (address) => {
-    return axios.get(restUrl + "/cosmos/distribution/v1beta1/delegators/" + address + "/rewards")
-      .then(res => res.data)
-      .then(
-        (result) => {
-          const rewards = result.rewards.reduce((a, v) => ({ ...a, [v.validator_address]: v}), {})
-          return rewards
-        }
-      )
-  }
+    // ValidatorDelegations
+    const allValidatorDelegations = [];
 
-  const getGrants = (botAddress, address) => {
+    // Loop through pagination
+    let startAtKey;
+    do {
+      const response = await client?.staking.validatorDelegations(
+        validatorAddress,
+        startAtKey
+      );
+      const { validatorDelegations, pagination } = response;
+      const loadedValidatorDelegations = validatorDelegations || [];
+      loadedValidatorDelegations.reverse();
+      allValidatorDelegations.unshift(...loadedValidatorDelegations);
+      startAtKey = pagination?.nextKey;
+    } while (startAtKey?.length !== 0);
+
+    return allValidatorDelegations;
+  };
+
+  const getDelegations = async (address) => {
+    // Create queryClient
+    const client = await makeClient();
+
+    // DelegatorDelegations
+    const allDelegatorDelegations = [];
+
+    // Loop through pagination
+    let startAtKey;
+    do {
+      const response = await client?.staking.delegatorDelegations(
+        address,
+        startAtKey
+      );
+      const { delegatorDelegations, pagination } = response;
+      const loadedDelegatorDelegations = delegatorDelegations || [];
+      loadedDelegatorDelegations.reverse();
+      allDelegatorDelegations.unshift(...loadedDelegatorDelegations);
+      startAtKey = pagination?.nextKey;
+    } while (startAtKey?.length !== 0);
+
+    return allDelegatorDelegations;
+  };
+
+  const getBalance = async (address, denom) => {
+    const client = await makeClient();
+    return await client?.bank.balance(address, denom);
+  };
+
+  const getRewards = async (address) => {
+    const client = await makeClient();
+    return await (client?.distribution.delegationTotalRewards(address)).rewards;
+  };
+
+  /**
+   * @TODO Since authz features are not implemented in queryClient yet, we need to leave this like it is.
+   * See https://github.com/cosmos/cosmjs/issues/1080 for further details.
+   */
+  const getGrants = async (botAddress, address) => {
     const searchParams = new URLSearchParams();
     searchParams.append("grantee", botAddress);
     searchParams.append("granter", address);
     // searchParams.append("msg_type_url", "/cosmos.staking.v1beta1.MsgDelegate");
-    return axios.get(restUrl + "/cosmos/authz/v1beta1/grants?" + searchParams.toString())
-      .then(res => res.data)
-      .then(
-        (result) => {
-          const claimGrant = result.grants.find(el => {
-            if (el.authorization['@type'] === "/cosmos.authz.v1beta1.GenericAuthorization" &&
-              el.authorization.msg === "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward"){
-              return Date.parse(el.expiration) > new Date()
-            }else{
-              return false
-            }
-          })
-          const stakeGrant = result.grants.find(el => {
-            if(el.authorization['@type'] === "/cosmos.staking.v1beta1.StakeAuthorization"){
-              return Date.parse(el.expiration) > new Date()
-            }else{
-              return false
-            }
-          })
-          return {
-            claimGrant,
-            stakeGrant
-          }
-        }
-      )
-  }
-
-  const getAllValidatorDelegations = (validatorAddress, pageSize, pageCallback) => {
-    return getAllPages((nextKey) => {
-      return getValidatorDelegations(validatorAddress, pageSize, nextKey)
-    }, pageCallback).then(pages => {
-      return pages.map(el => el.delegation_responses).flat()
-    })
-  }
-
-  const getValidatorDelegations = (validatorAddress, pageSize, nextKey) => {
-    const searchParams = new URLSearchParams()
-    if(pageSize) searchParams.append("pagination.limit", pageSize)
-    if(nextKey) searchParams.append("pagination.key", nextKey)
-
-    return axios.get(restUrl + "/cosmos/staking/v1beta1/validators/" + validatorAddress + "/delegations?" + searchParams.toString())
-      .then(res => res.data)
-  }
-
-  const getAllPages = async (getPage, pageCallback) => {
-    let pages = []
-    let nextKey, error
-    do {
-      try {
-        const result = await getPage(nextKey)
-        pages.push(result)
-        nextKey = result.pagination.next_key
-        if(pageCallback) pageCallback(pages)
-      } catch (err) {
-        error = err
+    const res = await axios.get(
+      restUrl + "/cosmos/authz/v1beta1/grants?" + searchParams.toString()
+    );
+    const result_1 = res.data;
+    const claimGrant = result_1.grants.find((el) => {
+      if (
+        el.authorization["@type"] ===
+          "/cosmos.authz.v1beta1.GenericAuthorization" &&
+        el.authorization.msg ===
+          "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward"
+      ) {
+        return Date.parse(el.expiration) > new Date();
+      } else {
+        return false;
       }
-    } while (nextKey && !error)
-    return pages
+    });
+    const stakeGrant = result_1.grants.find((el_1) => {
+      if (
+        el_1.authorization["@type"] ===
+        "/cosmos.staking.v1beta1.StakeAuthorization"
+      ) {
+        return Date.parse(el_1.expiration) > new Date();
+      } else {
+        return false;
+      }
+    });
+    return {
+      claimGrant,
+      stakeGrant,
+    };
+  };
+
+
+  const getBlocksPerYear = async () => { 
+    const client = await makeClient();
+    const params = await client.mint.params();
+    return params.blocksPerYear.toInt();
   }
 
-  function findAvailableUrl(urls){
-    return findAsync(urls, (url) => {
-      return axios.get(url + '/node_info', {timeout: 2000})
-        .then(res => res.data)
-        .then(data => {
-          return data.node_info.network === chainId
-        }).catch(error => {
-          return false
-        })
-    })
+  const getInflation = async () => { 
+    const client = await makeClient();
+    const inflation = await client.mint.inflation();
+    console.log(inflation.toFloatApproximation());
+    return inflation.toFloatApproximation();
+  }
+
+
+
+
+  function findAvailableUrl(urls, urlType) {
+    const urlParam = urlType === "rpc" ? "/status?" : "/node_info";
+    return findAsync(urls, async (url) => {
+      try {
+        const res = await axios.get(url + urlParam, { timeout: 1000 });
+        const nodeInfo = res.data.result
+          ? res.data.result.node_info
+          : res.data.node_info;
+        return nodeInfo.network === chainId;
+      } catch (error) {
+        return false;
+      }
+    });
   }
 
   return {
     connected: !!restUrl,
     restUrl,
-    getInflation,
-    getBlocksPerYear,
     getAllValidators,
-    getValidators,
     getAllValidatorDelegations,
-    getValidatorDelegations,
+    getBlocksPerYear,
+    getInflation,
     getBalance,
     getDelegations,
     getRewards,
-    getGrants
-  }
-}
+    getGrants,
+  };
+};
 
 export default RestClient;
