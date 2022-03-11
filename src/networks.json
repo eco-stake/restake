@@ -1327,7 +1327,7 @@
     "name": "cheqd",
     "prettyName": "cheqd",
     "chainId": "cheqd-mainnet-1",
-    "prefix": "cheq",
+    "prefix": "cheqd",
     "denom": "ncheq",
     "decimals": 9,
     "restUrl": [
