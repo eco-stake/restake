@@ -1144,7 +1144,7 @@
     "name": "sifchain",
     "prettyName": "Sifchain",
     "chainId": "sifchain-1",
-    "prefix": "sifchain",
+    "prefix": "sif",
     "denom": "rowan",
     "decimals": 18,
     "restUrl": [
