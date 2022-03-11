@@ -1,3 +1,5 @@
+import _ from 'lodash'
+import axios from 'axios'
 import React, { useEffect, useReducer } from 'react';
 import { useParams, useNavigate } from "react-router-dom";
 import Network from '../utils/Network.mjs'
@@ -19,9 +21,16 @@ function NetworkFinder() {
     {loading: true, networks: [], operators: [], validators: []}
   )
 
-  const getNetworks = () => {
-    let data = networksData
-    return data.filter(el => el.enabled !== false).reduce((a, v) => ({ ...a, [v.name]: v}), {})
+  const getNetworks = async () => {
+    const registryNetworks = await axios.get('https://registry.cosmos.directory')
+      .then(res => res.data)
+      .then(data => data.reduce((a, v) => ({ ...a, [v.chain_name]: v}), {}))
+
+    const networks = networksData.filter(el => el.enabled !== false).map(data => {
+      const registryData = registryNetworks[data.name] || {}
+      return {...data, ...registryData}
+    })
+    return _.compact(networks).reduce((a, v) => ({ ...a, [v.name]: v}), {})
   }
 
   const changeNetwork = (network, validators) => {
@@ -38,8 +47,9 @@ function NetworkFinder() {
   useEffect(() => {
     if(!Object.keys(state.networks).length){
       setState({loading: true})
-      const networks = getNetworks()
-      setState({networks: networks})
+      getNetworks().then(networks => {
+        setState({networks: networks})
+      })
     }
   }, [state.networks])
 
