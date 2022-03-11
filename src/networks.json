@@ -676,7 +676,7 @@
     "rpcUrl": [
       "https://rpc.cosmos.directory/regen"
     ],
-    "gasPrice": "0.002uregen",
+    "gasPrice": "0.03uregen",
     "testAddress": "regen1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczw5vc9j",
     "operators": [
       {
