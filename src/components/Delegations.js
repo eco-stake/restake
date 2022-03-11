@@ -46,7 +46,6 @@ class Delegations extends React.Component {
     if (this.props.network !== prevProps.network) {
       clearInterval(this.state.refreshInterval);
     }
-
     if(!this.props.address) return
 
     if(this.props.address !== prevProps.address){
@@ -63,8 +62,7 @@ class Delegations extends React.Component {
 
   refresh(){
     this.getRewards()
-    this.getInflation()
-    this.getBlocksPerYear()
+    this.calculateApy();
     this.refreshInterval()
     if(this.props.operators.length){
       this.getGrants()
@@ -96,27 +94,31 @@ class Delegations extends React.Component {
       )
   }
 
-  getInflation() { 
-  this.props.restClient.getInflation().then((inflation) => { this.setState({inflation: inflation})},
-      (error) => {
-        if([404, 500].includes(error.response && error.response.status)){
-        this.setState({ rewards: {} });
-        }else{
-          this.setState({ error: 'Failed to get inflation. Please refresh' });
-        }
-      })
+  async getInflation() { 
+    return await this.props.restClient.getInflation();
   }
 
-  getBlocksPerYear() { 
-    this.props.restClient.getBlocksPerYear().then((blocksPerYear) => { this.setState({blocksPerYear: blocksPerYear})},
-        (error) => {
-          if([404, 500].includes(error.response && error.response.status)){
-          this.setState({ rewards: {} });
-        } else {
-          this.setState({ error: 'Failed to get number of blocks per year. Please refresh' });
-        }
-      })
+  async getBlocksPerYear() { 
+    return await this.props.restClient.getBlocksPerYear()
   }
+
+  async calculateApy() {
+    const inflation = await this.getInflation()
+    const blocksPerYear = await this.getBlocksPerYear();
+    const periodPerYear = 365;
+      const { validators } = this.props;
+      let validatorApy = {};
+      for (const [address, validator] of Object.entries(validators)) {
+        const chainApr = (1 + inflation / blocksPerYear) ** blocksPerYear - 1;
+        const realApr = chainApr * (1 - parseCommissionRate(validator));
+        const apy = (1 + realApr / periodPerYear) ** periodPerYear - 1;
+        console.log( address, chainApr, realApr, apy);
+        validatorApy[address] = apy;
+      }
+      this.setState({ validatorApy })
+  
+  }
+
 
   getGrants() {
     this.props.operators.forEach(operator => {
@@ -264,13 +266,6 @@ class Delegations extends React.Component {
     return rewards.reward.find(reward => reward.denom === this.props.network.denom)
   }
 
-  calculateApy(validatorCommission, periodPerYear) {
-    let chainApr = (1 + this.state.inflation / this.state.blocksPerYear) ** this.state.blocksPerYear - 1;
-    let realApr = chainApr * (1 - validatorCommission);
-    let apy = (1 + realApr / periodPerYear) ** periodPerYear - 1;
-    return (apy*100).toFixed(2)
-  }
-
   renderValidator(validatorAddress, delegation) {
     const validator = this.props.validators[validatorAddress]
     if(validator){
@@ -323,7 +318,7 @@ class Delegations extends React.Component {
             )}
           </td>
           <td className="d-none d-lg-table-cell">{parseCommissionRate(validator)*100}%</td>
-          <td className="d-none d-lg-table-cell">{isNaN(this.calculateApy(parseCommissionRate(validator),365))?"": this.calculateApy(parseCommissionRate(validator),365).toString() + "%"}</td>
+          <td className="d-none d-lg-table-cell">{this.state.validatorApy ? ( !isNaN(this.state.validatorApy[validatorAddress]) ? (this.state.validatorApy[validatorAddress] *100).toFixed(2).toString() + " %" : ""): ""}</td>
           <td className="d-none d-sm-table-cell">
             <Coins coins={delegationBalance} decimals={this.props.network.data.decimals} />
           </td>

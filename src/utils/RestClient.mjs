@@ -176,7 +176,6 @@ const RestClient = async (chainId, restUrls, rpcUrls) => {
   const getInflation = async () => {
     const client = await makeClient();
     const inflation = await client.mint.inflation();
-    console.log(inflation.toFloatApproximation());
     return inflation.toFloatApproximation();
   }
 
