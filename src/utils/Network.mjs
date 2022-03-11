@@ -2,13 +2,16 @@ import _ from 'lodash'
 import RestClient from './RestClient.mjs'
 import SigningClient from './SigningClient.mjs'
 import Operator from './Operator.mjs'
+import Chain from './Chain.mjs'
 
 const Network = async (data) => {
-  const restClient = await RestClient(data.chainId, data.restUrl)
+
+  const chain = await Chain(data)
+  const restClient = await RestClient(chain.chainId, data.restUrl)
 
   const signingClient = (wallet, key) => {
-    const gasPrice = data.gasPrice || '0.0025' + data.denom
-    return SigningClient(data.rpcUrl, data.chainId, gasPrice, wallet, key)
+    const gasPrice = data.gasPrice || '0.0025' + chain.denom
+    return SigningClient(data.rpcUrl, chain.chainId, gasPrice, wallet, key)
   }
 
   const getOperator = (operators, operatorAddress) => {
@@ -37,16 +40,21 @@ const Network = async (data) => {
   return {
     connected: restClient.connected,
     name: data.name,
-    prettyName: data.prettyName,
-    chainId: data.chainId,
-    prefix: data.prefix,
+    prettyName: chain.prettyName,
+    chainId: chain.chainId,
+    prefix: chain.prefix,
     gasPrice: data.gasPrice,
-    denom: data.denom,
+    denom: chain.denom,
+    symbol: chain.symbol,
+    decimals: chain.decimals,
+    image: chain.image,
+    testAddress: data.testAddress,
     restUrl: restClient.restUrl,
     rpcUrl: data.rpcUrl,
     operators: data.operators,
     authzSupport: data.authzSupport,
     data,
+    chain,
     restClient,
     signingClient,
     getValidators,

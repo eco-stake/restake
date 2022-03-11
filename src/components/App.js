@@ -222,7 +222,7 @@ class App extends React.Component {
                 <Badge>
                   <Coins
                     coins={this.state.balance}
-                    decimals={this.props.network.data.decimals}
+                    decimals={this.props.network.decimals}
                   />
                 </Badge>
               </span>

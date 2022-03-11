@@ -55,13 +55,13 @@ function NetworkSelect(props) {
     const networks = Object.values(props.networks).sort((a, b) => a.name > b.name ? 1 : -1)
     setOptions({
       networks: networks.map(el => {
-        return {value: el.name, label: el.prettyName, image: el.image, operators: el.operators, authz: el.authzSupport}
+        return {value: el.name, label: el.pretty_name, image: el.image, operators: el.operators, authz: el.authzSupport}
       }),
       network: selectedNetwork && {
         value: selectedNetwork.name,
         label: selectedNetwork.prettyName,
-        image: selectedNetwork.data.image,
-        operators: selectedNetwork.data.operators,
+        image: selectedNetwork.image,
+        operators: selectedNetwork.operators,
         authz: selectedNetwork.authzSupport
       }
     })
@@ -96,7 +96,7 @@ function NetworkSelect(props) {
     <>
       <Button onClick={handleOpen} variant="link" className="d-flex align-items-center text-dark text-decoration-none border-secondary btn-outline-light" role="button">
         <div className="avatar avatar-sm rounded-circle text-white">
-          <img alt={props.network.prettyName} src={props.network.data.image} height={30} width={30} />
+          <img alt={props.network.prettyName} src={props.network.image} height={30} width={30} />
         </div>
         <div className="d-none d-sm-block ms-2">
           <span className="h6">{props.network.prettyName}</span>

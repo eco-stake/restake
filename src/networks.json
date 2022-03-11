@@ -1,10 +1,6 @@
 [
   {
     "name": "osmosis",
-    "prettyName": "Osmosis",
-    "chainId": "osmosis-1",
-    "prefix": "osmo",
-    "denom": "uosmo",
     "restUrl": [
       "https://rest.cosmos.directory/osmosis",
       "https://lcd-osmosis.blockapsis.com"
@@ -14,7 +10,6 @@
       "https://osmosis.validator.network",
       "https://rpc-osmosis.blockapsis.com"
     ],
-    "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/osmo.svg",
     "gasPrice": "0uosmo",
     "testAddress": "osmo1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczed559y",
     "ownerAddress": "osmovaloper1u5v0m74mql5nzfx2yh43s2tke4mvzghr6m2n5t",
@@ -138,10 +133,6 @@
   },
   {
     "name": "juno",
-    "prettyName": "Juno",
-    "chainId": "juno-1",
-    "prefix": "juno",
-    "denom": "ujuno",
     "restUrl": [
       "https://rest.cosmos.directory/juno",
       "https://lcd-juno.itastakers.com"
@@ -150,7 +141,6 @@
       "https://rpc.cosmos.directory/juno",
       "https://rpc-juno.itastakers.com"
     ],
-    "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/juno.svg",
     "gasPrice": "0.0025ujuno",
     "testAddress": "juno1yxsmtnxdt6gxnaqrg0j0nudg7et2gqcz8yyl52",
     "operators": [
@@ -279,10 +269,6 @@
   },
   {
     "name": "cosmoshub",
-    "prettyName": "Cosmos Hub",
-    "chainId": "cosmoshub-4",
-    "prefix": "cosmos",
-    "denom": "uatom",
     "restUrl": [
       "https://rest.cosmos.directory/cosmoshub",
       "https://lcd-cosmoshub.blockapsis.com"
@@ -292,7 +278,6 @@
       "https://cosmoshub.validator.network",
       "https://rpc-cosmoshub.blockapsis.com"
     ],
-    "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/atom.svg",
     "gasPrice": "0.0025uatom",
     "testAddress": "cosmos1yxsmtnxdt6gxnaqrg0j0nudg7et2gqcz3k8ynk",
     "operators": [
@@ -343,10 +328,6 @@
   },
   {
     "name": "akash",
-    "prettyName": "Akash",
-    "chainId": "akashnet-2",
-    "prefix": "akash",
-    "denom": "uakt",
     "restUrl": [
       "https://rest.cosmos.directory/akash"
     ],
@@ -354,7 +335,6 @@
       "https://rpc.cosmos.directory/akash",
       "https://akash.technofractal.com:443"
     ],
-    "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/akt.svg",
     "testAddress": "akash1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczud2r2v",
     "ownerAddress": "akashvaloper1xgnd8aach3vawsl38snpydkng2nv8a4kqgs8hf",
     "operators": [
@@ -423,10 +403,6 @@
   },
   {
     "name": "chihuahua",
-    "prettyName": "Chihuahua",
-    "chainId": "chihuahua-1",
-    "prefix": "chihuahua",
-    "denom": "uhuahua",
     "restUrl": [
       "https://rest.cosmos.directory/chihuahua",
       "https://api.chihuahua.wtf/"
@@ -435,7 +411,6 @@
       "https://rpc.cosmos.directory/chihuahua",
       "https://rpc.chihuahua.wtf"
     ],
-    "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/huahua.png",
     "gasPrice": "0.025uhuahua",
     "testAddress": "chihuahua1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczjr22j5",
     "ownerAddress": "chihuahuavaloper19vwcee000fhazmpt4ultvnnkhfh23ppwxll8zz",
@@ -566,10 +541,6 @@
   },
   {
     "name": "gravitybridge",
-    "prettyName": "Gravity Bridge",
-    "chainId": "gravity-bridge-3",
-    "prefix": "gravity",
-    "denom": "ugraviton",
     "restUrl": [
       "https://rest.cosmos.directory/gravitybridge",
       "https://gravitychain.io:1317"
@@ -578,7 +549,6 @@
       "https://rpc.cosmos.directory/gravitybridge",
       "https://gravitychain.io:26657"
     ],
-    "image": "https://raw.githubusercontent.com/Gravity-Bridge/Gravity-Docs/main/assets/Graviton-Blue.svg",
     "testAddress": "gravity1yxsmtnxdt6gxnaqrg0j0nudg7et2gqcz4x4uk7",
     "gasPrice": "0.025ugraviton",
     "operators": [
@@ -629,17 +599,12 @@
   },
   {
     "name": "regen",
-    "prettyName": "Regen Network",
-    "chainId": "regen-1",
-    "prefix": "regen",
-    "denom": "uregen",
     "restUrl": [
       "https://rest.cosmos.directory/regen"
     ],
     "rpcUrl": [
       "https://rpc.cosmos.directory/regen"
     ],
-    "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/regen.png",
     "gasPrice": "0.002uregen",
     "testAddress": "regen1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczw5vc9j",
     "operators": [
@@ -660,17 +625,12 @@
   },
   {
     "name": "terra",
-    "prettyName": "Terra",
-    "chainId": "columbus-5",
-    "prefix": "terra",
-    "denom": "uluna",
     "restUrl": [
       "https://rest.cosmos.directory/terra"
     ],
     "rpcUrl": [
       "https://rpc.cosmos.directory/terra"
     ],
-    "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/luna.svg",
     "testAddress": "terra1rnszu7kumz5lmgdk3fv2pmzt3s8vhcddqep7d4",
     "gasPrice": "0.015uluna",
     "operators": [
@@ -697,10 +657,6 @@
   },
   {
     "name": "sentinel",
-    "prettyName": "Sentinel",
-    "chainId": "sentinelhub-2",
-    "prefix": "sent",
-    "denom": "udvpn",
     "restUrl": [
       "https://rest.cosmos.directory/sentinel",
       "https://lcd-sentinel.keplr.app"
@@ -709,7 +665,6 @@
       "https://rpc.cosmos.directory/sentinel",
       "https://rpc-sentinel.keplr.app"
     ],
-    "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/dvpn.png",
     "gasPrice": "0.02udvpn",
     "testAddress": "sent1yxsmtnxdt6gxnaqrg0j0nudg7et2gqcz2d3ahe",
     "operators": [
@@ -760,10 +715,6 @@
   },
   {
     "name": "dig",
-    "prettyName": "Dig Chain",
-    "chainId": "dig-1",
-    "prefix": "dig",
-    "denom": "udig",
     "restUrl": [
       "https://rest.cosmos.directory/dig",
       "https://api-1-dig.notional.ventures"
@@ -772,7 +723,6 @@
       "https://rpc.cosmos.directory/dig",
       "https://rpc-1-dig.notional.ventures"
     ],
-    "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/dig.png",
     "gasPrice": "0.0025udig",
     "testAddress": "dig1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczfzw03d",
     "ownerAddress": "digvaloper136avwnuvvy94dqmtnaue2nfvjes8xr37h9rzay",
@@ -824,10 +774,6 @@
   },
   {
     "name": "bitcanna",
-    "prettyName": "BitCanna",
-    "chainId": "bitcanna-1",
-    "prefix": "bcna",
-    "denom": "ubcna",
     "restUrl": [
       "https://rest.cosmos.directory/bitcanna",
       "https://lcd.bitcanna.io"
@@ -837,7 +783,6 @@
       "https://rpc.bitcanna.io",
       "https://rpc-bitcanna.itastakers.com"
     ],
-    "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/bcna.svg",
     "gasPrice": "0.001ubcna",
     "operators": [
       {
@@ -863,10 +808,6 @@
   },
   {
     "name": "emoney",
-    "prettyName": "e-Money",
-    "chainId": "emoney-3",
-    "prefix": "emoney",
-    "denom": "ungm",
     "restUrl": [
       "https://rest.cosmos.directory/emoney",
       "https://lcd-emoney.keplr.app",
@@ -877,7 +818,6 @@
       "https://rpc-emoney.keplr.app",
       "https://emoney.validator.network"
     ],
-    "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/ngm.svg",
     "gasPrice": "0.08ungm",
     "operators": [
       {
@@ -921,10 +861,6 @@
   },
   {
     "name": "kava",
-    "prettyName": "Kava",
-    "chainId": "kava-9",
-    "prefix": "kava",
-    "denom": "ukava",
     "restUrl": [
       "https://rest.cosmos.directory/kava",
       "https://api.data.kava.io/"
@@ -933,7 +869,6 @@
       "https://rpc.cosmos.directory/kava",
       "https://rpc.kava.io"
     ],
-    "image": "https://raw.githubusercontent.com/Kava-Labs/kava/master/kava-logo.svg",
     "gasPrice": "0.00008ukava",
     "operators": [
       {
@@ -959,10 +894,6 @@
   },
   {
     "name": "desmos",
-    "prettyName": "Desmos",
-    "chainId": "desmos-mainnet",
-    "prefix": "desmos",
-    "denom": "udsm",
     "restUrl": [
       "https://rest.cosmos.directory/desmos",
       "https://api.mainnet.desmos.network"
@@ -971,7 +902,6 @@
       "https://rpc.cosmos.directory/desmos",
       "https://rpc.mainnet.desmos.network"
     ],
-    "image": "https://raw.githubusercontent.com/cosmos/chain-registry/master/desmos/images/dsm.png",
     "gasPrice": "0.001udsm",
     "operators": [
       {
@@ -1027,11 +957,6 @@
   },
   {
     "name": "cryptoorgchain",
-    "prettyName": "Crypto.org",
-    "chainId": "crypto-org-chain-mainnet-1",
-    "prefix": "cro",
-    "denom": "basecro",
-    "decimals": 8,
     "restUrl": [
       "https://rest.cosmos.directory/cryptoorgchain",
       "https://lcd-crypto-org.keplr.app/"
@@ -1041,7 +966,6 @@
       "https://mainnet.crypto.org",
       "https://rpc-crypto-org.keplr.app"
     ],
-    "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/cro.png",
     "gasPrice": "0.025basecro",
     "operators": [
       {
@@ -1061,12 +985,6 @@
   },
   {
     "name": "evmos",
-    "enabled": false,
-    "prettyName": "Evmos",
-    "chainId": "evmos_9001-1",
-    "prefix": "evmos",
-    "denom": "aevmos",
-    "decimals": 18,
     "restUrl": [
       "https://rest.cosmos.directory/evmos",
       "https://rest.bd.evmos.org:1317"
@@ -1075,7 +993,6 @@
       "https://rpc.cosmos.directory/evmos",
       "https://tendermint.bd.evmos.org:26657"
     ],
-    "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/evmos.png",
     "operators": [
       {
         "address": "evmosvaloper1shvcjzhcxau6qtlz9w82a646ecwp4hq7ayqt0w",
@@ -1142,11 +1059,6 @@
   },
   {
     "name": "sifchain",
-    "prettyName": "Sifchain",
-    "chainId": "sifchain-1",
-    "prefix": "sifchain",
-    "denom": "rowan",
-    "decimals": 18,
     "restUrl": [
       "https://rest.cosmos.directory/sifchain",
       "https://api.sifchain.finance"
@@ -1155,7 +1067,6 @@
       "https://rpc.cosmos.directory/sifchain",
       "https://rpc.sifchain.finance"
     ],
-    "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/rowan.png",
     "operators": [
        {
         "address": "sifvaloper1lnhxf6war6qlldemkqzp0t3g57hpe9a6nh3tyv",
@@ -1186,10 +1097,6 @@
   },
   {
     "name": "lumnetwork",
-    "prettyName": "Lum Network",
-    "chainId": "lum-network-1",
-    "prefix": "lum",
-    "denom": "ulum",
     "restUrl": [
       "https://rest.cosmos.directory/lumnetwork",
       "https://node0.mainnet.lum.network/rest"
@@ -1198,7 +1105,6 @@
       "https://rpc.cosmos.directory/lumnetwork",
       "https://node0.mainnet.lum.network/rpc"
     ],
-    "image": "https://raw.githubusercontent.com/lum-network/mainnet/master/assets/lum.png",
     "operators": [
       {
         "address": "lumvaloper1u6jr0pztvsjpvx77rfzmtw49xwzu9kash9slqs",
@@ -1271,10 +1177,6 @@
   },
   {
     "name": "stargaze",
-    "prettyName": "Stargaze",
-    "chainId": "stargaze-1",
-    "prefix": "stars",
-    "denom": "ustars",
     "restUrl": [
       "https://rest.cosmos.directory/stargaze",
       "https://rest.stargaze-apis.com",
@@ -1285,7 +1187,6 @@
       "https://rpc.stargaze-apis.com",
       "https://rpc.stargaze.ezstaking.io"
     ],
-    "image": "https://raw.githubusercontent.com/public-awesome/assets/main/images/stars.png",
     "operators": [
       {
         "address": "starsvaloper10wxn2lv29yqnw2uf4jf439kwy5ef00qd0jluj0",
@@ -1334,10 +1235,6 @@
   },
   {
     "name": "comdex",
-    "prettyName": "Comdex",
-    "chainId": "comdex-1",
-    "prefix": "comdex",
-    "denom": "ucmdx",
     "restUrl": [
       "https://rest.cosmos.directory/comdex",
       "https://api.comdex.audit.one/rest",
@@ -1348,7 +1245,6 @@
       "https://api.comdex.audit.one/rpc/",
       "https://rpc.comdex.one"
     ],
-    "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/cmdx.png",
     "operators": [
       {
         "address": "comdexvaloper195re7mhwh9urewm3rvaj9r7vm6j63c4sd78njd",
