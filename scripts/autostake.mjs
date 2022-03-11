@@ -86,7 +86,7 @@ class Autostake {
     const accounts = await wallet.getAccounts()
     const botAddress = accounts[0].address
 
-    console.log(data.prettyName, 'bot address is', botAddress)
+    console.log(network.prettyName, 'bot address is', botAddress)
 
     const client = await network.signingClient(wallet)
     if(client.connected){
@@ -94,7 +94,7 @@ class Autostake {
     }
 
     let validators = {}
-    if(data.operators.find(el => el.botAddress === botAddress)){
+    if(network.operators.find(el => el.botAddress === botAddress)){
       validators = await network.getValidators()
     }
     const operators = network.getOperators(validators)
