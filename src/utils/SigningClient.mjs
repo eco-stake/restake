@@ -88,6 +88,7 @@ const SigningClient = async (rpcUrl, chainId, defaultGasPrice, signer, key) => {
   return {
     connected: !!rpcUrl,
     registry: client && client.registry,
+    rpcUrl,
     client,
     chainId,
     getAddress,
