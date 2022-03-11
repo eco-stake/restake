@@ -1,25 +1,23 @@
-import {
-  OverlayTrigger,
-  Tooltip
-} from 'react-bootstrap'
+import { OverlayTrigger, Tooltip } from "react-bootstrap";
 
 function TooltipIcon(props) {
-
   return (
     <>
       {props.tooltip ? (
-      <OverlayTrigger
-        key={props.identifier}
-        placement="top"
-        overlay={
-          <Tooltip id={`tooltip-${props.key}`}>
-            {props.tooltip}
-          </Tooltip>
-        }
-      >{props.icon}</OverlayTrigger>
-      ) : props.icon}
+        <OverlayTrigger
+          key={props.identifier}
+          placement="top"
+          overlay={
+            <Tooltip id={`tooltip-${props.key}`}>{props.tooltip}</Tooltip>
+          }
+        >
+          {props.icon}
+        </OverlayTrigger>
+      ) : (
+        props.icon
+      )}
     </>
-  )
+  );
 }
 
-export default TooltipIcon
+export default TooltipIcon;

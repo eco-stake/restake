@@ -33,7 +33,9 @@
     "prebuild": "rm -rf dist/",
     "build": "npx parcel build src/index.html",
     "autostake": "node scripts/autostake.mjs",
-    "registryConfig": "node scripts/registryConfig.mjs"
+    "registryConfig": "node scripts/registryConfig.mjs",
+    "lint:fix": "npx eslint --fix --ext .js,.jsx,.mjs .",
+    "lint": "npx eslint ."
   },
   "eslintConfig": {
     "extends": [
@@ -58,9 +60,18 @@
     "@parcel/transformer-webmanifest": "^2.3.2",
     "crypto-browserify": "^3.12.0",
     "eslint": "^8.10.0",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-import": "^2.25.4",
+    "eslint-plugin-jsx-a11y": "^6.5.1",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-react": "^7.29.3",
+    "eslint-plugin-react-hooks": "^4.3.0",
     "events": "^3.3.0",
     "parcel": "^2.0.0",
     "path-browserify": "^1.0.1",
+    "prettier": "^2.5.1",
+    "prettier-eslint": "^13.0.0",
     "stream-browserify": "^3.0.0"
   }
 }
