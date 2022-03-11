@@ -1067,7 +1067,7 @@
       "https://rpc.sifchain.finance"
     ],
     "operators": [
-       {
+      {
         "address": "sifvaloper1lnhxf6war6qlldemkqzp0t3g57hpe9a6nh3tyv",
         "botAddress": "sifchain194ytn50yhh67rdha8akhs7c6zulnz4n2zjs8hn",
         "runTime": "21:00",
@@ -1301,27 +1301,5 @@
       }
     ],
     "authzSupport": false
-  },
-  {
-    "name": "cheqd",
-    "restUrl": [
-      "https://rest.cosmos.directory/cheqd",
-      "https://api.cheqd.net",
-      "https://api.cheqd.blockfend.com"
-    ],
-    "rpcUrl": [
-      "https://rpc.cosmos.directory/cheqd",
-      "https://rpc.cheqd.net",
-      "https://rpc.cheqd.blockfend.com"
-    ],
-    "operators": [
-      {
-        "address": "cheqdvaloper1m0f5mdkusqq24zhf8azjn2j5v2jqwqlt3ukrc0",
-        "botAddress": "cheqd1ypntyymvjg90ntxwes3hxtmuvvh4fcr8w082sd",
-        "runTime": "21:00",
-        "minimumReward": 1000
-      }
-    ],
-    "authzSupport": true
   }
 ]
