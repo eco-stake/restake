@@ -10,6 +10,7 @@ import {
   setupGovExtension,
 } from "@cosmjs/stargate";
 import { Tendermint34Client } from "@cosmjs/tendermint-rpc";
+import { Decimal } from "@cosmjs/math";
 
 const RestClient = async (chainId, restUrls, rpcUrls) => {
   // Find available rpcUrl
