@@ -11,7 +11,7 @@ import {
 } from "@cosmjs/stargate";
 import { Tendermint34Client } from "@cosmjs/tendermint-rpc";
 
-const RestClient = async (chainId, restUrls,rpcUrls) => {
+const RestClient = async (chainId, restUrls, rpcUrls) => {
   // Find available rpcUrl
   const rpcUrl = await findAvailableUrl(
     Array.isArray(rpcUrls) ? rpcUrls : [rpcUrls],
@@ -64,7 +64,7 @@ const RestClient = async (chainId, restUrls,rpcUrls) => {
     const validators = _.shuffle(allValidators);
 
     // Return shuffled array
-    return validators.reduce((a, v) => ({ ...a, [v.operatorAddress]: v}), {})
+    return validators.reduce((a, v) => ({ ...a, [v.operatorAddress]: v }), {})
   };
 
   const getAllValidatorDelegations = async (validatorAddress) => {
@@ -141,9 +141,9 @@ const RestClient = async (chainId, restUrls,rpcUrls) => {
     const claimGrant = result_1.grants.find((el) => {
       if (
         el.authorization["@type"] ===
-          "/cosmos.authz.v1beta1.GenericAuthorization" &&
+        "/cosmos.authz.v1beta1.GenericAuthorization" &&
         el.authorization.msg ===
-          "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward"
+        "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward"
       ) {
         return Date.parse(el.expiration) > new Date();
       } else {
@@ -167,13 +167,13 @@ const RestClient = async (chainId, restUrls,rpcUrls) => {
   };
 
 
-  const getBlocksPerYear = async () => { 
+  const getBlocksPerYear = async () => {
     const client = await makeClient();
     const params = await client.mint.params();
     return params.blocksPerYear.toInt();
   }
 
-  const getInflation = async () => { 
+  const getInflation = async () => {
     const client = await makeClient();
     const inflation = await client.mint.inflation();
     console.log(inflation.toFloatApproximation());
@@ -196,20 +196,19 @@ const RestClient = async (chainId, restUrls,rpcUrls) => {
         return false;
       }
     });
-  }
-
-  return {
-    connected: !!restUrl,
-    restUrl,
-    getAllValidators,
-    getAllValidatorDelegations,
-    getBlocksPerYear,
-    getInflation,
-    getBalance,
-    getDelegations,
-    getRewards,
-    getGrants,
   };
-};
 
+    return {
+      connected: !!restUrl,
+      restUrl,
+      getAllValidators,
+      getAllValidatorDelegations,
+      getBlocksPerYear,
+      getInflation,
+      getBalance,
+      getDelegations,
+      getRewards,
+      getGrants,
+    };
+  };
 export default RestClient;

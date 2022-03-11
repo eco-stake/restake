@@ -5,7 +5,8 @@ import Operator from './Operator.mjs'
 
 const Network = async (data) => {
   console.log(data);
-  const restClient = await RestClient(data.chainId,data.restUrl,data.rpcUrl)
+  const restClient = await RestClient(data.chainId, data.restUrl, data.rpcUrl)
+  console.log(restClient)
 
   const signingClient = (wallet, key) => {
     const gasPrice = data.gasPrice || '0.0025' + data.denom
