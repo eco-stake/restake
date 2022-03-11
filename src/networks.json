@@ -1310,10 +1310,12 @@
     "denom": "ncheq",
     "decimals": 9,
     "restUrl": [
+      "https://rest.cosmos.directory/cheqd",
       "https://api.cheqd.net",
       "https://api.cheqd.blockfend.com"
     ],
     "rpcUrl": [
+      "https://rpc.cosmos.directory/cheqd",
       "https://rpc.cheqd.net",
       "https://rpc.cheqd.blockfend.com"
     ],
@@ -1335,6 +1337,7 @@
     "prefix": "umee",
     "denom": "uumee",
     "restUrl": [
+      "https://rest.cosmos.directory/umee",
       "https://api.aphrodite.main.network.umee.cc",
       "https://api.apollo.main.network.umee.cc",
       "https://api.artemis.main.network.umee.cc",
@@ -1343,6 +1346,7 @@
       "https://api.bottlenose.main.network.umee.cc"
     ],
     "rpcUrl": [
+      "https://rpc.cosmos.directory/umee",
       "https://rpc.aphrodite.main.network.umee.cc",
       "https://rpc.apollo.main.network.umee.cc",
       "https://rpc.artemis.main.network.umee.cc",
