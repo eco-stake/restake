@@ -1376,22 +1376,14 @@
   },
   {
     "name": "cheqd",
-    "prettyName": "cheqd",
-    "chainId": "cheqd-mainnet-1",
-    "prefix": "cheqd",
-    "denom": "ncheq",
-    "decimals": 9,
     "restUrl": [
       "https://rest.cosmos.directory/cheqd",
-      "https://api.cheqd.net",
-      "https://api.cheqd.blockfend.com"
+      "https://api.cheqd.net"
     ],
     "rpcUrl": [
       "https://rpc.cosmos.directory/cheqd",
-      "https://rpc.cheqd.net",
-      "https://rpc.cheqd.blockfend.com"
+      "https://rpc.cheqd.net"
     ],
-    "image": "https://raw.githubusercontent.com/osmosis-labs/osmosis-frontend/master/public/assets/tokens/cheq.svg",
     "operators": [
       {
         "address": "cheqdvaloper1m0f5mdkusqq24zhf8azjn2j5v2jqwqlt3ukrc0",
@@ -1404,10 +1396,6 @@
   },
   {
     "name": "umee",
-    "prettyName": "umee",
-    "chainId": "umee-1",
-    "prefix": "umee",
-    "denom": "uumee",
     "restUrl": [
       "https://rest.cosmos.directory/umee",
       "https://api.aphrodite.main.network.umee.cc",
@@ -1426,7 +1414,6 @@
       "https://rpc.beaked.main.network.umee.cc",
       "https://rpc.bottlenose.main.network.umee.cc"
     ],
-    "image": "https://raw.githubusercontent.com/cosmos/chain-registry/master/umee/images/umee.png",
     "operators": [
       {
         "address": "umeevaloper14vmuhgm04ffvzts9jxm2wy5d538g96ru9fsg5v",
@@ -1439,17 +1426,14 @@
   },
   {
     "name": "bitsong",
-    "prettyName": "BitSong",
-    "chainId": "bitsong-2b",
-    "prefix": "bitsong",
-    "denom": "ubtsg",
     "restUrl": [
+      "https://rest.cosmos.directory/bitsong",
       "https://lcd-bitsong.itastakers.com"
     ],
     "rpcUrl": [
+      "https://rpc.cosmos.directory/bitsong",
       "https://rpc-bitsong.itastakers.com"
     ],
-    "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/btsg.svg",
     "operators": [
       {
         "address": "bitsongvaloper129y6g55wz7mz9vs2nudfvfdaun80fuphnltfpf",
@@ -1462,17 +1446,14 @@
   },
   {
     "name": "persistence",
-    "prettyName": "Persistence",
-    "chainId": "core-1",
-    "prefix": "persistence",
-    "denom": "uxprt",
     "restUrl": [
+      "https://rest.cosmos.directory/persistence",
       "https://rest.core.persistence.one"
     ],
     "rpcUrl": [
+      "https://rpc.cosmos.directory/persistence",
       "https://rpc.core.persistence.one"
     ],
-    "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/xprt.png",
     "operators": [
       {
         "address": "persistencevaloper1pdse5rr5njkkka6qeu5m8u704h6z67w5r700vn",
@@ -1485,17 +1466,12 @@
   },
   {
     "name": "agoric",
-    "prettyName": "Agoric",
-    "chainId": "agoric-3",
-    "prefix": "agoric",
-    "denom": "ubld",
     "restUrl": [
-      "https://main.api.agoric.net:443"
+      "https://rest.cosmos.directory/agoric"
     ],
     "rpcUrl": [
-      "https://main.rpc.agoric.net:443"
+      "https://rpc.cosmos.directory/agoric"
     ],
-    "image": "https://raw.githubusercontent.com/cosmos/chain-registry/master/agoric/images/bld.png",
     "operators": [
       {
         "address": "agoricvaloper1kh8nwuee2y353u6nmv8jffpvhtzs7xu8f4klam",
@@ -1508,23 +1484,17 @@
   },
   {
     "name": "impacthub",
-    "prettyName": "Impact Hub",
-    "chainId": "impacthub-3",
-    "prefix": "ixo",
-    "denom": "uixo",
     "restUrl": [
+      "https://rest.cosmos.directory/impacthub",
       "https://lcd-impacthub.keplr.app",
       "https://proxies.sifchain.finance/api/impacthub-3/rest",
-      "http://18.220.101.192:1317/",
       "https://impacthub.ixo.world/rest/"
     ],
     "rpcUrl": [
+      "https://rpc.cosmos.directory/impacthub",
       "https://rpc-impacthub.keplr.app",
-      "https://proxies.sifchain.finance/api/impacthub-3/rpc",
-      "http://18.220.101.192:26657",
-      "https://impacthub.ixo.world/rpc"
+      "https://proxies.sifchain.finance/api/impacthub-3/rpc"
     ],
-    "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/ixo.png",
     "gasPrice": "0.025uixo",
     "operators": [
       {
@@ -1538,17 +1508,13 @@
   },
   {
     "name": "kichain",
-    "prettyName": "Ki",
-    "chainId": "kichain-2",
-    "prefix": "ki",
-    "denom": "uxki",
     "restUrl": [
+      "https://rest.cosmos.directory/kichain",
       "https://api-mainnet.blockchain.ki"
     ],
     "rpcUrl": [
-      "https://rpc-mainnet.blockchain.ki"
+      "https://rpc.cosmos.directory/kichain"
     ],
-    "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/xki.svg",
     "gasPrice": "0.025uxki",
     "operators": [
       {
@@ -1562,17 +1528,14 @@
   },
   {
     "name": "sommelier",
-    "prettyName": "Sommelier",
-    "chainId": "sommelier-3",
-    "prefix": "somm",
-    "denom": "usomm",
     "restUrl": [
+      "https://rest.cosmos.directory/sommelier",
       "https://lcd-sommelier.keplr.app"
     ],
     "rpcUrl": [
+      "https://rpc.cosmos.directory/sommelier",
       "https://rpc-sommelier.keplr.app"
     ],
-    "image": "https://github.com/osmosis-labs/assetlists/raw/main/images/somm.png",
     "operators": [
       {
         "address": "sommvaloper1cgdlryczzgrk7d4kkeawqg7t6ldz4x84yu305c",
