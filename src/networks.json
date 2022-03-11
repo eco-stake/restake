@@ -111,6 +111,12 @@
         "minimumReward": 1000
       },
       {
+        "address": "osmovaloper1feh2keupglep6mvxf5c96eulh3puujjryj2h8v",
+        "botAddress": "osmo1vqhz5g5sq8ku0ka5x9ygal9flkg5vzr9h34kq8",
+        "runTime": "20:00",
+        "minimumReward": 1000000
+      },
+      {
         "address": "osmovaloper125kjmvuv5sv7qct2t6wc99h3mp7hpyxw37dcgg",
         "botAddress": "osmo1tah24yf5pndrwwc8hsdmjahgyf4s5s7nherfmw",
         "runTime": "1:00",
@@ -259,6 +265,12 @@
         "minimumReward": 10000
       },
       {
+        "address": "junovaloper124maqmcqv8tquy764ktz7cu0gxnzfw54l2d073",
+        "botAddress": "juno1vqhz5g5sq8ku0ka5x9ygal9flkg5vzr9fc9a3f",
+        "runTime": "20:00",
+        "minimumReward": 1000000
+      },
+      {
         "address": "junovaloper1hx9yj7qgnp8zhkrqfanvz74mcsg9d8eyskvsxg",
         "botAddress": "juno1hl0jgxre5z0nkyjj07c5vfdy44yk44at0dphgp",
         "runTime": "22:30",
@@ -322,6 +334,12 @@
         "botAddress": "cosmos1dg8u5qll7fjm9nnwqns0ullhtc6g552ugd0eqj",
         "runTime": "9:00",
         "minimumReward": 10000
+      },
+      {
+        "address": "cosmosvaloper124maqmcqv8tquy764ktz7cu0gxnzfw54n3vww8",
+        "botAddress": "cosmos1vqhz5g5sq8ku0ka5x9ygal9flkg5vzr9l2xxk4",
+        "runTime": "20:00",
+        "minimumReward": 1000000
       }
     ],
     "authzSupport": true
@@ -397,6 +415,12 @@
         "botAddress": "akash1uwqjtgjhjctjc45ugy7ev5prprhehc7w5xcfwl",
         "runTime": "21:00",
         "minimumReward": 1000
+      },
+      {
+        "address": "akashvaloper1epnrvkylqpk0f2d3us3cvx7x9tlycz42lwf0v6",
+        "botAddress": "akash1vqhz5g5sq8ku0ka5x9ygal9flkg5vzr9j3tp00",
+        "runTime": "20:00",
+        "minimumReward": 1000000
       }
     ],
     "authzSupport": false
@@ -592,6 +616,12 @@
         "botAddress": "gravity1hcgxjhvv43g9z6dc58g428jgc8hdlmf7sl2d82",
         "runTime": "12:00",
         "minimumReward": 1000
+      },
+      {
+        "address": "gravityvaloper14vaak0zdjtnvh92hw9ypwxj76093yrgzmuguar",
+        "botAddress": "gravity1vqhz5g5sq8ku0ka5x9ygal9flkg5vzr9m657na",
+        "runTime": "20:00",
+        "minimumReward": 1000000
       }
     ],
     "authzSupport": true
@@ -612,6 +642,12 @@
         "botAddress": "regen1mjq48r6435aewerpruwc8up3tz3rzan2nm4th3",
         "runTime": "19:00",
         "minimumReward": 10000
+      },
+      {
+        "address": "regenvaloper1ceunjpth8nds7sfmfd9yjmh97vxmwqfyf7r2cn",
+        "botAddress": "regen1vqhz5g5sq8ku0ka5x9ygal9flkg5vzr9qgd6q3",
+        "runTime": "20:00",
+        "minimumReward": 1000000
       },
       {
         "address": "regenvaloper1kzhxmgp8z05zrj90nd8h5qx9pm949an5y7nwsz",
@@ -767,6 +803,12 @@
         "botAddress": "dig1e44rluarkdw56dy2turnwjtvtg4wqvs02lu047",
         "runTime": "21:00",
         "minimumReward": 1000
+      },
+      {
+        "address": "digvaloper1uc8nz85axexc9svkxjy0ccm28cc0uctvs33ewg",
+        "botAddress": "dig1vqhz5g5sq8ku0ka5x9ygal9flkg5vzr9870d5w",
+        "runTime": "20:00",
+        "minimumReward": 1000000
       }
     ],
     "authzSupport": false
@@ -854,6 +896,12 @@
         "botAddress": "emoney1m5hgzum68rjf4c7zhezgkj8hlnmr0kghezplad",
         "runTime": "10:00",
         "minimumReward": 1000
+      },
+      {
+        "address": "emoneyvaloper1sz7rp920hgupfl0p6c7kwkaes8q8tx3lmzhcrc",
+        "botAddress": "emoney1vqhz5g5sq8ku0ka5x9ygal9flkg5vzr9sfujpg",
+        "runTime": "20:00",
+        "minimumReward": 1000000
       }
     ],
     "authzSupport": false
@@ -938,6 +986,12 @@
         "botAddress": "desmos1az6huqur4g2u29fa6c5zzxmtljp0euqmnla6x5",
         "runTime": "10:00",
         "minimumReward": 10000
+      },
+      {
+        "address": "desmosvaloper1zm3l7p8n5dxqeadsfxy3rd0j3c2knnx3chg77a",
+        "botAddress": "desmos19n0raswpfd9f7779ah637h20ltae0g7ussa8at",
+        "runTime": "20:00",
+        "minimumReward": 1000000
       },
       {
         "address": "desmosvaloper1s5gnmccngltteh6ugtsz7fdrykc294tnw2e7pz",
@@ -1052,6 +1106,12 @@
         "botAddress": "evmos1uwqjtgjhjctjc45ugy7ev5prprhehc7wmuyqdd",
         "runTime": "21:00",
         "minimumReward": 1000
+      },
+      {
+        "address": "evmosvaloper1a36r4jvcprvewxnr2qhfs0h4spec35238s2h7t",
+        "botAddress": "evmos1axp36fwjy2vzlaym52urh80wq9l7z2t0shrj2y",
+        "runTime": "20:00",
+        "minimumReward": 1000000
       }
     ],
     "authzSupport": true
@@ -1166,6 +1226,12 @@
         "minimumReward": 10000
       },
       {
+        "address": "lumvaloper1uqw4e63xwwjmxt6ympdl20dsxtjr7lzx2p20hu",
+        "botAddress": "lum1vqhz5g5sq8ku0ka5x9ygal9flkg5vzr92qm0rp",
+        "runTime": "20:00",
+        "minimumReward": 1000000
+      },
+      {
         "address": "lumvaloper1zs59ua4l0h6a2hnh08v8qn76f6qh7uxc22vey5",
         "botAddress": "lum1hl0jgxre5z0nkyjj07c5vfdy44yk44atv4l96f",
         "runTime": "22:30",
@@ -1228,6 +1294,12 @@
         "botAddress": "stars1hcgxjhvv43g9z6dc58g428jgc8hdlmf7qn0gfn",
         "runTime": "12:00",
         "minimumReward": 10000
+      },
+      {
+        "address": "starsvaloper13agg47uffkehwqpvqeqp86aamjmkvmt4hyt9z7",
+        "botAddress": "stars1vqhz5g5sq8ku0ka5x9ygal9flkg5vzr9tk3may",
+        "runTime": "20:00",
+        "minimumReward": 1000000
       }
     ],
     "authzSupport": true
@@ -1321,7 +1393,7 @@
     ],
     "image": "https://raw.githubusercontent.com/osmosis-labs/osmosis-frontend/master/public/assets/tokens/cheq.svg",
     "operators": [
-         {
+      {
         "address": "cheqdvaloper1m0f5mdkusqq24zhf8azjn2j5v2jqwqlt3ukrc0",
         "botAddress": "cheqd1ypntyymvjg90ntxwes3hxtmuvvh4fcr8w082sd",
         "runTime": "21:00",
@@ -1364,5 +1436,150 @@
       }
     ],
     "authzSupport": true
+  },
+  {
+    "name": "bitsong",
+    "prettyName": "BitSong",
+    "chainId": "bitsong-2b",
+    "prefix": "bitsong",
+    "denom": "ubtsg",
+    "restUrl": [
+      "https://lcd-bitsong.itastakers.com"
+    ],
+    "rpcUrl": [
+      "https://rpc-bitsong.itastakers.com"
+    ],
+    "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/btsg.svg",
+    "operators": [
+      {
+        "address": "bitsongvaloper129y6g55wz7mz9vs2nudfvfdaun80fuphnltfpf",
+        "botAddress": "bitsong14td30sayes36tm042gcrwpynky927x2c434c06",
+        "runTime": "20:00",
+        "minimumReward": 1000000
+      }
+    ],
+    "authzSupport": true
+  },
+  {
+    "name": "persistence",
+    "prettyName": "Persistence",
+    "chainId": "core-1",
+    "prefix": "persistence",
+    "denom": "uxprt",
+    "restUrl": [
+      "https://rest.core.persistence.one"
+    ],
+    "rpcUrl": [
+      "https://rpc.core.persistence.one"
+    ],
+    "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/xprt.png",
+    "operators": [
+      {
+        "address": "persistencevaloper1pdse5rr5njkkka6qeu5m8u704h6z67w5r700vn",
+        "botAddress": "persistence1atgss2zpwl9m8fmm32gzrkjtqw3tdawguqw6tk",
+        "runTime": "20:00",
+        "minimumReward": 1000000
+      }
+    ],
+    "authzSupport": true
+  },
+  {
+    "name": "agoric",
+    "prettyName": "Agoric",
+    "chainId": "agoric-3",
+    "prefix": "agoric",
+    "denom": "ubld",
+    "restUrl": [
+      "https://main.api.agoric.net:443"
+    ],
+    "rpcUrl": [
+      "https://main.rpc.agoric.net:443"
+    ],
+    "image": "https://raw.githubusercontent.com/cosmos/chain-registry/master/agoric/images/bld.png",
+    "operators": [
+      {
+        "address": "agoricvaloper1kh8nwuee2y353u6nmv8jffpvhtzs7xu8f4klam",
+        "botAddress": "agoric148kutx4cag3js995cesc0rpuwpe85hq7zk5ry3",
+        "runTime": "20:00",
+        "minimumReward": 1000000
+      }
+    ],
+    "authzSupport": true
+  },
+  {
+    "name": "impacthub",
+    "prettyName": "Impact Hub",
+    "chainId": "impacthub-3",
+    "prefix": "ixo",
+    "denom": "uixo",
+    "restUrl": [
+      "https://lcd-impacthub.keplr.app",
+      "https://proxies.sifchain.finance/api/impacthub-3/rest",
+      "http://18.220.101.192:1317/",
+      "https://impacthub.ixo.world/rest/"
+    ],
+    "rpcUrl": [
+      "https://rpc-impacthub.keplr.app",
+      "https://proxies.sifchain.finance/api/impacthub-3/rpc",
+      "http://18.220.101.192:26657",
+      "https://impacthub.ixo.world/rpc"
+    ],
+    "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/ixo.png",
+    "gasPrice": "0.025uixo",
+    "operators": [
+      {
+        "address": "ixovaloper1m3kz9q3hp50udyq5tt4rawrexnay4y7jpyvtr9",
+        "botAddress": "ixo1vqhz5g5sq8ku0ka5x9ygal9flkg5vzr9qlc5jx",
+        "runTime": "20:00",
+        "minimumReward": 1000000
+      }
+    ],
+    "authzSupport": false
+  },
+  {
+    "name": "kichain",
+    "prettyName": "Ki",
+    "chainId": "kichain-2",
+    "prefix": "ki",
+    "denom": "uxki",
+    "restUrl": [
+      "https://api-mainnet.blockchain.ki"
+    ],
+    "rpcUrl": [
+      "https://rpc-mainnet.blockchain.ki"
+    ],
+    "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/xki.svg",
+    "gasPrice": "0.025uxki",
+    "operators": [
+      {
+        "address": "kivaloper1n5cpxhwm5rpgellky5njz67sx8sp0t6ejyxevq",
+        "botAddress": "ki1vqhz5g5sq8ku0ka5x9ygal9flkg5vzr9w8hfjp",
+        "runTime": "20:00",
+        "minimumReward": 1000000
+      }
+    ],
+    "authzSupport": false
+  },
+  {
+    "name": "sommelier",
+    "prettyName": "Sommelier",
+    "chainId": "sommelier-3",
+    "prefix": "somm",
+    "denom": "usomm",
+    "restUrl": [
+      "https://lcd-sommelier.keplr.app"
+    ],
+    "rpcUrl": [
+      "https://rpc-sommelier.keplr.app"
+    ],
+    "image": "https://github.com/osmosis-labs/assetlists/raw/main/images/somm.png",
+    "operators": [
+      {
+        "address": "sommvaloper1cgdlryczzgrk7d4kkeawqg7t6ldz4x84yu305c",
+        "botAddress": "somm1vqhz5g5sq8ku0ka5x9ygal9flkg5vzr9nkf28l",
+        "runTime": "20:00",
+        "minimumReward": 1000000
+      }
+    ]
   }
 ]
