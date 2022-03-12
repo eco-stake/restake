@@ -1526,6 +1526,12 @@
         "botAddress": "persistence1atgss2zpwl9m8fmm32gzrkjtqw3tdawguqw6tk",
         "runTime": "20:00",
         "minimumReward": 1000000
+      },
+      {
+        "address": "persistencevaloper1nchnrey36nrvzjslscu0c3l8j0r4z92hlsz3gk",
+        "botAddress": "persistence1f204r62y7l3ye7s3z05pvwufjawaf6vefpjmk0",
+        "runTime": "23:00",
+        "minimumReward": 10000
       }
     ],
     "authzSupport": true
@@ -1588,6 +1594,12 @@
         "botAddress": "ki1vqhz5g5sq8ku0ka5x9ygal9flkg5vzr9w8hfjp",
         "runTime": "20:00",
         "minimumReward": 1000000
+      },
+      {
+        "address": "kivaloper1lykm0h574w0r3jm545hhlfnd8937a70022xlwl",
+        "botAddress": "ki1v9vae554q55xa4pcfdm0p3kv8nxn50jktpkafa",
+        "runTime": "23:00",
+        "minimumReward": 100000
       }
     ],
     "authzSupport": false
@@ -1610,5 +1622,51 @@
         "minimumReward": 1000000
       }
     ]
+  },
+  {
+    "name": "darchub",
+    "prettyName": "Konstellation",
+    "chainId": "darchub",
+    "prefix": "darc",
+    "denom": "knstld",
+    "restUrl": [
+      "https://node1.konstellation.tech:1318"
+    ],
+    "rpcUrl": [
+      "https://node1.konstellation.tech:26657"
+    ],
+    "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/darc.png",
+    "operators": [
+      {
+        "address": "darcvaloper1cmtxucuhf0hysjrx02p9fvzjr5kkcgcj9nxwhc",
+        "botAddress": "darc1v9vae554q55xa4pcfdm0p3kv8nxn50jk9dnrq7",
+        "runTime": "23:00",
+        "minimumReward": 100000
+      }
+    ],
+    "authzSupport": false
+  },
+  {
+    "name": "fetchai",
+    "prettyName": "Fetch.ai",
+    "chainId": "fetchhub-3",
+    "prefix": "fetch",
+    "denom": "afet",
+    "restUrl": [
+      "https://rest-fetchhub.fetch.ai"
+    ],
+    "rpcUrl": [
+      "https://rpc-fetchhub.fetch.ai:443"
+    ],
+    "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/fet.png",
+    "operators": [
+      {
+        "address": "fetchvaloper1a7l5xar7vyymvahfelar6vtkdar5x9a54l7zvc",
+        "botAddress": "fetch1v9vae554q55xa4pcfdm0p3kv8nxn50jkf3wk07",
+        "runTime": "23:00",
+        "minimumReward": 10000000000000000
+      }
+    ],
+    "authzSupport": false
   }
 ]
