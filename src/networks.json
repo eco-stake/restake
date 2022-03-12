@@ -1642,7 +1642,7 @@
     "authzSupport": false
   },
   {
-    "name": "fetchai",
+    "name": "fetchhub",
     "restUrl": [
       "https://rest-fetchhub.fetch.ai"
     ],
