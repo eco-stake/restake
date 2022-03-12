@@ -24,11 +24,11 @@ function NetworkFinder() {
   const getNetworks = async () => {
     const registryNetworks = await axios.get('https://registry.cosmos.directory')
       .then(res => res.data)
-      .then(data => data.reduce((a, v) => ({ ...a, [v.chain_name]: v}), {}))
+      .then(data => data.reduce((a, v) => ({ ...a, [v.directory]: v}), {}))
 
     const networks = networksData.filter(el => el.enabled !== false).map(data => {
       const registryData = registryNetworks[data.name] || {}
-      return {...data, ...registryData}
+      return {...registryData, ...data}
     })
     return _.compact(networks).reduce((a, v) => ({ ...a, [v.name]: v}), {})
   }
