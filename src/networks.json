@@ -1108,6 +1108,12 @@
         "minimumReward": 1000
       },
       {
+        "address": "evmosvaloper1chx7v975g72xuw8kdpjt94dh35daqqfyc37kys",
+        "botAddress": "evmos1k0fpumkxl35p3se0n52e6dc3mh8vy24kn0uqsg",
+        "runTime": "21:00",
+        "minimumReward": 1000
+      },
+      {
         "address": "evmosvaloper14zatq4jagqtm9ejgvglnv0t364d88u80futp65",
         "botAddress": "evmos1xul3g9w27tlns7k3d2reqjxqdsgyknkx74prwv",
         "runTime": "21:00",
@@ -1442,6 +1448,12 @@
       {
         "address": "cheqdvaloper1m0f5mdkusqq24zhf8azjn2j5v2jqwqlt3ukrc0",
         "botAddress": "cheqd1ypntyymvjg90ntxwes3hxtmuvvh4fcr8w082sd",
+        "runTime": "21:00",
+        "minimumReward": 1000
+      },
+      {
+        "address": "cheqdvaloper1qsp3a2qd6km9g0hczsac8279wcwmzmvzgvre8w",
+        "botAddress": "cheqd1e44rluarkdw56dy2turnwjtvtg4wqvs0ufeyu5",
         "runTime": "21:00",
         "minimumReward": 1000
       }
