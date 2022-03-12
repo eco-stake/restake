@@ -12,9 +12,6 @@ import axios from 'axios'
 
 const SigningClient = async (rpcUrl, chainId, defaultGasPrice, signer, key) => {
 
-  const rpcUrls = Array.isArray(rpcUrl) ? rpcUrl : [rpcUrl]
-  rpcUrl = await findAvailableUrl(rpcUrls)
-
   const client = rpcUrl && await SigningStargateClient.connectWithSigner(
     rpcUrl,
     signer
@@ -71,18 +68,6 @@ const SigningClient = async (rpcUrl, chainId, defaultGasPrice, signer, key) => {
   const simulate = async (address, msgs, memo, modifier) => {
     const estimate = await client.simulate(address, msgs, memo)
     return (parseInt(estimate * (modifier || 1.5)))
-  }
-
-  function findAvailableUrl(urls){
-    return findAsync(urls, (url) => {
-      return axios.get(url + '/status?', {timeout: 1000})
-        .then(res => res.data)
-        .then(data => {
-          return data.result.node_info.network === chainId
-        }).catch(error => {
-          return false
-        })
-    })
   }
 
   return {

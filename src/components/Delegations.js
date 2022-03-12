@@ -75,7 +75,7 @@ class Delegations extends React.Component {
   }
 
   getRewards(hideError) {
-    this.props.restClient.getRewards(this.props.address, this.props.network.denom)
+    this.props.queryClient.getRewards(this.props.address, this.props.network.denom)
       .then(
         (rewards) => {
           this.setState({ rewards: rewards });
@@ -93,7 +93,7 @@ class Delegations extends React.Component {
   getGrants() {
     this.props.operators.forEach(operator => {
       const {botAddress, address} = operator
-      this.props.restClient.getGrants(botAddress, this.props.address)
+      this.props.queryClient.getGrants(botAddress, this.props.address)
         .then(
           (result) => {
             let grantValidators
@@ -121,7 +121,7 @@ class Delegations extends React.Component {
   }
 
   getTestGrant(){
-    this.props.restClient.getGrants(this.props.network.testAddress, this.props.address)
+    this.props.queryClient.getGrants(this.props.network.testAddress, this.props.address)
       .then(
         (result) => { }, (error) => {
           if (error.response && error.response.status === 501) {

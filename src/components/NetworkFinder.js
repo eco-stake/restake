@@ -77,7 +77,7 @@ function NetworkFinder() {
     if(state.error) return
 
     if(state.network && (!Object.keys(state.validators).length)){
-      if(!state.network.restClient.connected){
+      if(!state.network.connected){
         return setState({
           loading: false
         })

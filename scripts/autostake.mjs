@@ -27,22 +27,21 @@ class Autostake {
     const calls = this.getNetworksData().map(data => {
       return async () => {
         if(networkName && data.name !== networkName) return
+        if(data.enabled === false) return
 
         let client
         try {
           client = await this.getClient(data)
         } catch (error) {
-          return console.log('Failed to connect')
+          return console.log('Failed to connect', error.message)
         }
 
-        if(!client.operator) return console.log('Not an operator')
-        if(!client.network.authzSupport) return console.log('No Authz support')
-        if(!data.overriden) console.log('You are using public nodes, script may fail with many delegations. Check the README to use your own')
-        if(!client.network.connected) return console.log('Could not connect to REST API')
-        if(!client.signingClient.connected) return console.log('Could not connect to RPC API')
+        if(!client) return console.log('Skipping')
 
         console.log('Using REST URL', client.network.restUrl)
-        console.log('Using RPC URL', client.signingClient.rpcUrl)
+        console.log('Using RPC URL', client.network.rpcUrl)
+
+        if(!data.overriden) console.log('You are using public nodes, script may fail with many delegations. Check the README to use your own')
 
         console.log('Running autostake')
         await this.checkBalance(client)
@@ -88,28 +87,30 @@ class Autostake {
 
     console.log(network.prettyName, 'bot address is', botAddress)
 
-    const client = await network.signingClient(wallet)
-    if(client.connected){
-      client.registry.register("/cosmos.authz.v1beta1.MsgExec", MsgExec)
-    }
+    const operatorData = data.operators.find(el => el.botAddress === botAddress)
 
-    let validators = {}
-    if(network.operators.find(el => el.botAddress === botAddress)){
-      validators = await network.getValidators()
-    }
+    if(!operatorData) return console.log('Not an operator')
+    if(!network.authzSupport) return console.log('No Authz support')
+    if(!network.rpcUrl) return console.log('Could not connect to RPC API')
+    if(!network.restUrl) return console.log('Could not connect to REST API')
+
+    const client = await network.signingClient(wallet)
+    client.registry.register("/cosmos.authz.v1beta1.MsgExec", MsgExec)
+
+    const validators = await network.getValidators()
     const operators = network.getOperators(validators)
-    const operator = operators.find(el => el.botAddress === botAddress)
+    const operator = network.getOperator(operators, botAddress)
 
     return{
       network: network,
       operator: operator,
       signingClient: client,
-      restClient: network.restClient
+      queryClient: network.queryClient
     }
   }
 
   checkBalance(client) {
-    return client.restClient.getBalance(client.operator.botAddress, client.network.denom)
+    return client.queryClient.getBalance(client.operator.botAddress, client.network.denom)
       .then(
         (balance) => {
           console.log("Bot balance is", balance.amount, balance.denom)
@@ -126,7 +127,7 @@ class Autostake {
   }
 
   getDelegations(client) {
-    return client.restClient.getAllValidatorDelegations(client.operator.address, 100, (pages) => {
+    return client.queryClient.getAllValidatorDelegations(client.operator.address, 100, (pages) => {
       console.log("...batch", pages.length)
     }).catch(error => {
       console.log("ERROR:", error.message || error)
@@ -152,7 +153,7 @@ class Autostake {
   }
 
   getGrantValidators(client, delegatorAddress) {
-    return client.restClient.getGrants(client.operator.botAddress, delegatorAddress)
+    return client.queryClient.getGrants(client.operator.botAddress, delegatorAddress)
       .then(
         (result) => {
           if(result.claimGrant && result.stakeGrant){
@@ -227,7 +228,7 @@ class Autostake {
   }
 
   totalRewards(client, address, validators){
-    return client.restClient.getRewards(address)
+    return client.queryClient.getRewards(address)
       .then(
         (rewards) => {
           const total = Object.values(rewards).reduce((sum, item) => {
