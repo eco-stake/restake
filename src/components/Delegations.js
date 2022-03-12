@@ -12,22 +12,11 @@ import TooltipIcon from "./TooltipIcon";
 import { Table, Button, Dropdown, Spinner } from "react-bootstrap";
 
 import { CheckCircle, XCircle } from "react-bootstrap-icons";
-import axios from "axios";
 
 function parseCommissionRate(validator) {
   return (
     parseInt(validator.commission.commissionRates.rate) / 1000000000000000000
   );
-}
-
-function duration(epochs, epochIdentifier) {
-  const epoch = epochs.find((epoch) => epoch.identifier === epochIdentifier);
-  if (!epoch) {
-    return 0;
-  }
-
-  // Actually, the date type of golang protobuf is returned by the unit of seconds.
-  return parseInt(epoch.duration.replace("s", ""));
 }
 
 class Delegations extends React.Component {
@@ -106,101 +95,11 @@ class Delegations extends React.Component {
       );
   }
 
-  async getOsmosisInflation() {
-    const osmosisParams = await axios.get(
-      this.props.network.restUrl + "/osmosis/mint/v1beta1/params"
-    );
-    const osmosisEpoch = await axios.get(
-      this.props.network.restUrl + "/osmosis/epochs/v1beta1/epochs"
-    );
-    const epochProvisions = await axios.get(
-      this.props.network.restUrl + "/osmosis/mint/v1beta1/epoch_provisions"
-    );
-    const pool = await axios.get(
-      this.props.network.restUrl + "/cosmos/staking/v1beta1/pool"
-    );
-    const total = await axios.get(
-      this.props.network.restUrl + "/bank/total/" + this.props.network.denom
-    );
-    let data = {
-      params: osmosisParams.data.params,
-      epoch: osmosisEpoch.data.epochs,
-      provisions: epochProvisions.data.epoch_provisions,
-      total: parseInt(total.data.result.amount),
-      bonded_tokens: parseInt(pool.data.pool.bonded_tokens),
-    };
-    const mintingEpochProvision =
-      parseFloat(data.params.distribution_proportions.staking) *
-      data.provisions;
-    const epochDuration = duration(data.epoch, data.params.epoch_identifier);
-    const yearMintingProvision =
-      (mintingEpochProvision * (365 * 24 * 3600)) / epochDuration;
-    const dec = yearMintingProvision / data.total;
-    const ratio = data.bonded_tokens / data.total;
-    return dec / ratio;
-  }
-
-  async getInflation() {
-    if (this.props.network.chainId.startsWith("osmosis")) {
-      return this.getOsmosisInflation();
-    } else if (this.props.network.chainId.startsWith("sifchain")) {
-      let inflation = await axios.get(
-        "https://data.sifchain.finance/beta/validator/stakingRewards"
-      );
-      return inflation.data.rate;
-    } else {
-      return await this.props.restClient.getInflation();
-    }
-  }
-
   async calculateApy() {
-    if (this.props.network.chainId.startsWith("juno")) {
-      const params = await axios.get(
-        this.props.network.restUrl + "/cosmos/mint/v1beta1/params"
-      );
-    }
-    const { validators } = this.props;
-    const periodPerYear = 365;
-    if (this.props.network.chainId.startsWith("osmosis")) {
-      const chainApr = await this.getInflation();
-      let validatorApy = {};
-      for (const [address, validator] of Object.entries(validators)) {
-        const realApr = chainApr * (1 - parseCommissionRate(validator));
-        const apy = (1 + realApr / periodPerYear) ** periodPerYear - 1;
-        validatorApy[address] = apy;
-      }
-      this.setState({ validatorApy });
-    } else if (this.props.network.chainId.startsWith("sifchain")) {
-      const chainApr = await this.getInflation();
-      let validatorApy = {};
-      for (const [address, validator] of Object.entries(validators)) {
-        const realApr = chainApr * (1 - parseCommissionRate(validator));
-        const apy = (1 + realApr / periodPerYear) ** periodPerYear - 1;
-        //console.log(chainApr, realApr, apy);
-        validatorApy[address] = apy;
-      }
-      this.setState({ validatorApy });
-    } else {
-      const total = await axios.get(
-        this.props.network.restUrl + "/bank/total/" + this.props.network.denom
-      );
-      const pool = await axios.get(
-        this.props.network.restUrl + "/cosmos/staking/v1beta1/pool"
-      );
-      const bondedTokens = parseInt(pool.data.pool.bonded_tokens);
-      const totalSupply = parseInt(total.data.result.amount);
-
-      const ratio = bondedTokens / totalSupply;
-      const inflation = await this.getInflation();
-      const chainApr = inflation / ratio;
-      let validatorApy = {};
-      for (const [address, validator] of Object.entries(validators)) {
-        const realApr = chainApr * (1 - parseCommissionRate(validator));
-        const apy = (1 + realApr / periodPerYear) ** periodPerYear - 1;
-        validatorApy[address] = apy;
-      }
-      this.setState({ validatorApy });
-    }
+    let validatorApy = await this.props.restClient.getApy(
+      this.props.validators
+    );
+    this.setState({ validatorApy });
   }
 
   getGrants() {
