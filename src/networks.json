@@ -1631,6 +1631,7 @@
     "rpcUrl": [
       "https://node1.konstellation.tech:26657"
     ],
+    "image": "https://raw.githubusercontent.com/Konstellation/DARC_token/main/darctoken.svg",
     "operators": [
       {
         "address": "darcvaloper1cmtxucuhf0hysjrx02p9fvzjr5kkcgcj9nxwhc",
