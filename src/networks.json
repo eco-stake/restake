@@ -1625,17 +1625,12 @@
   },
   {
     "name": "darchub",
-    "prettyName": "Konstellation",
-    "chainId": "darchub",
-    "prefix": "darc",
-    "denom": "knstld",
     "restUrl": [
       "https://node1.konstellation.tech:1318"
     ],
     "rpcUrl": [
       "https://node1.konstellation.tech:26657"
     ],
-    "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/darc.png",
     "operators": [
       {
         "address": "darcvaloper1cmtxucuhf0hysjrx02p9fvzjr5kkcgcj9nxwhc",
@@ -1648,17 +1643,12 @@
   },
   {
     "name": "fetchai",
-    "prettyName": "Fetch.ai",
-    "chainId": "fetchhub-3",
-    "prefix": "fetch",
-    "denom": "afet",
     "restUrl": [
       "https://rest-fetchhub.fetch.ai"
     ],
     "rpcUrl": [
       "https://rpc-fetchhub.fetch.ai:443"
     ],
-    "image": "https://raw.githubusercontent.com/osmosis-labs/assetlists/main/images/fet.png",
     "operators": [
       {
         "address": "fetchvaloper1a7l5xar7vyymvahfelar6vtkdar5x9a54l7zvc",
