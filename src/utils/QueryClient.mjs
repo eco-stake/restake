@@ -2,9 +2,10 @@ import axios from 'axios'
 import _ from 'lodash'
 import {findAsync} from './Helpers.mjs'
 
-const RestClient = async (chainId, restUrls) => {
+const QueryClient = async (chainId, rpcUrls, restUrls) => {
 
-  const restUrl = await findAvailableUrl(Array.isArray(restUrls) ? restUrls : [restUrls])
+  const rpcUrl = await findAvailableUrl(Array.isArray(rpcUrls) ? rpcUrls : [rpcUrls], 'rpc')
+  const restUrl = await findAvailableUrl(Array.isArray(restUrls) ? restUrls : [restUrls], 'rest')
 
   const getAllValidators = (pageSize, pageCallback) => {
     return getAllPages((nextKey) => {
@@ -118,12 +119,14 @@ const RestClient = async (chainId, restUrls) => {
     return pages
   }
 
-  function findAvailableUrl(urls){
+  function findAvailableUrl(urls, type){
+    const path = type === 'rest' ? '/blocks/latest' : '/block'
     return findAsync(urls, (url) => {
-      return axios.get(url + '/node_info', {timeout: 2000})
+      return axios.get(url + path, {timeout: 2000})
         .then(res => res.data)
         .then(data => {
-          return data.node_info.network === chainId
+          if(type === 'rpc') data = data.result
+          return data.block.header.chain_id === chainId
         }).catch(error => {
           return false
         })
@@ -131,7 +134,8 @@ const RestClient = async (chainId, restUrls) => {
   }
 
   return {
-    connected: !!restUrl,
+    connected: !!rpcUrl && !!restUrl,
+    rpcUrl,
     restUrl,
     getAllValidators,
     getValidators,
@@ -144,4 +148,4 @@ const RestClient = async (chainId, restUrls) => {
   }
 }
 
-export default RestClient;
+export default QueryClient;

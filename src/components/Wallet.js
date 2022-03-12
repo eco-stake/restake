@@ -52,7 +52,7 @@ class Wallet extends React.Component {
   }
 
   async getDelegations(hideError) {
-    this.props.restClient.getDelegations(this.props.address)
+    this.props.queryClient.getDelegations(this.props.address)
       .then(
         (delegations) => {
           this.setState({
@@ -145,7 +145,7 @@ class Wallet extends React.Component {
           validators={this.props.validators}
           getValidatorImage={this.props.getValidatorImage}
           delegations={this.state.delegations}
-          restClient={this.props.restClient}
+          queryClient={this.props.queryClient}
           stargateClient={this.props.stargateClient}
           getDelegations={this.getDelegations}
           onAddValidator={this.onAddValidator} />

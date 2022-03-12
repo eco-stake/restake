@@ -104,12 +104,12 @@ class Autostake {
       network: network,
       operator: operator,
       signingClient: client,
-      restClient: network.restClient
+      queryClient: network.queryClient
     }
   }
 
   checkBalance(client) {
-    return client.restClient.getBalance(client.operator.botAddress, client.network.denom)
+    return client.queryClient.getBalance(client.operator.botAddress, client.network.denom)
       .then(
         (balance) => {
           console.log("Bot balance is", balance.amount, balance.denom)
@@ -126,7 +126,7 @@ class Autostake {
   }
 
   getDelegations(client) {
-    return client.restClient.getAllValidatorDelegations(client.operator.address, 100, (pages) => {
+    return client.queryClient.getAllValidatorDelegations(client.operator.address, 100, (pages) => {
       console.log("...batch", pages.length)
     }).catch(error => {
       console.log("ERROR:", error.message || error)
@@ -152,7 +152,7 @@ class Autostake {
   }
 
   getGrantValidators(client, delegatorAddress) {
-    return client.restClient.getGrants(client.operator.botAddress, delegatorAddress)
+    return client.queryClient.getGrants(client.operator.botAddress, delegatorAddress)
       .then(
         (result) => {
           if(result.claimGrant && result.stakeGrant){
@@ -227,7 +227,7 @@ class Autostake {
   }
 
   totalRewards(client, address, validators){
-    return client.restClient.getRewards(address)
+    return client.queryClient.getRewards(address)
       .then(
         (rewards) => {
           const total = Object.values(rewards).reduce((sum, item) => {

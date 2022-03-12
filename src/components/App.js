@@ -2,7 +2,6 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import React from 'react'
 import _ from 'lodash'
-import SigningClient from '../utils/SigningClient.mjs'
 import AlertMessage from './AlertMessage'
 import NetworkSelect from './NetworkSelect'
 import Wallet from './Wallet'
@@ -75,7 +74,7 @@ class App extends React.Component {
 
     return this.setState({
       error: false,
-      restClient: network.restClient
+      queryClient: network.queryClient
     })
   }
 
@@ -100,12 +99,6 @@ class App extends React.Component {
       const offlineSigner = await window.getOfflineSignerAuto(chainId)
       const key = await window.keplr.getKey(chainId);
       const stargateClient = await this.props.network.signingClient(offlineSigner, key)
-      if(!stargateClient.connected){
-        this.setState({
-          error: 'Could not connect to any available RPC servers'
-        })
-        return
-      }
 
       const address = await stargateClient.getAddress()
 
@@ -135,7 +128,7 @@ class App extends React.Component {
       coinGeckoId: network.coinGeckoId
     }
     return window.keplr.experimentalSuggestChain({
-      rpc: network.rpcUrl[0],
+      rpc: network.rpcUrl,
       rest: network.restUrl,
       chainId: network.chainId,
       chainName: network.prettyName,
@@ -215,7 +208,7 @@ class App extends React.Component {
   }
 
   async getBalance() {
-    this.state.restClient.getBalance(this.state.address, this.props.network.denom)
+    this.state.queryClient.getBalance(this.state.address, this.props.network.denom)
       .then(
         (balance) => {
           this.setState({
@@ -299,7 +292,7 @@ class App extends React.Component {
                 validators={this.props.validators}
                 balance={this.state.balance}
                 getValidatorImage={this.getValidatorImage}
-                restClient={this.state.restClient}
+                queryClient={this.state.queryClient}
                 stargateClient={this.state.stargateClient} />
             </>
           }
