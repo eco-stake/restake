@@ -65,13 +65,13 @@ Running the autostake script manually is then simple.
 Note you might need `sudo` depending on your docker install.
 
 ```bash
-docker-compose run app npm run autostake
+docker-compose run --rm app npm run autostake
 ```
 
 Pass a network name to run the script for a single network at a time.
 
 ```bash
-docker-compose run app npm run autostake osmosis
+docker-compose run --rm app npm run autostake osmosis
 ```
 
 ### Updating your local version
@@ -99,7 +99,7 @@ Don't forget to [update often](#updating-your-local-version)!
 ```bash
 crontab -e
 
-0 21 * * * /bin/bash -c "cd restake && docker-compose run app npm run autostake" > ./restake.log 2>&1
+0 21 * * * /bin/bash -c "cd restake && docker-compose run --rm app npm run autostake" > ./restake.log 2>&1
 ```
 
 #### Using `systemd-timer`
