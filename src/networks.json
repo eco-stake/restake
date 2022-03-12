@@ -1444,6 +1444,7 @@
       "https://rpc.cosmos.directory/cheqd",
       "https://rpc.cheqd.net"
     ],
+    "gasPrice": "25ncheq",
     "operators": [
       {
         "address": "cheqdvaloper1m0f5mdkusqq24zhf8azjn2j5v2jqwqlt3ukrc0",
