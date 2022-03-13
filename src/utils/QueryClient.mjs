@@ -1,6 +1,5 @@
 import axios from 'axios'
 import _ from 'lodash'
-import {findAsync} from './Helpers.mjs'
 
 const QueryClient = async (chainId, rpcUrls, restUrls) => {
 
@@ -21,8 +20,9 @@ const QueryClient = async (chainId, rpcUrls, restUrls) => {
     searchParams.append('status', 'BOND_STATUS_BONDED')
     if(pageSize) searchParams.append('pagination.limit', pageSize)
     if(nextKey) searchParams.append('pagination.key', nextKey)
-    return axios.get(restUrl + "/cosmos/staking/v1beta1/validators?" + searchParams.toString())
-      .then(res => res.data)
+    return axios.get(restUrl + "/cosmos/staking/v1beta1/validators?" + searchParams.toString(), {
+      timeout: 5000
+    }).then(res => res.data)
   }
 
   const getBalance = (address, denom) => {
@@ -121,16 +121,17 @@ const QueryClient = async (chainId, rpcUrls, restUrls) => {
 
   function findAvailableUrl(urls, type){
     const path = type === 'rest' ? '/blocks/latest' : '/block'
-    return findAsync(urls, (url) => {
-      return axios.get(url + path, {timeout: 4000})
+    return Promise.any(urls.map(url => {
+      return axios.get(url + path, {timeout: 10000})
         .then(res => res.data)
         .then(data => {
           if(type === 'rpc') data = data.result
-          return data.block.header.chain_id === chainId
-        }).catch(error => {
-          return false
+          if(!data.block.header.chain_id === chainId){
+            throw false;
+          }
+          return url
         })
-    })
+    }))
   }
 
   return {
