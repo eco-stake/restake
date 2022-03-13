@@ -1,6 +1,5 @@
 import { DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
 import Network from '../src/utils/Network.mjs'
-import Operator from '../src/utils/Operator.mjs'
 import {mapSync, executeSync, overrideNetworks} from '../src/utils/Helpers.mjs'
 
 import {
@@ -76,7 +75,7 @@ class Autostake {
   }
 
   async getClient(data){
-    const network = await Network(data)
+    let network = await Network(data, true)
 
     const wallet = await DirectSecp256k1HdWallet.fromMnemonic(this.mnemonic, {
       prefix: network.prefix
@@ -91,6 +90,8 @@ class Autostake {
 
     if(!operatorData) return console.log('Not an operator')
     if(!network.authzSupport) return console.log('No Authz support')
+
+    network = await Network(data)
     if(!network.rpcUrl) return console.log('Could not connect to RPC API')
     if(!network.restUrl) return console.log('Could not connect to REST API')
 
