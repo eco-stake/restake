@@ -1290,6 +1290,12 @@
         "botAddress": "lum1hl0jgxre5z0nkyjj07c5vfdy44yk44atv4l96f",
         "runTime": "22:30",
         "minimumReward": 1000
+      },
+      {
+        "address": "lumvaloper1trkdt99yc4je55759s8z4fctrluxf9pmla7k80",
+        "botAddress": "lum1327kewr0m28edp6ee022myyxzvlf3g5exxpvr7",
+        "runTime": "14:30",
+        "minimumReward": 10000
       }
     ],
     "authzSupport": true
