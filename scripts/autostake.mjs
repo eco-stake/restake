@@ -99,7 +99,7 @@ class Autostake {
 
     const validators = await network.getValidators()
     const operators = network.getOperators(validators)
-    const operator = network.getOperator(operators, botAddress)
+    const operator = network.getOperatorByBotAddress(operators, botAddress)
 
     return{
       network: network,
