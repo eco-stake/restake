@@ -72,22 +72,23 @@ function NetworkSelect(props) {
     if(data){
       setLoading(true)
       setError(false)
+      Network(data, true).then(network => {
+        setSelectedNetwork(network)
+      })
       Network(data).then(network => {
         setSelectedNetwork(network)
         setValidators({})
-        if(network.connected){
-          network.getValidators().then(data => {
-            setValidators(data)
-            loadValidatorImages(network, data)
-            setLoading(false)
-          }).catch(error => {
-            setError('Unable to connect to this network currently. Try again later.')
-            setLoading(false)
-          })
-        }else{
+        network.getValidators().then(data => {
+          setValidators(data)
+          loadValidatorImages(network, data)
+          setLoading(false)
+        }, (error) => {
           setError('Unable to connect to this network currently. Try again later.')
           setLoading(false)
-        }
+        })
+      }, (error) => {
+        setError('Unable to connect to this network currently. Try again later.')
+        setLoading(false)
       })
     }
   }

@@ -57,9 +57,7 @@ class App extends React.Component {
       this.connect()
     }
     if(this.props.network !== prevProps.network){
-      if(this.state.address){
-        this.connect()
-      }
+      this.connect()
       await this.setNetwork()
     }
   }
@@ -82,8 +80,12 @@ class App extends React.Component {
     this.setState({showNetworkSelect: true})
   }
 
+  connected() {
+    return this.props.network.connected && Object.values(this.props.validators).length > 0
+  }
+
   async connect() {
-    if(!this.props.network.connected){
+    if(!this.connected()){
       return this.setState({
         error: 'Could not connect to any available API servers'
       })
@@ -307,7 +309,7 @@ class App extends React.Component {
             <strong>The validators will pay the transaction fees for you.</strong>
           </p>
           <p className="text-center mb-5">
-            <Button onClick={() => this.setState({showAbout: true})} variant="outline-secondary">More info</Button>
+            <Button onClick={() => this.setState({ showAbout: true })} variant="outline-secondary">More info</Button>
           </p>
         </div>
         <footer className="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
@@ -323,7 +325,7 @@ class App extends React.Component {
             <GitHubButton href="https://github.com/eco-stake/restake" data-icon="octicon-star" data-size="large" data-show-count="true" aria-label="Star eco-stake/restake on GitHub">Star</GitHubButton>
           </p>
         </footer>
-        <About show={this.state.showAbout} onHide={() => this.setState({showAbout: false})} />
+        <About show={this.state.showAbout} onHide={() => this.setState({ showAbout: false })} />
       </Container>
     )
   }

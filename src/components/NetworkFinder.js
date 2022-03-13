@@ -18,7 +18,7 @@ function NetworkFinder() {
 
   const [state, setState] = useReducer(
     (state, newState) => ({...state, ...newState}),
-    {loading: true, networks: [], operators: [], validators: []}
+    {loading: true, networks: [], operators: [], validators: {}}
   )
 
   const getNetworks = async () => {
@@ -69,27 +69,27 @@ function NetworkFinder() {
       }
       Network(data).then(network => {
         setState({network: network})
+      }, (error) => {
+        Network(data, true).then(network => {
+          setState({ network: network, loading: false })
+        })
       })
     }
   }, [state.networks, state.network, params.network, navigate])
 
   useEffect(() => {
     if(state.error) return
-
+    if(!state.network || !state.network.connected) return
     if(state.network && (!Object.keys(state.validators).length)){
-      if(!state.network.connected){
-        return setState({
-          loading: false
-        })
-      }
-
       state.network.getValidators().then(validators => {
         setState({
           validators,
           operators: state.network.getOperators(validators),
           loading: false
         })
-      }, error => setState({loading: false, error: 'Unable to connect right now, try again'}))
+      }, error => {
+        setState({validators: {}, loading: false})
+      })
     }
   }, [state.network])
 
@@ -101,16 +101,6 @@ function NetworkFinder() {
         </Spinner>
       </div>
     )
-  }
-
-  if (state.error) {
-    return (
-      <p>Loading failed</p>
-    )
-  }
-
-  if(!state.network){
-    return <p>Page not found</p>
   }
 
   return <App networks={state.networks} network={state.network} operators={state.operators} validators={state.validators}
