@@ -267,7 +267,9 @@ class App extends React.Component {
           </div>
         </header>
         <div className="mb-5">
-          <p className="lead fs-3 text-center mt-5 mb-5">REStake allows validators to <strong>auto-compound</strong> your <strong onClick={this.showNetworkSelect} className="text-decoration-underline" role="button">{this.props.network.prettyName}</strong> staking rewards for you</p>
+          <p className="lead fs-3 text-center mt-5 mb-5">
+            REStake allows validators to <strong onClick={() => this.setState({showAbout: true})} className="text-decoration-underline" role="button">auto-compound</strong> your <strong onClick={this.showNetworkSelect} className="text-decoration-underline" role="button">{this.props.network.prettyName}</strong> staking rewards for you
+            </p>
           <AlertMessage message={this.state.error} variant="danger" dismissible={false} />
           {!this.state.address && (
             !this.state.keplr
@@ -299,7 +301,7 @@ class App extends React.Component {
           <hr />
           <p className="mt-5 text-center">
             Enabling REStake will authorize the validator to send <em>WithdrawDelegatorReward</em> and <em>Delegate</em> transactions on your behalf for 1 year using <a href="https://docs.cosmos.network/master/modules/authz/" target="_blank" rel="noreferrer">Authz</a>.<br />
-            They will only be authorised to delegate to their own validator. You can revoke the authorization at any time and everything is open source.
+            They will only be authorized to delegate to their own validator. You can revoke the authorization at any time and everything is open source.
           </p>
           <p className="text-center mb-4">
             <strong>The validators will pay the transaction fees for you.</strong>
