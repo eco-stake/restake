@@ -18,6 +18,10 @@ const Network = async (data) => {
     return operators.find(elem => elem.address === operatorAddress)
   }
 
+  const getOperatorByBotAddress = (operators, botAddress) => {
+    return operators.find(elem => elem.botAddress === botAddress)
+  }
+
   const getOperators = (validators) => {
     return sortOperators().map(operator => {
       const validator = validators[operator.address]
@@ -61,7 +65,8 @@ const Network = async (data) => {
     signingClient,
     getValidators,
     getOperators,
-    getOperator
+    getOperator,
+    getOperatorByBotAddress
   }
 }
 

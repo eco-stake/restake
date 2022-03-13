@@ -1492,7 +1492,7 @@
         "address": "umeevaloper1gvt9l5tshr0fp8ksl2tuem584z69eyvt9m8yh6",
         "botAddress": "umee19pqrxrl6n0g0mky4y79hlfzchprmsp5jp3yygg",
         "runTime": "17:00",
-        "minimumReward": 10000,
+        "minimumReward": 10000
       }
     ],
     "authzSupport": true
