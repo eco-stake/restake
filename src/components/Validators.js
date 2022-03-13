@@ -64,7 +64,7 @@ function Validators(props) {
         <td className="text-center">
           {isOperator
             ? <TooltipIcon icon={<CheckCircle className="text-success" />} identifier={item.operator_address}
-              tooltip="This validator can auto-compound your rewards" />
+              tooltip="This validator can REStake your rewards" />
             : <TooltipIcon icon={<XCircle className="opacity-50" />} identifier={item.operator_address}
               tooltip="This validator is not a REStake operator" />
           }
