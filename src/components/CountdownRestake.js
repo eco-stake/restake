@@ -52,7 +52,7 @@ function RevokeRestake(props) {
     }
   }
   return (
-    <TooltipIcon icon={<ClockHistory />} identifier={operator.address}>
+    <TooltipIcon icon={<ClockHistory className={props.className} />} identifier={operator.address}>
       <div className="mt-2 text-center">
         <Countdown
           date={nextRun(true)}

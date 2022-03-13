@@ -260,6 +260,7 @@ class Delegations extends React.Component {
               network={this.props.network}
               address={this.props.address}
               validator={validator}
+              operators={this.props.operators}
               getValidatorImage={this.props.getValidatorImage}
               availableBalance={this.props.balance}
               stargateClient={this.props.stargateClient}
@@ -340,6 +341,7 @@ class Delegations extends React.Component {
                         network={this.props.network}
                         address={this.props.address}
                         validator={validator}
+                        operators={this.props.operators}
                         availableBalance={this.props.balance}
                         getValidatorImage={this.props.getValidatorImage}
                         stargateClient={this.props.stargateClient}
@@ -374,6 +376,7 @@ class Delegations extends React.Component {
                     network={this.props.network}
                     address={this.props.address}
                     validator={validator}
+                    operators={this.props.operators}
                     availableBalance={this.props.balance}
                     getValidatorImage={this.props.getValidatorImage}
                     stargateClient={this.props.stargateClient}
