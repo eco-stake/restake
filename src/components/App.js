@@ -98,20 +98,26 @@ class App extends React.Component {
       await this.suggestChain(this.props.network)
     }
     if (window.getOfflineSigner){
-      const offlineSigner = await window.getOfflineSignerAuto(chainId)
-      const key = await window.keplr.getKey(chainId);
-      const stargateClient = await this.props.network.signingClient(offlineSigner, key)
+      try {
+        const offlineSigner = await window.getOfflineSignerAuto(chainId)
+        const key = await window.keplr.getKey(chainId);
+        const stargateClient = await this.props.network.signingClient(offlineSigner, key)
 
-      const address = await stargateClient.getAddress()
+        const address = await stargateClient.getAddress()
 
-      stargateClient.registry.register("/cosmos.authz.v1beta1.MsgGrant", MsgGrant)
-      stargateClient.registry.register("/cosmos.authz.v1beta1.MsgRevoke", MsgRevoke)
-      this.setState({
-        address: address,
-        stargateClient: stargateClient,
-        error: false
-      })
-      this.getBalance()
+        stargateClient.registry.register("/cosmos.authz.v1beta1.MsgGrant", MsgGrant)
+        stargateClient.registry.register("/cosmos.authz.v1beta1.MsgRevoke", MsgRevoke)
+        this.setState({
+          address: address,
+          stargateClient: stargateClient,
+          error: false
+        })
+        this.getBalance()
+      } catch (e) {
+        return this.setState({
+          error: 'Failed to connect to signing client. API may be down'
+        })
+      }
     }
   }
 
