@@ -8,8 +8,6 @@ import {
   GasPrice
 } from '@cosmjs/stargate'
 
-import axios from 'axios'
-
 const SigningClient = async (rpcUrl, chainId, defaultGasPrice, signer, key) => {
 
   const client = rpcUrl && await SigningStargateClient.connectWithSigner(

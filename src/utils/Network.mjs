@@ -4,12 +4,17 @@ import SigningClient from './SigningClient.mjs'
 import Operator from './Operator.mjs'
 import Chain from './Chain.mjs'
 
-const Network = async (data) => {
+const Network = async (data, withoutQueryClient) => {
 
   const chain = await Chain(data)
-  const queryClient = await QueryClient(chain.chainId, data.rpcUrl, data.restUrl)
+  let queryClient
+  if(!withoutQueryClient){
+    queryClient = await QueryClient(chain.chainId, data.rpcUrl, data.restUrl)
+  }
 
   const signingClient = (wallet, key) => {
+    if(!queryClient) return 
+
     const gasPrice = data.gasPrice || '0.0025' + chain.denom
     return SigningClient(queryClient.rpcUrl, chain.chainId, gasPrice, wallet, key)
   }
@@ -42,7 +47,7 @@ const Network = async (data) => {
   }
 
   return {
-    connected: queryClient.connected,
+    connected: queryClient && queryClient.connected,
     name: data.name,
     prettyName: chain.prettyName,
     chainId: chain.chainId,
@@ -55,8 +60,8 @@ const Network = async (data) => {
     image: chain.image,
     coinGeckoId: chain.coinGeckoId,
     testAddress: data.testAddress,
-    restUrl: queryClient.restUrl,
-    rpcUrl: queryClient.rpcUrl,
+    restUrl: queryClient && queryClient.restUrl,
+    rpcUrl: queryClient && queryClient.rpcUrl,
     operators: data.operators,
     authzSupport: data.authzSupport,
     data,
