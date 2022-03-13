@@ -1,6 +1,5 @@
 import axios from 'axios'
 import _ from 'lodash'
-import {findAsync} from './Helpers.mjs'
 
 const QueryClient = async (chainId, rpcUrls, restUrls) => {
 
