@@ -1701,7 +1701,7 @@
         "address": "cerberusvaloper1tat2cy3f9djtq9z7ly262sqngcarvaktr0w78f",
         "botAddress": "cerberus1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczd38dxa",
         "runTime": "21:00",
-        "minimumReward": 100000000
+        "minimumReward": 1000000000
       }
     ],
     "authzSupport": true
