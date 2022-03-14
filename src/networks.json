@@ -145,6 +145,12 @@
         "botAddress": "osmo19pqrxrl6n0g0mky4y79hlfzchprmsp5jmu2t6g",
         "runTime": "19:31",
         "minimumReward": 1000
+      },
+      {
+        "address": "osmovaloper1vmkt6ysppk8m4rhlq78tpqyh429lhlsah4mn3y",
+        "botAddress": "osmo1syc66updwkat9nhmfplzzvflh5789phc3z4kgk",
+        "runTime": "21:00",
+        "minimumReward": 1000
       }
     ],
     "authzSupport": true
