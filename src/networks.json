@@ -606,6 +606,12 @@
         "botAddress": "chihuahua1uwqjtgjhjctjc45ugy7ev5prprhehc7w6gcqk8",
         "runTime": "21:00",
         "minimumReward": 1000
+      },
+      {
+        "address": "chihuahuavaloper16kctxuen3x2avvjj2mdwsl6g8n7d4vjkq6c6q9",
+        "botAddress": "chihuahua1m8d834ykcy3dgrdve4xhxky3u3c2tl9d3d7gy9",
+        "runTime": "21:00",
+        "minimumReward": 1000
       }
     ],
     "authzSupport": false
