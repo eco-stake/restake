@@ -688,6 +688,12 @@
         "botAddress": "gravity1vqhz5g5sq8ku0ka5x9ygal9flkg5vzr9m657na",
         "runTime": "20:00",
         "minimumReward": 1000000
+      },
+      {
+        "address": "gravityvaloper1epfpvqsc34sfserdx8x4t3aszdkar3w684fwr6",
+        "botAddress": "gravity1zwjfxr3j9gnnrhxwtt8t6qqr4pdn7cgjyt59pa",
+        "runTime": "18:00",
+        "minimumReward": 100000
       }
     ],
     "authzSupport": true
