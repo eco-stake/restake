@@ -5,7 +5,9 @@ import { StakeAuthorization } from "cosmjs-types/cosmos/staking/v1beta1/authz";
 import { Timestamp } from "cosmjs-types/google/protobuf/timestamp";
 
 import {
-  Button
+  Button,
+  OverlayTrigger,
+  Tooltip
 } from 'react-bootstrap'
 
 function GrantRestake(props) {
@@ -66,13 +68,31 @@ function GrantRestake(props) {
     }
   }
 
+  function button(){
+    return (
+      <Button className="mr-5" onClick={() => update()} size={props.size} disabled={props.disabled} variant={props.variant}>
+        Enable
+      </Button>
+    )
+  }
+
   return (
     <>
       {!loading
         ? (
-          <Button className="mr-5" onClick={() => update()} size={props.size} disabled={props.disabled} variant={props.variant}>
-            Enable
-          </Button>
+          <>
+            {props.tooltip ? (
+              <OverlayTrigger
+                key={props.operator.address}
+                placement="top"
+                overlay={
+                  <Tooltip id={`tooltip-${props.operator.address}`}>
+                    {props.tooltip}
+                  </Tooltip>
+                }
+              >{button()}</OverlayTrigger>
+            ) : button()}
+          </>
         ) : (
           <Button className="mr-5" disabled size={props.size} variant={props.variant}>
             <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>&nbsp;

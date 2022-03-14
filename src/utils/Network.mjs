@@ -1,18 +1,30 @@
 import _ from 'lodash'
-import RestClient from './RestClient.mjs'
+import QueryClient from './QueryClient.mjs'
 import SigningClient from './SigningClient.mjs'
 import Operator from './Operator.mjs'
+import Chain from './Chain.mjs'
 
-const Network = async (data) => {
-  const restClient = await RestClient(data.chainId, data.restUrl)
+const Network = async (data, withoutQueryClient) => {
+
+  const chain = await Chain(data)
+  let queryClient
+  if(!withoutQueryClient){
+    queryClient = await QueryClient(chain.chainId, data.rpcUrl, data.restUrl)
+  }
 
   const signingClient = (wallet, key) => {
-    const gasPrice = data.gasPrice || '0.0025' + data.denom
-    return SigningClient(data.rpcUrl, data.chainId, gasPrice, wallet, key)
+    if(!queryClient) return 
+
+    const gasPrice = data.gasPrice || '0.0025' + chain.denom
+    return SigningClient(queryClient.rpcUrl, chain.chainId, gasPrice, wallet, key)
   }
 
   const getOperator = (operators, operatorAddress) => {
     return operators.find(elem => elem.address === operatorAddress)
+  }
+
+  const getOperatorByBotAddress = (operators, botAddress) => {
+    return operators.find(elem => elem.botAddress === botAddress)
   }
 
   const getOperators = (validators) => {
@@ -31,27 +43,35 @@ const Network = async (data) => {
   }
 
   const getValidators = () => {
-    return restClient.getAllValidators(150)
+    return queryClient.getAllValidators(150)
   }
 
   return {
-    connected: restClient.connected,
+    connected: queryClient && queryClient.connected,
     name: data.name,
-    prettyName: data.prettyName,
-    chainId: data.chainId,
-    prefix: data.prefix,
+    prettyName: chain.prettyName,
+    chainId: chain.chainId,
+    prefix: chain.prefix,
+    slip44: chain.slip44,
     gasPrice: data.gasPrice,
-    denom: data.denom,
-    restUrl: restClient.restUrl,
-    rpcUrl: data.rpcUrl,
+    denom: chain.denom,
+    symbol: chain.symbol,
+    decimals: chain.decimals,
+    image: chain.image,
+    coinGeckoId: chain.coinGeckoId,
+    testAddress: data.testAddress,
+    restUrl: queryClient && queryClient.restUrl,
+    rpcUrl: queryClient && queryClient.rpcUrl,
     operators: data.operators,
     authzSupport: data.authzSupport,
     data,
-    restClient,
+    chain,
+    queryClient,
     signingClient,
     getValidators,
     getOperators,
-    getOperator
+    getOperator,
+    getOperatorByBotAddress
   }
 }
 

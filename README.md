@@ -12,7 +12,7 @@ Try it out at [restake.app](https://restake.app).
 
 Authz is a new feature for Tendermint chains which lets you grant permission to another wallet to carry out certain transactions for you. These transactions are sent by the grantee on behalf of the granter, meaning the validator will send and pay for the TX, but actions will affect your wallet (such as claiming rewards). 
 
-REStake specifically lets you grant a validator permission to send `WithdrawDelegatorReward` and `Delegate` transactions for their validator only (note `WithdrawDelegatorReward` is technically not restricted to a single validator). The validator cannot send any other transaction types, and has no other access to your wallet. You authorise this using Keplr as normal.
+REStake specifically lets you grant a validator permission to send `WithdrawDelegatorReward` and `Delegate` transactions for their validator only (note `WithdrawDelegatorReward` is technically not restricted to a single validator). The validator cannot send any other transaction types, and has no other access to your wallet. You authorize this using Keplr as normal.
 
 A script is also provided which allows a validator to automatically search their delegators, check each for the required grants, and if applicable carry out the claim and delegate transactions on their behalf in a single transaction. This script should be run daily, and the time you will run it can be specified when you [add your operator](#become-an-operator).
 
@@ -28,7 +28,7 @@ Becoming an operator is extremely easy. You need to do three things:
 
 ### Setup a bot wallet
 
-Generate a new hot wallet you will use to automatically carry out the staking transactions. The mnemonic will need to be provided to the script so **use a dedicated wallet and only keep enough funds for transaction fees**.
+Generate a new hot wallet you will use to automatically carry out the staking transactions. The mnemonic will need to be provided to the script so **use a dedicated wallet and only keep enough funds for transaction fees**. The ONLY menmonic required here is for the hot wallet, do not put your validator operator mnemonic anywhere.
 
 You only need a single mnemonic for multiple Cosmos chains, and the script will check each network in the [networks.json](./src/networks.json) file for a matching bot address. 
 
@@ -50,7 +50,7 @@ Docker Compose: [docs.docker.com/compose/install](https://docs.docker.com/compos
 
 Clone the repository and copy the sample `.env` file ready for your mnemonic.
 
-```
+```bash
 git clone https://github.com/eco-stake/restake
 cd restake
 cp .env.sample .env
@@ -64,14 +64,14 @@ Running the autostake script manually is then simple.
 
 Note you might need `sudo` depending on your docker install.
 
-```
-docker-compose run app npm run autostake
+```bash
+docker-compose run --rm app npm run autostake
 ```
 
 Pass a network name to run the script for a single network at a time.
 
-```
-docker-compose run app npm run autostake osmosis
+```bash
+docker-compose run --rm app npm run autostake osmosis
 ```
 
 ### Updating your local version
@@ -80,7 +80,7 @@ REStake is MVP. Very MVP. Updates are happening all the time and there are bugs 
 
 Update your local repository and pre-build your Docker containers with the following commands:
 
-```
+```bash
 git pull
 docker-compose build
 ```
@@ -88,30 +88,33 @@ docker-compose build
 ### Setting up Cron to make sure the script runs daily
 
 You should setup your script to run at the same time each day.
-2 methodes are described bellow, The `crontab` one, and the `systemd-timer` one.
+2 methods are described below; using `crontab` or using `systemd-timer`.
 
-####  **using `crontab` (deprecated)**
+In both cases, ensure your system time is correct and you know what time the script will run in UTC, as that will be required later. Both examples below are for 21:00.
 
-```
+Don't forget to [update often](#updating-your-local-version)!
+
+#### Using `crontab`
+
+```bash
 crontab -e
 
-0 21 * * * /bin/bash -c "cd restake && docker-compose run app npm run autostake" > ./restake.log 2>&1
+0 21 * * * /bin/bash -c "cd restake && docker-compose run --rm app npm run autostake" > ./restake.log 2>&1
 ```
 
-#### **using `systemd-timer` (prefered)**
+#### Using `systemd-timer`
 
-Systemd-timer allow to run a onshot service with specified rules.
+Systemd-timer allow to run a one-off service with specified rules.
 
-  * Create a systemd unit file:
+##### Create a systemd unit file:
 
-The unit file describe the application to run.
-We define a dependency with the timer with the `Wants` statement.
+The unit file describe the application to run.  We define a dependency with the timer with the `Wants` statement.
 
 ```bash
 $ sudo vim /etc/systemd/system/restake.service
 ```
 
-```
+```bash
 [Unit]
 Description=stakebot service with docker compose
 Requires=docker.service
@@ -127,7 +130,7 @@ ExecStart=/usr/bin/docker-compose run --rm app npm run autostake
 WantedBy=multi-user.target
 ```
 
-  * Create a systemd timer file:
+##### Create a systemd timer file:
 
 The timer file defines the rules for running the restake service every day. All rules are described in the [systemd documentation](https://www.freedesktop.org/software/systemd/man/systemd.timer.html). 
 
@@ -135,7 +138,7 @@ The timer file defines the rules for running the restake service every day. All 
 $ sudo vim /etc/systemd/system/restake.timer
 ```
 
-```
+```bash
 [Unit]
 Description=Restake bot timer
 
@@ -147,13 +150,15 @@ OnCalendar=*-*-* 21:00:00
 WantedBy=timers.target
 ```
 
-  * Enable and start everything
+##### Enable and start everything
+
 ```bash
 $ systemctl enable restake.service
 $ systemctl enable restake.timer
 $ systemctl start restake.timer
 ```
-  * Check your timer
+
+##### Check your timer
 
 `$ systemctl status restake.timer`
 <pre><font color="#8AE234"><b>●</b></font> restake.timer - Restake bot timer
@@ -171,17 +176,15 @@ TriggeredBy: <font color="#8AE234"><b>●</b></font> restake.timer
    Main PID: 86925 (code=exited, status=0/SUCCESS)
 </pre>
 
-
-Don't forget to [update often](#updating-your-local-version)!
-
-
-### Overriding networks config locally
+### Overriding networks config locally/use your own node
 
 You will likely want to customise your networks config, e.g. to set your own node URLs to ensure your autocompounding script completes successfully.
 
+Note that REStake requires a node with indexing enabled and minimum gas prices matching the networks.json gas price (or your local override).
+
 Create a `src/networks.local.json` file with JSON in the following format:
 
-```
+```json
 {
   "osmosis": {
     "prettyName": "Foobar",
@@ -203,7 +206,7 @@ Any values you specify will override the `networks.json` file. Arrays will not b
 
 You now need to update the [networks.json](./src/networks.json) file at `./src/networks.json` to add your operator to any networks you want to auto-compound for. Check the existing file for examples, but the operators array is simple:
 
-```
+```json
 "operators": [{
   "address": "osmovaloper1u5v0m74mql5nzfx2yh43s2tke4mvzghr6m2n5t",
   "botAddress": "osmo1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczed559y",
@@ -212,7 +215,9 @@ You now need to update the [networks.json](./src/networks.json) file at `./src/n
 },
 ```
 
-`address` is your validator's address, and `botAddress` is the address from your new hot wallet you generated earlier. Repeat this for all networks you want to REStake for.
+`address` is your validator's address, and `botAddress` is the address from your new hot wallet you generated earlier. `runTime` is the time in UTC that your bot will run (multiple planned in the future). `minimumReward` is the minimum reward to trigger autostaking, otherwise the address be skipped. 
+
+Repeat this config for all networks you want to REStake for.
 
 Note that the `botAddress` is the address which will be granted by the delegator to carry out their restaking transactions if it wasn't clear.
 
@@ -222,19 +227,35 @@ You can now submit your `networks.json` update to the repository in a pull reque
 
 ## Adding/updating a network
 
-A script is included to generate the config needed to add a new chain from the [Chain Registry](https://github.com/cosmos/chain-registry). It will update the config file in-place, retaining the important information like operators etc. It can be used to update and add a chain, just check the changes with Git.
+Network information is sourced from the [Chain Registry](https://github.com/cosmos/chain-registry) via the [registry.cosmos.directory](https://registry.cosmos.directory) API. The `networks.json` defines which chains appear in REStake; so long as the chain name matches the directory name from the Chain Registry, all chain information will be sourced automatically.
 
-Make sure you match the directory name from Chain Registry.
+To add a network to REStake, add the required information to `networks.json` as follows:
 
+```json
+{
+  "name": "osmosis",
+  "restUrl": [
+    "https://rest.cosmos.directory/osmosis",
+  ],
+  "rpcUrl": [
+    "https://rpc.cosmos.directory/osmosis",
+  ],
+  "gasPrice": "0.025uosmo",
+  "testAddress": "osmo1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczed559y",
+  "ownerAddress": "osmovaloper1u5v0m74mql5nzfx2yh43s2tke4mvzghr6m2n5t",
+  "operators": [
+  ],
+  "authzSupport": true
+}
 ```
-docker-compose run app npm run registryConfig cosmoshub
-```
+
+Note that most attributes from Chain Registry can be overriden by defining the camelCase version in networks.json.
 
 ## Running the UI
 
 Run the UI using docker with one line:
 
-```
+```bash
 docker run -p 80:80 -t ghcr.io/eco-stake/restake
 ```
 
@@ -244,7 +265,7 @@ Alternative run from source using `docker-compose up` or `npm start`.
 
 The REStake UI is both validator and network agnostic. Any validator can be added as an operator and run this tool to provide an auto-compounding service to their delegators, but they can also run their own UI if they choose and adjust the branding to suit themselves. 
 
-For this to work, we need a common source of chain information, and a common source of 'operator' information. Currently this the [networks.json](./src/networks.json) file in this repository. A helper script is included to add a chain from the [Chain Registry](https://github.com/cosmos/chain-registry), and this integration will be taken further soon.
+For this to work, we need a common source of chain information, and a common source of 'operator' information. Chain information is sourced from the [Chain Registry](https://github.com/cosmos/chain-registry), via an API provided by [cosmos.directory](https://registry.cosmos.directory). Operator information currently lives in the [networks.json](./src/networks.json) file in this repository. 
 
 If you fork this repository to provide your own UI, please keep up to date with the upstream to ensure you have the latest [networks.json](./src/networks.json) to include all operators. Some honesty is needed until we have a more decentralised solution.
 

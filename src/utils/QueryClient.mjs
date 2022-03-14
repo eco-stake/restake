@@ -1,10 +1,10 @@
 import axios from 'axios'
 import _ from 'lodash'
-import {findAsync} from './Helpers.mjs'
 
-const RestClient = async (chainId, restUrls) => {
+const QueryClient = async (chainId, rpcUrls, restUrls) => {
 
-  const restUrl = await findAvailableUrl(Array.isArray(restUrls) ? restUrls : [restUrls])
+  const rpcUrl = await findAvailableUrl(Array.isArray(rpcUrls) ? rpcUrls : [rpcUrls], 'rpc')
+  const restUrl = await findAvailableUrl(Array.isArray(restUrls) ? restUrls : [restUrls], 'rest')
 
   const getAllValidators = (pageSize, pageCallback) => {
     return getAllPages((nextKey) => {
@@ -20,8 +20,9 @@ const RestClient = async (chainId, restUrls) => {
     searchParams.append('status', 'BOND_STATUS_BONDED')
     if(pageSize) searchParams.append('pagination.limit', pageSize)
     if(nextKey) searchParams.append('pagination.key', nextKey)
-    return axios.get(restUrl + "/cosmos/staking/v1beta1/validators?" + searchParams.toString())
-      .then(res => res.data)
+    return axios.get(restUrl + "/cosmos/staking/v1beta1/validators?" + searchParams.toString(), {
+      timeout: 5000
+    }).then(res => res.data)
   }
 
   const getBalance = (address, denom) => {
@@ -118,20 +119,24 @@ const RestClient = async (chainId, restUrls) => {
     return pages
   }
 
-  function findAvailableUrl(urls){
-    return findAsync(urls, (url) => {
-      return axios.get(url + '/node_info', {timeout: 2000})
+  function findAvailableUrl(urls, type){
+    const path = type === 'rest' ? '/blocks/latest' : '/block'
+    return Promise.any(urls.map(url => {
+      return axios.get(url + path, {timeout: 10000})
         .then(res => res.data)
         .then(data => {
-          return data.node_info.network === chainId
-        }).catch(error => {
-          return false
+          if(type === 'rpc') data = data.result
+          if(!data.block.header.chain_id === chainId){
+            throw false;
+          }
+          return url
         })
-    })
+    }))
   }
 
   return {
-    connected: !!restUrl,
+    connected: !!rpcUrl && !!restUrl,
+    rpcUrl,
     restUrl,
     getAllValidators,
     getValidators,
@@ -144,4 +149,4 @@ const RestClient = async (chainId, restUrls) => {
   }
 }
 
-export default RestClient;
+export default QueryClient;
