@@ -1216,6 +1216,12 @@
         "botAddress": "sif1mjq48r6435aewerpruwc8up3tz3rzan2fy3pw7",
         "runTime": "19:00",
         "minimumReward": 1000
+      },
+      {
+        "address": "sifvaloper1a2ly5lyry8l4wvx27fzdu6ha5mj53sxceu4uvj",
+        "botAddress": "sif1m8d834ykcy3dgrdve4xhxky3u3c2tl9dh9us2v",
+        "runTime": "21:00",
+        "minimumReward": 1000
       }
     ],
     "authzSupport": false
