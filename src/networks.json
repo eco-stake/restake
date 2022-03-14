@@ -1563,6 +1563,12 @@
         "botAddress": "persistence1f204r62y7l3ye7s3z05pvwufjawaf6vefpjmk0",
         "runTime": "23:00",
         "minimumReward": 10000
+      },
+      {
+        "address": "persistencevaloper10sc98vt6saux8asexnsp2hgvkgmjmful8w5cuw",
+        "botAddress": "persistence1n8htrjks32y59u3fxwuy6fnz868n667k8ltezs",
+        "runTime": "18:00",
+        "minimumReward": 10000
       }
     ],
     "authzSupport": true
