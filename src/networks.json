@@ -1744,6 +1744,12 @@
         "botAddress": "cerberus1305e92ng6a9pdh3ttc3ld459ckxupxt3tt620v",
         "runTime": "19:00",
         "minimumReward": 10000
+      },
+      {
+        "address": "cerberusvaloper1y3thykrje2fmdcf8wva8l8kphmwpx89ur4erq3",
+        "botAddress": "cerberus1v9vae554q55xa4pcfdm0p3kv8nxn50jkxt8mcz",
+        "runTime": "23:00",
+        "minimumReward": 10000
       }
     ],
     "authzSupport": true
