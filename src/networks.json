@@ -1037,7 +1037,7 @@
       },
       {
         "address": "desmosvaloper19c6nnp6afxj82ehxtlejyvg6zh58050jcgpdj6",
-        "botAddress": "desmos1az6huqur4g2u29fa6c5zzxmtljp0euqmnla6x5",
+        "botAddress": "desmos1m5hgzum68rjf4c7zhezgkj8hlnmr0kghzekmag",
         "runTime": "10:00",
         "minimumReward": 10000
       },
@@ -1531,6 +1531,12 @@
         "botAddress": "bitsong14td30sayes36tm042gcrwpynky927x2c434c06",
         "runTime": "20:00",
         "minimumReward": 1000000
+      },
+      {
+        "address": "bitsongvaloper1mceksy7l3xenuyx4dzl64erf3fh29a3r2ercnz",
+        "botAddress": "bitsong1m5hgzum68rjf4c7zhezgkj8hlnmr0kgh6gfrgl",
+        "runTime": "10:00",
+        "minimumReward": 100000
       }
     ],
     "authzSupport": true
@@ -1557,6 +1563,12 @@
         "botAddress": "persistence1f204r62y7l3ye7s3z05pvwufjawaf6vefpjmk0",
         "runTime": "23:00",
         "minimumReward": 10000
+      },
+      {
+        "address": "persistencevaloper1f9p23ru4sw8p2044237ckfhwdpklrn0ahdaujg",
+        "botAddress": "persistence1m5hgzum68rjf4c7zhezgkj8hlnmr0kghcdacy5",
+        "runTime": "10:00",
+        "minimumReward": 100000
       }
     ],
     "authzSupport": true
@@ -1599,6 +1611,12 @@
         "botAddress": "ixo1vqhz5g5sq8ku0ka5x9ygal9flkg5vzr9qlc5jx",
         "runTime": "20:00",
         "minimumReward": 1000000
+      },
+      {
+        "address": "ixovaloper1a3qpp5ff9cgnusxwufdkmnvn83446lf9vq88ga",
+        "botAddress": "ixo1m5hgzum68rjf4c7zhezgkj8hlnmr0kghf59ewr",
+        "runTime": "10:00",
+        "minimumReward": 100000
       }
     ],
     "authzSupport": false
@@ -1686,6 +1704,12 @@
         "address": "fetchvaloper1a7l5xar7vyymvahfelar6vtkdar5x9a54l7zvc",
         "botAddress": "fetch1v9vae554q55xa4pcfdm0p3kv8nxn50jkf3wk07",
         "runTime": "23:00",
+        "minimumReward": 10000000000000000
+      },
+      {
+        "address": "fetchvaloper13uwrjldm8m45cuarjdvgk9qwnysf835rgrugc6",
+        "botAddress": "fetch1m5hgzum68rjf4c7zhezgkj8hlnmr0kgh9uj0g8",
+        "runTime": "10:00",
         "minimumReward": 10000000000000000
       }
     ],
