@@ -276,8 +276,8 @@ class App extends React.Component {
         </header>
         <div className="mb-5">
           <p className="lead fs-3 text-center mt-5 mb-5">
-            REStake allows validators to <strong onClick={() => this.setState({showAbout: true})} className="text-decoration-underline" role="button">auto-compound</strong> your <strong onClick={this.showNetworkSelect} className="text-decoration-underline" role="button">{this.props.network.prettyName}</strong> staking rewards for you
-            </p>
+            REStake allows validators to <strong onClick={() => this.setState({ showAbout: true })} className="text-decoration-underline" role="button">auto-compound</strong> your <strong onClick={this.showNetworkSelect} className="text-decoration-underline" role="button">{this.props.network.prettyName}</strong> staking rewards for you
+          </p>
           <AlertMessage message={this.state.error} variant="danger" dismissible={false} />
           {!this.state.address && (
             !this.state.keplr

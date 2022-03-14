@@ -55,16 +55,17 @@ function NetworkFinder() {
 
   useEffect(() => {
     if(Object.keys(state.networks).length && !state.network){
-      const networkName = params.network || Object.keys(state.networks)[0]
-      const data = state.networks[networkName]
+      let networkName = params.network || Object.keys(state.networks)[0]
+      let data = state.networks[networkName]
       if(params.network && !data){
-        navigate("/" + Object.keys(state.networks)[0]);
+        networkName = Object.keys(state.networks)[0]
+        data = state.networks[networkName]
       }
       if(!data){
         setState({loading: false})
         return
       }
-      if(!params.network){
+      if(params.network != networkName){
         navigate("/" + networkName);
       }
       Network(data).then(network => {
