@@ -1681,6 +1681,12 @@
         "botAddress": "darc1v9vae554q55xa4pcfdm0p3kv8nxn50jk9dnrq7",
         "runTime": "23:00",
         "minimumReward": 100000
+      },
+      {
+        "address": "darcvaloper1yww5jnu4y39vyea47xs4z7r45yz9rl5dpxg67v",
+        "botAddress": "darc1m8d834ykcy3dgrdve4xhxky3u3c2tl9dde8hgs",
+        "runTime": "21:00",
+        "minimumReward": 100000
       }
     ],
     "authzSupport": false
