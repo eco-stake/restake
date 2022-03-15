@@ -29,7 +29,10 @@
       {
         "address": "osmovaloper1u5v0m74mql5nzfx2yh43s2tke4mvzghr6m2n5t",
         "botAddress": "osmo1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczed559y",
-        "runTime": ["09:00", "21:00"],
+        "runTime": [
+          "09:00",
+          "21:00"
+        ],
         "minimumReward": 1000
       },
       {
@@ -443,7 +446,10 @@
       {
         "address": "akashvaloper1xgnd8aach3vawsl38snpydkng2nv8a4kqgs8hf",
         "botAddress": "akash1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczud2r2v",
-        "runTime": ["09:00", "21:00"],
+        "runTime": [
+          "09:00",
+          "21:00"
+        ],
         "minimumReward": 1000
       },
       {
@@ -550,7 +556,10 @@
       {
         "address": "chihuahuavaloper19vwcee000fhazmpt4ultvnnkhfh23ppwxll8zz",
         "botAddress": "chihuahua1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczjr22j5",
-        "runTime": ["09:00", "21:00"],
+        "runTime": [
+          "09:00",
+          "21:00"
+        ],
         "minimumReward": 1000
       },
       {
@@ -879,7 +888,10 @@
       {
         "address": "digvaloper136avwnuvvy94dqmtnaue2nfvjes8xr37h9rzay",
         "botAddress": "dig1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczfzw03d",
-        "runTime": ["09:00", "21:00"],
+        "runTime": [
+          "09:00",
+          "21:00"
+        ],
         "minimumReward": 1000
       },
       {
@@ -1468,7 +1480,7 @@
         "botAddress": "stars14gra89zm8753pfuhvujjulmtkf2qq70fdcp9k9",
         "runTime": "17:28",
         "minimumReward": 10000
-      },      
+      },
       {
         "address": "starsvaloper1y58hfnm90r4efhlydx0gavz57lvm7k6uulkg3h",
         "botAddress": "stars1grfk7t0k42yxpwqhr7kt4te7j73m2a3vke2d2h",
@@ -1883,6 +1895,14 @@
     "testAddress": "cerberus1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczd38dxa",
     "ownerAddress": "cerberusvaloper1tat2cy3f9djtq9z7ly262sqngcarvaktr0w78f",
     "operators": [
+      {
+        "address": "cerberusvaloper1zl4vt84hya03e8hu7dx4q4cvn2ts2xdrrnnufr",
+        "botAddress": "cerberus1weeu5yuj8n23hd87wsdxqqgfmzzz9zt6nlw6xf",
+        "runTime": [
+          "21:00"
+        ],
+        "minimumReward": 1000
+      },
       {
         "address": "cerberusvaloper18twaqg4vaextnm5dddgmlm5quwymaswkchqt3a",
         "botAddress": "cerberus1uxwnhyjd2m5y6mpqsdg95y4ty0a5jtfrjhkgq5",
