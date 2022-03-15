@@ -63,7 +63,7 @@ class DelegateForm extends React.Component {
     const address = this.props.address
     const validatorAddress = this.props.selectedValidator.operator_address
     let messages = []
-    const decimals = Math.pow(10, this.props.network.data.decimals || 6)
+    const decimals = Math.pow(10, this.props.network.decimals || 6)
     if(this.props.redelegate){
       messages.push({
         typeUrl: "/cosmos.staking.v1beta1.MsgBeginRedelegate",
@@ -90,7 +90,7 @@ class DelegateForm extends React.Component {
 
   async setAvailableAmount(){
     this.setState({error: undefined})
-    const decimals = Math.pow(10, this.props.network.data.decimals || 6)
+    const decimals = Math.pow(10, this.props.network.decimals || 6)
     const messages = this.buildMessages(parseInt(this.props.availableBalance.amount * 0.95) / decimals)
     this.props.stargateClient.simulate(this.props.address, messages).then(gas => {
       const saveTxFeeNum = (this.props.redelegate || this.props.undelegate) ? 0 : 10
@@ -110,7 +110,7 @@ class DelegateForm extends React.Component {
   }
 
   denom(){
-    return this.props.network.denom.slice(1).toUpperCase()
+    return this.props.network.symbol.toUpperCase()
   }
 
   render() {
@@ -131,7 +131,7 @@ class DelegateForm extends React.Component {
               </div>
               {this.props.availableBalance &&
               <div className="form-text text-end"><span role="button" onClick={() => this.setAvailableAmount()}>
-                Available: <Coins coins={this.props.availableBalance} decimals={this.props.network.data.decimals} />
+                Available: <Coins coins={this.props.availableBalance} decimals={this.props.network.decimals} />
               </span></div>
               }
             </div>

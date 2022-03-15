@@ -1,44 +1,38 @@
 import axios from "axios";
 import _ from "lodash";
-import { findAsync } from "./Helpers.mjs";
-import {
-  setupStakingExtension,
-  QueryClient,
-  setupBankExtension,
-  setupDistributionExtension,
-  setupMintExtension,
-  setupGovExtension,
-} from "@cosmjs/stargate";
-import { Tendermint34Client } from "@cosmjs/tendermint-rpc";
-import { Decimal } from "@cosmjs/math";
 
-function duration(epochs, epochIdentifier) {
-  const epoch = epochs.find((epoch) => epoch.identifier === epochIdentifier);
-  if (!epoch) {
-    return 0;
-  }
-
-  // Actually, the date type of golang protobuf is returned by the unit of seconds.
-  return parseInt(epoch.duration.replace("s", ""));
-}
-
-function parseCommissionRate(validator) {
-  return (
-    parseInt(validator.commission.commissionRates.rate) / 1000000000000000000
-  );
-}
-
-const RestClient = async ({
-  chainId,
-  restUrl: restUrls,
-  rpcUrl: rpcUrls,
-  denom,
-}) => {
-  // Find available rpcUrl
+const QueryClient = async (chainId, rpcUrls, restUrls) => {
   const rpcUrl = await findAvailableUrl(
     Array.isArray(rpcUrls) ? rpcUrls : [rpcUrls],
     "rpc"
   );
+  const restUrl = await findAvailableUrl(
+    Array.isArray(restUrls) ? restUrls : [restUrls],
+    "rest"
+  );
+
+  function parseCommissionRate(validator) {
+    return (
+      parseInt(validator.commission.commissionRates.rate) / 1000000000000000000
+    );
+  }
+
+  const getValidators = (pageSize, nextKey) => {
+    const searchParams = new URLSearchParams();
+    searchParams.append("status", "BOND_STATUS_BONDED");
+    if (pageSize) searchParams.append("pagination.limit", pageSize);
+    if (nextKey) searchParams.append("pagination.key", nextKey);
+    return axios
+      .get(
+        restUrl +
+          "/cosmos/staking/v1beta1/validators?" +
+          searchParams.toString(),
+        {
+          timeout: 5000,
+        }
+      )
+      .then((res) => res.data);
+  };
 
   // Find available restUrl
   const restUrl = await findAvailableUrl(
@@ -254,23 +248,27 @@ const RestClient = async ({
     return validatorApy;
   };
 
-  function findAvailableUrl(urls, urlType) {
-    const urlParam = urlType === "rpc" ? "/status?" : "/node_info";
-    return findAsync(urls, async (url) => {
-      try {
-        const res = await axios.get(url + urlParam, { timeout: 1000 });
-        const nodeInfo = res.data.result
-          ? res.data.result.node_info
-          : res.data.node_info;
-        return nodeInfo.network === chainId;
-      } catch (error) {
-        return false;
-      }
-    });
+  function findAvailableUrl(urls, type) {
+    const path = type === "rest" ? "/blocks/latest" : "/block";
+    return Promise.any(
+      urls.map((url) => {
+        return axios
+          .get(url + path, { timeout: 10000 })
+          .then((res) => res.data)
+          .then((data) => {
+            if (type === "rpc") data = data.result;
+            if (!data.block.header.chain_id === chainId) {
+              throw false;
+            }
+            return url;
+          });
+      })
+    );
   }
 
   return {
-    connected: !!restUrl,
+    connected: !!rpcUrl && !!restUrl,
+    rpcUrl,
     restUrl,
     getApy,
     getAllValidators,
@@ -282,4 +280,5 @@ const RestClient = async ({
     getGrants,
   };
 };
-export default RestClient;
+
+export default QueryClient;

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React from "react";
 import _ from "lodash";
 import AlertMessage from "./AlertMessage";
@@ -18,6 +19,30 @@ function parseCommissionRate(validator) {
     parseInt(validator.commission.commissionRates.rate) / 1000000000000000000
   );
 }
+=======
+import React from 'react'
+import _ from 'lodash'
+import AlertMessage from './AlertMessage'
+import Coins from './Coins'
+import ClaimRewards from './ClaimRewards'
+import RevokeRestake from './RevokeRestake'
+import GrantRestake from './GrantRestake'
+import CountdownRestake from './CountdownRestake'
+import Delegate from './Delegate'
+import ValidatorImage from './ValidatorImage'
+import TooltipIcon from './TooltipIcon'
+
+import {
+  Table,
+  Button,
+  Dropdown,
+  Spinner
+} from 'react-bootstrap'
+
+import {
+  CheckCircle, XCircle
+} from 'react-bootstrap-icons'
+>>>>>>> upstream/master
 
 class Delegations extends React.Component {
   constructor(props) {
@@ -78,8 +103,12 @@ class Delegations extends React.Component {
   }
 
   getRewards(hideError) {
+<<<<<<< HEAD
     this.props.restClient
       .getRewards(this.props.address, this.props.network.denom)
+=======
+    this.props.queryClient.getRewards(this.props.address, this.props.network.denom)
+>>>>>>> upstream/master
       .then(
         (rewards) => {
           this.setState({ rewards: rewards });
@@ -103,6 +132,7 @@ class Delegations extends React.Component {
   }
 
   getGrants() {
+<<<<<<< HEAD
     this.props.operators.forEach((operator) => {
       const { botAddress, address } = operator;
       this.props.restClient.getGrants(botAddress, this.props.address).then(
@@ -145,6 +175,39 @@ class Delegations extends React.Component {
   getTestGrant() {
     this.props.restClient
       .getGrants(this.props.network.data.testAddress, this.props.address)
+=======
+    this.props.operators.forEach(operator => {
+      const {botAddress, address} = operator
+      this.props.queryClient.getGrants(botAddress, this.props.address)
+        .then(
+          (result) => {
+            let grantValidators
+            if(result.stakeGrant){
+              grantValidators = result.stakeGrant.authorization.allow_list.address
+            }
+            const operatorGrant = {
+              claimGrant: result.claimGrant,
+              stakeGrant: result.stakeGrant,
+              validators: grantValidators || [],
+              grantsValid: !!(result.claimGrant && result.stakeGrant && grantValidators.includes(address)),
+              grantsExist: !!(result.claimGrant || result.stakeGrant),
+            }
+            this.setState((state, props) => ({
+              operatorGrants: _.set(state.operatorGrants, botAddress, operatorGrant)
+            }))
+          }, (error) => {
+            if (error.response && error.response.status === 501) {
+              this.setState({ authzMissing: true });
+            }else{
+              this.setState({ error: 'Failed to get grants. Please refresh' });
+            }
+          })
+    })
+  }
+
+  getTestGrant(){
+    this.props.queryClient.getGrants(this.props.network.testAddress, this.props.address)
+>>>>>>> upstream/master
       .then(
         (result) => {},
         (error) => {
@@ -194,9 +257,15 @@ class Delegations extends React.Component {
   onClaimRewards() {
     this.setState({ claimLoading: false, validatorLoading: {}, error: null });
     setTimeout(() => {
+<<<<<<< HEAD
       this.props.getDelegations();
       this.getRewards();
     }, 5_000);
+=======
+      this.props.getDelegations()
+      this.getRewards()
+    }, 6_000)
+>>>>>>> upstream/master
   }
 
   setClaimLoading(value) {
@@ -282,6 +351,7 @@ class Delegations extends React.Component {
     );
   }
 
+<<<<<<< HEAD
   renderValidator(validatorAddress, delegation) {
     const validator = this.props.validators[validatorAddress];
     if (validator) {
@@ -290,11 +360,27 @@ class Delegations extends React.Component {
       const denomRewards = rewards && this.denomRewards(rewards);
       const operator = this.operatorForValidator(validatorAddress);
       let rowVariant = operator ? "table-warning" : undefined;
+=======
+  renderValidator(validatorAddress, delegation){
+    const validator = this.props.validators[validatorAddress]
+    if(validator){
+      const rewards = this.state.rewards && this.state.rewards[validatorAddress]
+      const denomRewards = rewards && this.denomRewards(rewards)
+      const operator = this.operatorForValidator(validatorAddress)
+      let rowVariant = operator && delegation ? (
+        this.grantsValid(operator) ? 'table-success' : 'table-warning'
+      ) : undefined
+>>>>>>> upstream/master
 
       const delegationBalance = (delegation && delegation.balance) || {
         amount: 0,
         denom: this.props.network.denom,
       };
+
+      const minimumReward = operator && { 
+        amount: operator.data.minimumReward, 
+        denom: this.props.network.denom 
+      }
 
       return (
         <tr key={validatorAddress} className={rowVariant}>
@@ -314,6 +400,7 @@ class Delegations extends React.Component {
               network={this.props.network}
               address={this.props.address}
               validator={validator}
+              operators={this.props.operators}
               getValidatorImage={this.props.getValidatorImage}
               availableBalance={this.props.balance}
               stargateClient={this.props.stargateClient}
@@ -323,6 +410,7 @@ class Delegations extends React.Component {
             </Delegate>
           </td>
           <td className="text-center">
+<<<<<<< HEAD
             {operator ? (
               this.restakePossible() && delegation ? (
                 this.grantsValid(operator) ? (
@@ -387,6 +475,44 @@ class Delegations extends React.Component {
                 decimals={this.props.network.data.decimals}
               />
             )}
+=======
+            {operator ? this.restakePossible() && delegation ? (
+              this.grantsValid(operator) ? (
+                <CountdownRestake
+                  network={this.props.network} operator={operator} />
+              ) : (
+                <GrantRestake
+                  size="sm" variant="success"
+                  tooltip='Authorize validator to REStake for you'
+                  address={this.props.address}
+                  operator={operator}
+                  stargateClient={this.props.stargateClient}
+                  onGrant={this.onGrant}
+                  setError={this.setError} />
+              )
+            ) : (
+              <TooltipIcon icon={<CheckCircle className="text-success" />} identifier={validatorAddress} tooltip="This validator can REStake your rewards" />
+            ) : (
+              <TooltipIcon icon={<XCircle className="opacity-50" />} identifier={validatorAddress} tooltip="This validator is not a REStake operator" />
+            )}
+          </td>
+          <td className="d-none d-lg-table-cell text-center">
+            {operator && (
+              <TooltipIcon icon={<small>{operator.frequency()}</small>} identifier={operator.address}>
+                <div className="mt-2 text-center">
+                  <p>REStakes {operator.runTimesString()}</p>
+                  <p>Minimum reward is <Coins coins={minimumReward} decimals={this.props.network.decimals} /></p>
+                </div>
+              </TooltipIcon>
+            )}
+          </td>
+          <td className="d-none d-lg-table-cell text-center">{validator.commission.commission_rates.rate * 100}%</td>
+          <td className="d-none d-sm-table-cell">
+            <small><Coins coins={delegationBalance} decimals={this.props.network.decimals} /></small>
+          </td>
+          <td className="d-none d-sm-table-cell">
+            {denomRewards && <small><Coins key={denomRewards.denom} coins={denomRewards} decimals={this.props.network.decimals} /></small>}
+>>>>>>> upstream/master
           </td>
           <td>
             <div className="d-grid gap-2 d-md-flex justify-content-end">
@@ -402,6 +528,18 @@ class Delegations extends React.Component {
                     </Dropdown.Toggle>
 
                     <Dropdown.Menu>
+                      {operator && this.restakePossible() && this.grantsValid(operator) && (
+                        <>
+                          <RevokeRestake
+                            address={this.props.address}
+                            operator={operator}
+                            stargateClient={this.props.stargateClient}
+                            onRevoke={this.onRevoke}
+                            setLoading={(loading) => this.setValidatorLoading(validatorAddress, loading)}
+                            setError={this.setError} />
+                          <hr />
+                        </>
+                      )}
                       <ClaimRewards
                         network={this.props.network}
                         address={this.props.address}
@@ -432,6 +570,7 @@ class Delegations extends React.Component {
                         network={this.props.network}
                         address={this.props.address}
                         validator={validator}
+                        operators={this.props.operators}
                         availableBalance={this.props.balance}
                         getValidatorImage={this.props.getValidatorImage}
                         stargateClient={this.props.stargateClient}
@@ -477,6 +616,7 @@ class Delegations extends React.Component {
                     network={this.props.network}
                     address={this.props.address}
                     validator={validator}
+                    operators={this.props.operators}
                     availableBalance={this.props.balance}
                     getValidatorImage={this.props.getValidatorImage}
                     stargateClient={this.props.stargateClient}
@@ -573,13 +713,13 @@ class Delegations extends React.Component {
       <>
         {alerts}
         {!this.noDelegations() && (
-          <Table className="align-middle table-hover">
+          <Table className="align-middle table-striped">
             <thead>
               <tr>
                 <th colSpan={2}>Validator</th>
                 <th className="d-none d-sm-table-cell text-center">REStake</th>
-                <th className="d-none d-lg-table-cell">Commission</th>
-                <th className="d-none d-lg-table-cell">APY</th>
+                <th className="d-none d-lg-table-cell text-center">Frequency</th>
+                <th className="d-none d-lg-table-cell text-center">Commission</th>
                 <th className="d-none d-sm-table-cell">Delegation</th>
                 <th className="d-none d-sm-table-cell">Rewards</th>
                 <th width={110}></th>

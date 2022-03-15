@@ -2,6 +2,9 @@ import DelegateForm from './DelegateForm'
 import Validators from './Validators'
 import ValidatorImage from './ValidatorImage'
 import ValidatorLink from './ValidatorLink'
+import Coins from './Coins'
+import TooltipIcon from './TooltipIcon'
+import CountdownRestake from './CountdownRestake'
 
 import React, { useState, useRef } from 'react';
 
@@ -10,17 +13,21 @@ import {
   Button,
   Modal,
   OverlayTrigger,
-  Tooltip
+  Tooltip,
+  Table
 } from 'react-bootstrap'
+
+import {
+  XCircle
+} from 'react-bootstrap-icons'
 
 function Delegate(props) {
   const [show, setShow] = useState(false);
   const [selectedValidator, setSelectedValidator] = useState(!props.redelegate && props.validator);
-  const target = useRef(null);
 
   const handleOpen = () => {
     setShow(true)
-    if(!props.validator || props.redelegate){
+    if (!props.validator || props.redelegate) {
       setSelectedValidator(null)
     }
   }
@@ -31,32 +38,64 @@ function Delegate(props) {
   }
 
   const excludeValidators = () => {
-    if(props.redelegate){
+    if (props.redelegate) {
       return [props.validator.operator_address]
-    }else if(props.delegations){
+    } else if (props.delegations) {
       return Object.keys(props.delegations)
     }
   }
 
+  const operator = () => {
+    if (!props.operators || !selectedValidator) return
+
+    return props.network.getOperator(props.operators, selectedValidator.operator_address)
+  }
+
+  const website = () => {
+    if (!selectedValidator) return
+
+    return selectedValidator.description && selectedValidator.description.website
+  }
+
+  const securityContact = () => {
+    if (!selectedValidator) return
+
+    return selectedValidator.description && selectedValidator.description.security_contact
+  }
+
+  const bondedTokens = () => {
+    if (!selectedValidator) return
+
+    const amount = parseInt(selectedValidator.tokens)
+    return <Coins coins={{ amount: amount, denom: props.network.denom }} />
+  }
+
+  const minimumReward = () => {
+    return {
+      amount: operator().data.minimumReward,
+      denom: props.network.denom
+    }
+  }
+
   const actionText = () => {
-    if(props.redelegate) return 'Redelegate'
-    if(props.undelegate) return 'Undelegate'
-    if(props.validator){
+    if (props.redelegate) return 'Redelegate'
+    if (props.undelegate) return 'Undelegate'
+    if (props.validator) {
       return 'Delegate'
-    }else{
+    } else {
       return 'Add Validator'
     }
   }
 
   const button = () => {
-    if(props.children){
+    if (props.children) {
       return (
         <span role="button" onClick={handleOpen}>
           {props.children}
         </span>
       )
-    }else{
-      if(props.button){
+    } else {
+      if (props.button) {
         const button = (
           <Button variant={props.variant || 'secondary'} size={props.size} onClick={handleOpen}>
             {actionText()}
@@ -77,7 +116,7 @@ function Delegate(props) {
             ) : button}
           </>
         )
-      }else{
+      } else {
         return (
           <Dropdown.Item onClick={handleOpen}>
             {actionText()}
@@ -106,6 +145,7 @@ function Delegate(props) {
         <Modal.Body>
           {!selectedValidator &&
             <Validators
+<<<<<<< HEAD
             inflation={props.inflation}
             blocksPerYear={ props.blocksPerYear}
             redelegate={props.redelegate}
@@ -116,9 +156,54 @@ function Delegate(props) {
             getValidatorImage={props.getValidatorImage}
             delegations={props.delegations}
             selectValidator={(selectedValidator) => setSelectedValidator(selectedValidator)} /> }
+=======
+              redelegate={props.redelegate}
+              network={props.network}
+              operators={props.operators}
+              exclude={excludeValidators()}
+              validators={props.validators}
+              getValidatorImage={props.getValidatorImage}
+              delegations={props.delegations}
+              selectValidator={(selectedValidator) => setSelectedValidator(selectedValidator)} />}
+>>>>>>> upstream/master
           {selectedValidator && (
             <>
+              <Table>
+                <tbody className="table-sm">
+                  {!!website() && (
+                    <tr>
+                      <td scope="row">Website</td>
+                      <td><ValidatorLink validator={selectedValidator}>{website()}</ValidatorLink></td>
+                    </tr>
+                  )}
+                  <tr>
+                    <td scope="row">Commission</td>
+                    <td>{selectedValidator.commission.commission_rates.rate * 100}%</td>
+                  </tr>
+                  {!!securityContact() && (
+                    <tr>
+                      <td scope="row">Contact</td>
+                      <td><a href={`mailto:${securityContact()}`}>{securityContact()}</a></td>
+                    </tr>
+                  )}
+                  <tr>
+                    <td scope="row">Voting power</td>
+                    <td>{bondedTokens()}</td>
+                  </tr>
+                  <tr>
+                    <td scope="row">REStake</td>
+                    <td>
+                      {!!operator() ? (
+                        <small>{operator().runTimesString()} (<Coins coins={minimumReward()} denom={props.network.denom} /> min)</small>
+                      ) :
+                        <TooltipIcon icon={<XCircle className="opacity-50 p-0" />} identifier={selectedValidator.operator_address} tooltip="This validator is not a REStake operator" />
+                      }
+                    </td>
+                  </tr>
+                </tbody>
+              </Table>
               <p>{selectedValidator.description.details}</p>
+              <hr />
               <h5 className="mb-3">
                 {props.redelegate
                   ? <span>Redelegate from <ValidatorLink validator={props.validator} /></span>

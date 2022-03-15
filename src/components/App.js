@@ -2,12 +2,10 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import React from 'react'
 import _ from 'lodash'
-import SigningClient from '../utils/SigningClient.mjs'
 import AlertMessage from './AlertMessage'
 import NetworkSelect from './NetworkSelect'
 import Wallet from './Wallet'
 import Coins from './Coins'
-import ValidatorLink from './ValidatorLink'
 import About from './About'
 
 import { MsgGrant, MsgRevoke } from "cosmjs-types/cosmos/authz/v1beta1/tx.js";
@@ -58,9 +56,7 @@ class App extends React.Component {
       this.connect()
     }
     if(this.props.network !== prevProps.network){
-      if(this.state.address){
-        this.connect()
-      }
+      this.connect()
       await this.setNetwork()
     }
   }
@@ -75,9 +71,7 @@ class App extends React.Component {
 
     return this.setState({
       error: false,
-      chainId: network.chainId,
-      denom: network.denom,
-      restClient: network.restClient
+      queryClient: network.queryClient
     })
   }
 
@@ -85,34 +79,44 @@ class App extends React.Component {
     this.setState({showNetworkSelect: true})
   }
 
+  connected() {
+    return this.props.network.connected && Object.values(this.props.validators).length > 0
+  }
+
   async connect() {
-    if(!this.props.network.connected){
+    if(!this.connected()){
       return this.setState({
         error: 'Could not connect to any available API servers'
       })
     }
-    await window.keplr.enable(this.state.chainId);
+    const chainId = this.props.network.chainId
+    try {
+      await window.keplr.enable(chainId);
+    } catch (e) {
+      console.log(e.message, e)
+      await this.suggestChain(this.props.network)
+    }
     if (window.getOfflineSigner){
-      const offlineSigner = await window.getOfflineSignerAuto(this.state.chainId)
-      const key = await window.keplr.getKey(this.state.chainId);
-      const stargateClient = await this.props.network.signingClient(offlineSigner, key)
-      if(!stargateClient.connected){
+      try {
+        const offlineSigner = await window.getOfflineSignerAuto(chainId)
+        const key = await window.keplr.getKey(chainId);
+        const stargateClient = await this.props.network.signingClient(offlineSigner, key)
+
+        const address = await stargateClient.getAddress()
+
+        stargateClient.registry.register("/cosmos.authz.v1beta1.MsgGrant", MsgGrant)
+        stargateClient.registry.register("/cosmos.authz.v1beta1.MsgRevoke", MsgRevoke)
         this.setState({
-          error: 'Could not connect to any available RPC servers'
+          address: address,
+          stargateClient: stargateClient,
+          error: false
         })
-        return
+        this.getBalance()
+      } catch (e) {
+        return this.setState({
+          error: 'Failed to connect to signing client. API may be down'
+        })
       }
-
-      const address = await stargateClient.getAddress()
-
-      stargateClient.registry.register("/cosmos.authz.v1beta1.MsgGrant", MsgGrant)
-      stargateClient.registry.register("/cosmos.authz.v1beta1.MsgRevoke", MsgRevoke)
-      this.setState({
-        address: address,
-        stargateClient: stargateClient,
-        error: false
-      })
-      this.getBalance()
     }
   }
 
@@ -120,6 +124,34 @@ class App extends React.Component {
     this.setState({
       address: null,
       stargateClient: null
+    })
+  }
+
+  suggestChain(network){
+    const currency = {
+      coinDenom: network.symbol,
+      coinMinimalDenom: network.denom,
+      coinDecimals: network.decimals,
+      coinGeckoId: network.coinGeckoId
+    }
+    return window.keplr.experimentalSuggestChain({
+      rpc: network.rpcUrl,
+      rest: network.restUrl,
+      chainId: network.chainId,
+      chainName: network.prettyName,
+      stakeCurrency: currency,
+      bip44: { coinType: network.slip44 },
+      walletUrlForStaking: "https://restake.app/" + network.name,
+      bech32Config: {
+        bech32PrefixAccAddr: network.prefix,
+        bech32PrefixAccPub: network.prefix + "pub",
+        bech32PrefixValAddr: network.prefix + "valoper",
+        bech32PrefixValPub: network.prefix + "valoperpub",
+        bech32PrefixConsAddr: network.prefix + "valcons",
+        bech32PrefixConsPub: network.prefix + "valconspub"
+      },
+      currencies: [currency],
+      feeCurrencies:[currency]
     })
   }
 
@@ -183,7 +215,7 @@ class App extends React.Component {
   }
 
   async getBalance() {
-    this.state.restClient.getBalance(this.state.address, this.props.network.denom)
+    this.state.queryClient.getBalance(this.state.address, this.props.network.denom)
       .then(
         (balance) => {
           this.setState({
@@ -222,7 +254,7 @@ class App extends React.Component {
                 <Badge>
                   <Coins
                     coins={this.state.balance}
-                    decimals={this.props.network.data.decimals}
+                    decimals={this.props.network.decimals}
                   />
                 </Badge>
               </span>
@@ -242,7 +274,9 @@ class App extends React.Component {
           </div>
         </header>
         <div className="mb-5">
-          <p className="lead fs-3 text-center mt-5 mb-5">REStake allows validators to <strong>auto-compound</strong> your <strong onClick={this.showNetworkSelect} className="text-decoration-underline" role="button">{this.props.network.prettyName}</strong> staking rewards for you</p>
+          <p className="lead fs-3 text-center mt-5 mb-5">
+            REStake allows validators to <strong onClick={() => this.setState({ showAbout: true })} className="text-decoration-underline" role="button">auto-compound</strong> your <strong onClick={this.showNetworkSelect} className="text-decoration-underline" role="button">{this.props.network.prettyName}</strong> staking rewards for you
+          </p>
           <AlertMessage message={this.state.error} variant="danger" dismissible={false} />
           {!this.state.address && (
             !this.state.keplr
@@ -259,28 +293,28 @@ class App extends React.Component {
               )
           )}
           {this.state.address &&
-          <>
-            <Wallet
-              network={this.props.network}
-              address={this.state.address}
-              operators={this.props.operators}
-              validators={this.props.validators}
-              balance={this.state.balance}
-              getValidatorImage={this.getValidatorImage}
-              restClient={this.state.restClient}
-              stargateClient={this.state.stargateClient} />
-          </>
+            <>
+              <Wallet
+                network={this.props.network}
+                address={this.state.address}
+                operators={this.props.operators}
+                validators={this.props.validators}
+                balance={this.state.balance}
+                getValidatorImage={this.getValidatorImage}
+                queryClient={this.state.queryClient}
+                stargateClient={this.state.stargateClient} />
+            </>
           }
           <hr />
           <p className="mt-5 text-center">
             Enabling REStake will authorize the validator to send <em>WithdrawDelegatorReward</em> and <em>Delegate</em> transactions on your behalf for 1 year using <a href="https://docs.cosmos.network/master/modules/authz/" target="_blank" rel="noreferrer">Authz</a>.<br />
-            They will only be authorised to delegate to their own validator. You can revoke the authorization at any time and everything is open source.
+            They will only be authorized to delegate to their own validator. You can revoke the authorization at any time and everything is open source.
           </p>
           <p className="text-center mb-4">
             <strong>The validators will pay the transaction fees for you.</strong>
           </p>
           <p className="text-center mb-5">
-            <Button onClick={() => this.setState({showAbout: true})} variant="outline-secondary">More info</Button>
+            <Button onClick={() => this.setState({ showAbout: true })} variant="outline-secondary">More info</Button>
           </p>
         </div>
         <footer className="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
@@ -296,7 +330,7 @@ class App extends React.Component {
             <GitHubButton href="https://github.com/eco-stake/restake" data-icon="octicon-star" data-size="large" data-show-count="true" aria-label="Star eco-stake/restake on GitHub">Star</GitHubButton>
           </p>
         </footer>
-        <About show={this.state.showAbout} onHide={() => this.setState({showAbout: false})} />
+        <About show={this.state.showAbout} onHide={() => this.setState({ showAbout: false })} />
       </Container>
     )
   }
