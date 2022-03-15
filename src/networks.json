@@ -1928,8 +1928,8 @@
       {
         "address": "cerberusvaloper18twaqg4vaextnm5dddgmlm5quwymaswkchqt3a",
         "botAddress": "cerberus1uxwnhyjd2m5y6mpqsdg95y4ty0a5jtfrjhkgq5",
-        "runTime": "every 5 minutes",
-        "minimumReward": 100000000
+        "runTime": "every 4 minutes",
+        "minimumReward": 10000000
       },
       {
         "address": "cerberusvaloper1u7m9kwj8tvwjaxympp3r8xq7d0pf5la994x7u8",
