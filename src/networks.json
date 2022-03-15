@@ -225,7 +225,7 @@
       {
         "address": "junovaloper10y7ucn6jhjtakwchgpw32y0tgaku6yn255z7gm",
         "botAddress": "juno106n92ygqknaw5wcgl2e9v0duxxux6nttqd24vh",
-        "runTime": "21:00",
+        "runTime": "every 1 hour",
         "minimumReward": 10000
       },
       {
