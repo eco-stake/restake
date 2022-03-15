@@ -443,8 +443,8 @@
       {
         "address": "akashvaloper1xgnd8aach3vawsl38snpydkng2nv8a4kqgs8hf",
         "botAddress": "akash1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczud2r2v",
-        "runTime": "21:00",
-        "minimumReward": 10000
+        "runTime": ["09:00", "21:00"],
+        "minimumReward": 1000
       },
       {
         "address": "akashvaloper1qwpnhmdlfj6gfyh0e29fjudh0ytfe5l7tjttul",
@@ -550,7 +550,7 @@
       {
         "address": "chihuahuavaloper19vwcee000fhazmpt4ultvnnkhfh23ppwxll8zz",
         "botAddress": "chihuahua1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczjr22j5",
-        "runTime": "21:00",
+        "runTime": ["09:00", "21:00"],
         "minimumReward": 1000
       },
       {
@@ -879,7 +879,7 @@
       {
         "address": "digvaloper136avwnuvvy94dqmtnaue2nfvjes8xr37h9rzay",
         "botAddress": "dig1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczfzw03d",
-        "runTime": "21:00",
+        "runTime": ["09:00", "21:00"],
         "minimumReward": 1000
       },
       {
