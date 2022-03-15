@@ -82,7 +82,7 @@ Update your local repository and pre-build your Docker containers with the follo
 
 ```bash
 git pull
-docker-compose build
+docker-compose build --no-cache
 ```
 
 ### Setting up Cron to make sure the script runs daily
@@ -210,16 +210,20 @@ You now need to update the [networks.json](./src/networks.json) file at `./src/n
 "operators": [{
   "address": "osmovaloper1u5v0m74mql5nzfx2yh43s2tke4mvzghr6m2n5t",
   "botAddress": "osmo1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczed559y",
-  "runTime": "21:00",
+  "runTime": ["09:00", "21:00"],
   "minimumReward": 1000
 },
 ```
 
-`address` is your validator's address, and `botAddress` is the address from your new hot wallet you generated earlier. `runTime` is the time in UTC that your bot will run (multiple planned in the future). `minimumReward` is the minimum reward to trigger autostaking, otherwise the address be skipped. 
+`address` is your validator's address, and `botAddress` is the address from your new hot wallet you generated earlier. 
+
+`runTime` is the time *in UTC* that you intend to run your bot, and there are a few options. Pass a single time, e.g. `09:00` to specify a single run at 9am UTC. Use an array for multiple specified times, e.g. `["09:00", "21:00"]`. Use an interval string for multiple times per hour/day, e.g. `"every 15 minutes"`.
+
+`minimumReward` is the minimum reward to trigger autostaking, otherwise the address be skipped. This could be set higher for more frequent restaking. Note this is in the base denomination, e.g. `uosmo`.
 
 Repeat this config for all networks you want to REStake for.
 
-Note that the `botAddress` is the address which will be granted by the delegator to carry out their restaking transactions if it wasn't clear.
+Note that the `botAddress` is the address which will be granted by the delegator in the UI to carry out their restaking transactions.
 
 #### Submit your operator
 
