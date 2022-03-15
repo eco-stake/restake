@@ -1142,6 +1142,12 @@
         "botAddress": "desmos1hcgxjhvv43g9z6dc58g428jgc8hdlmf7qh4946",
         "runTime": "12:00",
         "minimumReward": 10000
+      },
+      {
+        "address": "desmosvaloper1pe2fwwffxn2qnykeut8wzm20sv6eevxedlgpfu",
+        "botAddress": "desmos1cttl86ufne2qvctzdjtnunapr9y9qptt9chfra",
+        "runTime": "21:00",
+        "minimumReward": 10000
       }
     ],
     "authzSupport": true
