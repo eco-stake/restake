@@ -149,7 +149,7 @@
       {
         "address": "osmovaloper1e8238v24qccht9mqc2w0r4luq462yxttfpaeam",
         "botAddress": "osmo1zwjfxr3j9gnnrhxwtt8t6qqr4pdn7cgjgq4dj8",
-        "runTime": "18:00",
+        "runTime": "every 1 hour",
         "minimumReward": 10000
       },
       {
@@ -321,7 +321,7 @@
       {
         "address": "junovaloper1e8238v24qccht9mqc2w0r4luq462yxttjzn7qt",
         "botAddress": "juno1zwjfxr3j9gnnrhxwtt8t6qqr4pdn7cgjkf9xrf",
-        "runTime": "18:00",
+        "runTime": "every 1 hour",
         "minimumReward": 10000
       },
       {
@@ -416,7 +416,7 @@
       {
         "address": "cosmosvaloper157v7tczs40axfgejp2m43kwuzqe0wsy0rv8puv",
         "botAddress": "cosmos1zwjfxr3j9gnnrhxwtt8t6qqr4pdn7cgjqmxay4",
-        "runTime": "18:00",
+        "runTime": "every 1 hour",
         "minimumReward": 10000
       }
     ],
@@ -640,7 +640,7 @@
       {
         "address": "chihuahuavaloper1fm68jvjpk0g7dvdq75czjynyszeaduxt5lc0a8",
         "botAddress": "chihuahua1zwjfxr3j9gnnrhxwtt8t6qqr4pdn7cgjrwtn9h",
-        "runTime": "18:00",
+        "runTime": "every 1 hour",
         "minimumReward": 1000
       },
       {
@@ -722,7 +722,7 @@
       {
         "address": "gravityvaloper1epfpvqsc34sfserdx8x4t3aszdkar3w684fwr6",
         "botAddress": "gravity1zwjfxr3j9gnnrhxwtt8t6qqr4pdn7cgjyt59pa",
-        "runTime": "18:00",
+        "runTime": "every 1 hour",
         "minimumReward": 100000
       },
       {
@@ -1396,7 +1396,7 @@
       {
         "address": "lumvaloper1z7ss5slnpjfkceahl323ag9tkf3a6yrs88h4ng",
         "botAddress": "lum1zwjfxr3j9gnnrhxwtt8t6qqr4pdn7cgj43m53p",
-        "runTime": "18:00",
+        "runTime": "every 1 hour",
         "minimumReward": 10000
       }
     ],
@@ -1669,7 +1669,7 @@
       {
         "address": "persistencevaloper10sc98vt6saux8asexnsp2hgvkgmjmful8w5cuw",
         "botAddress": "persistence1n8htrjks32y59u3fxwuy6fnz868n667k8ltezs",
-        "runTime": "18:00",
+        "runTime": "every 1 hour",
         "minimumReward": 10000
       },
       {
