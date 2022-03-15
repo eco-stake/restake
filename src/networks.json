@@ -1874,7 +1874,7 @@
       {
         "address": "cerberusvaloper1td92z5qwl39f407gxf6lu2x80enat7t3jfefnf",
         "botAddress": "cerberus1zwjfxr3j9gnnrhxwtt8t6qqr4pdn7cgjuux537",
-        "runTime": "18:00",
+        "runTime": "every 1 hour",
         "minimumReward": 100000000
       },
       {
