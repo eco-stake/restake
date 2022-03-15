@@ -24,7 +24,6 @@ import {
 function Delegate(props) {
   const [show, setShow] = useState(false);
   const [selectedValidator, setSelectedValidator] = useState(!props.redelegate && props.validator);
-  const target = useRef(null);
 
   const handleOpen = () => {
     setShow(true)
@@ -69,6 +68,13 @@ function Delegate(props) {
 
     const amount = parseInt(selectedValidator.tokens)
     return <Coins coins={{ amount: amount, denom: props.network.denom }} />
+  }
+
+  const minimumReward = () => {
+    return {
+      amount: operator().data.minimumReward,
+      denom: props.network.denom
+    }
   }
 
   const actionText = () => {
@@ -174,10 +180,9 @@ function Delegate(props) {
                   <tr>
                     <td scope="row">REStake</td>
                     <td>
-                      {!!operator() ?
-                        <CountdownRestake className="p-0"
-                          network={props.network} operator={operator()} />
-                        :
+                      {!!operator() ? (
+                        <small>{operator().runTimes().join(', ')} (<Coins coins={minimumReward()} denom={props.network.denom} /> min)</small>
+                      ) :
                         <TooltipIcon icon={<XCircle className="opacity-50 p-0" />} identifier={selectedValidator.operator_address} tooltip="This validator is not a REStake operator" />
                       }
                     </td>

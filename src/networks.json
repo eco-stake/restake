@@ -29,7 +29,7 @@
       {
         "address": "osmovaloper1u5v0m74mql5nzfx2yh43s2tke4mvzghr6m2n5t",
         "botAddress": "osmo1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczed559y",
-        "runTime": "21:00",
+        "runTime": ["09:00", "21:00"],
         "minimumReward": 1000
       },
       {
