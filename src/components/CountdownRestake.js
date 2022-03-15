@@ -13,12 +13,12 @@ function CountdownRestake(props) {
 
   const nextRun = () => {
     if(!operator) return null
-    return 0 + operator.nextRun()
+    return operator.nextRun() + (60 * 1000)
   }
 
   const countdownRenderer = ({ hours, minutes, seconds, completed }) => {
     if (completed) {
-      return <p>Running now. The next run will be at {operator.data.runTime} tomorrow</p>
+      return <p>Validator is restaking now</p>
     } else {
       let string = ''
       if(hours > 0) string = string.concat(hours + 'h ')
