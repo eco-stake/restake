@@ -8,6 +8,14 @@ const Operator = (data, validatorData) => {
     return [data.runTime]
   }
 
+  function runTimesString(){
+    let string = ''
+    if (runTimes().length > 1 || !runTimes()[0].startsWith('every')) {
+      string = 'at '
+    }
+    return string + runTimes().join(', ')
+  }
+
   function frequency() {
     if(Array.isArray(data.runTime)){
       return data.runTime.length + 'x per day'
@@ -56,9 +64,10 @@ const Operator = (data, validatorData) => {
     description: validatorData && validatorData.description,
     validatorData,
     data,
-    runTimes,
     nextRun,
-    frequency
+    frequency,
+    runTimes,
+    runTimesString
   }
 }
 

@@ -296,6 +296,7 @@ class Delegations extends React.Component {
             {operator && (
               <TooltipIcon icon={<small>{operator.frequency()}</small>} identifier={operator.address}>
                 <div className="mt-2 text-center">
+                  <p>REStakes {operator.runTimesString()}</p>
                   <p>Minimum reward is <Coins coins={minimumReward} decimals={this.props.network.decimals} /></p>
                 </div>
               </TooltipIcon>
