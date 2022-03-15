@@ -1834,5 +1834,80 @@
       }
     ],
     "authzSupport": false
+  },
+  {
+    "name": "cerberus",
+    "restUrl": [
+      "https://rest.cosmos.directory/cerberus"
+    ],
+    "rpcUrl": [
+      "https://rpc.cosmos.directory/cerberus"
+    ],
+    "gasPrice": "0.025ucrbrus",
+    "testAddress": "cerberus1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczd38dxa",
+    "ownerAddress": "cerberusvaloper1tat2cy3f9djtq9z7ly262sqngcarvaktr0w78f",
+    "operators": [
+      {
+        "address": "cerberusvaloper1tat2cy3f9djtq9z7ly262sqngcarvaktr0w78f",
+        "botAddress": "cerberus1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczd38dxa",
+        "runTime": "every 15 minutes",
+        "minimumReward": 100000000
+      },
+      {
+        "address": "cerberusvaloper1uvl2g9nd8qttjjyxjs30x7fj878d3wt4lt4juq",
+        "botAddress": "cerberus1e7tcnlaen39yafqxcj5zhnd0m8r8xlzyq92vrv",
+        "runTime": "21:00",
+        "minimumReward": 100000000
+      },
+      {
+        "address": "cerberusvaloper18g9868awp4dtxn5n5cjd7e30y8djevc80hqyad",
+        "botAddress": "cerberus1h43hjfxlz8t6y5wewma63jz7melv46gjcaue9a",
+        "runTime": "every 15 minutes",
+        "minimumReward": 100000000
+      },
+      {
+        "address": "cerberusvaloper1g3d36rfxfqtlnz3hzd05cs2wrjgykcz2g649a8",
+        "botAddress": "cerberus1e44rluarkdw56dy2turnwjtvtg4wqvs0wv4dzw",
+        "runTime": "every 15 minutes",
+        "minimumReward": 100000000
+      },
+      {
+        "address": "cerberusvaloper1td92z5qwl39f407gxf6lu2x80enat7t3jfefnf",
+        "botAddress": "cerberus1zwjfxr3j9gnnrhxwtt8t6qqr4pdn7cgjuux537",
+        "runTime": "18:00",
+        "minimumReward": 100000000
+      },
+      {
+        "address": "cerberusvaloper1r34mlqewsxrde38vp3tzwh3rk5vt6ez0slzuvu",
+        "botAddress": "cerberus16r56awgxe7mkrwpsnurjexfdg0n3f4f3dgf090",
+        "runTime": "21:00",
+        "minimumReward": 10000
+      },
+      {
+        "address": "cerberusvaloper1lxz6ucd5qydhpwtpatn9wu83fc002v08tek6zh",
+        "botAddress": "cerberus1305e92ng6a9pdh3ttc3ld459ckxupxt3tt620v",
+        "runTime": "every 5 minutes",
+        "minimumReward": 10000
+      },
+      {
+        "address": "cerberusvaloper1y3thykrje2fmdcf8wva8l8kphmwpx89ur4erq3",
+        "botAddress": "cerberus1v9vae554q55xa4pcfdm0p3kv8nxn50jkxt8mcz",
+        "runTime": "every 1 hour",
+        "minimumReward": 10000
+      },
+      {
+        "address": "cerberusvaloper1evv5y2ake002n9l27t5qhqcwhgwd6up2m2yhcy",
+        "botAddress": "cerberus1m8d834ykcy3dgrdve4xhxky3u3c2tl9dwln0sv",
+        "runTime": "every 1 hour",
+        "minimumReward": 100000000
+      },
+      {
+        "address": "cerberusvaloper1l6kfy4xvy0a34fseyhvc6f6k8asukfdz8462mg",
+        "botAddress": "cerberus17xyeczwsax3st6aykyu4f28s5n3zg6r78znm7g",
+        "runTime": "22:10",
+        "minimumReward": 1000000
+      }
+    ],
+    "authzSupport": true
   }
 ]
