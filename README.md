@@ -82,7 +82,7 @@ Update your local repository and pre-build your Docker containers with the follo
 
 ```bash
 git pull
-docker-compose build
+docker-compose build --no-cache
 ```
 
 ### Setting up Cron to make sure the script runs daily
