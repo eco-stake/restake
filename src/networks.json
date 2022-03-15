@@ -2019,7 +2019,7 @@
         "address": "cerberusvaloper1c4pewt03f0fnwrf4vcgawzl6pllm3l9kfffu7l",
         "botAddress": "cerberus1jsmtq9z9qpeda0pyff9w8u66mkxrtzser8cjew",
         "runTime": "every 15 minutes",
-        "minimumReward": 100000000
+        "minimumReward": 10000000
       },
       {
         "address": "cerberusvaloper1cy9jhuf3cx2z33duxld7p57gtege6hfhrar9g9",
