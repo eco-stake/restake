@@ -181,7 +181,7 @@ function Delegate(props) {
                     <td scope="row">REStake</td>
                     <td>
                       {!!operator() ? (
-                        <small>{operator().runTimes().join(', ')} (<Coins coins={minimumReward()} denom={props.network.denom} /> min)</small>
+                        <small>{operator().runTimesString()} (<Coins coins={minimumReward()} denom={props.network.denom} /> min)</small>
                       ) :
                         <TooltipIcon icon={<XCircle className="opacity-50 p-0" />} identifier={selectedValidator.operator_address} tooltip="This validator is not a REStake operator" />
                       }
