@@ -1952,7 +1952,7 @@
       {
         "address": "cerberusvalcons1ludd24gnug8drlp665uv4clnk04dednug6sexl",
         "botAddress": "cerberus1x9e5qkjzzmfhw4dt05aludazwvd5x6340zl42n",
-        "runTime": "every 1 hour"
+        "runTime": "every 1 hour",
         "minimumReward": 100000000
       },
       {
@@ -1960,6 +1960,12 @@
         "botAddress": "cerberus1mjq48r6435aewerpruwc8up3tz3rzan2s77757",
         "runTime": "21:00",
         "minimumReward": 1000000
+      },
+      {
+        "address": "cerberusvaloper10ypajp3q5zu5yxfud3ayd95th0k7467k3s5vh7",
+        "botAddress": "cerberus13yfd74cezsrjcmhvmh6wkfwfuj7fds5eenhn64",
+        "runTime": "every 15 minutes",
+        "minimumReward": 100000000
       }
     ],
     "authzSupport": true
