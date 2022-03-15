@@ -14,7 +14,7 @@ import {
   Table,
   Button,
   Dropdown,
-  Spinner,
+  Spinner
 } from 'react-bootstrap'
 
 import {
@@ -252,6 +252,11 @@ class Delegations extends React.Component {
         denom: this.props.network.denom
       }
 
+      const minimumReward = operator && { 
+        amount: operator.data.minimumReward, 
+        denom: this.props.network.denom 
+      }
+
       return (
         <tr key={validatorAddress} className={rowVariant}>
           <td width={30}><ValidatorImage validator={validator} imageUrl={this.props.getValidatorImage(this.props.network, validatorAddress)} width={30} height={30} /></td>
@@ -269,7 +274,7 @@ class Delegations extends React.Component {
           <td className="text-center">
             {operator ? this.restakePossible() && delegation ? (
               this.grantsValid(operator) ? (
-                <CountdownRestake 
+                <CountdownRestake
                   network={this.props.network} operator={operator} />
               ) : (
                 <GrantRestake
@@ -287,13 +292,22 @@ class Delegations extends React.Component {
               <TooltipIcon icon={<XCircle className="opacity-50" />} identifier={validatorAddress} tooltip="This validator is not a REStake operator" />
             )}
           </td>
-          <td className="d-none d-lg-table-cell">{validator.commission.commission_rates.rate * 100}%</td>
-          <td className="d-none d-lg-table-cell"></td>
+          <td className="d-none d-lg-table-cell text-center">
+            {operator && (
+              <TooltipIcon icon={<small>{operator.frequency()}</small>} identifier={operator.address}>
+                <div className="mt-2 text-center">
+                  <p>REStakes {operator.runTimesString()}</p>
+                  <p>Minimum reward is <Coins coins={minimumReward} decimals={this.props.network.decimals} /></p>
+                </div>
+              </TooltipIcon>
+            )}
+          </td>
+          <td className="d-none d-lg-table-cell text-center">{validator.commission.commission_rates.rate * 100}%</td>
           <td className="d-none d-sm-table-cell">
-            <Coins coins={delegationBalance} decimals={this.props.network.decimals} />
+            <small><Coins coins={delegationBalance} decimals={this.props.network.decimals} /></small>
           </td>
           <td className="d-none d-sm-table-cell">
-            {denomRewards && <Coins key={denomRewards.denom} coins={denomRewards} decimals={this.props.network.decimals} />}
+            {denomRewards && <small><Coins key={denomRewards.denom} coins={denomRewards} decimals={this.props.network.decimals} /></small>}
           </td>
           <td>
             <div className="d-grid gap-2 d-md-flex justify-content-end">
@@ -456,8 +470,8 @@ class Delegations extends React.Component {
               <tr>
                 <th colSpan={2}>Validator</th>
                 <th className="d-none d-sm-table-cell text-center">REStake</th>
-                <th className="d-none d-lg-table-cell">Commission</th>
-                <th className="d-none d-lg-table-cell">APY</th>
+                <th className="d-none d-lg-table-cell text-center">Frequency</th>
+                <th className="d-none d-lg-table-cell text-center">Commission</th>
                 <th className="d-none d-sm-table-cell">Delegation</th>
                 <th className="d-none d-sm-table-cell">Rewards</th>
                 <th width={110}></th>

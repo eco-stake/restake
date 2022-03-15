@@ -6,7 +6,6 @@ import AlertMessage from './AlertMessage'
 import NetworkSelect from './NetworkSelect'
 import Wallet from './Wallet'
 import Coins from './Coins'
-import ValidatorLink from './ValidatorLink'
 import About from './About'
 
 import { MsgGrant, MsgRevoke } from "cosmjs-types/cosmos/authz/v1beta1/tx.js";
