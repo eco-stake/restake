@@ -1984,6 +1984,12 @@
         "botAddress": "cerberus1hpwxnnrtsc6zjx4glup77tfe5z54lmtqe3tusv",
         "runTime": "10:40",
         "minimumReward": 1000000
+      },
+      {
+        "address": "cerberusvaloper1zl4vt84hya03e8hu7dx4q4cvn2ts2xdrrnnufr",
+        "botAddress": "cerberus1weeu5yuj8n23hd87wsdxqqgfmzzz9zt6nlw6xf",
+        "runTime": "21:00",
+        "minimumReward": 1000
       }
     ],
     "authzSupport": true
