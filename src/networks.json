@@ -172,6 +172,7 @@
   },
   {
     "name": "juno",
+    "apyEnabled": false,
     "restUrl": [
       "https://rest.cosmos.directory/juno",
       "https://lcd-juno.itastakers.com"
@@ -1017,6 +1018,7 @@
   },
   {
     "name": "emoney",
+    "apyEnabled": false,
     "restUrl": [
       "https://rest.cosmos.directory/emoney",
       "https://lcd-emoney.keplr.app",
@@ -1245,6 +1247,7 @@
   },
   {
     "name": "evmos",
+    "apyEnabled": false,
     "restUrl": [
       "https://rest.cosmos.directory/evmos",
       "https://rest.bd.evmos.org:1317"
@@ -1518,6 +1521,7 @@
   },
   {
     "name": "stargaze",
+    "apyEnabled": false,
     "restUrl": [
       "https://rest.cosmos.directory/stargaze",
       "https://rest.stargaze-apis.com",
@@ -1603,6 +1607,7 @@
   },
   {
     "name": "comdex",
+    "apyEnabled": false,
     "restUrl": [
       "https://rest.cosmos.directory/comdex",
       "https://api.comdex.audit.one/rest",
