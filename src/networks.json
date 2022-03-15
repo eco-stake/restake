@@ -1848,6 +1848,12 @@
     "ownerAddress": "cerberusvaloper1tat2cy3f9djtq9z7ly262sqngcarvaktr0w78f",
     "operators": [
       {
+        "address": "cerberusvaloper18twaqg4vaextnm5dddgmlm5quwymaswkchqt3a",
+        "botAddress": "cerberus1uxwnhyjd2m5y6mpqsdg95y4ty0a5jtfrjhkgq5",
+        "runTime": "every 5 minutes",
+        "minimumReward": 100000000
+      },
+      {
         "address": "cerberusvaloper1tat2cy3f9djtq9z7ly262sqngcarvaktr0w78f",
         "botAddress": "cerberus1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczd38dxa",
         "runTime": "every 15 minutes",
