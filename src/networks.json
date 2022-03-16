@@ -2066,10 +2066,12 @@
   {
     "name": "cerberus",
     "restUrl": [
-      "https://rest.cosmos.directory/cerberus"
+      "https://rest.cosmos.directory/cerberus",
+      "https://api-cerberus.zenchainlabs.io/"
     ],
     "rpcUrl": [
-      "https://rpc.cosmos.directory/cerberus"
+      "https://rpc.cosmos.directory/cerberus",
+      "https://rpc-cerberus.zenchainlabs.io/"
     ],
     "gasPrice": "0.025ucrbrus",
     "testAddress": "cerberus1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczd38dxa",
@@ -2157,7 +2159,7 @@
         "address": "cerberusvaloper1s3k0rhxxt8jl0tgyn2sule8rkzkx58x04a900g",
         "botAddress": "cerberus1x9e5qkjzzmfhw4dt05aludazwvd5x6340zl42n",
         "runTime": "every 1 hour",
-        "minimumReward": 100000000
+        "minimumReward": 1000000
       },
       {
         "address": "cerberusvaloper16cfkt9n0pcftg0ky3rk9aegqdp383uwge38rdl",
