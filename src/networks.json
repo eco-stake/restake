@@ -1162,6 +1162,15 @@
     "gasPrice": "0.001udsm",
     "operators": [
       {
+        "address": "desmosvaloper1xk2kv26fjd9zrg4l3qc7lwxv03w4ydeeppqkkp",
+        "botAddress": "desmos1dpcdg5qr033gdzlde5qqgd9ysssfcjhq6w9fjw",
+	"runTime": [
+          "09:00",
+     	  "21:00"
+        ],
+        "minimumReward": 1000000
+      },
+      {
         "address": "desmosvaloper18yazgsq8yvn2f8c734fmnu2ssfrzpw7l8tqckm",
         "botAddress": "desmos1ueyqd3shd7lrpqacjzap8vy6akh2ek8l40fn0y",
         "runTime": [
@@ -1432,6 +1441,15 @@
       "https://node0.mainnet.lum.network/rpc"
     ],
     "operators": [
+      {
+        "address": "lumvaloper1xkv494sduqkpadwesqlsp6069yepsj587dvf46",
+        "botAddress": "lum1js340eq8082essggjtv8lf9df7qlnny88wzu7n",
+	"runTime": [
+          "09:00",
+	  "21:00"
+        ],
+        "minimumReward": 1000000
+      },
       {
         "address": "lumvaloper16w9g7epcvwnmya5khpj2kk9x7k39pjp3ufa3uj",
         "botAddress": "lum15xa7vst3jca9qjkngmlysrdfur8gsex98h7u0h",
@@ -1803,6 +1821,15 @@
     ],
     "operators": [
       {
+        "address": "bitsongvaloper10uv3t6yru5dryz2yy9em2pzmqezyhsp0gkkxd2",
+        "botAddress": "bitsong1xkst6jjmtrd7v9wahqazguxuy04msfuy5ljm09",
+	"runTime": [
+          "09:00",
+	  "21:00"
+        ],
+        "minimumReward": 1000000
+      },
+      {
         "address": "bitsongvaloper1mvpx2jnq7vnur3dehwesddg6as5eua0jy2a99s",
         "botAddress": "bitsong1wdc6rmm2ng2jkeytt4ptas3vhx2t94yjvcg4g4",
         "runTime": [
@@ -2095,6 +2122,12 @@
     "testAddress": "cerberus1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczd38dxa",
     "ownerAddress": "cerberusvaloper1tat2cy3f9djtq9z7ly262sqngcarvaktr0w78f",
     "operators": [
+      {
+        "address": "cerberusvaloper1xkv494sduqkpadwesqlsp6069yepsj58axja5l",
+        "botAddress": "cerberus1js340eq8082essggjtv8lf9df7qlnny8wrlu7v",
+        "runTime": "every 2 hour",
+        "minimumReward": 100000000
+      },
       {
         "address": "cerberusvaloper1ga0xxzst2hjyjtfqnffz2mapn8vk8ufysqsn30",
         "botAddress": "cerberus15xa7vst3jca9qjkngmlysrdfur8gsex9w6ru0g",
