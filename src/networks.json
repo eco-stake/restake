@@ -231,8 +231,8 @@
       {
         "address": "junovaloper193xl2tqh2tjkld2zv49ku5s44ee4qmgr65jcep",
         "botAddress": "juno1e44rluarkdw56dy2turnwjtvtg4wqvs0yeklse",
-        "runTime": "21:00",
-        "minimumReward": 1000
+        "runTime": "every 45 minutes",
+        "minimumReward": 9999
       },
       {
         "address": "junovaloper17n3w6v5q3n0tws4xv8upd9ul4qqes0nlg7q0xd",
