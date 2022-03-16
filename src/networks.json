@@ -1862,13 +1862,13 @@
       {
         "address": "cerberusvaloper18g9868awp4dtxn5n5cjd7e30y8djevc80hqyad",
         "botAddress": "cerberus1h43hjfxlz8t6y5wewma63jz7melv46gjcaue9a",
-        "runTime": "every 10 minutes",
+        "runTime": "every 15 minutes",
         "minimumReward": 100000000
       },
       {
         "address": "cerberusvaloper1g3d36rfxfqtlnz3hzd05cs2wrjgykcz2g649a8",
         "botAddress": "cerberus1e44rluarkdw56dy2turnwjtvtg4wqvs0wv4dzw",
-        "runTime": "every 10 minutes",
+        "runTime": "every 15 minutes",
         "minimumReward": 100000000
       },
       {
