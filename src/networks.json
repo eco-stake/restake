@@ -2291,7 +2291,6 @@
         "runTime": "every 15 minutes",
         "minimumReward": 100000000
       }
-
     ],
     "authzSupport": true
   }
