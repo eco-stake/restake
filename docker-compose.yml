@@ -9,4 +9,7 @@ services:
       - '1234:1234'
     volumes:
       - .:/usr/src/app
-      - /usr/src/app/node_modules
+      - restake_node_modules:/usr/src/app/node_modules
+
+volumes:
+  restake_node_modules:

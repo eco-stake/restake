@@ -381,7 +381,7 @@ class Delegations extends React.Component {
           <td className="d-none d-lg-table-cell text-center">
             {operator && (
               <TooltipIcon
-                icon={<small>{operator.frequency()}</small>}
+                icon={<small className="text-decoration-underline">{operator.frequency()}</small>}
                 identifier={operator.address}
               >
                 <div className="mt-2 text-center">
