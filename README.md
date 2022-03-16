@@ -1,4 +1,6 @@
-# [REStake](https://restake.app)
+# [REStake](https://restake.cats.ac)
+
+https://restake.cats.ac
 
 REStake allows delegators to grant permission for a validator to compound their rewards, and provides a script validators can run to find their granted delegators and send the compounding transactions automatically.
 
