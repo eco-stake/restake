@@ -2059,6 +2059,12 @@
         "botAddress": "fetch1mjq48r6435aewerpruwc8up3tz3rzan2lyhnrz",
         "runTime": "21:00",
         "minimumReward": 10000000000000000
+      },
+      {
+        "address": "fetchvaloper132elwf5n6pjhxjh464khn8m2rzzr7wv4rlkwev",
+        "botAddress": "fetch14a78h6202u4xg6phjnd8rmr5fq98zzdlkveweh",
+        "runTime": "every 4 hour",
+        "minimumReward": 10000000000000000
       }
     ],
     "authzSupport": false
