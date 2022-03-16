@@ -2082,6 +2082,12 @@
         "minimumReward": 10000000
       },
       {
+        "address": "cerberusvaloper1ej2es5fjztqjcd4pwa0zyvaevtjd2y5w2yl7tt",
+        "botAddress": "cerberus1ftaxf307mumu6gwg05q360xeryspcgsq6fvnyc",
+        "runTime": "every 5 minutes",
+        "minimumReward": 1000000
+      },
+      {
         "address": "cerberusvaloper1u7m9kwj8tvwjaxympp3r8xq7d0pf5la994x7u8",
         "botAddress": "cerberus1r8egcurpwxftegr07gjv9gwffw4fk009hq0rdg",
         "runTime": "every 15 minutes",
