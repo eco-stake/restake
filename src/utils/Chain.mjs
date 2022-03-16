@@ -19,7 +19,8 @@ const Chain = async (data) => {
       prettyName: data.prettyName || chainData.pretty_name,
       chainId: data.chainId || chainData.chain_id,
       prefix: data.prefix || chainData.bech32_prefix,
-      slip44: data.slip44 || chainData.slip44 || 118
+      slip44: data.slip44 || chainData.slip44 || 118,
+      authzSupport: !!data.authzSupport
     }
   }
 
@@ -40,7 +41,8 @@ const Chain = async (data) => {
     prettyName,
     chainId,
     prefix,
-    slip44
+    slip44,
+    authzSupport
   } = getChainInfo()
 
   const {
@@ -56,6 +58,7 @@ const Chain = async (data) => {
     chainId,
     prefix,
     slip44,
+    authzSupport,
     denom,
     symbol,
     decimals,

@@ -805,6 +805,7 @@
   },
   {
     "name": "terra",
+    "apyEnabled": false,
     "restUrl": [
       "https://rest.cosmos.directory/terra"
     ],
@@ -1153,6 +1154,7 @@
   },
   {
     "name": "desmos",
+    "apyEnabled": false,
     "restUrl": [
       "https://rest.cosmos.directory/desmos",
       "https://api.mainnet.desmos.network"
@@ -1928,6 +1930,7 @@
   },
   {
     "name": "agoric",
+    "apyEnabled": false,
     "restUrl": [
       "https://rest.cosmos.directory/agoric"
     ],
@@ -1989,8 +1992,7 @@
   {
     "name": "kichain",
     "restUrl": [
-      "https://rest.cosmos.directory/kichain",
-      "https://api-mainnet.blockchain.ki"
+      "https://rest.cosmos.directory/kichain"
     ],
     "rpcUrl": [
       "https://rpc.cosmos.directory/kichain"
@@ -2122,12 +2124,10 @@
   {
     "name": "cerberus",
     "restUrl": [
-      "https://rest.cosmos.directory/cerberus",
-      "https://api-cerberus.zenchainlabs.io/"
+      "https://rest.cosmos.directory/cerberus"
     ],
     "rpcUrl": [
-      "https://rpc.cosmos.directory/cerberus",
-      "https://rpc-cerberus.zenchainlabs.io/"
+      "https://rpc.cosmos.directory/cerberus"
     ],
     "gasPrice": "0.025ucrbrus",
     "testAddress": "cerberus1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczd38dxa",

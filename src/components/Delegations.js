@@ -17,7 +17,7 @@ import { CheckCircle, XCircle } from "react-bootstrap-icons";
 class Delegations extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { operatorGrants: {}, validatorLoading: {} };
+    this.state = { operatorGrants: {}, validatorLoading: {}, validatorApy: {} };
 
     this.setError = this.setError.bind(this);
     this.setClaimLoading = this.setClaimLoading.bind(this);
@@ -46,6 +46,7 @@ class Delegations extends React.Component {
         isNanoLedger: isNanoLedger,
         authzMissing: false,
         error: null,
+        validatorApy: {}
       });
       this.refresh();
     }
@@ -92,11 +93,14 @@ class Delegations extends React.Component {
   }
 
   async calculateApy() {
-    let validatorApy = await this.props.queryClient.getApy(
+    this.props.network.getApy(
       this.props.validators,
-      this.props.network.denom
-    );
-    this.setState({ validatorApy });
+      this.props.operators
+    ).then(validatorApy => {
+      this.setState({ validatorApy });
+    }, error => {
+      this.setState({ error: "Failed to get APY. Please refresh" });
+    })
   }
 
   getGrants() {
@@ -321,6 +325,7 @@ class Delegations extends React.Component {
               network={this.props.network}
               address={this.props.address}
               validator={validator}
+              validatorApy={this.state.validatorApy}
               operators={this.props.operators}
               getValidatorImage={this.props.getValidatorImage}
               availableBalance={this.props.balance}
@@ -330,19 +335,6 @@ class Delegations extends React.Component {
               {validator.description.moniker}
             </Delegate>
           </td>
-          {this.props.network.data.apyEnabled !== false ? (
-            <td>
-              {this.state.validatorApy
-                ? !isNaN(this.state.validatorApy[validatorAddress])
-                  ? (this.state.validatorApy[validatorAddress] * 100)
-                      .toFixed(2)
-                      .toString() + " %"
-                  : ""
-                : ""}
-            </td>
-          ) : (
-            ""
-          )}
           <td className="text-center">
             {operator ? (
               this.restakePossible() && delegation ? (
@@ -397,9 +389,19 @@ class Delegations extends React.Component {
               </TooltipIcon>
             )}
           </td>
-          <td className="d-none d-lg-table-cell text-center">
-            {validator.commission.commission_rates.rate * 100}%
-          </td>
+          {this.props.network.data.apyEnabled !== false && (
+            <td className="d-none d-lg-table-cell text-center">
+              {Object.keys(this.state.validatorApy).length > 0 
+                ? this.state.validatorApy[validatorAddress]
+                  ? <small>{Math.round(this.state.validatorApy[validatorAddress] * 100) + "%"}</small>
+                  : ""
+                : (
+                  <Spinner animation="border" role="status" className="spinner-border-sm text-secondary">
+                    <span className="visually-hidden">Loading...</span>
+                  </Spinner>
+                )}
+            </td>
+          )}
           <td className="d-none d-sm-table-cell">
             <small>
               <Coins
@@ -483,6 +485,7 @@ class Delegations extends React.Component {
                         network={this.props.network}
                         address={this.props.address}
                         validator={validator}
+                        validatorApy={this.state.validatorApy}
                         operators={this.props.operators}
                         availableBalance={this.props.balance}
                         getValidatorImage={this.props.getValidatorImage}
@@ -495,6 +498,7 @@ class Delegations extends React.Component {
                         address={this.props.address}
                         validator={validator}
                         validators={this.props.validators}
+                        validatorApy={this.state.validatorApy}
                         operators={this.props.operators}
                         availableBalance={
                           (this.props.delegations[validatorAddress] || {})
@@ -509,6 +513,7 @@ class Delegations extends React.Component {
                         network={this.props.network}
                         address={this.props.address}
                         validator={validator}
+                        validatorApy={this.state.validatorApy}
                         operators={this.props.operators}
                         availableBalance={
                           (this.props.delegations[validatorAddress] || {})
@@ -529,6 +534,7 @@ class Delegations extends React.Component {
                     network={this.props.network}
                     address={this.props.address}
                     validator={validator}
+                    validatorApy={this.state.validatorApy}
                     operators={this.props.operators}
                     availableBalance={this.props.balance}
                     getValidatorImage={this.props.getValidatorImage}
@@ -612,6 +618,7 @@ class Delegations extends React.Component {
               delegations={this.props.delegations}
               operators={this.props.operators}
               validators={this.props.validators}
+              validatorApy={this.state.validatorApy}
               getValidatorImage={this.props.getValidatorImage}
               availableBalance={this.props.balance}
               stargateClient={this.props.stargateClient}
@@ -630,18 +637,23 @@ class Delegations extends React.Component {
             <thead>
               <tr>
                 <th colSpan={2}>Validator</th>
-                {this.props.network.data.apyEnabled !== false ? (
-                  <th>APY</th>
-                ) : (
-                  ""
-                )}
                 <th className="d-none d-sm-table-cell text-center">REStake</th>
                 <th className="d-none d-lg-table-cell text-center">
                   Frequency
                 </th>
-                <th className="d-none d-lg-table-cell text-center">
-                  Commission
-                </th>
+                {this.props.network.apyEnabled !== false && (
+                  <th className="d-none d-lg-table-cell text-center">
+                    <TooltipIcon
+                      icon={<span className="text-decoration-underline">APY</span>}
+                      identifier="delegations-apy"
+                    >
+                      <div className="mt-2 text-center">
+                        <p>Based on commission, compounding frequency and estimated block times.</p>
+                        <p>This is a best case scenario and may not be 100% accurate.</p>
+                      </div>
+                    </TooltipIcon>
+                  </th>
+                )}
                 <th className="d-none d-sm-table-cell">Delegation</th>
                 <th className="d-none d-sm-table-cell">Rewards</th>
                 <th width={110}></th>
@@ -673,6 +685,7 @@ class Delegations extends React.Component {
               operators={this.props.operators}
               address={this.props.address}
               validators={this.props.validators}
+              validatorApy={this.state.validatorApy}
               getValidatorImage={this.props.getValidatorImage}
               delegations={this.props.delegations}
               availableBalance={this.props.balance}
