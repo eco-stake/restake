@@ -2281,5 +2281,26 @@
       }
     ],
     "authzSupport": true
+  },
+  {
+    "name": "secretnetwork",
+    "restUrl": [
+      "https://rest.cosmos.directory/secretnetwork"
+    ],
+    "rpcUrl": [
+      "https://rpc.cosmos.directory/secretnetwork"
+    ],
+    "gasPrice": "0.025uscrt",
+    "testAddress": "secret1mpf7w0yyz9n3dh42un2zqu2dmsqv7dhkdlh78e",
+    "ownerAddress": "",
+    "operators": [
+      {
+        "address": "secretvaloper16k26akna7h295rfjx3278s7xusnt736vy437y8",
+        "botAddress": "secret1yqv7y5ynhas45hu59vhe3qvw0kmc8amtx7s7ur",
+        "runTime": "21:00",
+        "minimumReward": 100000
+      }
+    ],
+    "authzSupport": true
   }
 ]
