@@ -336,6 +336,12 @@
         "botAddress": "juno1grfk7t0k42yxpwqhr7kt4te7j73m2a3v5h7tx6",
         "runTime": "13:37",
         "minimumReward": 10000
+      },
+      {
+        "address": "junovaloper1q3jsx9dpfhtyqqgetwpe5tmk8f0ms5qywje8tw",
+        "botAddress": "juno12yeq3h92ew3e00tt2kma5q0t7tmangvy03wz5y",
+        "runTime": "every 12 hours",
+        "minimumReward": 10000
       }
     ],
     "authzSupport": true
