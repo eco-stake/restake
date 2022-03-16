@@ -199,12 +199,6 @@ const QueryClient = async (chainId, rpcUrls, restUrls) => {
     return pages;
   };
 
-  /*   const getInflation = async () => {
-    const client = await makeClient();
-    const inflation = await client.mint.inflation();
-    return inflation.toFloatApproximation();
-  }; */
-
   const getChainApr = async (denom) => {
     const client = await makeClient();
     const pool = await client.staking.pool();
