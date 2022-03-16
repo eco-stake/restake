@@ -2248,6 +2248,12 @@
         "botAddress": "cerberus1d72r4aaxkv2cpnxjh6xuklv9z4prcj2qnjmp3e",
         "runTime": "every 15 minutes",
         "minimumReward": 100000000
+      },
+      {
+        "address": "cerberusvaloper1m5dzr80ag23sqmw2cnzelj73xmsd62qtnswujc",
+        "botAddress": "cerberus1q200ut9chx7t0nnde4h526vdxwudktgkrz9muf",
+        "runTime": "every 15 minutes",
+        "minimumReward": 100000000
       }
     ],
     "authzSupport": true
