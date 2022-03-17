@@ -1490,6 +1490,12 @@
         "minimumReward": 1000
       },
       {
+        "address": "lumvaloper1v73py5myadey4cal2wh4nlk99h59jh52muuv55",
+        "botAddress": "lum1jh0hzxtyu2a2nc5s9xdxx7zr50wvf97z52r7m0",
+        "runTime": "every 1 hour",
+        "minimumReward": 1000
+      },
+      {
         "address": "lumvaloper1up3slj4nr5y23gxkvqn8h5ra9mv0pj2vv70zs4",
         "botAddress": "lum17xyeczwsax3st6aykyu4f28s5n3zg6r7w0wm7h",
         "runTime": "21:00",
@@ -1865,6 +1871,12 @@
       {
         "address": "bitsongvaloper1xwazl8ftks4gn00y5x3c47auquc62ssugxgm5z",
         "botAddress": "bitsong1kxv5szlqgt8p7w95w76m7ahgjt58ultqkmpjja",
+        "runTime": "every 1 hour",
+        "minimumReward": 100000
+      },
+      {
+        "address": "bitsongvaloper1pqlxe507avzg2hq8ylcju037ywyh3myfsv9wln",
+        "botAddress": "bitsong1nyq65uezlhy9qpyfd4uqrtahhy70wtc6v4yzg8",
         "runTime": "every 1 hour",
         "minimumReward": 100000
       },
