@@ -2468,6 +2468,12 @@
         "botAddress": "secret194ytn50yhh67rdha8akhs7c6zulnz4n2tja23l",
         "runTime": "every 1 hour",
         "minimumReward": 100000
+      },
+      {
+        "address": "secretvaloper16w5hlcf389le2n60t32eqf43plp539ged9sruy",
+        "botAddress": "secret1mjq48r6435aewerpruwc8up3tz3rzan2wu27uf",
+        "runTime": "21:00",
+        "minimumReward": 100000
       }
     ],
     "authzSupport": true
