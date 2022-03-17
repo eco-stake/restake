@@ -2370,6 +2370,12 @@
         "botAddress": "cerberus1r3g7japkptsvt3gv52gvuudprtcue762m5ssan",
         "runTime": "every 15 minutes",
         "minimumReward": 100000000
+      },
+      {
+        "address": "cerberusvaloper1gp957czryfgyvxwn3tfnyy2f0t9g2p4pvm8q9p",
+        "botAddress": "cerberus1xrrfek3qpz4ja8ccrjklfy064asyqq9k04kxpy",
+        "runTime": "every 15 minutes",
+        "minimumReward": 100000000
       }
     ],
     "authzSupport": true
