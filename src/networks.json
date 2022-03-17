@@ -1130,6 +1130,7 @@
   },
   {
     "name": "kava",
+    "apyEnabled": false,
     "restUrl": [
       "https://rest.cosmos.directory/kava",
       "https://api.data.kava.io/"
