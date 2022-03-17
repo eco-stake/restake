@@ -93,6 +93,8 @@ class Delegations extends React.Component {
   }
 
   async calculateApy() {
+    if(this.props.network.apyEnabled === false) return
+
     this.props.network.getApy(
       this.props.validators,
       this.props.operators
@@ -389,7 +391,7 @@ class Delegations extends React.Component {
               </TooltipIcon>
             )}
           </td>
-          {this.props.network.data.apyEnabled !== false && (
+          {this.props.network.apyEnabled !== false && (
             <td className="d-none d-lg-table-cell text-center">
               {Object.keys(this.state.validatorApy).length > 0 
                 ? this.state.validatorApy[validatorAddress]
