@@ -2498,6 +2498,12 @@
         "botAddress": "secret1mjq48r6435aewerpruwc8up3tz3rzan2wu27uf",
         "runTime": "21:00",
         "minimumReward": 100000
+      },
+      {
+        "address": "secretvaloper14mwwdad00y7lwwmmk3yw2l2qhn6jzjpy28fmfw",
+        "botAddress": "secret13x5lkafjz2x7ue468cqc65ea6uajq7uctnadgl",
+        "runTime": "15:00",
+        "minimumReward": 100000
       }
     ],
     "authzSupport": true
