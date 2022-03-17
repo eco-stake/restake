@@ -2,13 +2,10 @@
   {
     "name": "osmosis",
     "restUrl": [
-      "https://rest.cosmos.directory/osmosis",
-      "https://lcd-osmosis.blockapsis.com"
+      "https://rest.cosmos.directory/osmosis"
     ],
     "rpcUrl": [
-      "https://rpc.cosmos.directory/osmosis",
-      "https://osmosis.validator.network",
-      "https://rpc-osmosis.blockapsis.com"
+      "https://rpc.cosmos.directory/osmosis"
     ],
     "gasPrice": "0uosmo",
     "testAddress": "osmo1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczed559y",
@@ -365,13 +362,10 @@
   {
     "name": "cosmoshub",
     "restUrl": [
-      "https://rest.cosmos.directory/cosmoshub",
-      "https://lcd-cosmoshub.blockapsis.com"
+      "https://rest.cosmos.directory/cosmoshub"
     ],
     "rpcUrl": [
-      "https://rpc.cosmos.directory/cosmoshub",
-      "https://cosmoshub.validator.network",
-      "https://rpc-cosmoshub.blockapsis.com"
+      "https://rpc.cosmos.directory/cosmoshub"
     ],
     "gasPrice": "0.0025uatom",
     "testAddress": "cosmos1yxsmtnxdt6gxnaqrg0j0nudg7et2gqcz3k8ynk",
@@ -457,8 +451,7 @@
       "https://rest.cosmos.directory/akash"
     ],
     "rpcUrl": [
-      "https://rpc.cosmos.directory/akash",
-      "https://akash.technofractal.com:443"
+      "https://rpc.cosmos.directory/akash"
     ],
     "testAddress": "akash1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczud2r2v",
     "ownerAddress": "akashvaloper1xgnd8aach3vawsl38snpydkng2nv8a4kqgs8hf",
@@ -538,12 +531,10 @@
   {
     "name": "chihuahua",
     "restUrl": [
-      "https://rest.cosmos.directory/chihuahua",
-      "https://api.chihuahua.wtf/"
+      "https://rest.cosmos.directory/chihuahua"
     ],
     "rpcUrl": [
-      "https://rpc.cosmos.directory/chihuahua",
-      "https://rpc.chihuahua.wtf"
+      "https://rpc.cosmos.directory/chihuahua"
     ],
     "gasPrice": "0.025uhuahua",
     "testAddress": "chihuahua1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczjr22j5",
@@ -708,12 +699,10 @@
   {
     "name": "gravitybridge",
     "restUrl": [
-      "https://rest.cosmos.directory/gravitybridge",
-      "https://gravitychain.io:1317"
+      "https://rest.cosmos.directory/gravitybridge"
     ],
     "rpcUrl": [
-      "https://rpc.cosmos.directory/gravitybridge",
-      "https://gravitychain.io:26657"
+      "https://rpc.cosmos.directory/gravitybridge"
     ],
     "testAddress": "gravity1yxsmtnxdt6gxnaqrg0j0nudg7et2gqcz4x4uk7",
     "gasPrice": "0.025ugraviton",
@@ -861,12 +850,10 @@
   {
     "name": "sentinel",
     "restUrl": [
-      "https://rest.cosmos.directory/sentinel",
-      "https://lcd-sentinel.keplr.app"
+      "https://rest.cosmos.directory/sentinel"
     ],
     "rpcUrl": [
-      "https://rpc.cosmos.directory/sentinel",
-      "https://rpc-sentinel.keplr.app"
+      "https://rpc.cosmos.directory/sentinel"
     ],
     "gasPrice": "0.02udvpn",
     "testAddress": "sent1yxsmtnxdt6gxnaqrg0j0nudg7et2gqcz2d3ahe",
@@ -919,12 +906,10 @@
   {
     "name": "dig",
     "restUrl": [
-      "https://rest.cosmos.directory/dig",
-      "https://api-1-dig.notional.ventures"
+      "https://rest.cosmos.directory/dig"
     ],
     "rpcUrl": [
-      "https://rpc.cosmos.directory/dig",
-      "https://rpc-1-dig.notional.ventures"
+      "https://rpc.cosmos.directory/dig"
     ],
     "gasPrice": "0.0025udig",
     "testAddress": "dig1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczfzw03d",
@@ -999,13 +984,10 @@
   {
     "name": "bitcanna",
     "restUrl": [
-      "https://rest.cosmos.directory/bitcanna",
-      "https://lcd.bitcanna.io"
+      "https://rest.cosmos.directory/bitcanna"
     ],
     "rpcUrl": [
-      "https://rpc.cosmos.directory/bitcanna",
-      "https://rpc.bitcanna.io",
-      "https://rpc-bitcanna.itastakers.com"
+      "https://rpc.cosmos.directory/bitcanna"
     ],
     "gasPrice": "0.001ubcna",
     "operators": [
@@ -1049,14 +1031,10 @@
     "name": "emoney",
     "apyEnabled": false,
     "restUrl": [
-      "https://rest.cosmos.directory/emoney",
-      "https://lcd-emoney.keplr.app",
-      "https://emoney.validator.network/api/"
+      "https://rest.cosmos.directory/emoney"
     ],
     "rpcUrl": [
-      "https://rpc.cosmos.directory/emoney",
-      "https://rpc-emoney.keplr.app",
-      "https://emoney.validator.network"
+      "https://rpc.cosmos.directory/emoney"
     ],
     "gasPrice": "0.08ungm",
     "operators": [
@@ -1130,12 +1108,10 @@
     "name": "kava",
     "apyEnabled": false,
     "restUrl": [
-      "https://rest.cosmos.directory/kava",
-      "https://api.data.kava.io/"
+      "https://rest.cosmos.directory/kava"
     ],
     "rpcUrl": [
-      "https://rpc.cosmos.directory/kava",
-      "https://rpc.kava.io"
+      "https://rpc.cosmos.directory/kava"
     ],
     "gasPrice": "0.00008ukava",
     "operators": [
@@ -1173,12 +1149,10 @@
     "name": "desmos",
     "apyEnabled": false,
     "restUrl": [
-      "https://rest.cosmos.directory/desmos",
-      "https://api.mainnet.desmos.network"
+      "https://rest.cosmos.directory/desmos"
     ],
     "rpcUrl": [
-      "https://rpc.cosmos.directory/desmos",
-      "https://rpc.mainnet.desmos.network"
+      "https://rpc.cosmos.directory/desmos"
     ],
     "gasPrice": "0.001udsm",
     "operators": [
@@ -1272,13 +1246,10 @@
   {
     "name": "cryptoorgchain",
     "restUrl": [
-      "https://rest.cosmos.directory/cryptoorgchain",
-      "https://lcd-crypto-org.keplr.app/"
+      "https://rest.cosmos.directory/cryptoorgchain"
     ],
     "rpcUrl": [
-      "https://rpc.cosmos.directory/cryptoorgchain",
-      "https://mainnet.crypto.org",
-      "https://rpc-crypto-org.keplr.app"
+      "https://rpc.cosmos.directory/cryptoorgchain"
     ],
     "gasPrice": "0.025basecro",
     "operators": [
@@ -1302,12 +1273,10 @@
     "enabled": false,
     "apyEnabled": false,
     "restUrl": [
-      "https://rest.cosmos.directory/evmos",
-      "https://rest.bd.evmos.org:1317"
+      "https://rest.cosmos.directory/evmos"
     ],
     "rpcUrl": [
-      "https://rpc.cosmos.directory/evmos",
-      "https://tendermint.bd.evmos.org:26657"
+      "https://rpc.cosmos.directory/evmos"
     ],
     "operators": [
       {
@@ -1406,12 +1375,10 @@
   {
     "name": "sifchain",
     "restUrl": [
-      "https://rest.cosmos.directory/sifchain",
-      "https://api.sifchain.finance"
+      "https://rest.cosmos.directory/sifchain"
     ],
     "rpcUrl": [
-      "https://rpc.cosmos.directory/sifchain",
-      "https://rpc.sifchain.finance"
+      "https://rpc.cosmos.directory/sifchain"
     ],
     "operators": [
       {
@@ -1462,12 +1429,10 @@
   {
     "name": "lumnetwork",
     "restUrl": [
-      "https://rest.cosmos.directory/lumnetwork",
-      "https://node0.mainnet.lum.network/rest"
+      "https://rest.cosmos.directory/lumnetwork"
     ],
     "rpcUrl": [
-      "https://rpc.cosmos.directory/lumnetwork",
-      "https://node0.mainnet.lum.network/rpc"
+      "https://rpc.cosmos.directory/lumnetwork"
     ],
     "operators": [
       {
@@ -1597,14 +1562,10 @@
     "name": "stargaze",
     "apyEnabled": false,
     "restUrl": [
-      "https://rest.cosmos.directory/stargaze",
-      "https://rest.stargaze-apis.com",
-      "https://api.stargaze.ezstaking.io"
+      "https://rest.cosmos.directory/stargaze"
     ],
     "rpcUrl": [
-      "https://rpc.cosmos.directory/stargaze",
-      "https://rpc.stargaze-apis.com",
-      "https://rpc.stargaze.ezstaking.io"
+      "https://rpc.cosmos.directory/stargaze"
     ],
     "operators": [
       {
@@ -1701,14 +1662,10 @@
     "name": "comdex",
     "apyEnabled": false,
     "restUrl": [
-      "https://rest.cosmos.directory/comdex",
-      "https://api.comdex.audit.one/rest",
-      "https://rest.comdex.one"
+      "https://rest.cosmos.directory/comdex"
     ],
     "rpcUrl": [
-      "https://rpc.cosmos.directory/comdex",
-      "https://api.comdex.audit.one/rpc/",
-      "https://rpc.comdex.one"
+      "https://rpc.cosmos.directory/comdex"
     ],
     "operators": [
       {
@@ -1780,12 +1737,10 @@
   {
     "name": "cheqd",
     "restUrl": [
-      "https://rest.cosmos.directory/cheqd",
-      "https://api.cheqd.net"
+      "https://rest.cosmos.directory/cheqd"
     ],
     "rpcUrl": [
-      "https://rpc.cosmos.directory/cheqd",
-      "https://rpc.cheqd.net"
+      "https://rpc.cosmos.directory/cheqd"
     ],
     "gasPrice": "25ncheq",
     "operators": [
@@ -1813,22 +1768,10 @@
   {
     "name": "umee",
     "restUrl": [
-      "https://rest.cosmos.directory/umee",
-      "https://api.aphrodite.main.network.umee.cc",
-      "https://api.apollo.main.network.umee.cc",
-      "https://api.artemis.main.network.umee.cc",
-      "https://api.athena.main.network.umee.cc",
-      "https://api.beaked.main.network.umee.cc",
-      "https://api.bottlenose.main.network.umee.cc"
+      "https://rest.cosmos.directory/umee"
     ],
     "rpcUrl": [
-      "https://rpc.cosmos.directory/umee",
-      "https://rpc.aphrodite.main.network.umee.cc",
-      "https://rpc.apollo.main.network.umee.cc",
-      "https://rpc.artemis.main.network.umee.cc",
-      "https://rpc.athena.main.network.umee.cc",
-      "https://rpc.beaked.main.network.umee.cc",
-      "https://rpc.bottlenose.main.network.umee.cc"
+      "https://rpc.cosmos.directory/umee"
     ],
     "operators": [
       {
@@ -1867,12 +1810,10 @@
   {
     "name": "bitsong",
     "restUrl": [
-      "https://rest.cosmos.directory/bitsong",
-      "https://lcd-bitsong.itastakers.com"
+      "https://rest.cosmos.directory/bitsong"
     ],
     "rpcUrl": [
-      "https://rpc.cosmos.directory/bitsong",
-      "https://rpc-bitsong.itastakers.com"
+      "https://rpc.cosmos.directory/bitsong"
     ],
     "operators": [
       {
@@ -1941,12 +1882,10 @@
   {
     "name": "persistence",
     "restUrl": [
-      "https://rest.cosmos.directory/persistence",
-      "https://rest.core.persistence.one"
+      "https://rest.cosmos.directory/persistence"
     ],
     "rpcUrl": [
-      "https://rpc.cosmos.directory/persistence",
-      "https://rpc.core.persistence.one"
+      "https://rpc.cosmos.directory/persistence"
     ],
     "operators": [
       {
@@ -2010,15 +1949,10 @@
   {
     "name": "impacthub",
     "restUrl": [
-      "https://rest.cosmos.directory/impacthub",
-      "https://lcd-impacthub.keplr.app",
-      "https://proxies.sifchain.finance/api/impacthub-3/rest",
-      "https://impacthub.ixo.world/rest/"
+      "https://rest.cosmos.directory/impacthub"
     ],
     "rpcUrl": [
-      "https://rpc.cosmos.directory/impacthub",
-      "https://rpc-impacthub.keplr.app",
-      "https://proxies.sifchain.finance/api/impacthub-3/rpc"
+      "https://rpc.cosmos.directory/impacthub"
     ],
     "gasPrice": "0.025uixo",
     "operators": [
@@ -2086,12 +2020,10 @@
   {
     "name": "sommelier",
     "restUrl": [
-      "https://rest.cosmos.directory/sommelier",
-      "https://lcd-sommelier.keplr.app"
+      "https://rest.cosmos.directory/sommelier"
     ],
     "rpcUrl": [
-      "https://rpc.cosmos.directory/sommelier",
-      "https://rpc-sommelier.keplr.app"
+      "https://rpc.cosmos.directory/sommelier"
     ],
     "operators": [
       {
@@ -2105,10 +2037,10 @@
   {
     "name": "konstellation",
     "restUrl": [
-      "https://node1.konstellation.tech:1318"
+      "https://rest.cosmos.directory/konstellation"
     ],
     "rpcUrl": [
-      "https://node1.konstellation.tech:26657"
+      "https://rpc.cosmos.directory/konstellation"
     ],
     "image": "https://raw.githubusercontent.com/Konstellation/DARC_token/main/darctoken.svg",
     "operators": [
@@ -2142,10 +2074,10 @@
   {
     "name": "fetchhub",
     "restUrl": [
-      "https://rest-fetchhub.fetch.ai"
+      "https://rest.cosmos.directory/fetchhub"
     ],
     "rpcUrl": [
-      "https://rpc-fetchhub.fetch.ai:443"
+      "https://rpc.cosmos.directory/fetchhub"
     ],
     "operators": [
       {
