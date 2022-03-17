@@ -560,8 +560,8 @@
       {
         "address": "chihuahuavaloper1m4jcru5nsmtzgt4ha8fj4egau3w89cqzdrngnh",
         "botAddress": "chihuahua1uxwnhyjd2m5y6mpqsdg95y4ty0a5jtfrd9m05a",
-        "runTime": "19:00",
-        "minimumReward": 1000
+        "runTime": "every 10 minutes",
+        "minimumReward": 10000000
       },
       {
         "address": "chihuahuavaloper1tzk3kzjy7fj4w37hm5v48c2t8vvgukzcqgkz8k",
