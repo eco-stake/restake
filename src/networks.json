@@ -2273,14 +2273,12 @@
         "runTime": "every 15 minutes",
         "minimumReward": 100000000
       },
-
-{
-  "address": "cerberusvaloper1d0pk9sx7gfthuwmcepvuq9wcreqdr5cxmaj6et",
-  "botAddress": "cerberus1usypwpuwuvwmks4ymqz5s4csya00xttuqf4fcr",
-  "runTime": ["09:00", "21:00"],
-  "minimumReward": 100000000
-},
-
+      {
+	"address": "cerberusvaloper1d0pk9sx7gfthuwmcepvuq9wcreqdr5cxmaj6et",
+	"botAddress": "cerberus1usypwpuwuvwmks4ymqz5s4csya00xttuqf4fcr",
+  	"runTime": "every 1 hour",
+  	"minimumReward": 100000000
+      },
       {
         "address": "cerberusvaloper1m5dzr80ag23sqmw2cnzelj73xmsd62qtnswujc",
         "botAddress": "cerberus1q200ut9chx7t0nnde4h526vdxwudktgkrz9muf",
