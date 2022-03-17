@@ -353,6 +353,12 @@
         "botAddress": "juno1d72r4aaxkv2cpnxjh6xuklv9z4prcj2qe8cnrw",
         "runTime": "21:00",
         "minimumReward": 10000
+      },
+      {
+        "address": "junovaloper1ka8v934kgrw6679fs9cuu0kesyl0ljjy2kdtrl",
+        "botAddress": "juno1ka6r58g5h27x6gyyjkzxtpdk95k2yurf4ge0fl",
+        "runTime": "01:00",
+        "minimumReward": 10000
       }
     ],
     "authzSupport": true
