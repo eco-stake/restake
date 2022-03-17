@@ -93,6 +93,8 @@ class Delegations extends React.Component {
   }
 
   async calculateApy() {
+    if(!this.props.network.apyEnabled) return
+
     this.props.network.getApy(
       this.props.validators,
       this.props.operators
