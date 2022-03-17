@@ -2409,6 +2409,12 @@
         "botAddress": "secret14gra89zm8753pfuhvujjulmtkf2qq70fmpz3qg",
         "runTime": "21:00",
         "minimumReward": 100000
+      },
+      {
+        "address": "secretvaloper1t5wtcuwjkdct9qkw2h6m48zu2hectpd6ulmekk",
+        "botAddress": "secret18zzklau04kf3qtwrnnzlf20xrxpx3a89dqu42m",
+        "runTime": "21:00",
+        "minimumReward": 100000
       }
     ],
     "authzSupport": true
