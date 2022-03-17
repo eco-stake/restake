@@ -180,12 +180,10 @@
     "name": "juno",
     "apyEnabled": false,
     "restUrl": [
-      "https://rest.cosmos.directory/juno",
-      "https://lcd-juno.itastakers.com"
+      "https://rest.cosmos.directory/juno"
     ],
     "rpcUrl": [
-      "https://rpc.cosmos.directory/juno",
-      "https://rpc-juno.itastakers.com"
+      "https://rpc.cosmos.directory/juno"
     ],
     "gasPrice": "0.0025ujuno",
     "testAddress": "juno1yxsmtnxdt6gxnaqrg0j0nudg7et2gqcz8yyl52",
