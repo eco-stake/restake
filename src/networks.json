@@ -779,6 +779,12 @@
         "botAddress": "gravity1grfk7t0k42yxpwqhr7kt4te7j73m2a3vx40gyw",
         "runTime": "13:37",
         "minimumReward": 10000
+      },
+      {
+        "address": "gravityvaloper10m848yf5f66qytun249z9k56nvtvknwenp0dts",
+        "botAddress": "gravity1kxd2f28ugzwyv9twexw88kpajvgf94xgeghxtr",
+        "runTime": "every 1 hour",
+        "minimumReward": 10000
       }
     ],
     "authzSupport": true
@@ -1681,6 +1687,12 @@
         "botAddress": "stars1r3g7japkptsvt3gv52gvuudprtcue762n08yrf",
         "runTime": "12:00",
         "minimumReward": 10000
+      },
+      {
+        "address": "starsvaloper1926sz228mm6yjlwye9hfxxh0hh4nm4aqfp29l7",
+        "botAddress": "stars1kxd2f28ugzwyv9twexw88kpajvgf94xgfyjr96",
+        "runTime": "every 1 hour",
+        "minimumReward": 10000
       }
     ],
     "authzSupport": true
@@ -1840,6 +1852,12 @@
       {
         "address": "umeevaloper1q5z5vdxtvqmf4eq37pm2xnytc69st382cadf0x",
         "botAddress": "umee1mmg6pqqnu6ktl4yp0afwzz6g33w8kpw3wajxln",
+        "runTime": "every 1 hour",
+        "minimumReward": 10000
+      },
+      {
+        "address": "umeevaloper142xnwdgpmpzgsyckxwyd5c9ppmmvqa9k7c4fh8",
+        "botAddress": "umee1kxd2f28ugzwyv9twexw88kpajvgf94xg0wcp2e",
         "runTime": "every 1 hour",
         "minimumReward": 10000
       }
