@@ -2238,7 +2238,7 @@
       {
         "address": "cerberusvaloper1lxz6ucd5qydhpwtpatn9wu83fc002v08tek6zh",
         "botAddress": "cerberus1305e92ng6a9pdh3ttc3ld459ckxupxt3tt620v",
-        "runTime": "every 5 minutes",
+        "runTime": "every 20 minutes",
         "minimumReward": 10000
       },
       {
