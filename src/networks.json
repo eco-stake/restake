@@ -2391,6 +2391,12 @@
         "botAddress": "secret1yqv7y5ynhas45hu59vhe3qvw0kmc8amtx7s7ur",
         "runTime": "21:00",
         "minimumReward": 100000
+      },
+      {
+        "address": "secretvaloper1vzkdmu0sa8gaj686jh5all7hpmmsp8x87vyz8z",
+        "botAddress": "secret1hl0jgxre5z0nkyjj07c5vfdy44yk44atm6k9jp",
+        "runTime": "22:30",
+        "minimumReward": 100000
       }
     ],
     "authzSupport": true
