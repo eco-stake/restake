@@ -178,6 +178,7 @@
   },
   {
     "name": "juno",
+    "apyEnabled": false,
     "restUrl": [
       "https://rest.cosmos.directory/juno",
       "https://lcd-juno.itastakers.com"
@@ -810,6 +811,7 @@
   },
   {
     "name": "terra",
+    "apyEnabled": false,
     "restUrl": [
       "https://rest.cosmos.directory/terra"
     ],
@@ -1035,6 +1037,7 @@
   },
   {
     "name": "emoney",
+    "apyEnabled": false,
     "restUrl": [
       "https://rest.cosmos.directory/emoney",
       "https://lcd-emoney.keplr.app",
@@ -1157,6 +1160,7 @@
   },
   {
     "name": "desmos",
+    "apyEnabled": false,
     "restUrl": [
       "https://rest.cosmos.directory/desmos",
       "https://api.mainnet.desmos.network"
@@ -1284,6 +1288,7 @@
   },
   {
     "name": "evmos",
+    "apyEnabled": false,
     "restUrl": [
       "https://rest.cosmos.directory/evmos",
       "https://rest.bd.evmos.org:1317"
@@ -1578,6 +1583,7 @@
   },
   {
     "name": "stargaze",
+    "apyEnabled": false,
     "restUrl": [
       "https://rest.cosmos.directory/stargaze",
       "https://rest.stargaze-apis.com",
@@ -1675,6 +1681,7 @@
   },
   {
     "name": "comdex",
+    "apyEnabled": false,
     "restUrl": [
       "https://rest.cosmos.directory/comdex",
       "https://api.comdex.audit.one/rest",
@@ -1953,6 +1960,7 @@
   },
   {
     "name": "agoric",
+    "apyEnabled": false,
     "restUrl": [
       "https://rest.cosmos.directory/agoric"
     ],
@@ -2014,8 +2022,7 @@
   {
     "name": "kichain",
     "restUrl": [
-      "https://rest.cosmos.directory/kichain",
-      "https://api-mainnet.blockchain.ki"
+      "https://rest.cosmos.directory/kichain"
     ],
     "rpcUrl": [
       "https://rpc.cosmos.directory/kichain"
@@ -2147,12 +2154,10 @@
   {
     "name": "cerberus",
     "restUrl": [
-      "https://rest.cosmos.directory/cerberus",
-      "https://api-cerberus.zenchainlabs.io/"
+      "https://rest.cosmos.directory/cerberus"
     ],
     "rpcUrl": [
-      "https://rpc.cosmos.directory/cerberus",
-      "https://rpc-cerberus.zenchainlabs.io/"
+      "https://rpc.cosmos.directory/cerberus"
     ],
     "gasPrice": "0.025ucrbrus",
     "testAddress": "cerberus1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczd38dxa",
