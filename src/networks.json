@@ -1873,6 +1873,12 @@
         "botAddress": "bitsong1m52073hvnza73uwrf45avgdwljyqx7p04qh3yw",
         "runTime": "21:00",
         "minimumReward": 100000
+      },
+      {
+        "address": "bitsongvaloper1fk4up90cx352jwr6clug8pkg5jt28ha9whf6pu",
+        "botAddress": "bitsong14a78h6202u4xg6phjnd8rmr5fq98zzdlfczze0",
+        "runTime": "every 4 hour",
+        "minimumReward": 100000
       }
     ],
     "authzSupport": true
