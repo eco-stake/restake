@@ -1238,6 +1238,12 @@
         "botAddress": "desmos169n5p9xuhsnn85xunkg7sdmhtwqgwc3jhnzc0u",
         "runTime": "21:00",
         "minimumReward": 10000
+      },
+      {
+        "address": "desmosvaloper1axt95v5rpc97dtnl24mxtfj95gpxu59vn6xyvw",
+        "botAddress": "desmos1qfp2g2ve043h9538nvns6ggda7686m7zvyvz8t",
+        "runTime": "every 4 hour",
+        "minimumReward": 10000
       }
     ],
     "authzSupport": true
