@@ -12,6 +12,12 @@
     "ownerAddress": "osmovaloper1u5v0m74mql5nzfx2yh43s2tke4mvzghr6m2n5t",
     "operators": [
       {
+        "address": "osmovaloper122yaxffys6rmv03nwwkmn3rvr5skzxl9lry2a5",
+        "botAddress": "osmo1m7xlymnpxl2d4llu67v08e8xs67dj2fz0wqmqw",
+        "runTime": ["09:00", "21:00"],
+        "minimumReward": 10
+      },
+      {
         "address": "osmovaloper17mggn4znyeyg25wd7498qxl7r2jhgue8td054x",
         "botAddress": "osmo1ks0uf2zxgv6qjyzjwfvfxyv5vp2m6nk5p5wwvc",
         "runTime": "18:00",
