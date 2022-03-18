@@ -3,6 +3,19 @@ import parse from 'parse-duration'
 
 const Operator = (data, validatorData) => {
 
+  function runsPerDay() {
+    const { runTime } = data
+    if(Array.isArray(runTime)){
+      return runTime.length
+    }else{
+      if(runTime.startsWith('every')){
+        const interval = parse(runTime.replace('every ', ''))
+        return (1000 * 60 * 60 * 24) / interval
+      }
+      return 1
+    }
+  }
+
   function runTimes() {
     if(Array.isArray(data.runTime)) return data.runTime
     return [data.runTime]
@@ -67,7 +80,8 @@ const Operator = (data, validatorData) => {
     nextRun,
     frequency,
     runTimes,
-    runTimesString
+    runTimesString,
+    runsPerDay
   }
 }
 
