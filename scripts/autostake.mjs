@@ -1,6 +1,6 @@
 import { DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
 import Network from '../src/utils/Network.mjs'
-import {mapSync, executeSync, overrideNetworks} from '../src/utils/Helpers.mjs'
+import {timeStamp, mapSync, executeSync, overrideNetworks} from '../src/utils/Helpers.mjs'
 
 import {
   coin
@@ -17,7 +17,7 @@ class Autostake {
   constructor(){
     this.mnemonic = process.env.MNEMONIC
     if(!this.mnemonic){
-      console.log('Please provide a MNEMONIC environment variable')
+      timeStamp('Please provide a MNEMONIC environment variable')
       process.exit()
     }
   }
@@ -32,20 +32,20 @@ class Autostake {
         try {
           client = await this.getClient(data)
         } catch (error) {
-          return console.log('Failed to connect', error.message)
+          return timeStamp('Failed to connect', error.message)
         }
 
-        if(!client) return console.log('Skipping')
+        if(!client) return timeStamp('Skipping')
 
-        console.log('Using REST URL', client.network.restUrl)
-        console.log('Using RPC URL', client.network.rpcUrl)
+        timeStamp('Using REST URL', client.network.restUrl)
+        timeStamp('Using RPC URL', client.network.rpcUrl)
 
-        if(!data.overriden) console.log('You are using public nodes, script may fail with many delegations. Check the README to use your own')
+        if(!data.overriden) timeStamp('You are using public nodes, script may fail with many delegations. Check the README to use your own')
 
-        console.log('Running autostake')
+        timeStamp('Running autostake')
         await this.checkBalance(client)
 
-        console.log('Finding delegators...')
+        timeStamp('Finding delegators...')
         let delegations
         const addresses = await this.getDelegations(client).then(delegations => {
           return delegations.map(delegation => {
@@ -55,16 +55,16 @@ class Autostake {
           })
         })
 
-        console.log("Checking", addresses.length, "delegators for grants...")
+        timeStamp("Checking", addresses.length, "delegators for grants...")
         let grantedAddresses = await this.getGrantedAddresses(client, addresses)
 
-        console.log("Found", grantedAddresses.length, "delegators with valid grants...")
+        timeStamp("Found", grantedAddresses.length, "delegators with valid grants...")
         let calls = _.compact(grantedAddresses).map(item => {
           return async () => {
             try {
               await this.autostake(client, item, [client.operator.address])
             } catch (error) {
-              console.log(item, 'ERROR: Skipping this run -', error.message)
+              timeStamp(item, 'ERROR: Skipping this run -', error.message)
             }
           }
         })
@@ -84,16 +84,16 @@ class Autostake {
     const accounts = await wallet.getAccounts()
     const botAddress = accounts[0].address
 
-    console.log(network.prettyName, 'bot address is', botAddress)
+    timeStamp(network.prettyName, 'bot address is', botAddress)
 
     const operatorData = data.operators.find(el => el.botAddress === botAddress)
 
-    if(!operatorData) return console.log('Not an operator')
-    if(!network.authzSupport) return console.log('No Authz support')
+    if(!operatorData) return timeStamp('Not an operator')
+    if(!network.authzSupport) return timeStamp('No Authz support')
 
     network = await Network(data)
-    if(!network.rpcUrl) return console.log('Could not connect to RPC API')
-    if(!network.restUrl) return console.log('Could not connect to REST API')
+    if(!network.rpcUrl) return timeStamp('Could not connect to RPC API')
+    if(!network.restUrl) return timeStamp('Could not connect to REST API')
 
     const client = await network.signingClient(wallet)
     client.registry.register("/cosmos.authz.v1beta1.MsgExec", MsgExec)
@@ -114,14 +114,14 @@ class Autostake {
     return client.queryClient.getBalance(client.operator.botAddress, client.network.denom)
       .then(
         (balance) => {
-          console.log("Bot balance is", balance.amount, balance.denom)
+          timeStamp("Bot balance is", balance.amount, balance.denom)
           if(balance.amount < 1_000){
-            console.log('Bot balance is too low')
+            timeStamp('Bot balance is too low')
             process.exit()
           }
         },
         (error) => {
-          console.log("ERROR:", error.message || error)
+          timeStamp("ERROR:", error.message || error)
           process.exit()
         }
       )
@@ -129,9 +129,9 @@ class Autostake {
 
   getDelegations(client) {
     return client.queryClient.getAllValidatorDelegations(client.operator.address, 100, (pages) => {
-      console.log("...batch", pages.length)
+      timeStamp("...batch", pages.length)
     }).catch(error => {
-      console.log("ERROR:", error.message || error)
+      timeStamp("ERROR:", error.message || error)
       process.exit()
     })
   }
@@ -143,12 +143,12 @@ class Autostake {
           const validators = await this.getGrantValidators(client, item)
           return validators ? item : undefined
         } catch (error) {
-          console.log(item, 'Failed to get address')
+          timeStamp(item, 'Failed to get address')
         }
       }
     })
     let grantedAddresses = await mapSync(grantCalls, 100, (batch, index) => {
-      console.log('...batch', index + 1)
+      timeStamp('...batch', index + 1)
     })
     return _.compact(grantedAddresses.flat())
   }
@@ -160,7 +160,7 @@ class Autostake {
           if(result.claimGrant && result.stakeGrant){
             const grantValidators = result.stakeGrant.authorization.allow_list.address
             if(!grantValidators.includes(client.operator.address)){
-              console.log(delegatorAddress, "Not autostaking for this validator, skipping")
+              timeStamp(delegatorAddress, "Not autostaking for this validator, skipping")
               return
             }
 
@@ -168,7 +168,7 @@ class Autostake {
           }
         },
         (error) => {
-          console.log(delegatorAddress, "ERROR skipping this run:", error.message || error)
+          timeStamp(delegatorAddress, "ERROR skipping this run:", error.message || error)
         }
       )
   }
@@ -179,11 +179,11 @@ class Autostake {
     const perValidatorReward = parseInt(totalRewards / validators.length)
 
     if(perValidatorReward < client.operator.data.minimumReward){
-      console.log(address, perValidatorReward, client.network.denom, 'reward is too low, skipping')
+      timeStamp(address, perValidatorReward, client.network.denom, 'reward is too low, skipping')
       return
     }
 
-    console.log(address, "Autostaking", perValidatorReward, client.network.denom, validators.length > 1 ? "per validator" : '')
+    timeStamp(address, "Autostaking", perValidatorReward, client.network.denom, validators.length > 1 ? "per validator" : '')
 
     let messages = validators.map(el => {
       return this.buildRestakeMessage(address, el, perValidatorReward, client.network.denom)
@@ -193,9 +193,9 @@ class Autostake {
 
     const memo = 'REStaked by ' + client.operator.moniker
     return client.signingClient.signAndBroadcast(client.operator.botAddress, [execMsg], undefined, memo).then((result) => {
-      console.log(address, "Successfully broadcasted");
+      timeStamp(address, "Successfully broadcasted");
     }, (error) => {
-      console.log(address, 'Failed to broadcast:', error.message)
+      timeStamp(address, 'Failed to broadcast:', error.message)
       // Skip on failure
       // process.exit()
     })
@@ -242,7 +242,7 @@ class Autostake {
           return total
         },
         (error) => {
-          console.log(address, "ERROR skipping this run:", error.message || error)
+          timeStamp(address, "ERROR skipping this run:", error.message || error)
           return 0
         }
       )
