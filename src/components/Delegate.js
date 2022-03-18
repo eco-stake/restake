@@ -4,7 +4,6 @@ import ValidatorImage from './ValidatorImage'
 import ValidatorLink from './ValidatorLink'
 import Coins from './Coins'
 import TooltipIcon from './TooltipIcon'
-import CountdownRestake from './CountdownRestake'
 
 import React, { useState, useRef } from 'react';
 
@@ -14,7 +13,8 @@ import {
   Modal,
   OverlayTrigger,
   Tooltip,
-  Table
+  Table,
+  Spinner
 } from 'react-bootstrap'
 
 import {
@@ -150,6 +150,7 @@ function Delegate(props) {
               operators={props.operators}
               exclude={excludeValidators()}
               validators={props.validators}
+              validatorApy={props.validatorApy}
               getValidatorImage={props.getValidatorImage}
               delegations={props.delegations}
               selectValidator={(selectedValidator) => setSelectedValidator(selectedValidator)} />}
@@ -167,6 +168,32 @@ function Delegate(props) {
                     <td scope="row">Commission</td>
                     <td>{selectedValidator.commission.commission_rates.rate * 100}%</td>
                   </tr>
+                  {props.network.data.apyEnabled !== false && (
+                    <tr>
+                      <td scope="row">
+                        <TooltipIcon
+                          icon={<span className="p-0 text-decoration-underline">APY</span>}
+                          identifier="delegations-apy"
+                        >
+                          <div className="mt-2 text-center">
+                            <p>Based on commission, compounding frequency and estimated block times.</p>
+                            <p>This is an estimate and best case scenario.</p>
+                          </div>
+                        </TooltipIcon>
+                      </td>
+                      <td>
+                        {Object.keys(props.validatorApy).length > 0
+                          ? props.validatorApy[selectedValidator.operator_address]
+                            ? Math.round(props.validatorApy[selectedValidator.operator_address] * 100) + "%"
+                            : ""
+                          : (
+                            <Spinner animation="border" role="status" className="spinner-border-sm text-secondary">
+                              <span className="visually-hidden">Loading...</span>
+                            </Spinner>
+                          )}
+                      </td>
+                    </tr>
+                  )}
                   {!!securityContact() && (
                     <tr>
                       <td scope="row">Contact</td>

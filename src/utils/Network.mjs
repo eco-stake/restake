@@ -1,6 +1,7 @@
 import _ from 'lodash'
 import QueryClient from './QueryClient.mjs'
 import SigningClient from './SigningClient.mjs'
+import ApyClient from '../ApyClient.mjs'
 import Operator from './Operator.mjs'
 import Chain from './Chain.mjs'
 
@@ -18,6 +19,8 @@ const Network = async (data, withoutQueryClient) => {
     const gasPrice = data.gasPrice || '0.0025' + chain.denom
     return SigningClient(queryClient.rpcUrl, chain.chainId, gasPrice, wallet, key)
   }
+
+  const apyClient = queryClient && ApyClient(chain, queryClient.rpcUrl, queryClient.restUrl)
 
   const getOperator = (operators, operatorAddress) => {
     return operators.find(elem => elem.address === operatorAddress)
@@ -48,6 +51,8 @@ const Network = async (data, withoutQueryClient) => {
 
   return {
     connected: queryClient && queryClient.connected,
+    enabled: data.enabled,
+    apyEnabled: data.apyEnabled,
     name: data.name,
     prettyName: chain.prettyName,
     chainId: chain.chainId,
@@ -63,10 +68,11 @@ const Network = async (data, withoutQueryClient) => {
     restUrl: queryClient && queryClient.restUrl,
     rpcUrl: queryClient && queryClient.rpcUrl,
     operators: data.operators,
-    authzSupport: data.authzSupport,
+    authzSupport: chain.authzSupport,
     data,
     chain,
     queryClient,
+    getApy: apyClient && apyClient.getApy,
     signingClient,
     getValidators,
     getOperators,
