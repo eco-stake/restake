@@ -1269,6 +1269,12 @@
         "botAddress": "desmos14a78h6202u4xg6phjnd8rmr5fq98zzdl3fa6vc",
         "runTime": "every 4 hour",
         "minimumReward": 10000
+      },
+      {
+	"address": "desmosvaloper1mzar2v3xh3at49t2azg9qnkuc9nfvyurqmatuv",
+	"botAddress": "desmos1g4zywrluj6ac0xpu6f6jqul52rv0am66r8qy5h",
+	"runTime": "21:00",
+	"minimumReward": 100000
       }
     ],
     "authzSupport": true
@@ -1590,6 +1596,12 @@
         "botAddress": "lum14a78h6202u4xg6phjnd8rmr5fq98zzdlsmdrw5",
         "runTime": "every 4 hour",
         "minimumReward": 10000
+      },
+      {
+        "address": "lumvaloper1qckuz6ks3kgjjnp26gtw3ya3e2l7tdp4hcvyem",
+        "botAddress": "lum1g4zywrluj6ac0xpu6f6jqul52rv0am66z4sakm",
+        "runTime": "21:00",
+        "minimumReward": 100000
       }
     ],
     "authzSupport": true
@@ -1917,6 +1929,12 @@
         "botAddress": "bitsong14a78h6202u4xg6phjnd8rmr5fq98zzdlfczze0",
         "runTime": "every 4 hour",
         "minimumReward": 100000
+      },
+      {
+	"address": "bitsongvaloper1vtc6xlwpeuf9r5ee5hxq40hcllxcad9pnl99xn",
+	"botAddress": "bitsong1g4zywrluj6ac0xpu6f6jqul52rv0am66mklupq",
+	"runTime": "21:00",
+	"minimumReward": 100000
       }
     ],
     "authzSupport": true
