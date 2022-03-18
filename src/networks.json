@@ -1188,7 +1188,7 @@
     "operators": [
       {
         "address": "desmosvaloper1xk2kv26fjd9zrg4l3qc7lwxv03w4ydeeppqkkp",
-        "botAddress": "desmos1dpcdg5qr033gdzlde5qqgd9ysssfcjhq6w9fjw",
+        "botAddress": "desmos1js340eq8082essggjtv8lf9df7qlnny8xuj9ul",
 	"runTime": [
           "09:00",
      	  "21:00"
@@ -1860,7 +1860,7 @@
     "operators": [
       {
         "address": "bitsongvaloper10uv3t6yru5dryz2yy9em2pzmqezyhsp0gkkxd2",
-        "botAddress": "bitsong1xkst6jjmtrd7v9wahqazguxuy04msfuy5ljm09",
+        "botAddress": "bitsong1js340eq8082essggjtv8lf9df7qlnny87ddafg",
 	"runTime": [
           "09:00",
 	  "21:00"
@@ -2182,7 +2182,7 @@
       {
         "address": "cerberusvaloper1xkv494sduqkpadwesqlsp6069yepsj58axja5l",
         "botAddress": "cerberus1js340eq8082essggjtv8lf9df7qlnny8wrlu7v",
-        "runTime": "every 2 hour",
+        "runTime": "every 1 hour",
         "minimumReward": 100000000
       },
       {
