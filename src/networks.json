@@ -1817,6 +1817,12 @@
     ],
     "operators": [
       {
+        "address": "umeevaloper18s567a3dxf09q7erpcp8q20dpauugxwx8xsrcc",
+        "botAddress": "umee1upe9xslwkqmmd8m7f7nuyhedhjc6saqhy4pldd",
+        "runTime": "every 15 minutes",
+        "minimumReward": 100000
+      },
+      {
         "address": "umeevaloper14vmuhgm04ffvzts9jxm2wy5d538g96ru9fsg5v",
         "botAddress": "umee1m5hgzum68rjf4c7zhezgkj8hlnmr0kghyhx5wz",
         "runTime": "every 1 hour",
