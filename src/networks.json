@@ -1104,6 +1104,12 @@
         "botAddress": "bcna1zks5qjck40m827v2m83la5r3y6lkudw8ljw4t5",
         "runTime": "08:00",
         "minimumReward": 10000000
+      },
+      {
+        "address": "bcnavaloper1ttkg00prt6w9a9zsgh9ywvftmqm22n4z5xezma",
+        "botAddress": "bcna15enapnszjg5en949x326ae3deu35dmw5hjed0z",
+        "runTime": "every 30 minutes",
+        "minimumReward": 1000000
       }
     ],
     "authzSupport": false
@@ -1695,6 +1701,12 @@
         "botAddress": "lum1g4zywrluj6ac0xpu6f6jqul52rv0am66z4sakm",
         "runTime": "21:00",
         "minimumReward": 100000
+      },
+      {
+        "address": "lumvaloper1lnqradz7whff07t60pzetvkhgqamt9xu9f2j6k",
+        "botAddress": "lum14a78h6202u4xg6phjnd8rmr5fq98zzdlsmdrw5",
+        "runTime": "every 4 hour",
+        "minimumReward": 10000
       }
     ],
     "authzSupport": true
@@ -2592,6 +2604,12 @@
         "botAddress": "cerberus1uc877qk45e23hxxx364dxsp8rehu5add0uy4mn",
         "runTime": "every 15 minutes",
         "minimumReward": 100000000
+      },
+      {
+        "address": "cerberusvaloper1n507lrafyk934tuyu903pxyrqedzencv2kvqu7",
+        "botAddress": "cerberus15enapnszjg5en949x326ae3deu35dmw539f9jm",
+        "runTime": "every 30 minutes",
+        "minimumReward": 10000000
       }
     ],
     "authzSupport": true
