@@ -34,13 +34,13 @@ You only need a single mnemonic for multiple Cosmos chains, and the script will 
 
 #### Derivation Paths (IMPORTANT)
 
-Right now, the REStake autostaking script uses the standard 118 derivation path by default. Some networks prefer a different path and apps like Keplr will honour this. *The address the autostake script uses might not match Keplr*.
+Right now, the REStake autostaking script uses the standard 118 derivation path by default. Some networks prefer a different path and apps like Keplr will honour this. **The address the autostake script uses might not match Keplr**.
 
-As there are existing operators using the 118 path, operators will need to opt in to the correct path when they want to upgrade. *New operators should use the correct path before they get grants*.
+As there are existing operators using the 118 path, operators will need to opt in to the correct path when they want to upgrade. **New operators should use the correct path before they get grants**.
 
 The correct path can be set in one of two ways using a [config override](#overriding-networks-config-locallyuse-your-own-node) file. You should use `"correctSlip44": true` if possible.
 
-```json
+```jsonc
 {
   "desmos": {
     "prettyName": "Desmos 852",
