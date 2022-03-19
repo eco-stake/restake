@@ -65,13 +65,13 @@ const QueryClient = async (chainId, rpcUrls, restUrls) => {
       });
   };
 
-  const getRewards = (address) => {
+  const getRewards = (address, opts) => {
     return axios
       .get(
         restUrl +
           "/cosmos/distribution/v1beta1/delegators/" +
           address +
-          "/rewards"
+          "/rewards", opts
       )
       .then((res) => res.data)
       .then((result) => {
@@ -83,13 +83,13 @@ const QueryClient = async (chainId, rpcUrls, restUrls) => {
       });
   };
 
-  const getGrants = (botAddress, address) => {
+  const getGrants = (botAddress, address, opts) => {
     const searchParams = new URLSearchParams();
     searchParams.append("grantee", botAddress);
     searchParams.append("granter", address);
     // searchParams.append("msg_type_url", "/cosmos.staking.v1beta1.MsgDelegate");
     return axios
-      .get(restUrl + "/cosmos/authz/v1beta1/grants?" + searchParams.toString())
+      .get(restUrl + "/cosmos/authz/v1beta1/grants?" + searchParams.toString(), opts)
       .then((res) => res.data)
       .then((result) => {
         const claimGrant = result.grants.find((el) => {
