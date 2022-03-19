@@ -209,18 +209,33 @@ Create a `src/networks.local.json` file with JSON in the following format:
 ```json
 {
   "osmosis": {
-    "prettyName": "Foobar",
+    "prettyName": "Osmosis with Fees",
     "restUrl": [
       "https://rest.validator.com/osmosis"
     ],
     "rpcUrl": [
       "https://rpc.validator.com/osmosis"
-    ]
+    ],
+    "gasPrice": "0.001uosmo",
+    "autostake": {
+      "batchTxs": 69
+    }
+  },
+  "desmos": {
+    "prettyName": "Desmos 118",
+    "autostake": {
+      "correctSlip44": true
+    }
+  },
+  "cosmoshub": {
+    "enabled": false
   }
 }
 ```
 
-Any values you specify will override the `networks.json` file. Arrays will not be merged. The file is `.gitignore`'d so it won't affect updates.
+Any values you specify will override the `networks.json` file. These are examples, you can override as much or little as you need.
+
+Arrays will be replaced and not merged. The file is `.gitignore`'d so it won't affect upstream updates.
 
 ## Submiting your operator
 
