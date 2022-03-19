@@ -61,6 +61,7 @@ class Autostake {
 
         let grantMessages = await this.getAutostakeMessages(client, grantedAddresses, [client.operator.address])
         await this.autostake(client, grantMessages)
+        timeStamp(client.network.prettyName, "finished")
       }
     })
     await executeSync(calls, 1)
