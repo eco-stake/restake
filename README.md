@@ -38,7 +38,7 @@ Right now, the REStake autostaking script uses the standard 118 derivation path 
 
 As there are existing operators using the 118 path, operators will need to opt in to the correct path when they want to upgrade. *New operators should use the correct path before they get grants*.
 
-The correct path can be set in one of two ways, using a [config override](#overriding-networks-config-locallyuse-your-own-node) file. You should use `"correctSlip44": true` if possible.
+The correct path can be set in one of two ways using a [config override](#overriding-networks-config-locallyuse-your-own-node) file. You should use `"correctSlip44": true` if possible.
 
 ```json
 {
@@ -46,11 +46,13 @@ The correct path can be set in one of two ways, using a [config override](#overr
     "prettyName": "Desmos 852",
     "autostake": {
       "correctSlip44": true, // Use the correct slip44 path from chain-registry
-      "slip44": 852 // Set a specific slip44 path
+      "slip44": 852 // Alternatively set a specific slip44 path
     }
   }
 }
 ```
+
+In the future, `correctSlip44` will become the default and you will need to set `slip44` explicitely if you want to use the 118 path.
 
 ### Setup the autostaking script and run daily
 
