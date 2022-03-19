@@ -77,7 +77,7 @@
       {
         "address": "osmovaloper1xwazl8ftks4gn00y5x3c47auquc62ssuh8af89",
         "botAddress": "osmo195mm9y35sekrjk73anw2az9lv9xs5mztjduk29",
-        "runTime": "every 1 hour",
+        "runTime": "17:30",
         "minimumReward": 10000
       },
       {
@@ -1934,7 +1934,7 @@
         "address": "cheqdvaloper1xwazl8ftks4gn00y5x3c47auquc62ssu5r5utr",
         "botAddress": "cheqd195mm9y35sekrjk73anw2az9lv9xs5mzt55rxhx",
         "runTime": "every 1 hour",
-        "minimumReward": 1000
+        "minimumReward": 10000000
       }
     ],
     "authzSupport": true
@@ -2470,7 +2470,7 @@
       {
         "address": "cerberusvaloper1xwazl8ftks4gn00y5x3c47auquc62ssuvav5f9",
         "botAddress": "cerberus195mm9y35sekrjk73anw2az9lv9xs5mztx300fu",
-        "runTime": "every 1 hour",
+        "runTime": "every 15 minutes",
         "minimumReward": 1000000
       },
       {
