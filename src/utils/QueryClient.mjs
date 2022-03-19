@@ -40,6 +40,34 @@ const QueryClient = async (chainId, rpcUrls, restUrls) => {
       .then((res) => res.data);
   };
 
+  const getAllValidatorDelegations = (
+    validatorAddress,
+    pageSize,
+    pageCallback
+  ) => {
+    return getAllPages((nextKey) => {
+      return getValidatorDelegations(validatorAddress, pageSize, nextKey);
+    }, pageCallback).then((pages) => {
+      return pages.map((el) => el.delegation_responses).flat();
+    });
+  };
+
+  const getValidatorDelegations = (validatorAddress, pageSize, nextKey) => {
+    const searchParams = new URLSearchParams();
+    if (pageSize) searchParams.append("pagination.limit", pageSize);
+    if (nextKey) searchParams.append("pagination.key", nextKey);
+
+    return axios
+      .get(
+        restUrl +
+          "/cosmos/staking/v1beta1/validators/" +
+          validatorAddress +
+          "/delegations?" +
+          searchParams.toString()
+      )
+      .then((res) => res.data);
+  };
+
   const getBalance = (address, denom) => {
     return axios
       .get(restUrl + "/cosmos/bank/v1beta1/balances/" + address)
@@ -121,32 +149,18 @@ const QueryClient = async (chainId, rpcUrls, restUrls) => {
       });
   };
 
-  const getAllValidatorDelegations = (
-    validatorAddress,
-    pageSize,
-    pageCallback
-  ) => {
-    return getAllPages((nextKey) => {
-      return getValidatorDelegations(validatorAddress, pageSize, nextKey);
-    }, pageCallback).then((pages) => {
-      return pages.map((el) => el.delegation_responses).flat();
-    });
-  };
-
-  const getValidatorDelegations = (validatorAddress, pageSize, nextKey) => {
-    const searchParams = new URLSearchParams();
-    if (pageSize) searchParams.append("pagination.limit", pageSize);
-    if (nextKey) searchParams.append("pagination.key", nextKey);
-
+  const getWithdrawAddress = (address, opts) => {
     return axios
       .get(
         restUrl +
-          "/cosmos/staking/v1beta1/validators/" +
-          validatorAddress +
-          "/delegations?" +
-          searchParams.toString()
+          "/cosmos/distribution/v1beta1/delegators/" +
+          address +
+          "/withdraw_address", opts
       )
-      .then((res) => res.data);
+      .then((res) => res.data)
+      .then((result) => {
+        return result.withdraw_address
+      });
   };
 
   const getAllPages = async (getPage, pageCallback) => {
@@ -191,6 +205,7 @@ const QueryClient = async (chainId, rpcUrls, restUrls) => {
     getDelegations,
     getRewards,
     getGrants,
+    getWithdrawAddress
   };
 };
 

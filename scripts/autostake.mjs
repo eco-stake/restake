@@ -169,7 +169,7 @@ class Autostake {
           const validators = await this.getGrantValidators(client, item)
           return validators ? item : undefined
         } catch (error) {
-          timeStamp(item, 'Failed to get address')
+          timeStamp(item, 'Failed to get address', error.message)
         }
       }
     })
@@ -205,7 +205,7 @@ class Autostake {
         try {
           return await this.getAutostakeMessage(client, item, validators)
         } catch (error) {
-          timeStamp(item, 'Failed to get address')
+          timeStamp(item, 'Failed to get address', error.message)
         }
       }
     })
@@ -222,6 +222,12 @@ class Autostake {
 
     if (perValidatorReward < client.operator.data.minimumReward) {
       timeStamp(address, perValidatorReward, client.network.denom, 'reward is too low, skipping')
+      return
+    }
+
+    const withdrawAddress = await client.queryClient.getWithdrawAddress(address, {timeout: 5000})
+    if(withdrawAddress && withdrawAddress !== address){
+      timeStamp(address, 'has a different withdraw address:', withdrawAddress)
       return
     }
 
