@@ -2413,6 +2413,9 @@
       "https://rpc.cosmos.directory/cerberus"
     ],
     "gasPrice": "0.025ucrbrus",
+    "autostake": {
+      "batchTxs": 100
+    },
     "testAddress": "cerberus1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczd38dxa",
     "ownerAddress": "cerberusvaloper1tat2cy3f9djtq9z7ly262sqngcarvaktr0w78f",
     "operators": [
