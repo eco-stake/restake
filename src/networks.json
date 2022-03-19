@@ -1473,6 +1473,12 @@
         "botAddress": "evmos1spdlljxpvgzn52qky7hafsdqxpchpydqfg403n",
         "runTime": "every 1 hour",
         "minimumReward": 1000000
+      },
+      {
+        "address": "evmosvaloper10qpycc2egucukw8afcz4us7xlxxmfwh6rscvjz",
+        "botAddress": "evmos1uzjr9euyy4dflxta40lar6w5jm8jdm8gpeszf0",
+        "runTime": "20:00",
+        "minimumReward": 1000000000000000
       }
     ],
     "authzSupport": true
