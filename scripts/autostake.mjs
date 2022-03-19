@@ -202,7 +202,7 @@ class Autostake {
   }
 
   async autostake(client, messages){
-    let batchSize = 50
+    let batchSize = client.network.data.autostake?.batchTxs || 50
     let batches = _.chunk(_.compact(messages), batchSize)
     timeStamp('Sending', messages.length, 'messages in', batches.length, 'batches of', batchSize)
     let calls = batches.map((batch, index) => {
