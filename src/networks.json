@@ -221,7 +221,7 @@
       {
         "address": "junovaloper10wxn2lv29yqnw2uf4jf439kwy5ef00qdelfp7r",
         "botAddress": "juno1xs023g3yj2mavwn3cjclgsh8mlk0kgsjsvdd2e",
-        "runTime": "00:00",
+        "runTime": ["00:00","12:00"],
         "minimumReward": 10000
       },
       {
@@ -1646,7 +1646,7 @@
       {
         "address": "starsvaloper10wxn2lv29yqnw2uf4jf439kwy5ef00qd0jluj0",
         "botAddress": "stars1xs023g3yj2mavwn3cjclgsh8mlk0kgsjjzetx5",
-        "runTime": "00:00",
+        "runTime": ["00:00","12:00"],
         "minimumReward": 10000
       },
       {
