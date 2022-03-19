@@ -221,8 +221,8 @@
       {
         "address": "junovaloper1x8u2ypdr35802tjyjqyxan8x85fzxe6sk0qmh8",
         "botAddress": "juno1r8egcurpwxftegr07gjv9gwffw4fk009a4v3ll",
-        "runTime": "21:00",
-        "minimumReward": 10000
+        "runTime": "every 1 hour",
+        "minimumReward": 20000
       },
       {
         "address": "junovaloper10wxn2lv29yqnw2uf4jf439kwy5ef00qdelfp7r",
@@ -582,7 +582,7 @@
       {
         "address": "chihuahuavaloper1tzk3kzjy7fj4w37hm5v48c2t8vvgukzcqgkz8k",
         "botAddress": "chihuahua1r8egcurpwxftegr07gjv9gwffw4fk009gjzyep",
-        "runTime": "21:00",
+        "runTime": "every 15 minutes",
         "minimumReward": 1000
       },
       {
@@ -1274,6 +1274,12 @@
         "minimumReward": 1000
       },
       {
+        "address": "desmosvaloper1np3qcmwdju3rtc4a5mavfyflum5gqsljy2vucp",
+        "botAddress": "desmos1v80dwktqstytcnz5esa0hxxam3d83q4xfedj4d",
+        "runTime": "every 1 hour",
+        "minimumReward": 10000
+      },
+      {
         "address": "desmosvaloper17ue85ck027c4grv7nuks7k7p4fqnlc55uqhskj",
         "botAddress": "desmos1z0xzvw999jh7ekce7eqnex2fj7cnn6xw6rhufu",
         "runTime": "22:00",
@@ -1604,6 +1610,12 @@
         "address": "lumvaloper1ej2es5fjztqjcd4pwa0zyvaevtjd2y5wf0p22w",
         "botAddress": "lum1gvgcxwdk4j46gx3knhuackvqr2hta29zl4xmxj",
         "runTime": "23:00",
+        "minimumReward": 1001
+      },
+      {
+        "address": "lumvaloper16xvwljz2vqpsdzuskdlqt25e8gxmlpnfq3dcxh",
+        "botAddress": "lum1r8egcurpwxftegr07gjv9gwffw4fk0097djrdh",
+        "runTime": "every 1 hour",
         "minimumReward": 1001
       },
       {
