@@ -798,7 +798,7 @@
         "address": "gravityvaloper122mak6mduuzyww573jlpgv57qhk96aqgu7sd8g",
         "botAddress": "gravity1jh0hzxtyu2a2nc5s9xdxx7zr50wvf97z9sv0tn",
         "runTime": "every 1 hour",
-        "minimumReward": 1000000
+        "minimumReward": 100000
       },
       {
         "address": "gravityvaloper1epfpvqsc34sfserdx8x4t3aszdkar3w684fwr6",
@@ -1073,7 +1073,7 @@
         "address": "bcnavaloper1s43h79qx6j85whr2p6060wvxjuyq9yqdak39dj",
         "botAddress": "bcna1jh0hzxtyu2a2nc5s9xdxx7zr50wvf97zmswkxf",
         "runTime": "every 1 hour",
-        "minimumReward": 1000000
+        "minimumReward": 100000
       },
       {
         "address": "bcnavaloper12wskdt5tcc9yx5ajdx8xjjujuc0fgs5p54j6ug",
@@ -1299,9 +1299,9 @@
       },
       {
         "address": "desmosvaloper1d6xe3ldswgaurszrp3emspvhspvu7hxm4ty8mv",
-        "botAddress": "desmos17srygfu0ky47ctnjrx740c53v57vnerp2rdnh0",
+        "botAddress": "desmos1jh0hzxtyu2a2nc5s9xdxx7zr50wvf97z4cn8er",
         "runTime": "every 1 hour",
-        "minimumReward": 100000
+        "minimumReward": 1000000
       },
       {
         "address": "desmosvaloper19c6nnp6afxj82ehxtlejyvg6zh58050jcgpdj6",
@@ -1520,7 +1520,7 @@
         "address": "sifvaloper1gstrmcv3tqrskdj7uqu4x4tkh8nfw4qp9f85pm",
         "botAddress": "sif1jh0hzxtyu2a2nc5s9xdxx7zr50wvf97zya3pps",
         "runTime": "every 1 hour",
-        "minimumReward": 1000000
+        "minimumReward": 100000000
       },
       {
         "address": "sifvaloper1lnhxf6war6qlldemkqzp0t3g57hpe9a6nh3tyv",
@@ -2046,7 +2046,7 @@
       },
       {
         "address": "bitsongvaloper1pqlxe507avzg2hq8ylcju037ywyh3myfsv9wln",
-        "botAddress": "bitsong1nyq65uezlhy9qpyfd4uqrtahhy70wtc6v4yzg8",
+        "botAddress": "bitsong1jh0hzxtyu2a2nc5s9xdxx7zr50wvf97zdfvlv5",
         "runTime": "every 1 hour",
         "minimumReward": 100000
       },
@@ -2217,6 +2217,12 @@
         "botAddress": "ki1mjq48r6435aewerpruwc8up3tz3rzan2a50c9p",
         "runTime": "21:00",
         "minimumReward": 100000
+      },
+      {
+        "address": "kivaloper14932eu6d398f0ycqj6xtmy9xhaewzegkhz2eap",
+        "botAddress": "ki1jh0hzxtyu2a2nc5s9xdxx7zr50wvf97zsd0c20",
+        "runTime": "every 1 hour",
+        "minimumReward": 1000000
       },
       {
         "address": "kivaloper1gp957czryfgyvxwn3tfnyy2f0t9g2p4pq8jud7",
