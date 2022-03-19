@@ -1,4 +1,5 @@
 import { DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
+import { Slip10RawIndex, pathToString } from "@cosmjs/crypto";
 import Network from '../src/utils/Network.mjs'
 import {timeStamp, mapSync, executeSync, overrideNetworks} from '../src/utils/Helpers.mjs'
 
@@ -77,9 +78,25 @@ class Autostake {
 
   async getClient(data) {
     let network = await Network(data, true)
+    let slip44
+
+    if(network.data.autostake?.correctSlip44){
+      slip44 = network.slip44 || 118
+    }else{
+      slip44 = network.data.autostake?.slip44 || 118
+    }
+    let hdPath = [
+      Slip10RawIndex.hardened(44),
+      Slip10RawIndex.hardened(slip44),
+      Slip10RawIndex.hardened(0),
+      Slip10RawIndex.normal(0),
+      Slip10RawIndex.normal(0),
+    ];
+    slip44 != 118 && timeStamp('Using HD Path', pathToString(hdPath))
 
     const wallet = await DirectSecp256k1HdWallet.fromMnemonic(this.mnemonic, {
-      prefix: network.prefix
+      prefix: network.prefix,
+      hdPaths: [hdPath]
     });
 
     const accounts = await wallet.getAccounts()
