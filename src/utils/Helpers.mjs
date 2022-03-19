@@ -1,5 +1,9 @@
 import _ from 'lodash'
 
+export function timeStamp(...args) {
+  console.log('[' + new Date().toISOString().substring(11, 23) + ']', ...args);
+}
+
 export function overrideNetworks(networks, overrides){
   return networks.map(network => {
     let override = overrides[network.name]
