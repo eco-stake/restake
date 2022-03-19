@@ -46,7 +46,6 @@ class Autostake {
         await this.checkBalance(client)
 
         timeStamp('Finding delegators...')
-        let delegations
         const addresses = await this.getDelegations(client).then(delegations => {
           return delegations.map(delegation => {
             if(delegation.balance.amount === 0) return
@@ -59,16 +58,9 @@ class Autostake {
         let grantedAddresses = await this.getGrantedAddresses(client, addresses)
 
         timeStamp("Found", grantedAddresses.length, "delegators with valid grants...")
-        let calls = _.compact(grantedAddresses).map(item => {
-          return async () => {
-            try {
-              await this.autostake(client, item, [client.operator.address])
-            } catch (error) {
-              timeStamp(item, 'ERROR: Skipping this run -', error.message)
-            }
-          }
-        })
-        await executeSync(calls, 1)
+
+        let grantMessages = await this.getAutostakeMessages(client, grantedAddresses, [client.operator.address])
+        await this.autostake(client, grantMessages)
       }
     })
     await executeSync(calls, 1)
@@ -147,14 +139,14 @@ class Autostake {
         }
       }
     })
-    let grantedAddresses = await mapSync(grantCalls, 100, (batch, index) => {
+    let grantedAddresses = await mapSync(grantCalls, 50, (batch, index) => {
       timeStamp('...batch', index + 1)
     })
     return _.compact(grantedAddresses.flat())
   }
 
   getGrantValidators(client, delegatorAddress) {
-    return client.queryClient.getGrants(client.operator.botAddress, delegatorAddress)
+    return client.queryClient.getGrants(client.operator.botAddress, delegatorAddress, {timeout: 5000})
       .then(
         (result) => {
           if(result.claimGrant && result.stakeGrant){
@@ -173,7 +165,23 @@ class Autostake {
       )
   }
 
-  async autostake(client, address, validators){
+  async getAutostakeMessages(client, addresses, validators){
+    let calls = addresses.map(item => {
+      return async () => {
+        try {
+          return await this.getAutostakeMessage(client, item, validators)
+        } catch (error) {
+          timeStamp(item, 'Failed to get address')
+        }
+      }
+    })
+    let messages = await mapSync(calls, 50, (batch, index) => {
+      // timeStamp('...batch', index + 1)
+    })
+    return _.compact(messages.flat())
+  }
+
+  async getAutostakeMessage(client, address, validators){
     const totalRewards = await this.totalRewards(client, address, validators)
 
     const perValidatorReward = parseInt(totalRewards / validators.length)
@@ -183,22 +191,35 @@ class Autostake {
       return
     }
 
-    timeStamp(address, "Autostaking", perValidatorReward, client.network.denom, validators.length > 1 ? "per validator" : '')
+    timeStamp(address, "Can autostake", perValidatorReward, client.network.denom, validators.length > 1 ? "per validator" : '')
 
     let messages = validators.map(el => {
       return this.buildRestakeMessage(address, el, perValidatorReward, client.network.denom)
     }).flat()
 
-    let execMsg = this.buildExecMessage(client.operator.botAddress, messages)
+    return this.buildExecMessage(client.operator.botAddress, messages)
+  }
 
-    const memo = 'REStaked by ' + client.operator.moniker
-    return client.signingClient.signAndBroadcast(client.operator.botAddress, [execMsg], undefined, memo).then((result) => {
-      timeStamp(address, "Successfully broadcasted");
-    }, (error) => {
-      timeStamp(address, 'Failed to broadcast:', error.message)
-      // Skip on failure
-      // process.exit()
+  async autostake(client, messages){
+    let batchSize = 100
+    let batches = _.chunk(_.compact(messages), batchSize)
+    timeStamp('Sending', messages.length, 'messages in', batches.length, 'batches of', batchSize)
+    let calls = batches.map((batch, index) => {
+      return async () => {
+        try {
+          timeStamp('...batch', index + 1)
+          const memo = 'REStaked by ' + client.operator.moniker
+          await client.signingClient.signAndBroadcast(client.operator.botAddress, batch, undefined, memo).then((result) => {
+            timeStamp("Successfully broadcasted");
+          }, (error) => {
+            timeStamp('Failed to broadcast:', error.message)
+          })
+        } catch (error) {
+          timeStamp('ERROR: Skipping batch:', error.message)
+        }
+      }
     })
+    await executeSync(calls, 1)
   }
 
   buildExecMessage(botAddress, messages){
@@ -229,7 +250,7 @@ class Autostake {
   }
 
   totalRewards(client, address, validators){
-    return client.queryClient.getRewards(address)
+    return client.queryClient.getRewards(address, {timeout: 5000})
       .then(
         (rewards) => {
           const total = Object.values(rewards).reduce((sum, item) => {
