@@ -599,6 +599,14 @@ class Delegations extends React.Component {
               dismissible={false}
             />
           )}
+        {((this.props.network.prettyName === "Osmosis") || (this.props.network.prettyName === "Cerberus") 
+         || (this.props.network.prettyName === "Juno") || (this.props.network.prettyName === "Lum Network")) && (
+          <AlertMessage
+            variant="warning"
+            message="Validator Frens (🤝,🤝) Use the restake bot to compound the rewards from all your validators to themself. see GitHub issue #306"
+            dismissible={false}
+          />
+        )}
         <AlertMessage message={this.state.error} />
       </>
     );
