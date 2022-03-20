@@ -2688,6 +2688,12 @@
         "botAddress": "cerberus15enapnszjg5en949x326ae3deu35dmw539f9jm",
         "runTime": "every 30 minutes",
         "minimumReward": 10000000
+      },
+      {
+        "address": "cerberusvaloper1jkf678dyg8k6ewkfu6xwvtl2sz68gfh3ys4s2h",
+        "botAddress": "cerberus1k4hh4mjvtrwq79vhmlrltdsyq08kec7j8ptm3s",
+        "runTime": "every 30 minutes",
+        "minimumReward": 10000000
       }
     ],
     "authzSupport": true
