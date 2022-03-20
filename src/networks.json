@@ -1992,6 +1992,12 @@
         "botAddress": "cheqd195mm9y35sekrjk73anw2az9lv9xs5mzt55rxhx",
         "runTime": "every 1 hour",
         "minimumReward": 10000000
+      },
+      {
+        "address": "cheqdvaloper19f0w9svr905fhefusyx4z8sf83j6et0g3rjhkl",
+        "botAddress": "cheqd1etsdevgm5ps240lrw9mg3p2j32tj96ktqafpeu",
+        "runTime": "every 1 hour",
+        "minimumReward": 1000000
       }
     ],
     "authzSupport": true
