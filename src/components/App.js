@@ -31,6 +31,7 @@ class App extends React.Component {
     this.showNetworkSelect = this.showNetworkSelect.bind(this);
     this.getValidatorImage = this.getValidatorImage.bind(this);
     this.loadValidatorImages = this.loadValidatorImages.bind(this);
+    this.getBalance = this.getBalance.bind(this);
   }
 
   async componentDidMount() {
@@ -56,6 +57,7 @@ class App extends React.Component {
       this.connect()
     }
     if(this.props.network !== prevProps.network){
+      this.setState({ balance: undefined })
       this.connect()
       await this.setNetwork()
     }
@@ -300,6 +302,7 @@ class App extends React.Component {
                 operators={this.props.operators}
                 validators={this.props.validators}
                 balance={this.state.balance}
+                getBalance={this.getBalance}
                 getValidatorImage={this.getValidatorImage}
                 queryClient={this.state.queryClient}
                 stargateClient={this.state.stargateClient} />
