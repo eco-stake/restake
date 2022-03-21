@@ -57,6 +57,7 @@ class App extends React.Component {
       this.connect()
     }
     if(this.props.network !== prevProps.network){
+      this.setState({ balance: undefined })
       this.connect()
       await this.setNetwork()
     }
