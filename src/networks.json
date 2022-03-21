@@ -2745,6 +2745,18 @@
         "botAddress": "secret13x5lkafjz2x7ue468cqc65ea6uajq7uctnadgl",
         "runTime": "15:00",
         "minimumReward": 100000
+      },
+      {
+        "address": "secretvaloper1ahawe276d250zpxt0xgpfg63ymmu63a0svuvgw",
+        "botAddress": "secret1cpzlkfep9z8wjthvk5csxfkmjhmqncsl963pqg",
+        "runTime": "21:00",
+        "minimumReward": 100000
+      },
+      {
+        "address": "secretvaloper17m3c795fz4f36zjgjhr3vkf7e9pn3xxuryeww9",
+        "botAddress": "secret14hqn2mr82kyacele3nmaw8hmfczfpy37kjpqun",
+        "runTime": "21:00",
+        "minimumReward": 100000
       }
     ],
     "authzSupport": true
