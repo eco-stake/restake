@@ -301,7 +301,7 @@ class App extends React.Component {
                 operators={this.props.operators}
                 validators={this.props.validators}
                 balance={this.state.balance}
-                onBalanceChange={this.getBalance}
+                getBalance={this.getBalance}
                 getValidatorImage={this.getValidatorImage}
                 queryClient={this.state.queryClient}
                 stargateClient={this.state.stargateClient} />

@@ -69,6 +69,7 @@ class Delegations extends React.Component {
 
   refreshInterval() {
     const interval = setInterval(() => {
+      this.props.getBalance();
       this.getRewards(true);
     }, 15_000);
     this.setState({ refreshInterval: interval });
@@ -196,8 +197,8 @@ class Delegations extends React.Component {
 
   onClaimRewards() {
     this.setState({ claimLoading: false, validatorLoading: {}, error: null });
-    this.props.onBalanceChange();
     setTimeout(() => {
+      this.props.getBalance();
       this.props.getDelegations();
       this.getRewards();
     }, 6_000);
