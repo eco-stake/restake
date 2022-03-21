@@ -196,6 +196,7 @@ class Delegations extends React.Component {
 
   onClaimRewards() {
     this.setState({ claimLoading: false, validatorLoading: {}, error: null });
+    this.props.onBalanceChange();
     setTimeout(() => {
       this.props.getDelegations();
       this.getRewards();
