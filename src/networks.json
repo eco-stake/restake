@@ -2853,6 +2853,12 @@
         "botAddress": "secret14hqn2mr82kyacele3nmaw8hmfczfpy37kjpqun",
         "runTime": "21:00",
         "minimumReward": 100000
+      },
+      {
+        "address": "secretvaloper1q0rth4fu4svxnw63vjd7w74nadzsdp0fmkhj3d",
+        "botAddress": "secret1zpmzxljkuzjqg20dvfwf9lnuk3pcxme5rkup7h",
+        "runTime": "21:00",
+        "minimumReward": 100000
       }
     ],
     "authzSupport": true
