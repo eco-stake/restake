@@ -1214,6 +1214,12 @@
         "botAddress": "dig195mm9y35sekrjk73anw2az9lv9xs5mztzzxd7v",
         "runTime": "every 1 hour",
         "minimumReward": 1000000
+      },
+      {
+        "address": "digvaloper1fhp54fwlfmpwwgrnfwk3v47v53yjtp8fw6nelw",
+        "botAddress": "dig1wtcvjqx8097gtkjdemle9c0lm8gczm2a9va2hg",
+        "runTime": "11:00",
+        "minimumReward": 1000
       }
     ],
     "authzSupport": false
@@ -1971,6 +1977,12 @@
         "botAddress": "lum1k4hh4mjvtrwq79vhmlrltdsyq08kec7jwvkm30",
         "runTime": "every 4 hour",
         "minimumReward": 10000
+      },
+      {
+        "address": "lumvaloper18rd4dk828pfgw680hr93rxjfmj8zvr5xc03hd3",
+        "botAddress": "lum1wtcvjqx8097gtkjdemle9c0lm8gczm2agjfgq8",
+        "runTime": "11:00",
+        "minimumReward": 1000
       }
     ],
     "authzSupport": true
