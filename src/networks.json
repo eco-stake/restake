@@ -1014,7 +1014,17 @@
     ],
     "gasPrice": "0.03uregen",
     "testAddress": "regen1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczw5vc9j",
+    "ownerAddress": "regenvaloper1c4y3j05qx652rnxm5mg4yesqdkmhz2f6dl7hhk",
     "operators": [
+      {
+        "address": "regenvaloper1c4y3j05qx652rnxm5mg4yesqdkmhz2f6dl7hhk",
+        "botAddress": "regen1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczw5vc9j",
+        "runTime": [
+          "09:00",
+          "21:00"
+        ],
+        "minimumReward": 1000
+      },
       {
         "address": "regenvaloper1gjvu75cq6qxyrtdv66lx9xe92jw9gqdetagaze",
         "botAddress": "regen1mjq48r6435aewerpruwc8up3tz3rzan2nm4th3",
@@ -2159,7 +2169,18 @@
     "rpcUrl": [
       "https://rpc.cosmos.directory/comdex"
     ],
+    "testAddress": "comdex1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczke9x2p",
+    "ownerAddress": "comdexvaloper17f70yjkvmvld379904jaddx9h0f74n32pjtmp6",
     "operators": [
+      {
+        "address": "comdexvaloper17f70yjkvmvld379904jaddx9h0f74n32pjtmp6",
+        "botAddress": "comdex1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczke9x2p",
+        "runTime": [
+          "09:00",
+          "21:00"
+        ],
+        "minimumReward": 1000
+      },
       {
         "address": "comdexvaloper15xevj3n6eq36t62sjjrsvf6hkuryg8w3pmpqy8",
         "botAddress": "comdex1m7xlymnpxl2d4llu67v08e8xs67dj2fzq63f0t",
