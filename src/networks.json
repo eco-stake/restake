@@ -3089,6 +3089,12 @@
     "ownerAddress": "",
     "operators": [
       {
+        "address": "secretvaloper1jjlfeshltdy6ngnf5tg6aeaygsvf0kxg8wck04",
+        "botAddress": "secret185yhf2a4a94en9t8qzwp8qkwx3dfx48m4k3lk7",
+        "runTime": "21:00",
+        "minimumReward": 100000
+      },
+      {
         "address": "secretvaloper16k26akna7h295rfjx3278s7xusnt736vy437y8",
         "botAddress": "secret1e44rluarkdw56dy2turnwjtvtg4wqvs0swpd2e",
         "runTime": "every 1 hour",
