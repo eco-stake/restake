@@ -2240,6 +2240,12 @@
     ],
     "operators": [
       {
+        "address": "umeevaloper10nsytn9zmtfnhk37hqfe2h9v599ld3h5zs9fqj",
+        "botAddress": "umee1yq67lj5nnkcc2jk9ngfe3v6mt5ra0n9d45v3nc",
+        "runTime": "every 1 hour",
+        "minimumReward": 100000
+      },
+      {
         "address": "umeevaloper18s567a3dxf09q7erpcp8q20dpauugxwx8xsrcc",
         "botAddress": "umee1upe9xslwkqmmd8m7f7nuyhedhjc6saqhy4pldd",
         "runTime": "every 15 minutes",
