@@ -2248,8 +2248,8 @@
       {
         "address": "cheqdvaloper1m0f5mdkusqq24zhf8azjn2j5v2jqwqlt3ukrc0",
         "botAddress": "cheqd1ypntyymvjg90ntxwes3hxtmuvvh4fcr8w082sd",
-        "runTime": "21:00",
-        "minimumReward": 1000
+        "runTime": "every 1 hour",
+        "minimumReward": 100000000
       },
       {
         "address": "cheqdvaloper1qsp3a2qd6km9g0hczsac8279wcwmzmvzgvre8w",
