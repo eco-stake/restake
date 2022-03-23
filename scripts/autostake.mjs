@@ -154,7 +154,8 @@ class Autostake {
   }
 
   getDelegations(client) {
-    return client.queryClient.getAllValidatorDelegations(client.operator.address, 100, (pages) => {
+    let batchSize = client.network.data.autostake?.batchQueries || 100
+    return client.queryClient.getAllValidatorDelegations(client.operator.address, batchSize, (pages) => {
       timeStamp("...batch", pages.length)
     }).catch(error => {
       timeStamp("ERROR:", error.message || error)
@@ -163,6 +164,7 @@ class Autostake {
   }
 
   async getGrantedAddresses(client, addresses) {
+    let batchSize = client.network.data.autostake?.batchQueries || 50
     let grantCalls = addresses.map(item => {
       return async () => {
         try {
@@ -173,7 +175,7 @@ class Autostake {
         }
       }
     })
-    let grantedAddresses = await mapSync(grantCalls, 50, (batch, index) => {
+    let grantedAddresses = await mapSync(grantCalls, batchSize, (batch, index) => {
       timeStamp('...batch', index + 1)
     })
     return _.compact(grantedAddresses.flat())
@@ -200,6 +202,7 @@ class Autostake {
   }
 
   async getAutostakeMessages(client, addresses, validators) {
+    let batchSize = client.network.data.autostake?.batchQueries || 50
     let calls = addresses.map(item => {
       return async () => {
         try {
@@ -209,7 +212,7 @@ class Autostake {
         }
       }
     })
-    let messages = await mapSync(calls, 50, (batch, index) => {
+    let messages = await mapSync(calls, batchSize, (batch, index) => {
       // timeStamp('...batch', index + 1)
     })
     return _.compact(messages.flat())
