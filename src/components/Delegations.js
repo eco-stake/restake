@@ -281,6 +281,26 @@ class Delegations extends React.Component {
     };
   }
 
+  validatorRewards(validators) {
+    if (!this.state.rewards) return;
+
+    const denom = this.props.network.denom;
+    const validatorRewards = Object.keys(this.state.rewards)
+        .map(validator => {
+          const validatorReward = this.state.rewards[validator];
+          const reward = validatorReward.reward.find((el) => el.denom === denom)
+          return {
+            validatorAddress: validator,
+            reward: reward ? parseInt(reward.amount) : undefined,
+          }
+        })
+        .filter(validatorReward => {
+          return validatorReward.reward && (validators === undefined || validators.includes(validatorReward.validatorAddress))
+        });
+
+    return validatorRewards;
+  }
+
   denomRewards(rewards) {
     return rewards.reward.find(
       (reward) => reward.denom === this.props.network.denom
@@ -462,8 +482,7 @@ class Delegations extends React.Component {
                       <ClaimRewards
                         network={this.props.network}
                         address={this.props.address}
-                        validators={[validatorAddress]}
-                        rewards={this.totalRewards([validatorAddress])}
+                        validatorRewards={this.validatorRewards([validatorAddress])}
                         stargateClient={this.props.stargateClient}
                         onClaimRewards={this.onClaimRewards}
                         setLoading={(loading) =>
@@ -475,8 +494,7 @@ class Delegations extends React.Component {
                         restake={true}
                         network={this.props.network}
                         address={this.props.address}
-                        validators={[validatorAddress]}
-                        rewards={this.totalRewards([validatorAddress])}
+                        validatorRewards={this.validatorRewards([validatorAddress])}
                         stargateClient={this.props.stargateClient}
                         onClaimRewards={this.onClaimRewards}
                         setLoading={(loading) =>
@@ -714,8 +732,7 @@ class Delegations extends React.Component {
                       <ClaimRewards
                         network={this.props.network}
                         address={this.props.address}
-                        validators={Object.keys(this.props.delegations)}
-                        rewards={this.totalRewards()}
+                        validatorRewards={this.validatorRewards()}
                         stargateClient={this.props.stargateClient}
                         onClaimRewards={this.onClaimRewards}
                         setLoading={this.setClaimLoading}
@@ -725,8 +742,7 @@ class Delegations extends React.Component {
                         restake={true}
                         network={this.props.network}
                         address={this.props.address}
-                        validators={Object.keys(this.props.delegations)}
-                        rewards={this.totalRewards()}
+                        validatorRewards={this.validatorRewards()}
                         stargateClient={this.props.stargateClient}
                         onClaimRewards={this.onClaimRewards}
                         setLoading={this.setClaimLoading}
