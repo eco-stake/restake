@@ -2025,6 +2025,12 @@
         "botAddress": "lum1wtcvjqx8097gtkjdemle9c0lm8gczm2agjfgq8",
         "runTime": "11:00",
         "minimumReward": 1000
+      },
+      {
+        "address": "lumvaloper1lnqradz7whff07t60pzetvkhgqamt9xu9f2j6k",
+        "botAddress": "lum14a78h6202u4xg6phjnd8rmr5fq98zzdlsmdrw5",
+        "runTime": "every 4 hour",
+        "minimumReward": 10000
       }
     ],
     "authzSupport": true
