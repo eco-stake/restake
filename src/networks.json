@@ -878,6 +878,12 @@
         "botAddress": "chihuahua1330aewfwzu30vznhxw7aevaz0kn35fdya2nr9t",
         "runTime": "every 30 minutes",
         "minimumReward": 100000000
+      },
+      {
+        "address": "chihuahuavaloper12d2a8hfrq784u9lfxp8qj2huxxglejzrqlylwt",
+        "botAddress": "chihuahua18m7pnt8enhrlqf4rh7ff9uvcfsr6tmlm4l2wqj",
+        "runTime": "every 1 hour",
+        "minimumReward": 100000000
       }
     ],
     "authzSupport": false
@@ -3083,6 +3089,12 @@
         "address": "cerberusvaloper1tnmjjj5ugcunyy75q3c3pn62qpwnf50pnf2xm0",
         "botAddress": "cerberus1330aewfwzu30vznhxw7aevaz0kn35fdyzc7y3z",
         "runTime": "every 30 minutes",
+        "minimumReward": 10000000
+      },
+      {
+        "address": "cerberusvaloper1gl6mw8p76erqeltgt6kkqac57m6h5ufy28kas6",
+        "botAddress": "cerberus18m7pnt8enhrlqf4rh7ff9uvcfsr6tmlm2d8f5m",
+        "runTime": "every 1 hour",
         "minimumReward": 10000000
       }
     ],
