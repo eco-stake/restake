@@ -1506,8 +1506,8 @@
     "gasPrice": "0.001udsm",
     "operators": [
       {
-        "address": "desmosvaloper1zngdx77g9ywnwmwpwvj9w2eqcs6fhw78gn02d8",
-        "botAddress": "desmos1pu0pmlvakgdn7lzrwx2rgj6xjvcyln0l4cdfl2",
+        "address": "desmosvaloper1c5aqg0qjlqj0g99ee0seaeneqgpcz07sepmqx6",
+        "botAddress": "desmos1k8mymzl8sapy2yqyyce5a35u09rnuae7qlnnuc",
         "runTime": [
           "09:00",
           "21:00"
