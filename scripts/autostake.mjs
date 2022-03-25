@@ -315,7 +315,7 @@ class Autostake {
   }
 
   getNetworksData() {
-    const networksData = fs.readFileSync('src/networks.json');
+    const networksData = fs.readFileSync('src/networks.local.json');
     const networks = JSON.parse(networksData);
     try {
       const overridesData = fs.readFileSync('src/networks.local.json');

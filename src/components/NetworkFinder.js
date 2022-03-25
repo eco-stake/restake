@@ -10,7 +10,7 @@ import {
   Spinner
 } from 'react-bootstrap';
 
-import networksData from '../networks.json';
+import networksData from '../networks.local.json';
 
 function NetworkFinder() {
   const params = useParams();
