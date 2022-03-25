@@ -1618,6 +1618,12 @@
         "botAddress": "cro1hl0jgxre5z0nkyjj07c5vfdy44yk44atpy24nv",
         "runTime": "22:30",
         "minimumReward": 1000000
+      },
+      {
+        "address": "crocncl1s7cu28403gzdvy5tttyskm3zxjejxcv6j5ngp9",
+        "botAddress": "cro1lj3qga40dc0w2pacfrd2s6puk43ua2vczlv690",
+        "runTime": "16:30",
+        "minimumReward": 1000000
       }
     ],
     "authzSupport": true
