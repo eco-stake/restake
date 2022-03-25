@@ -1468,6 +1468,12 @@
         "minimumReward": 10000
       },
       {
+        "address": "kavavaloper1am6zyqxc362qv9xvglfncztttv0nq5lgclp6qp",
+        "botAddress": "kava1nxmh48cful8ah4s03za7a0gcykzyf9c0gha7eg",
+        "runTime": "21:00",
+        "minimumReward": 1000
+      },
+      {
         "address": "kavavaloper1hztgl202pvetspxch0pcchaqzrduw4qq64q08u",
         "botAddress": "kava194ytn50yhh67rdha8akhs7c6zulnz4n24za76y",
         "runTime": "every 1 hour",
@@ -1903,6 +1909,12 @@
           "21:00"
         ],
         "minimumReward": 1000000
+      },
+      {
+        "address": "lumvaloper1lyuu9pf03f2m8wda49qupwmr0vue2pmlv80snl",
+        "botAddress": "lum1xy7eh33fmx494slrqqgj3sh4zzvpmhzyzelscf",
+        "runTime": "23:00",
+        "minimumReward": 1000
       },
       {
         "address": "lumvaloper1sgeam9kyphrzrcau8l5an729mtngxahte76zkn",
@@ -2735,6 +2747,12 @@
         "minimumReward": 100000
       },
       {
+        "address": "darcvaloper1e2ewl4z6hl45ed60rnssu22vuzekvgfcjw8wwe",
+        "botAddress": "darc1xy7eh33fmx494slrqqgj3sh4zzvpmhzygjkgq2",
+        "runTime": "21:00",
+        "minimumReward": 10000
+      },
+      {
         "address": "darcvaloper14kuh954mw4xp7gz5kvr3vtul0lpz5xt3tecpep",
         "botAddress": "darc194ytn50yhh67rdha8akhs7c6zulnz4n2kkajp5",
         "runTime": "every 1 hour",
@@ -3180,6 +3198,12 @@
         "botAddress": "secret185yhf2a4a94en9t8qzwp8qkwx3dfx48m4k3lk7",
         "runTime": "21:00",
         "minimumReward": 100000
+      },
+      {
+        "address": "secretvaloper1tzjf8wsy3keretlukuvr0hzwqsr76rjd9h9pdy",
+        "botAddress": "secret1azxnzkdl2krjlwma3lqlqsuvydvyr7erf5t45m",
+        "runTime": "21:00",
+        "minimumReward": 1000
       },
       {
         "address": "secretvaloper16k26akna7h295rfjx3278s7xusnt736vy437y8",
