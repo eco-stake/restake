@@ -34,7 +34,7 @@ const QueryClient = async (chainId, rpcUrls, restUrls) => {
           "/cosmos/staking/v1beta1/validators?" +
           searchParams.toString(),
         {
-          timeout: 5000,
+          timeout: 6000,
         }
       )
       .then((res) => res.data);
