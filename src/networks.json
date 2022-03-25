@@ -2415,6 +2415,12 @@
         "botAddress": "umee1330aewfwzu30vznhxw7aevaz0kn35fdyvfrjqm",
         "runTime": "every 30 minutes",
         "minimumReward": 1000000
+      },
+      {
+        "address": "umeevaloper1l4xvfq5uj7624m73nn8j4mgra7xq4cpf08q2xj",
+        "botAddress": "umee1cyjx4pxqx6hxltp8je8mpwrvjhnq3kktj26xms",
+        "runTime": "every 1 hour",
+        "minimumReward": 10000
       }
     ],
     "authzSupport": true
