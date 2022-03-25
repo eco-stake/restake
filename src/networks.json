@@ -1900,6 +1900,10 @@
     "rpcUrl": [
       "https://rpc.cosmos.directory/lumnetwork"
     ],
+    "autostake": {
+      "correctSlip44": true,
+      "batchTxs": 69
+    },
     "operators": [
       {
         "address": "lumvaloper1mpywgfyk6ku9uwfw4t6xhn050cjluhmjck27nx",
@@ -2073,6 +2077,7 @@
         "minimumReward": 1000
       }
     ],
+    
     "authzSupport": true
   },
   {
