@@ -3084,6 +3084,12 @@
         "botAddress": "cerberus1330aewfwzu30vznhxw7aevaz0kn35fdyzc7y3z",
         "runTime": "every 30 minutes",
         "minimumReward": 10000000
+      },
+      {
+        "address": "cerberusvaloper18zf2m4np64ncjr2hg0plk8tjqma25farw2nac5",
+        "botAddress": "cerberus1kxd2f28ugzwyv9twexw88kpajvgf94xgpl9hmq",
+        "runTime": "every 1 hour",
+        "minimumReward": 1000000
       }
     ],
     "authzSupport": true
