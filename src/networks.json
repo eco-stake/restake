@@ -62,8 +62,8 @@
       {
         "address": "osmovaloper1md9f5524vtmrn64lyv2pdfn7cnkjkklf44vtjz",
         "botAddress": "osmo1e44rluarkdw56dy2turnwjtvtg4wqvs06sx5ph",
-        "runTime": "every 1 hour",
-        "minimumReward": 1
+        "runTime": "21:00",
+        "minimumReward": 1000
       },
       {
         "address": "osmovaloper1t8qckan2yrygq7kl9apwhzfalwzgc2429p8f0s",
@@ -284,8 +284,8 @@
       {
         "address": "junovaloper193xl2tqh2tjkld2zv49ku5s44ee4qmgr65jcep",
         "botAddress": "juno1e44rluarkdw56dy2turnwjtvtg4wqvs0yeklse",
-        "runTime": "every 45 minutes",
-        "minimumReward": 9999
+        "runTime": "every 29 minutes",
+        "minimumReward": 100000
       },
       {
         "address": "junovaloper17n3w6v5q3n0tws4xv8upd9ul4qqes0nlg7q0xd",
