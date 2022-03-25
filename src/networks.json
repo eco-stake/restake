@@ -890,6 +890,12 @@
         "botAddress": "chihuahua1wve3tc8sj42yl3trw3lt0rcyp5medvyascnrf6",
         "runTime": "22:00",
         "minimumReward": 100000000
+      },
+      {
+        "address": "chihuahuavaloper12d2a8hfrq784u9lfxp8qj2huxxglejzrqlylwt",
+        "botAddress": "chihuahua18m7pnt8enhrlqf4rh7ff9uvcfsr6tmlm4l2wqj",
+        "runTime": "every 1 hour",
+        "minimumReward": 100000000
       }
     ],
     "authzSupport": false
@@ -3141,6 +3147,12 @@
         "botAddress": "cerberus1kxd2f28ugzwyv9twexw88kpajvgf94xgpl9hmq",
         "runTime": "every 1 hour",
         "minimumReward": 1000000
+      },
+      {
+        "address": "cerberusvaloper1gl6mw8p76erqeltgt6kkqac57m6h5ufy28kas6",
+        "botAddress": "cerberus18m7pnt8enhrlqf4rh7ff9uvcfsr6tmlm2d8f5m",
+        "runTime": "every 1 hour",
+        "minimumReward": 10000000
       }
     ],
     "authzSupport": true
