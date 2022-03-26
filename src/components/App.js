@@ -26,11 +26,9 @@ import PoweredByAkash from '../assets/powered-by-akash.svg'
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {validatorImages: {}}
+    this.state = {}
     this.connect = this.connect.bind(this);
     this.showNetworkSelect = this.showNetworkSelect.bind(this);
-    this.getValidatorImage = this.getValidatorImage.bind(this);
-    this.loadValidatorImages = this.loadValidatorImages.bind(this);
     this.getBalance = this.getBalance.bind(this);
   }
 
@@ -45,10 +43,6 @@ class App extends React.Component {
       }
     }
     window.addEventListener("keplr_keystorechange", this.connect)
-    if(this.props.operators){
-      this.loadValidatorImages(this.props.network, _.compact(this.props.operators.map(el => el.validatorData)))
-    }
-    this.loadValidatorImages(this.props.network, this.props.validators)
   }
 
   async componentDidUpdate(prevProps){
@@ -70,7 +64,6 @@ class App extends React.Component {
   setNetwork(){
     const network = this.props.network
     if(!network) return
-    this.loadValidatorImages(network, this.props.validators)
 
     return this.setState({
       error: false,
@@ -158,65 +151,6 @@ class App extends React.Component {
     })
   }
 
-  getValidatorImage(network, validatorAddress, expireCache){
-    const images = this.state.validatorImages[network.name] || {}
-    if(images[validatorAddress]){
-      return images[validatorAddress]
-    }
-    return this.getValidatorImageCache(validatorAddress, expireCache)
-  }
-
-  getValidatorImageCache(validatorAddress, expireCache){
-    const cache = localStorage.getItem(validatorAddress)
-    if(!cache) return
-
-    let cacheData = {}
-    try {
-      cacheData = JSON.parse(cache)
-    } catch {
-      cacheData.url = cache
-    }
-    if(!cacheData.url) return
-    if(!expireCache) return cacheData.url
-
-    const cacheTime = cacheData.time && new Date(cacheData.time)
-    if(!cacheData.time) return
-
-    const expiry = new Date() - 1000 * 60 * 60 * 24 * 3
-    if(cacheTime >= expiry) return cacheData.url
-  }
-
-  async loadValidatorImages(network, validators) {
-    this.setState((state, props) => ({
-      validatorImages: _.set(state.validatorImages, network.name, state.validatorImages[network.name] || {})
-    }));
-    const calls = Object.values(validators).map(validator => {
-      return () => {
-        if(validator.description.identity && !this.getValidatorImage(network, validator.operator_address, true)){
-          return fetch("https://keybase.io/_/api/1.0/user/lookup.json?fields=pictures&key_suffix=" + validator.description.identity)
-            .then((response) => {
-              return response.json();
-            }).then((data) => {
-              if(data.them && data.them[0] && data.them[0].pictures){
-                const imageUrl = data.them[0].pictures.primary.url
-                this.setState((state, props) => ({
-                  validatorImages: _.set(state.validatorImages, [network.name, validator.operator_address], imageUrl)
-                }));
-                localStorage.setItem(validator.operator_address, JSON.stringify({url: imageUrl, time: +new Date()}))
-              }
-            }, error => { })
-        }else{
-          return null
-        }
-      }
-    })
-    const batchCalls = _.chunk(calls, 1);
-
-    for (const batchCall of batchCalls) {
-      await Promise.all(batchCall.map(call => call()))
-    }
-  }
-
   async getBalance() {
     this.state.queryClient.getBalance(this.state.address, this.props.network.denom)
       .then(
@@ -272,8 +206,8 @@ class App extends React.Component {
           <div className="d-flex align-items-center mb-3 mb-md-0 text-dark text-decoration-none">
             <NetworkSelect show={this.state.showNetworkSelect} onHide={() => {this.setState({showNetworkSelect: false})}} networks={this.props.networks}
               network={this.props.network}
-              validators={this.props.validators} getValidatorImage={this.getValidatorImage}
-              changeNetwork={this.props.changeNetwork} loadValidatorImages={this.loadValidatorImages} />
+              validators={this.props.validators}
+              changeNetwork={this.props.changeNetwork} />
           </div>
         </header>
         <div className="mb-5">
@@ -304,7 +238,6 @@ class App extends React.Component {
                 validators={this.props.validators}
                 balance={this.state.balance}
                 getBalance={this.getBalance}
-                getValidatorImage={this.getValidatorImage}
                 queryClient={this.state.queryClient}
                 stargateClient={this.state.stargateClient} />
             </>
