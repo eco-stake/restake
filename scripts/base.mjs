@@ -55,7 +55,11 @@ export class Autostake {
 
   async runNetwork(client){
     timeStamp('Running autostake')
-    await this.checkBalance(client)
+    const balance = await this.checkBalance(client)
+    if (!balance || balance < 1_000) {
+      timeStamp('Bot balance is too low')
+      return
+    }
 
     timeStamp('Finding delegators...')
     const addresses = await this.getDelegations(client).then(delegations => {
@@ -141,14 +145,10 @@ export class Autostake {
       .then(
         (balance) => {
           timeStamp("Bot balance is", balance.amount, balance.denom)
-          if (balance.amount < 1_000) {
-            timeStamp('Bot balance is too low')
-            process.exit()
-          }
+          return balance.amount
         },
         (error) => {
           timeStamp("ERROR:", error.message || error)
-          process.exit()
         }
       )
   }
@@ -159,7 +159,7 @@ export class Autostake {
       timeStamp("...batch", pages.length)
     }).catch(error => {
       timeStamp("ERROR:", error.message || error)
-      process.exit()
+      return []
     })
   }
 
