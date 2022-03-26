@@ -55,9 +55,9 @@ function Validators(props) {
         <td>
           <div className="row">
             <div className="col-1 me-2">
-              <ValidatorImage validator={item} imageUrl={props.getValidatorImage(props.network, address)} />
+              <ValidatorImage validator={item} imageUrl={props.getValidatorImage(props.network, address)} width={30} height={30} />
             </div>
-            <div className="col pt-1">
+            <div className="col">
               <span className="align-middle">{item.description.moniker}</span>
             </div>
           </div>
@@ -84,7 +84,7 @@ function Validators(props) {
           </td>
         )}
         <td className="text-end ps-5">
-          <Button onClick={() => props.selectValidator(item)}>
+          <Button size="sm" onClick={() => props.selectValidator(item)}>
             {props.redelegate ? 'Redelegate' : 'Delegate'}
           </Button>
         </td>
