@@ -176,7 +176,7 @@
       {
         "address": "osmovaloper13tk45jkxgf7w0nxquup3suwaz2tx483xe832ge",
         "botAddress": "osmo1grfk7t0k42yxpwqhr7kt4te7j73m2a3v27wqh5",
-        "runTime": "13:37",
+        "runTime": "19:37",
         "minimumReward": 10000
       },
       {
@@ -410,7 +410,7 @@
       {
         "address": "junovaloper1quqxfrxkycr0uzt4yk0d57tcq3zk7srm7sm6r8",
         "botAddress": "juno1grfk7t0k42yxpwqhr7kt4te7j73m2a3v5h7tx6",
-        "runTime": "13:37",
+        "runTime": "19:37",
         "minimumReward": 10000
       },
       {
@@ -980,7 +980,7 @@
       {
         "address": "gravityvaloper1vyd4k5j636erx5y5kdqghdu3rfjtwc48vdc7r6",
         "botAddress": "gravity1grfk7t0k42yxpwqhr7kt4te7j73m2a3vx40gyw",
-        "runTime": "13:37",
+        "runTime": "19:37",
         "minimumReward": 10000
       },
       {
@@ -1453,7 +1453,7 @@
       {
         "address": "emoneyvaloper149vyxd36kxpg46rralaw6eejv4d9daqc3nv642",
         "botAddress": "emoney1grfk7t0k42yxpwqhr7kt4te7j73m2a3vdx8ykm",
-        "runTime": "13:37",
+        "runTime": "19:37",
         "minimumReward": 100000
       },
       {
@@ -1766,7 +1766,7 @@
       {
         "address": "evmosvaloper1ce4vh0e5kanlgc7z0rhcemvd8erjnfzcyfecl7",
         "botAddress": "evmos1grfk7t0k42yxpwqhr7kt4te7j73m2a3vqyv7mw",
-        "runTime": "13:37",
+        "runTime": "19:37",
         "minimumReward": 1000000
       },
       {
@@ -2166,7 +2166,7 @@
       {
         "address": "starsvaloper1y58hfnm90r4efhlydx0gavz57lvm7k6uulkg3h",
         "botAddress": "stars1grfk7t0k42yxpwqhr7kt4te7j73m2a3vke2d2h",
-        "runTime": "13:37",
+        "runTime": "19:37",
         "minimumReward": 10000
       },
       {
@@ -3293,6 +3293,25 @@
         "address": "secretvaloper1q0rth4fu4svxnw63vjd7w74nadzsdp0fmkhj3d",
         "botAddress": "secret1zpmzxljkuzjqg20dvfwf9lnuk3pcxme5rkup7h",
         "runTime": "21:00",
+        "minimumReward": 100000
+      }
+    ],
+    "authzSupport": true
+  },
+  {
+    "name": "bostrom",
+    "restUrl": [
+      "https://lcd.bostrom.cybernode.ai/"
+    ],
+    "rpcUrl": [
+      "https://rpc.bostrom.cybernode.ai/"
+    ],
+    "gasPrice": "0boot",
+    "operators": [
+      {
+        "address": "bostromvaloper1ydc5fy9fjdygvgw36u49yj39fr67pd9m5qexm8",
+        "botAddress": "bostrom1grfk7t0k42yxpwqhr7kt4te7j73m2a3vpkfrlp",
+        "runTime": "19:37",
         "minimumReward": 100000
       }
     ],
