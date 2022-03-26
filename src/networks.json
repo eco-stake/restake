@@ -3301,10 +3301,10 @@
   {
     "name": "bostrom",
     "restUrl": [
-      "https://lcd.bostrom.cybernode.ai/"
+      "https://rest.cosmos.directory/bostrom"
     ],
     "rpcUrl": [
-      "https://rpc.bostrom.cybernode.ai/"
+      "https://rpc.cosmos.directory/bostrom"
     ],
     "gasPrice": "0boot",
     "operators": [
@@ -3316,5 +3316,17 @@
       }
     ],
     "authzSupport": true
+  },
+  {
+    "name": "starname",
+    "restUrl": [
+      "https://rest.cosmos.directory/starname"
+    ],
+    "rpcUrl": [
+      "https://rpc.cosmos.directory/starname"
+    ],
+    "gasPrice": "10uvoi",
+    "operators": [],
+    "authzSupport": false
   }
 ]
