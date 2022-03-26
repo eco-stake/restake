@@ -157,7 +157,7 @@ class Delegations extends React.Component {
     const batchCalls = _.chunk(calls, 10);
 
     for (const batchCall of batchCalls) {
-      await Promise.all(batchCall.map(call => call()))
+      await Promise.allSettled(batchCall.map(call => call()))
     }
   }
 
@@ -229,7 +229,7 @@ class Delegations extends React.Component {
     const batchCalls = _.chunk(calls, 1);
 
     for (const batchCall of batchCalls) {
-      await Promise.all(batchCall.map(call => call()))
+      await Promise.allSettled(batchCall.map(call => call()))
     }
   }
 
