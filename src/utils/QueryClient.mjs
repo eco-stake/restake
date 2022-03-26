@@ -113,8 +113,8 @@ const QueryClient = async (chainId, rpcUrls, restUrls) => {
 
   const getGrants = (botAddress, address, opts) => {
     const searchParams = new URLSearchParams();
-    searchParams.append("grantee", botAddress);
-    searchParams.append("granter", address);
+    if(botAddress) searchParams.append("grantee", botAddress);
+    if(address) searchParams.append("granter", address);
     // searchParams.append("msg_type_url", "/cosmos.staking.v1beta1.MsgDelegate");
     return axios
       .get(restUrl + "/cosmos/authz/v1beta1/grants?" + searchParams.toString(), opts)

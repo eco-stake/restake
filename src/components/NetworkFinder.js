@@ -104,8 +104,10 @@ function NetworkFinder() {
     )
   }
 
-  return <App networks={state.networks} network={state.network} operators={state.operators} validators={state.validators}
-    changeNetwork={(network, validators) => changeNetwork(network, validators)} />;
+  return <App networks={state.networks} network={state.network}
+  operators={state.operators} validators={state.validators}
+  changeNetwork={(network, validators) => changeNetwork(network, validators)}
+  />;
 }
 
 export default NetworkFinder
