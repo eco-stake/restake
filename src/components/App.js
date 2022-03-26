@@ -70,6 +70,7 @@ class App extends React.Component {
   setNetwork(){
     const network = this.props.network
     if(!network) return
+    this.loadValidatorImages(network, this.props.validators)
 
     return this.setState({
       error: false,

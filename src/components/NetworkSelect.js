@@ -23,8 +23,6 @@ function NetworkSelect(props) {
     {networks: [], operators: [], network: {value: ''}}
   )
 
-  const {loadValidatorImages} = props
-
   const handleOpen = () => {
     setSelectedNetwork(props.network)
     setValidators(props.validators)
@@ -80,7 +78,6 @@ function NetworkSelect(props) {
         setValidators({})
         network.getValidators().then(data => {
           setValidators(data)
-          loadValidatorImages(network, data)
           setLoading(false)
         }, (error) => {
           setError('Unable to connect to this network currently. Try again later.')
