@@ -3313,7 +3313,13 @@
         "botAddress": "bostrom1grfk7t0k42yxpwqhr7kt4te7j73m2a3vpkfrlp",
         "runTime": "19:37",
         "minimumReward": 100000
-      }
+      },
+      {
+        "address": "bostromvaloper1r28nhrkwcvqs4qss2l7zqdvc2qfdl8arglv6nn",
+        "botAddress": "bostrom14a78h6202u4xg6phjnd8rmr5fq98zzdlxzye98",
+        "runTime": "every 4 hour",
+        "minimumReward": 100000
+      }     
     ],
     "authzSupport": true
   },
