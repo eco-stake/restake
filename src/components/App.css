@@ -7,16 +7,16 @@ header a.moniker{
 }
 
 .btn-circle-sm {
-  width: 40px;
-  height: 40px;
-  line-height: 40px;
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
   font-size: 0.9rem;
 }
 
 .btn-circle-lg {
-  width: 55px;
-  height: 55px;
-  line-height: 55px;
+  width: 40px;
+  height: 40px;
+  line-height: 40px;
   font-size: 1.1rem;
 }
 
