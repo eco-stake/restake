@@ -2550,6 +2550,12 @@
         "botAddress": "bitsong197yc3g8drkf8fyv6fr4ynddy2n22kauunjhehs",
         "runTime": "22:00",
         "minimumReward": 100000
+      },
+      {
+        "address": "bitsongvaloper1qxw4fjged2xve8ez7nu779tm8ejw92rv0vcuqr",
+        "botAddress": "bitsong1fx6eahccn5n9m6zwz0p4ynff0asnllvtyvxvd5",
+        "runTime": "22:00",
+        "minimumReward": 100000
       }
     ],
     "authzSupport": true
