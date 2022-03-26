@@ -1,4 +1,7 @@
 src/networks.local.json
+scripts/*
+!scripts/autostake.mjs
+!scripts/base.mjs
 
 # dependencies
 /node_modules
