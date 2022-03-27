@@ -1694,6 +1694,12 @@
           "12:00"
         ],
         "minimumReward": 100000
+      },
+      {
+        "address": "crocncl1up7anp4cq0kc799dccgfhesxp0mxklgrpgf856",
+        "botAddress": "cro1vltdfsd0wujjhqks9dzx3qe5njdpkfszuy5zyv",
+        "runTime": "00:00",
+        "minimumReward": 100000
       }
     ],
     "authzSupport": true
