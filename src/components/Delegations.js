@@ -60,11 +60,11 @@ class Delegations extends React.Component {
 
   async refresh() {
     this.getRewards();
+    this.calculateApy();
     await this.getTestGrant();
     if (!this.state.authzMissing && this.props.operators.length) {
-      await this.getGrants();
+      this.getGrants();
     }
-    this.calculateApy();
     if(this.props.operators){
       this.loadValidatorImages(this.props.network, _.compact(this.props.operators.map(el => el.validatorData)))
       this.loadValidatorImages(this.props.network, _.omit(this.props.validators, this.props.operators.map(el => el.address)))
@@ -114,7 +114,10 @@ class Delegations extends React.Component {
   }
 
   async getGrants() {
-    const calls = this.props.operators.map((operator) => {
+    const ordered = this.props.operators.sort(el => {
+      return this.props.delegations[el.address] ? -1 : 0
+    })
+    const calls = ordered.map((operator) => {
       return () => {
         const { botAddress, address } = operator;
         return this.props.queryClient.getGrants(botAddress, this.props.address).then(
@@ -154,7 +157,7 @@ class Delegations extends React.Component {
       }
     });
 
-    const batchCalls = _.chunk(calls, 10);
+    const batchCalls = _.chunk(calls, 5);
 
     for (const batchCall of batchCalls) {
       await Promise.allSettled(batchCall.map(call => call()))
