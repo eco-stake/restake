@@ -182,7 +182,8 @@ export class Autostake {
   }
 
   getGrantValidators(client, delegatorAddress) {
-    return client.queryClient.getGrants(client.operator.botAddress, delegatorAddress, { timeout: 5000 })
+    let timeout = client.network.data.autostake?.delegatorTimeout || 5000
+    return client.queryClient.getGrants(client.operator.botAddress, delegatorAddress, { timeout })
       .then(
         (result) => {
           if (result.claimGrant && result.stakeGrant) {
@@ -228,7 +229,8 @@ export class Autostake {
       return
     }
 
-    const withdrawAddress = await client.queryClient.getWithdrawAddress(address, {timeout: 5000})
+    let timeout = client.network.data.autostake?.delegatorTimeout || 5000
+    const withdrawAddress = await client.queryClient.getWithdrawAddress(address, { timeout })
     if(withdrawAddress && withdrawAddress !== address){
       timeStamp(address, 'has a different withdraw address:', withdrawAddress)
       return
@@ -295,7 +297,8 @@ export class Autostake {
   }
 
   totalRewards(client, address, validators) {
-    return client.queryClient.getRewards(address, { timeout: 5000 })
+    let timeout = client.network.data.autostake?.delegatorTimeout || 5000
+    return client.queryClient.getRewards(address, { timeout })
       .then(
         (rewards) => {
           const total = Object.values(rewards).reduce((sum, item) => {
