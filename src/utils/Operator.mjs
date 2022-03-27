@@ -43,10 +43,12 @@ const Operator = (data, validatorData) => {
   function nextRun() {
     if (!data.runTime) return
 
-    if(Array.isArray(data.runTime)){
-      const runTimes = data.runTime.map(el => nextRunFromRuntime(el))
-      return runTimes.sort().find(el => el.isAfter());
-    }else{
+    if (Array.isArray(data.runTime)) {
+      return data.runTime
+        .map(el => nextRunFromRuntime(el))
+        .sort((a, b) => a.valueOf() - b.valueOf())
+        .find(el => el.isAfter());
+    } else {
       if(data.runTime.startsWith('every')){
         return nextRunFromInterval(data.runTime)
       }
@@ -56,18 +58,14 @@ const Operator = (data, validatorData) => {
 
   function nextRunFromInterval(runTime){
     const interval = parse(runTime.replace('every ', ''))
-    const date = moment().startOf('day')
-    do {
-      date.add(interval, 'ms')
-    } while (date.isBefore())
-    return date
+    const diff = moment().startOf('day').diff()
+    const ms = interval + diff % interval
+    return moment().add(ms, 'ms')
   }
 
   function nextRunFromRuntime(runTime) {
-    const date = moment(runTime, 'HH:mm:ss')
-    if(date.isAfter()) return date
-
-    return date.add(1, 'day')
+    const date = moment.utc(runTime, 'HH:mm:ss')
+    return date.isAfter() ? date : date.add(1, 'day')
   }
 
   return {
