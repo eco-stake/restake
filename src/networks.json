@@ -50,7 +50,7 @@
       {
         "address": "osmovaloper1zfcmwh56kmz4wqqg2t8pxrm228dx2c6hhzhtx7",
         "botAddress": "osmo1z0xzvw999jh7ekce7eqnex2fj7cnn6xwxqfugk",
-        "runTime": "15 minutes",
+        "runTime": "every 15 minutes",
         "minimumReward": 1000
       },
       {
@@ -621,7 +621,7 @@
       {
         "address": "akashvaloper1zfcmwh56kmz4wqqg2t8pxrm228dx2c6hzh0ewm",
         "botAddress": "akash1z0xzvw999jh7ekce7eqnex2fj7cnn6xwrqht87",
-        "runTime": "15 minutes",
+        "runTime": "every 15 minutes",
         "minimumReward": 10000
       },
       {
@@ -729,7 +729,7 @@
       {
         "address": "chihuahuavaloper1y6m72uxs6hhsudxqpq73rsdgkjh6nhkqef8pej",
         "botAddress": "chihuahua1z0xzvw999jh7ekce7eqnex2fj7cnn6xwdwhzlx",
-        "runTime": "15 minutes",
+        "runTime": "every 15 minutes",
         "minimumReward": 1001
       },
       {
@@ -926,7 +926,7 @@
       {
         "address": "gravityvaloper1zfcmwh56kmz4wqqg2t8pxrm228dx2c6hs487gh",
         "botAddress": "gravity1z0xzvw999jh7ekce7eqnex2fj7cnn6xw2tg5mv",
-        "runTime": "15 minutes",
+        "runTime": "every 15 minutes",
         "minimumReward": 1000
       },
       {
@@ -1565,7 +1565,7 @@
       {
         "address": "desmosvaloper17ue85ck027c4grv7nuks7k7p4fqnlc55uqhskj",
         "botAddress": "desmos1z0xzvw999jh7ekce7eqnex2fj7cnn6xw6rhufu",
-        "runTime": "15 minutes",
+        "runTime": "every 15 minutes",
         "minimumReward": 1000
       },
       {
@@ -2401,7 +2401,7 @@
       {
         "address": "umeevaloper18s567a3dxf09q7erpcp8q20dpauugxwx8xsrcc",
         "botAddress": "umee1upe9xslwkqmmd8m7f7nuyhedhjc6saqhy4pldd",
-        "runTime": "15 minutes",
+        "runTime": "every 15 minutes",
         "minimumReward": 100000
       },
       {
@@ -2977,7 +2977,7 @@
       {
         "address": "cerberusvaloper1r34mlqewsxrde38vp3tzwh3rk5vt6ez0slzuvu",
         "botAddress": "cerberus16r56awgxe7mkrwpsnurjexfdg0n3f4f3dgf090",
-        "runTime": "15 minutes",
+        "runTime": "every 15 minutes",
         "minimumReward": 10000
       },
       {
