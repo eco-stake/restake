@@ -114,7 +114,7 @@ class Delegations extends React.Component {
   }
 
   async getGrants() {
-    const ordered = this.props.operators.sort(el => {
+    const ordered = [...this.props.operators].sort(el => {
       return this.props.delegations[el.address] ? -1 : 0
     })
     const calls = ordered.map((operator) => {
