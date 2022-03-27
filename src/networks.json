@@ -8,7 +8,6 @@
       "https://rpc.cosmos.directory/osmosis"
     ],
     "gasPrice": "0uosmo",
-    "testAddress": "osmo1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczed559y",
     "ownerAddress": "osmovaloper1u5v0m74mql5nzfx2yh43s2tke4mvzghr6m2n5t",
     "operators": [
       {
@@ -228,7 +227,6 @@
       "https://rpc.cosmos.directory/juno"
     ],
     "gasPrice": "0.0025ujuno",
-    "testAddress": "juno1yxsmtnxdt6gxnaqrg0j0nudg7et2gqcz8yyl52",
     "operators": [
       {
         "address": "junovaloper1qr78535yz60zemv82sww948c6azx40gnawnh6r",
@@ -470,7 +468,6 @@
       "https://rpc.cosmos.directory/cosmoshub"
     ],
     "gasPrice": "0.0025uatom",
-    "testAddress": "cosmos1yxsmtnxdt6gxnaqrg0j0nudg7et2gqcz3k8ynk",
     "operators": [
       {
         "address": "cosmosvaloper1gf4wlkutql95j7wwsxz490s6fahlvk2s9xpwax",
@@ -585,7 +582,6 @@
     "rpcUrl": [
       "https://rpc.cosmos.directory/akash"
     ],
-    "testAddress": "akash1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczud2r2v",
     "ownerAddress": "akashvaloper1xgnd8aach3vawsl38snpydkng2nv8a4kqgs8hf",
     "operators": [
       {
@@ -690,7 +686,6 @@
       "https://rpc.cosmos.directory/chihuahua"
     ],
     "gasPrice": "0.025uhuahua",
-    "testAddress": "chihuahua1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczjr22j5",
     "ownerAddress": "chihuahuavaloper19vwcee000fhazmpt4ultvnnkhfh23ppwxll8zz",
     "operators": [
       {
@@ -908,7 +903,6 @@
     "rpcUrl": [
       "https://rpc.cosmos.directory/gravitybridge"
     ],
-    "testAddress": "gravity1yxsmtnxdt6gxnaqrg0j0nudg7et2gqcz4x4uk7",
     "gasPrice": "0.025ugraviton",
     "operators": [
       {
@@ -1037,7 +1031,6 @@
       "https://rpc.cosmos.directory/regen"
     ],
     "gasPrice": "0.03uregen",
-    "testAddress": "regen1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczw5vc9j",
     "ownerAddress": "regenvaloper1c4y3j05qx652rnxm5mg4yesqdkmhz2f6dl7hhk",
     "operators": [
       {
@@ -1103,7 +1096,6 @@
     "rpcUrl": [
       "https://rpc.cosmos.directory/terra"
     ],
-    "testAddress": "terra1rnszu7kumz5lmgdk3fv2pmzt3s8vhcddqep7d4",
     "gasPrice": "0.015uluna",
     "operators": [
       {
@@ -1148,7 +1140,6 @@
       "https://rpc.cosmos.directory/sentinel"
     ],
     "gasPrice": "0.02udvpn",
-    "testAddress": "sent1yxsmtnxdt6gxnaqrg0j0nudg7et2gqcz2d3ahe",
     "operators": [
       {
         "address": "sentvaloper1hms0qpe27uulkllw96tmeqnl4hvxsf4vwp729v",
@@ -1210,7 +1201,6 @@
       "https://rpc.cosmos.directory/dig"
     ],
     "gasPrice": "0.0025udig",
-    "testAddress": "dig1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczfzw03d",
     "ownerAddress": "digvaloper136avwnuvvy94dqmtnaue2nfvjes8xr37h9rzay",
     "operators": [
       {
@@ -2232,7 +2222,6 @@
     "rpcUrl": [
       "https://rpc.cosmos.directory/comdex"
     ],
-    "testAddress": "comdex1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczke9x2p",
     "ownerAddress": "comdexvaloper17f70yjkvmvld379904jaddx9h0f74n32pjtmp6",
     "operators": [
       {
@@ -2896,7 +2885,6 @@
     "autostake": {
       "batchTxs": 100
     },
-    "testAddress": "cerberus1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczd38dxa",
     "ownerAddress": "cerberusvaloper1tat2cy3f9djtq9z7ly262sqngcarvaktr0w78f",
     "operators": [
       {
@@ -3241,8 +3229,6 @@
       "https://rpc.cosmos.directory/secretnetwork"
     ],
     "gasPrice": "0.025uscrt",
-    "testAddress": "secret1mpf7w0yyz9n3dh42un2zqu2dmsqv7dhkdlh78e",
-    "ownerAddress": "",
     "operators": [
       {
         "address": "secretvaloper1jjlfeshltdy6ngnf5tg6aeaygsvf0kxg8wck04",
