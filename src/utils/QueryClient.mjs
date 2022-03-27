@@ -11,9 +11,9 @@ const QueryClient = async (chainId, rpcUrls, restUrls) => {
     "rest"
   );
 
-  const getAllValidators = (pageSize, pageCallback) => {
+  const getAllValidators = (pageSize, opts, pageCallback) => {
     return getAllPages((nextKey) => {
-      return getValidators(pageSize, nextKey);
+      return getValidators(pageSize, opts, nextKey);
     }, pageCallback).then((pages) => {
       const validators = _.shuffle(pages.map((el) => el.validators).flat());
       return validators.reduce(
@@ -23,9 +23,10 @@ const QueryClient = async (chainId, rpcUrls, restUrls) => {
     });
   };
 
-  const getValidators = (pageSize, nextKey) => {
+  const getValidators = (pageSize, opts, nextKey) => {
+    opts = opts || {}
     const searchParams = new URLSearchParams();
-    searchParams.append("status", "BOND_STATUS_BONDED");
+    if (opts.status) searchParams.append("status", opts.status);
     if (pageSize) searchParams.append("pagination.limit", pageSize);
     if (nextKey) searchParams.append("pagination.key", nextKey);
     return axios
@@ -34,7 +35,7 @@ const QueryClient = async (chainId, rpcUrls, restUrls) => {
           "/cosmos/staking/v1beta1/validators?" +
           searchParams.toString(),
         {
-          timeout: 10000,
+          timeout: opts.timeout || 10000,
         }
       )
       .then((res) => res.data);

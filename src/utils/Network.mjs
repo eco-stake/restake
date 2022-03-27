@@ -45,8 +45,10 @@ const Network = async (data, withoutQueryClient) => {
     return random
   }
 
-  const getValidators = () => {
-    return queryClient.getAllValidators(150)
+  const getValidators = (opts) => {
+    opts = opts || {}
+    opts.status = opts.status || 'BOND_STATUS_BONDED'
+    return queryClient.getAllValidators(150, opts)
   }
 
   return {
