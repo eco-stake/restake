@@ -33,42 +33,23 @@ class App extends React.Component {
   }
 
   async componentDidMount() {
-    await this.setNetwork()
-    window.onload = async () => {
-      if (!window.keplr) {
-        this.setState({keplr: false})
-      } else {
-        this.setState({keplr: true})
-        this.connect()
-      }
-    }
+    this.connectKeplr()
+    window.addEventListener("load", this.connectKeplr)
     window.addEventListener("keplr_keystorechange", this.connect)
   }
 
-  async componentDidUpdate(prevProps){
-    if(!this.state.keplr && window.keplr){
-      this.setState({keplr: true})
+  async componentDidUpdate(prevProps, prevState){
+    if(this.state.keplr != prevState.keplr){
       this.connect()
-    }
-    if(this.props.network !== prevProps.network){
+    }else if(this.props.network && this.props.network !== prevProps.network){
       this.setState({ balance: undefined })
       this.connect()
-      await this.setNetwork()
     }
   }
 
   componentWillUnmount() {
+    window.removeEventListener("load", this.connectKeplr)
     window.removeEventListener("keplr_keystorechange", this.connect)
-  }
-
-  setNetwork(){
-    const network = this.props.network
-    if(!network) return
-
-    return this.setState({
-      error: false,
-      queryClient: network.queryClient
-    })
   }
 
   showNetworkSelect(){
@@ -79,20 +60,30 @@ class App extends React.Component {
     return this.props.network.connected && Object.values(this.props.validators).length > 0
   }
 
+  connectKeplr() {
+    if (this.state.keplr && !window.keplr) {
+      this.setState({ keplr: false })
+    } else if(!this.state.keplr && window.keplr){
+      this.setState({ keplr: true })
+    }
+  }
+
   async connect() {
-    if(!this.connected()){
+    if (!this.connected()) {
       return this.setState({
         error: 'Could not connect to any available API servers'
       })
     }
     const chainId = this.props.network.chainId
     try {
-      await window.keplr.enable(chainId);
+      if (window.keplr) {
+        await window.keplr.enable(chainId);
+      }
     } catch (e) {
       console.log(e.message, e)
       await this.suggestChain(this.props.network)
     }
-    if (window.getOfflineSigner){
+    if (window.getOfflineSigner) {
       try {
         const offlineSigner = await window.getOfflineSignerAuto(chainId)
         const key = await window.keplr.getKey(chainId);
@@ -105,10 +96,12 @@ class App extends React.Component {
         this.setState({
           address: address,
           stargateClient: stargateClient,
+          queryClient: this.props.network.queryClient,
           error: false
         })
         this.getBalance()
       } catch (e) {
+        console.log(e)
         return this.setState({
           error: 'Failed to connect to signing client. API may be down'
         })
@@ -116,14 +109,15 @@ class App extends React.Component {
     }
   }
 
-  async disconnect(){
+  async disconnect() {
     this.setState({
       address: null,
       stargateClient: null
     })
   }
 
-  suggestChain(network){
+  suggestChain(network) {
+    if (!window.keplr) return
     const currency = {
       coinDenom: network.symbol,
       coinMinimalDenom: network.denom,
@@ -147,7 +141,7 @@ class App extends React.Component {
         bech32PrefixConsPub: network.prefix + "valconspub"
       },
       currencies: [currency],
-      feeCurrencies:[currency]
+      feeCurrencies: [currency]
     })
   }
 
@@ -162,10 +156,10 @@ class App extends React.Component {
       )
   }
 
-  setCopied(){
-    this.setState({copied: true})
+  setCopied() {
+    this.setState({ copied: true })
     setTimeout(() => {
-      this.setState({copied: false})
+      this.setState({ copied: false })
     }, 2000)
   }
 
@@ -174,37 +168,37 @@ class App extends React.Component {
       <Container>
         <header className="d-flex flex-wrap justify-content-between py-3 mb-4 border-bottom">
           <div className="logo d-flex align-items-center mb-3 mb-md-0 text-dark text-decoration-none">
-            <span onClick={() => this.setState({showAbout: true})} role="button" className="text-dark text-decoration-none">
+            <span onClick={() => this.setState({ showAbout: true })} role="button" className="text-dark text-decoration-none">
               <img src={Logo} srcSet={`${Logo2x} 2x, ${Logo3x} 3x`} alt="REStake" />
             </span>
           </div>
           {this.state.address &&
-          <ul className="nav nav-pills justify-content-end">
-            <li className="nav-item d-none d-xl-block">
-              <CopyToClipboard text={this.state.address}
-                onCopy={() => this.setCopied()}>
-                <span role="button"><span className={'nav-link disabled clipboard' + (this.state.copied ? ' copied' : '')}>{this.state.address}</span></span>
-              </CopyToClipboard>
-            </li>
-            <li className="nav-item d-none d-md-block">
-              <span className="nav-link">
-                <Badge>
-                  <Coins
-                    coins={this.state.balance}
-                    decimals={this.props.network.decimals}
-                  />
-                </Badge>
-              </span>
-            </li>
-            {false && (
-              <li className="nav-item">
-                <Button onClick={() => this.disconnect()} className="nav-link btn-link" aria-current="page">Disconnect</Button>
+            <ul className="nav nav-pills justify-content-end">
+              <li className="nav-item d-none d-xl-block">
+                <CopyToClipboard text={this.state.address}
+                  onCopy={() => this.setCopied()}>
+                  <span role="button"><span className={'nav-link disabled clipboard' + (this.state.copied ? ' copied' : '')}>{this.state.address}</span></span>
+                </CopyToClipboard>
               </li>
-            )}
-          </ul>
+              <li className="nav-item d-none d-md-block">
+                <span className="nav-link">
+                  <Badge>
+                    <Coins
+                      coins={this.state.balance}
+                      decimals={this.props.network.decimals}
+                    />
+                  </Badge>
+                </span>
+              </li>
+              {false && (
+                <li className="nav-item">
+                  <Button onClick={() => this.disconnect()} className="nav-link btn-link" aria-current="page">Disconnect</Button>
+                </li>
+              )}
+            </ul>
           }
           <div className="d-flex align-items-center mb-3 mb-md-0 text-dark text-decoration-none">
-            <NetworkSelect show={this.state.showNetworkSelect} onHide={() => {this.setState({showNetworkSelect: false})}} networks={this.props.networks}
+            <NetworkSelect show={this.state.showNetworkSelect} onHide={() => { this.setState({ showNetworkSelect: false }) }} networks={this.props.networks}
               network={this.props.network}
               validators={this.props.validators}
               changeNetwork={this.props.changeNetwork} />
