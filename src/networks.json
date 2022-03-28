@@ -1936,6 +1936,12 @@
         "botAddress": "sif1330aewfwzu30vznhxw7aevaz0kn35fdymz3mtz",
         "runTime": "every 30 minutes",
         "minimumReward": 10000000
+      },
+      {
+        "address": "sifvaloper1ta2yj7yee373evu8xy73gludh8psy55rnczcqw",
+        "botAddress": "sif1pfp235023cktu4aqlhuka8mgs8k8g9vw7dxu3h",
+        "runTime": "every 1 hour",
+        "minimumReward": 1000
       }
     ],
     "authzSupport": false
