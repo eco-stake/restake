@@ -1,5 +1,6 @@
 import React from "react";
 import _ from "lodash";
+import { Bech32 } from '@cosmjs/encoding'
 import AlertMessage from "./AlertMessage";
 import Coins from "./Coins";
 import ClaimRewards from "./ClaimRewards";
@@ -32,6 +33,7 @@ class Delegations extends React.Component {
     const isNanoLedger = this.props.stargateClient.getIsNanoLedger();
     this.setState({ isNanoLedger: isNanoLedger });
     this.refresh();
+    this.testAndGetGrants()
   }
 
   async componentDidUpdate(prevProps) {
@@ -48,9 +50,16 @@ class Delegations extends React.Component {
         isNanoLedger: isNanoLedger,
         authzMissing: false,
         error: null,
-        validatorApy: {}
+        validatorApy: {},
+        operatorGrants: {}
       });
-      this.refresh();
+      return this.refresh();
+    }
+
+    if (!this.props.delegations) return;
+    const matchingDelegations = _.difference(Object.keys(this.props.delegations), prevProps.delegations ? Object.keys(prevProps.delegations) : []).length === 0
+    if (!matchingDelegations){
+      this.testAndGetGrants()
     }
   }
 
@@ -61,10 +70,6 @@ class Delegations extends React.Component {
   async refresh() {
     this.getRewards();
     this.calculateApy();
-    await this.getTestGrant();
-    if (!this.state.authzMissing && this.props.operators.length) {
-      this.getGrants();
-    }
     if(this.props.operators){
       this.loadValidatorImages(this.props.network, _.compact(this.props.operators.map(el => el.validatorData)))
       this.loadValidatorImages(this.props.network, _.omit(this.props.validators, this.props.operators.map(el => el.address)))
@@ -113,7 +118,16 @@ class Delegations extends React.Component {
     })
   }
 
+  async testAndGetGrants() {
+    await this.getTestGrant();
+    if (!this.state.authzMissing && this.props.operators.length) {
+      this.getGrants();
+    }
+  }
+
   async getGrants() {
+    if(!this.props.delegations) return;
+
     const ordered = [...this.props.operators].sort(el => {
       return this.props.delegations[el.address] ? -1 : 0
     })
@@ -337,6 +351,14 @@ class Delegations extends React.Component {
     );
   }
 
+  isValidatorOperator(validator) {
+    if(!this.props.address || !validator || !window.atob) return false;
+
+    const prefix = this.props.network.prefix
+    const validatorOperator = Bech32.encode(prefix, Bech32.decode(validator.operator_address).data)
+    return validatorOperator === this.props.address
+  }
+
   totalRewards(validators) {
     if (!this.state.rewards) return;
 
@@ -359,7 +381,7 @@ class Delegations extends React.Component {
   }
 
   validatorRewards(validators) {
-    if (!this.state.rewards) return;
+    if (!this.state.rewards) return [];
 
     const denom = this.props.network.denom;
     const validatorRewards = Object.keys(this.state.rewards)
@@ -386,6 +408,7 @@ class Delegations extends React.Component {
 
   renderValidator(validatorAddress, delegation) {
     const validator = this.props.validators[validatorAddress];
+    const isValidatorOperator = this.isValidatorOperator(validator)
     if (validator) {
       const rewards =
         this.state.rewards && this.state.rewards[validatorAddress];
@@ -397,6 +420,8 @@ class Delegations extends React.Component {
             ? "table-success"
             : "table-warning"
           : undefined;
+
+      if(isValidatorOperator) rowVariant = 'table-info'
 
       const delegationBalance = (delegation && delegation.balance) || {
         amount: 0,
@@ -579,6 +604,23 @@ class Delegations extends React.Component {
                         }
                         setError={this.setError}
                       />
+                      {isValidatorOperator && (
+                        <>
+                          <hr />
+                          <ClaimRewards
+                            commission={true}
+                            network={this.props.network}
+                            address={this.props.address}
+                            validatorRewards={this.validatorRewards([validatorAddress])}
+                            stargateClient={this.props.stargateClient}
+                            onClaimRewards={this.onClaimRewards}
+                            setLoading={(loading) =>
+                              this.setValidatorLoading(validatorAddress, loading)
+                            }
+                            setError={this.setError}
+                          />
+                        </>
+                      )}
                       <hr />
                       <Delegate
                         network={this.props.network}

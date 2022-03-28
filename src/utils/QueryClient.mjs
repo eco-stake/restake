@@ -73,7 +73,7 @@ const QueryClient = async (chainId, rpcUrls, restUrls) => {
       .get(restUrl + "/cosmos/bank/v1beta1/balances/" + address)
       .then((res) => res.data)
       .then((result) => {
-        const balance = result.balances.find(
+        const balance = result.balances?.find(
           (element) => element.denom === denom
         ) || { denom: denom, amount: 0 };
         return balance;
@@ -85,7 +85,7 @@ const QueryClient = async (chainId, rpcUrls, restUrls) => {
       .get(restUrl + "/cosmos/staking/v1beta1/delegations/" + address)
       .then((res) => res.data)
       .then((result) => {
-        const delegations = _.shuffle(result.delegation_responses).reduce(
+        const delegations = result.delegation_responses.reduce(
           (a, v) => ({ ...a, [v.delegation.validator_address]: v }),
           {}
         );
