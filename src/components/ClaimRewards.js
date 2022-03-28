@@ -3,7 +3,7 @@ import Coins from './Coins'
 import {
   coin
 } from '@cosmjs/stargate'
-import { MsgWithdrawDelegatorReward } from "cosmjs-types/cosmos/distribution/v1beta1/tx";
+import { MsgWithdrawDelegatorReward, MsgWithdrawValidatorCommission } from "cosmjs-types/cosmos/distribution/v1beta1/tx";
 import { MsgDelegate } from "cosmjs-types/cosmos/staking/v1beta1/tx";
 
 import {
@@ -41,7 +41,7 @@ function ClaimRewards(props) {
 
       signAndBroadcast = props.stargateClient.signAndBroadcastWithoutBalanceCheck
 
-    if(adjustedValidatorRewards.some(validatorReward => validatorReward.reward <= 0)) {
+    if(!props.commission && adjustedValidatorRewards.some(validatorReward => validatorReward.reward <= 0)) {
       props.setLoading(false)
       props.setError('Reward is too low')
       return
@@ -80,6 +80,15 @@ function ClaimRewards(props) {
           validatorAddress: validatorReward.validatorAddress
         })
       })
+      
+      if (props.commission) {
+        valMessages.push({
+          typeUrl: "/cosmos.distribution.v1beta1.MsgWithdrawValidatorCommission",
+          value: MsgWithdrawValidatorCommission.fromPartial({
+            validatorAddress: validatorReward.validatorAddress
+          })
+        })
+      }
 
       if(props.restake){
         valMessages.push({
@@ -96,13 +105,21 @@ function ClaimRewards(props) {
     }).flat()
   }
 
+  function buttonText() {
+    if(props.restake){
+      return 'Manual Compound'
+    }else if(props.commission){
+      return 'Claim Commission'
+    }else{
+      return 'Claim Rewards'
+    }
+  }
+
   return (
     <>
-      {props.validatorRewards.length > 0 && (
-        <Dropdown.Item onClick={() => claim()}>
-          {props.restake ? 'Manual Compound' : 'Claim Rewards'}
-        </Dropdown.Item>
-      )}
+      <Dropdown.Item onClick={() => claim()}>
+        {buttonText()}
+      </Dropdown.Item>
     </>
   )
 }

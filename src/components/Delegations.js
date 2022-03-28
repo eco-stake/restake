@@ -1,5 +1,6 @@
 import React from "react";
 import _ from "lodash";
+import { Bech32 } from '@cosmjs/encoding'
 import AlertMessage from "./AlertMessage";
 import Coins from "./Coins";
 import ClaimRewards from "./ClaimRewards";
@@ -350,6 +351,14 @@ class Delegations extends React.Component {
     );
   }
 
+  isValidatorOperator(validator) {
+    if(!this.props.address || !validator || !window.atob) return false;
+
+    const prefix = this.props.network.prefix
+    const validatorOperator = Bech32.encode(prefix, Bech32.decode(validator.operator_address).data)
+    return validatorOperator === this.props.address
+  }
+
   totalRewards(validators) {
     if (!this.state.rewards) return;
 
@@ -399,6 +408,7 @@ class Delegations extends React.Component {
 
   renderValidator(validatorAddress, delegation) {
     const validator = this.props.validators[validatorAddress];
+    const isValidatorOperator = this.isValidatorOperator(validator)
     if (validator) {
       const rewards =
         this.state.rewards && this.state.rewards[validatorAddress];
@@ -410,6 +420,8 @@ class Delegations extends React.Component {
             ? "table-success"
             : "table-warning"
           : undefined;
+
+      if(isValidatorOperator) rowVariant = 'table-info'
 
       const delegationBalance = (delegation && delegation.balance) || {
         amount: 0,
@@ -592,6 +604,23 @@ class Delegations extends React.Component {
                         }
                         setError={this.setError}
                       />
+                      {isValidatorOperator && (
+                        <>
+                          <hr />
+                          <ClaimRewards
+                            commission={true}
+                            network={this.props.network}
+                            address={this.props.address}
+                            validatorRewards={this.validatorRewards([validatorAddress])}
+                            stargateClient={this.props.stargateClient}
+                            onClaimRewards={this.onClaimRewards}
+                            setLoading={(loading) =>
+                              this.setValidatorLoading(validatorAddress, loading)
+                            }
+                            setError={this.setError}
+                          />
+                        </>
+                      )}
                       <hr />
                       <Delegate
                         network={this.props.network}
