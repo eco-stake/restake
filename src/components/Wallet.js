@@ -50,6 +50,11 @@ class Wallet extends React.Component {
     this.props.queryClient.getDelegations(this.props.address)
       .then(
         (delegations) => {
+          const orderedAddresses = Object.keys(this.props.validators)
+          delegations = orderedAddresses.reduce((sum, address) => {
+            if(delegations[address]) sum[address] = delegations[address]
+            return sum
+          }, {})
           this.setState({
             isLoaded: true,
             delegations: delegations,
