@@ -80,7 +80,7 @@ cp .env.sample .env
 
 **Populate your new .env file with your mnemonic.**
 
-### Running the script (to see if everything works correctly)
+### Running the script manually
 
 Running the autostake script manually is then simple.
 
@@ -202,9 +202,7 @@ TriggeredBy: <font color="#8AE234"><b>●</b></font> restake.timer
 
 You will likely want to customise your networks config, e.g. to set your own node URLs to ensure your autocompounding script completes successfully.
 
-Note that REStake requires a node with indexing enabled and minimum gas prices matching the networks.json gas price (or your local override).
-
-Create a `src/networks.local.json` file with JSON in the following format:
+Create a `src/networks.local.json` file and specify the networks you want to override. The below is just an example, **you should only override a config if you need to**.
 
 ```json
 {
@@ -218,7 +216,9 @@ Create a `src/networks.local.json` file with JSON in the following format:
     ],
     "gasPrice": "0.001uosmo",
     "autostake": {
-      "batchTxs": 69
+      "batchTxs": 69,
+      "batchQueries": 50,
+      "delegatorTimeout": 5000
     }
   },
   "desmos": {
@@ -236,6 +236,8 @@ Create a `src/networks.local.json` file with JSON in the following format:
 Any values you specify will override the `networks.json` file. These are examples, you can override as much or little as you need.
 
 Arrays will be replaced and not merged. The file is `.gitignore`'d so it won't affect upstream updates.
+
+Note that REStake requires a node with indexing enabled and minimum gas prices matching the networks.json gas price (or your local override).
 
 ## Submiting your operator
 
