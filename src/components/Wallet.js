@@ -21,12 +21,11 @@ class Wallet extends React.Component {
   componentDidUpdate(prevProps) {
     if(this.props.network !== prevProps.network){
       clearInterval(this.state.refreshInterval);
+      this.setState({ delegations: undefined })
     }
 
-    if(!this.props.address) return
-
+    if (!this.props.address) return
     if(this.props.address !== prevProps.address){
-      clearInterval(this.state.refreshInterval);
       this.getDelegations()
       this.refreshInterval()
     }
@@ -51,6 +50,11 @@ class Wallet extends React.Component {
     this.props.queryClient.getDelegations(this.props.address)
       .then(
         (delegations) => {
+          const orderedAddresses = Object.keys(this.props.validators)
+          delegations = orderedAddresses.reduce((sum, address) => {
+            if(delegations[address]) sum[address] = delegations[address]
+            return sum
+          }, {})
           this.setState({
             isLoaded: true,
             delegations: delegations,
