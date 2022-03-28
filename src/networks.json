@@ -2665,6 +2665,12 @@
         "botAddress": "agoric14jhnyzfa9sf3jq879y5rp5324klh4av3vwezmm",
         "runTime": "every 30 minutes",
         "minimumReward": 1000000
+      },
+      {
+        "address": "agoricvaloper1rx04k2fuczu28tvcmu4dzchhwalxvhjrr3k2k9",
+        "botAddress": "cosmos1448zqw506zylru2g85xdw4qge2q8d304qn2eq7",
+        "runTime": "21:00",
+        "minimumReward": 1000000
       }
     ],
     "authzSupport": true
