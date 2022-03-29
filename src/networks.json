@@ -175,5 +175,10 @@
     "name": "starname",
     "gasPrice": "10uvoi",
     "authzSupport": false
+  },
+  {
+    "name": "rizon",
+    "gasPrice": "0.0001uatolo",
+    "authzSupport": true
   }
 ]
