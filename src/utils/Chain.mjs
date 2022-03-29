@@ -1,18 +1,10 @@
-import axios from 'axios'
+import CosmosDirectory from './CosmosDirectory.mjs'
 
 const Chain = async (data) => {
-  const getChainData = () => {
-    return axios.get('https://registry.cosmos.directory/' + data.name + '/chain')
-      .then(res => res.data)
-  }
+  const directory = CosmosDirectory()
 
-  const getTokenData = async () => {
-    return axios.get('https://registry.cosmos.directory/' + data.name + '/assetlist')
-      .then(res => res.data)
-  }
-
-  const chainData = await getChainData();
-  const tokenData = await getTokenData();
+  const chainData = await directory.getChainData(data.name);
+  const tokenData = await directory.getTokenData(data.name);
 
   const getChainInfo = () => {
     return {

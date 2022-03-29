@@ -1,12 +1,6 @@
 [
   {
     "name": "osmosis",
-    "restUrl": [
-      "https://rest.cosmos.directory/osmosis"
-    ],
-    "rpcUrl": [
-      "https://rpc.cosmos.directory/osmosis"
-    ],
     "gasPrice": "0uosmo",
     "testAddress": "osmo1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczed559y",
     "ownerAddress": "osmovaloper1u5v0m74mql5nzfx2yh43s2tke4mvzghr6m2n5t",
@@ -221,12 +215,6 @@
   {
     "name": "juno",
     "apyEnabled": false,
-    "restUrl": [
-      "https://rest.cosmos.directory/juno"
-    ],
-    "rpcUrl": [
-      "https://rpc.cosmos.directory/juno"
-    ],
     "gasPrice": "0.0025ujuno",
     "testAddress": "juno1yxsmtnxdt6gxnaqrg0j0nudg7et2gqcz8yyl52",
     "operators": [
@@ -469,12 +457,6 @@
   },
   {
     "name": "cosmoshub",
-    "restUrl": [
-      "https://rest.cosmos.directory/cosmoshub"
-    ],
-    "rpcUrl": [
-      "https://rpc.cosmos.directory/cosmoshub"
-    ],
     "gasPrice": "0.0025uatom",
     "testAddress": "cosmos1yxsmtnxdt6gxnaqrg0j0nudg7et2gqcz3k8ynk",
     "operators": [
@@ -585,12 +567,6 @@
   },
   {
     "name": "akash",
-    "restUrl": [
-      "https://rest.cosmos.directory/akash"
-    ],
-    "rpcUrl": [
-      "https://rpc.cosmos.directory/akash"
-    ],
     "testAddress": "akash1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczud2r2v",
     "ownerAddress": "akashvaloper1xgnd8aach3vawsl38snpydkng2nv8a4kqgs8hf",
     "operators": [
@@ -689,12 +665,6 @@
   },
   {
     "name": "chihuahua",
-    "restUrl": [
-      "https://rest.cosmos.directory/chihuahua"
-    ],
-    "rpcUrl": [
-      "https://rpc.cosmos.directory/chihuahua"
-    ],
     "gasPrice": "0.025uhuahua",
     "testAddress": "chihuahua1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczjr22j5",
     "ownerAddress": "chihuahuavaloper19vwcee000fhazmpt4ultvnnkhfh23ppwxll8zz",
@@ -908,12 +878,6 @@
   },
   {
     "name": "gravitybridge",
-    "restUrl": [
-      "https://rest.cosmos.directory/gravitybridge"
-    ],
-    "rpcUrl": [
-      "https://rpc.cosmos.directory/gravitybridge"
-    ],
     "testAddress": "gravity1yxsmtnxdt6gxnaqrg0j0nudg7et2gqcz4x4uk7",
     "gasPrice": "0.025ugraviton",
     "operators": [
@@ -1030,12 +994,6 @@
   },
   {
     "name": "regen",
-    "restUrl": [
-      "https://rest.cosmos.directory/regen"
-    ],
-    "rpcUrl": [
-      "https://rpc.cosmos.directory/regen"
-    ],
     "gasPrice": "0.03uregen",
     "testAddress": "regen1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczw5vc9j",
     "ownerAddress": "regenvaloper1c4y3j05qx652rnxm5mg4yesqdkmhz2f6dl7hhk",
@@ -1097,12 +1055,6 @@
   {
     "name": "terra",
     "apyEnabled": false,
-    "restUrl": [
-      "https://rest.cosmos.directory/terra"
-    ],
-    "rpcUrl": [
-      "https://rpc.cosmos.directory/terra"
-    ],
     "testAddress": "terra1rnszu7kumz5lmgdk3fv2pmzt3s8vhcddqep7d4",
     "gasPrice": "0.015uluna",
     "operators": [
@@ -1141,12 +1093,6 @@
   },
   {
     "name": "sentinel",
-    "restUrl": [
-      "https://rest.cosmos.directory/sentinel"
-    ],
-    "rpcUrl": [
-      "https://rpc.cosmos.directory/sentinel"
-    ],
     "gasPrice": "0.02udvpn",
     "testAddress": "sent1yxsmtnxdt6gxnaqrg0j0nudg7et2gqcz2d3ahe",
     "operators": [
@@ -1203,12 +1149,6 @@
   },
   {
     "name": "dig",
-    "restUrl": [
-      "https://rest.cosmos.directory/dig"
-    ],
-    "rpcUrl": [
-      "https://rpc.cosmos.directory/dig"
-    ],
     "gasPrice": "0.0025udig",
     "testAddress": "dig1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczfzw03d",
     "ownerAddress": "digvaloper136avwnuvvy94dqmtnaue2nfvjes8xr37h9rzay",
@@ -1296,12 +1236,6 @@
   },
   {
     "name": "bitcanna",
-    "restUrl": [
-      "https://rest.cosmos.directory/bitcanna"
-    ],
-    "rpcUrl": [
-      "https://rpc.cosmos.directory/bitcanna"
-    ],
     "gasPrice": "0.001ubcna",
     "operators": [
       {
@@ -1382,12 +1316,6 @@
   {
     "name": "emoney",
     "apyEnabled": false,
-    "restUrl": [
-      "https://rest.cosmos.directory/emoney"
-    ],
-    "rpcUrl": [
-      "https://rpc.cosmos.directory/emoney"
-    ],
     "gasPrice": "0.08ungm",
     "operators": [
       {
@@ -1468,12 +1396,6 @@
   {
     "name": "kava",
     "apyEnabled": false,
-    "restUrl": [
-      "https://rest.cosmos.directory/kava"
-    ],
-    "rpcUrl": [
-      "https://rpc.cosmos.directory/kava"
-    ],
     "gasPrice": "0.00008ukava",
     "operators": [
       {
@@ -1515,12 +1437,6 @@
   {
     "name": "desmos",
     "apyEnabled": false,
-    "restUrl": [
-      "https://rest.cosmos.directory/desmos"
-    ],
-    "rpcUrl": [
-      "https://rpc.cosmos.directory/desmos"
-    ],
     "gasPrice": "0.001udsm",
     "operators": [
       {
@@ -1651,12 +1567,6 @@
   },
   {
     "name": "cryptoorgchain",
-    "restUrl": [
-      "https://rest.cosmos.directory/cryptoorgchain"
-    ],
-    "rpcUrl": [
-      "https://rpc.cosmos.directory/cryptoorgchain"
-    ],
     "gasPrice": "0.025basecro",
     "operators": [
       {
@@ -1708,12 +1618,6 @@
     "name": "evmos",
     "enabled": false,
     "apyEnabled": false,
-    "restUrl": [
-      "https://rest.cosmos.directory/evmos"
-    ],
-    "rpcUrl": [
-      "https://rpc.cosmos.directory/evmos"
-    ],
     "operators": [
       {
         "address": "evmosvaloper1shvcjzhcxau6qtlz9w82a646ecwp4hq7ayqt0w",
@@ -1852,12 +1756,6 @@
   },
   {
     "name": "sifchain",
-    "restUrl": [
-      "https://rest.cosmos.directory/sifchain"
-    ],
-    "rpcUrl": [
-      "https://rpc.cosmos.directory/sifchain"
-    ],
     "operators": [
       {
         "address": "sifvaloper1ecv3sdx8h54ckv8q8u67cyk0nj37rffwpj7cdx",
@@ -1942,12 +1840,6 @@
   },
   {
     "name": "lumnetwork",
-    "restUrl": [
-      "https://rest.cosmos.directory/lumnetwork"
-    ],
-    "rpcUrl": [
-      "https://rpc.cosmos.directory/lumnetwork"
-    ],
     "operators": [
       {
         "address": "lumvaloper1mpywgfyk6ku9uwfw4t6xhn050cjluhmjck27nx",
@@ -2120,12 +2012,6 @@
   {
     "name": "stargaze",
     "apyEnabled": false,
-    "restUrl": [
-      "https://rest.cosmos.directory/stargaze"
-    ],
-    "rpcUrl": [
-      "https://rpc.cosmos.directory/stargaze"
-    ],
     "operators": [
       {
         "address": "starsvaloper1s679uyrt0uhljj8ws905hetwn87jqdz3n33klw",
@@ -2247,12 +2133,6 @@
   {
     "name": "comdex",
     "apyEnabled": false,
-    "restUrl": [
-      "https://rest.cosmos.directory/comdex"
-    ],
-    "rpcUrl": [
-      "https://rpc.cosmos.directory/comdex"
-    ],
     "testAddress": "comdex1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczke9x2p",
     "ownerAddress": "comdexvaloper17f70yjkvmvld379904jaddx9h0f74n32pjtmp6",
     "operators": [
@@ -2348,12 +2228,6 @@
   },
   {
     "name": "cheqd",
-    "restUrl": [
-      "https://rest.cosmos.directory/cheqd"
-    ],
-    "rpcUrl": [
-      "https://rpc.cosmos.directory/cheqd"
-    ],
     "gasPrice": "25ncheq",
     "operators": [
       {
@@ -2397,12 +2271,6 @@
   },
   {
     "name": "umee",
-    "restUrl": [
-      "https://rest.cosmos.directory/umee"
-    ],
-    "rpcUrl": [
-      "https://rpc.cosmos.directory/umee"
-    ],
     "operators": [
       {
         "address": "umeevaloper10nsytn9zmtfnhk37hqfe2h9v599ld3h5zs9fqj",
@@ -2493,12 +2361,6 @@
   },
   {
     "name": "bitsong",
-    "restUrl": [
-      "https://rest.cosmos.directory/bitsong"
-    ],
-    "rpcUrl": [
-      "https://rpc.cosmos.directory/bitsong"
-    ],
     "operators": [
       {
         "address": "bitsongvaloper1pn6mhrwq8vdhns366jwxkggmhmxypuhrrc4huu",
@@ -2592,12 +2454,6 @@
   },
   {
     "name": "persistence",
-    "restUrl": [
-      "https://rest.cosmos.directory/persistence"
-    ],
-    "rpcUrl": [
-      "https://rpc.cosmos.directory/persistence"
-    ],
     "operators": [
       {
         "address": "persistencevaloper1rxjmg3l0myaz6fzzvkum82lzyqz5acyxqqc08l",
@@ -2641,12 +2497,6 @@
   {
     "name": "agoric",
     "apyEnabled": false,
-    "restUrl": [
-      "https://rest.cosmos.directory/agoric"
-    ],
-    "rpcUrl": [
-      "https://rpc.cosmos.directory/agoric"
-    ],
     "operators": [
       {
         "address": "agoricvaloper1kh8nwuee2y353u6nmv8jffpvhtzs7xu8f4klam",
@@ -2683,12 +2533,6 @@
   },
   {
     "name": "impacthub",
-    "restUrl": [
-      "https://rest.cosmos.directory/impacthub"
-    ],
-    "rpcUrl": [
-      "https://rpc.cosmos.directory/impacthub"
-    ],
     "gasPrice": "0.025uixo",
     "operators": [
       {
@@ -2726,12 +2570,6 @@
   },
   {
     "name": "kichain",
-    "restUrl": [
-      "https://rest.cosmos.directory/kichain"
-    ],
-    "rpcUrl": [
-      "https://rpc.cosmos.directory/kichain"
-    ],
     "gasPrice": "0.025uxki",
     "operators": [
       {
@@ -2793,12 +2631,6 @@
   },
   {
     "name": "sommelier",
-    "restUrl": [
-      "https://rest.cosmos.directory/sommelier"
-    ],
-    "rpcUrl": [
-      "https://rpc.cosmos.directory/sommelier"
-    ],
     "operators": [
       {
         "address": "sommvaloper1cgdlryczzgrk7d4kkeawqg7t6ldz4x84yu305c",
@@ -2810,12 +2642,6 @@
   },
   {
     "name": "konstellation",
-    "restUrl": [
-      "https://rest.cosmos.directory/konstellation"
-    ],
-    "rpcUrl": [
-      "https://rpc.cosmos.directory/konstellation"
-    ],
     "image": "https://raw.githubusercontent.com/Konstellation/DARC_token/main/darctoken.svg",
     "operators": [
       {
@@ -2871,12 +2697,6 @@
   },
   {
     "name": "fetchhub",
-    "restUrl": [
-      "https://rest.cosmos.directory/fetchhub"
-    ],
-    "rpcUrl": [
-      "https://rpc.cosmos.directory/fetchhub"
-    ],
     "operators": [
       {
         "address": "fetchvaloper1a7l5xar7vyymvahfelar6vtkdar5x9a54l7zvc",
@@ -2913,12 +2733,6 @@
   },
   {
     "name": "cerberus",
-    "restUrl": [
-      "https://rest.cosmos.directory/cerberus"
-    ],
-    "rpcUrl": [
-      "https://rpc.cosmos.directory/cerberus"
-    ],
     "gasPrice": "0.025ucrbrus",
     "autostake": {
       "batchTxs": 100
@@ -3261,12 +3075,6 @@
   },
   {
     "name": "secretnetwork",
-    "restUrl": [
-      "https://rest.cosmos.directory/secretnetwork"
-    ],
-    "rpcUrl": [
-      "https://rpc.cosmos.directory/secretnetwork"
-    ],
     "gasPrice": "0.025uscrt",
     "testAddress": "secret1mpf7w0yyz9n3dh42un2zqu2dmsqv7dhkdlh78e",
     "ownerAddress": "",
@@ -3342,12 +3150,6 @@
   },
   {
     "name": "bostrom",
-    "restUrl": [
-      "https://rest.cosmos.directory/bostrom"
-    ],
-    "rpcUrl": [
-      "https://rpc.cosmos.directory/bostrom"
-    ],
     "gasPrice": "0boot",
     "operators": [
       {
@@ -3367,12 +3169,6 @@
   },
   {
     "name": "starname",
-    "restUrl": [
-      "https://rest.cosmos.directory/starname"
-    ],
-    "rpcUrl": [
-      "https://rpc.cosmos.directory/starname"
-    ],
     "gasPrice": "10uvoi",
     "operators": [],
     "authzSupport": false

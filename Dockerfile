@@ -9,6 +9,8 @@ RUN npm install
 COPY . ./
 
 ENV NODE_ENV=development
+ENV DIRECTORY_PROTOCOL=https
+ENV DIRECTORY_DOMAIN=cosmos.directory
 
 EXPOSE 3000
 CMD npm run start
