@@ -4,13 +4,19 @@ import SigningClient from './SigningClient.mjs'
 import ApyClient from '../ApyClient.mjs'
 import Operator from './Operator.mjs'
 import Chain from './Chain.mjs'
+import CosmosDirectory from './CosmosDirectory.mjs'
 
 const Network = async (data, withoutQueryClient) => {
 
   const chain = await Chain(data)
+  const directory = CosmosDirectory()
+
+  const rpcUrl = data.rpcUrl || directory.rpcUrl(data.name)
+  const restUrl = data.restUrl || directory.restUrl(data.name)
+
   let queryClient
   if(!withoutQueryClient){
-    queryClient = await QueryClient(chain.chainId, data.rpcUrl, data.restUrl)
+    queryClient = await QueryClient(chain.chainId, rpcUrl, restUrl)
   }
 
   const signingClient = (wallet, key) => {
