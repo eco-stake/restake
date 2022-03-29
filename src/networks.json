@@ -2114,12 +2114,12 @@
         "runTime": "11:00",
         "minimumReward": 1000
       },
-	{
-		"address": "lumvaloper1zy4xcyx25eg9qha503eqjjgz043l5zy96p83dh",
-		"botAddress": "lum15hfak84jamn59229c7r6umg2purgd9cysa8rw7",
-		"runTime": "every 5 minutes",
-		"minimumReward": 1000
-	}		  
+      {
+        "address": "lumvaloper1zy4xcyx25eg9qha503eqjjgz043l5zy96p83dh",
+        "botAddress": "lum15hfak84jamn59229c7r6umg2purgd9cysa8rw7",
+        "runTime": "every 5 minutes",
+        "minimumReward": 1000
+      }
     ],
     "authzSupport": true
   },
@@ -3367,7 +3367,7 @@
         "botAddress": "bostrom14a78h6202u4xg6phjnd8rmr5fq98zzdlxzye98",
         "runTime": "every 4 hour",
         "minimumReward": 100000
-      }     
+      }
     ],
     "authzSupport": true
   },
