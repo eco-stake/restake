@@ -1024,6 +1024,12 @@
         "botAddress": "gravity1k8mymzl8sapy2yqyyce5a35u09rnuae7shvmwg",
         "runTime": "18:00",
         "minimumReward": 1000000
+      },
+      {
+        "address": "gravityvaloper1gp957czryfgyvxwn3tfnyy2f0t9g2p4pskxg9g",
+        "botAddress": "gravity1xrrfek3qpz4ja8ccrjklfy064asyqq9khzyh38",
+        "runTime": "every 1 hour",
+        "minimumReward": 5000000
       }
     ],
     "authzSupport": true
@@ -3361,7 +3367,7 @@
         "botAddress": "bostrom14a78h6202u4xg6phjnd8rmr5fq98zzdlxzye98",
         "runTime": "every 4 hour",
         "minimumReward": 100000
-      }     
+      }
     ],
     "authzSupport": true
   },
