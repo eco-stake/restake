@@ -5,12 +5,12 @@ function CosmosDirectory(){
   const directoryDomain = process.env.DIRECTORY_DOMAIN
   const rpcBase = `${directoryProtocol}://rpc.${directoryDomain}`
   const restBase = `${directoryProtocol}://rest.${directoryDomain}`
-  const chainsUrl = `${directoryProtocol}://registry.${directoryDomain}`
+  const chainsUrl = `${directoryProtocol}://chains.${directoryDomain}`
 
   function getChains(){
     return axios.get(chainsUrl)
       .then(res => res.data)
-      .then(data => data.reduce((a, v) => ({ ...a, [v.directory]: v }), {}))
+      .then(data => data.reduce((a, v) => ({ ...a, [v.path]: v }), {}))
   }
 
   function getChainData(name) {
