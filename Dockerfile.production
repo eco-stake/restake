@@ -5,6 +5,8 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm ci
 COPY . ./
+ENV DIRECTORY_PROTOCOL=https
+ENV DIRECTORY_DOMAIN=cosmos.directory
 RUN npm run build
 
 # production env
