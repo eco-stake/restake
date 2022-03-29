@@ -1,5 +1,6 @@
 import React, { useState, useReducer, useEffect } from 'react';
 
+import CosmosDirectory from '../utils/CosmosDirectory.mjs';
 import Network from '../utils/Network.mjs'
 
 import {
@@ -17,6 +18,7 @@ function NetworkSelect(props) {
   const [error, setError] = useState(false);
   const [selectedNetwork, setSelectedNetwork] = useState();
   const [validators, setValidators] = useState([]);
+  const [operatorCounts, setOperatorCounts] = useState({});
   const [options, setOptions] = useReducer(
     (state, newState) => ({...state, ...newState}),
     {networks: [], operators: [], network: {value: ''}}
@@ -25,6 +27,9 @@ function NetworkSelect(props) {
   const handleOpen = () => {
     setSelectedNetwork(props.network)
     setValidators(props.validators)
+    CosmosDirectory().getOperatorCounts().then(counts => {
+      setOperatorCounts(counts)
+    })
     setShow(true)
   }
 
@@ -52,17 +57,23 @@ function NetworkSelect(props) {
     const networks = Object.values(props.networks).sort((a, b) => a.name > b.name ? 1 : -1)
     setOptions({
       networks: networks.map(el => {
-        return {value: el.name, label: el.pretty_name, image: el.image, operators: el.operators, authz: el.authzSupport}
+        return {
+          value: el.name, 
+          label: el.pretty_name, 
+          image: el.image,
+          operatorCount: el.operators?.length || operatorCounts[el.name], 
+          authz: el.authzSupport
+        }
       }),
       network: selectedNetwork && {
         value: selectedNetwork.name,
         label: selectedNetwork.prettyName,
         image: selectedNetwork.image,
-        operators: selectedNetwork.operators,
+        operatorCount: selectedNetwork.operators.length,
         authz: selectedNetwork.authzSupport
       }
     })
-  }, [props.networks, selectedNetwork])
+  }, [props.networks, selectedNetwork, operatorCounts])
 
   const selectNetwork = (newValue) => {
     const data = props.networks[newValue.value]
@@ -133,8 +144,8 @@ function NetworkSelect(props) {
                         <span className="ms-1">{network.label}</span>
                       </div>
                       <div className="col text-end pt-1">
-                        {network.operators.length > 0 &&
-                        <small>{network.operators.length} Operator{network.operators.length > 1 ? 's' : ''}</small>
+                        {network.operatorCount > 0 &&
+                        <small>{network.operatorCount} Operator{network.operatorCount > 1 ? 's' : ''}</small>
                         }
                         {network.authz
                           ? <Badge className="ms-3 rounded-pill" bg="success">Authz</Badge>

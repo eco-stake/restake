@@ -116,7 +116,7 @@ export class Autostake {
       timeStamp("!! You should switch to the correct path unless you have grants. Check the README !!")
     } 
 
-    const operatorData = data.operators.find(el => el.botAddress === botAddress)
+    const operatorData = network.operators.find(el => el.botAddress === botAddress)
 
     if (!operatorData) return timeStamp('Not an operator')
     if (!network.authzSupport) return timeStamp('No Authz support')

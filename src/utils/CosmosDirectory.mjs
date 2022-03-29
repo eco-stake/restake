@@ -5,12 +5,21 @@ function CosmosDirectory(){
   const directoryDomain = process.env.DIRECTORY_DOMAIN
   const rpcBase = `${directoryProtocol}://rpc.${directoryDomain}`
   const restBase = `${directoryProtocol}://rest.${directoryDomain}`
-  const chainsUrl = `${directoryProtocol}://registry.${directoryDomain}`
+  const chainsUrl = `${directoryProtocol}://chains.${directoryDomain}`
+  const validatorsUrl = `${directoryProtocol}://validators.${directoryDomain}`
+
+  function rpcUrl(name){
+    return rpcBase + '/' + name
+  }
+
+  function restUrl(name){
+    return restBase + '/' + name
+  }
 
   function getChains(){
     return axios.get(chainsUrl)
       .then(res => res.data)
-      .then(data => data.reduce((a, v) => ({ ...a, [v.directory]: v }), {}))
+      .then(data => data.reduce((a, v) => ({ ...a, [v.path]: v }), {}))
   }
 
   function getChainData(name) {
@@ -23,12 +32,22 @@ function CosmosDirectory(){
       .then(res => res.data)
   }
 
-  function rpcUrl(name){
-    return rpcBase + '/' + name
+  function getOperators(chainName){
+    return axios.get(validatorsUrl + '/chains/' + chainName)
+      .then(res => res.data)
+      .then(data => data.validators.filter(el => el.restake ))
   }
 
-  function restUrl(name){
-    return restBase + '/' + name
+  function getOperatorCounts(){
+    return axios.get(validatorsUrl)
+      .then(res => res.data)
+      .then(data => data.reduce((sum, validator) => {
+        validator.chains.forEach(chain => {
+          sum[chain.name] = sum[chain.name] || 0
+          if(!!chain.restake) sum[chain.name]++
+        })
+        return sum
+      }, {}))
   }
 
   return {
@@ -37,7 +56,9 @@ function CosmosDirectory(){
     chainsUrl,
     getChains,
     getChainData,
-    getTokenData
+    getTokenData,
+    getOperators,
+    getOperatorCounts
   }
 }
 
