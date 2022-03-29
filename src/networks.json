@@ -7,7 +7,7 @@
     "rpcUrl": [
       "https://rpc.cosmos.directory/osmosis"
     ],
-    "gasPrice": "0uosmo",
+    "gasPrice": "0.0025uosmo",
     "testAddress": "osmo1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczed559y",
     "ownerAddress": "osmovaloper1u5v0m74mql5nzfx2yh43s2tke4mvzghr6m2n5t",
     "operators": [
