@@ -61,7 +61,7 @@ function NetworkSelect(props) {
           value: el.name, 
           label: el.pretty_name, 
           image: el.image,
-          operatorCount: operatorCounts[el.name], 
+          operatorCount: el.operators?.length || operatorCounts[el.name], 
           authz: el.authzSupport
         }
       }),

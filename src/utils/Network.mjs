@@ -10,7 +10,7 @@ const Network = async (data, withoutQueryClient) => {
 
   const chain = await Chain(data)
   const directory = CosmosDirectory()
-  const operators = (await directory.getOperators(data.name)).map(el => {
+  const operators = data.operators || (await directory.getOperators(data.name)).map(el => {
     return {
       address: el.address,
       botAddress: el.restake.address,
