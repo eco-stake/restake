@@ -24,6 +24,7 @@ function NetworkFinder() {
   )
 
   const getNetworks = async () => {
+    let registryNetworks
     try {
       registryNetworks = await directory.getChains()
     } catch (error) {
