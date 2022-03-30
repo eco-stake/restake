@@ -34,7 +34,8 @@
     "start": "npx parcel src/index.html",
     "prebuild": "rm -rf dist/",
     "build": "npx parcel build src/index.html",
-    "autostake": "node scripts/autostake.mjs"
+    "autostake": "node scripts/autostake.mjs",
+    "checkAuthz": "node scripts/checkAuthz.mjs"
   },
   "eslintConfig": {
     "extends": [

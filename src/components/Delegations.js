@@ -32,8 +32,8 @@ class Delegations extends React.Component {
   async componentDidMount() {
     const isNanoLedger = this.props.stargateClient.getIsNanoLedger();
     this.setState({ isNanoLedger: isNanoLedger });
+    this.getGrants()
     this.refresh();
-    this.testAndGetGrants()
   }
 
   async componentDidUpdate(prevProps) {
@@ -48,7 +48,6 @@ class Delegations extends React.Component {
       const isNanoLedger = this.props.stargateClient.getIsNanoLedger();
       this.setState({
         isNanoLedger: isNanoLedger,
-        authzMissing: false,
         error: null,
         validatorApy: {},
         operatorGrants: {}
@@ -56,10 +55,9 @@ class Delegations extends React.Component {
       return this.refresh();
     }
 
-    if (!this.props.delegations) return;
-    const matchingDelegations = _.difference(Object.keys(this.props.delegations), prevProps.delegations ? Object.keys(prevProps.delegations) : []).length === 0
-    if (!matchingDelegations){
-      this.testAndGetGrants()
+    const delegationsChanged = _.difference(Object.keys(this.props.delegations || {}), Object.keys(prevProps.delegations || {})).length > 0
+    if (delegationsChanged) {
+      this.getGrants()
     }
   }
 
@@ -118,17 +116,12 @@ class Delegations extends React.Component {
     })
   }
 
-  async testAndGetGrants() {
-    await this.getTestGrant();
-    if (!this.state.authzMissing && this.props.operators.length) {
-      this.getGrants();
-    }
-  }
-
   async getGrants() {
-    if(!this.props.delegations) return;
+    if(!this.authzSupport() || !this.props.operators.length) return
 
     const ordered = [...this.props.operators].sort(el => {
+      if(!this.props.delegations) return 0
+
       return this.props.delegations[el.address] ? -1 : 0
     })
     const calls = ordered.map((operator) => {
@@ -161,11 +154,7 @@ class Delegations extends React.Component {
             }));
           },
           (error) => {
-            if (error.response && error.response.status === 501) {
-              this.setState({ authzMissing: true });
-            } else {
-              this.setState({ error: "Failed to get grants. Please refresh" });
-            }
+            this.setState({ error: "Failed to get grants. Please refresh" });
           }
         );
       }
@@ -176,19 +165,6 @@ class Delegations extends React.Component {
     for (const batchCall of batchCalls) {
       await Promise.allSettled(batchCall.map(call => call()))
     }
-  }
-
-  getTestGrant() {
-    return this.props.queryClient
-      .getGrants()
-      .then(
-        (result) => {},
-        (error) => {
-          if (error.response && error.response.status === 501) {
-            this.setState({ authzMissing: true });
-          }
-        }
-      );
   }
 
   getValidatorImage(network, validatorAddress, expireCache){
@@ -311,13 +287,17 @@ class Delegations extends React.Component {
     this.setState({ error: error });
   }
 
+  authzSupport() {
+    return this.props.network.authzSupport
+  }
+
   grantsValid(operator) {
     const grants = this.state.operatorGrants[operator.botAddress];
     return grants && grants.grantsValid;
   }
 
   restakePossible() {
-    return !this.state.isNanoLedger && !this.state.authzMissing;
+    return !this.state.isNanoLedger && this.authzSupport();
   }
 
   operatorForValidator(validatorAddress) {
@@ -715,21 +695,21 @@ class Delegations extends React.Component {
 
     const alerts = (
       <>
-        {this.state.authzMissing && (
+        {!this.authzSupport() && (
           <AlertMessage variant="warning" dismissible={false}>
             {this.props.network.prettyName} doesn't support Authz just yet. You
             can manually restake for now and REStake is ready when support is
             enabled
           </AlertMessage>
         )}
-        {!this.state.authzMissing && !this.props.operators.length && (
+        {this.authzSupport() && !this.props.operators.length && (
           <AlertMessage
             variant="warning"
             message="There are no REStake operators for this network yet. You can compound manually, or check the About section to run one yourself"
             dismissible={false}
           />
         )}
-        {!this.state.authzMissing &&
+        {this.authzSupport() &&
           this.props.operators.length > 0 &&
           this.state.isNanoLedger && (
             <AlertMessage
