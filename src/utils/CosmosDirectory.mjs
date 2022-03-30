@@ -1,8 +1,8 @@
 import axios from 'axios'
 
 function CosmosDirectory(){
-  const directoryProtocol = process.env.DIRECTORY_PROTOCOL
-  const directoryDomain = process.env.DIRECTORY_DOMAIN
+  const directoryProtocol = process.env.DIRECTORY_PROTOCOL || 'https'
+  const directoryDomain = process.env.DIRECTORY_DOMAIN || 'cosmos.directory'
   const rpcBase = `${directoryProtocol}://rpc.${directoryDomain}`
   const restBase = `${directoryProtocol}://rest.${directoryDomain}`
   const chainsUrl = `${directoryProtocol}://chains.${directoryDomain}`
