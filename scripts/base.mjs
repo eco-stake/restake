@@ -14,6 +14,8 @@ import { MsgExec } from "cosmjs-types/cosmos/authz/v1beta1/tx.js";
 import fs from 'fs'
 import _ from 'lodash'
 
+import 'dotenv/config'
+
 export class Autostake {
   constructor(){
     this.mnemonic = process.env.MNEMONIC
@@ -49,7 +51,7 @@ export class Autostake {
           timeStamp('You are using public nodes, script may fail with many delegations. Check the README to use your own')
           timeStamp('Delaying briefly to reduce load...')
           await new Promise(r => setTimeout(r, (Math.random() * 31) * 1000));
-        } 
+        }
 
         try {
           await this.runNetwork(client)
@@ -122,7 +124,7 @@ export class Autostake {
     if (network.slip44 && network.slip44 !== slip44) {
       timeStamp("!! You are not using the preferred derivation path !!")
       timeStamp("!! You should switch to the correct path unless you have grants. Check the README !!")
-    } 
+    }
 
     const operatorData = network.operators.find(el => el.botAddress === botAddress)
 

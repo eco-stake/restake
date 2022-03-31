@@ -14,6 +14,7 @@
     "bootstrap": "^5.1.3",
     "buffer": "^6.0.3",
     "cosmjs-types": "^0.4.1",
+    "dotenv": "^16.0.0",
     "fuzzy-search": "^3.2.1",
     "moment": "^2.29.1",
     "parse-duration": "^1.0.2",
