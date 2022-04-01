@@ -5,8 +5,12 @@ import ApyClient from '../ApyClient.mjs'
 import Operator from './Operator.mjs'
 import Chain from './Chain.mjs'
 import CosmosDirectory from './CosmosDirectory.mjs'
+import DesmosSigningClient from './DesmosSigningClient.mjs'
 
 const Network = async (data, withoutQueryClient) => {
+  const SIGNERS = {
+    desmos: DesmosSigningClient
+  }
 
   const chain = await Chain(data)
   const directory = CosmosDirectory()
@@ -31,7 +35,8 @@ const Network = async (data, withoutQueryClient) => {
     if(!queryClient) return 
 
     const gasPrice = data.gasPrice || '0.0025' + chain.denom
-    return SigningClient(queryClient.rpcUrl, chain.chainId, gasPrice, wallet, key)
+    const client = SIGNERS[data.name] || SigningClient
+    return client(queryClient.rpcUrl, gasPrice, wallet, key)
   }
 
   const apyClient = queryClient && ApyClient(chain, queryClient.rpcUrl, queryClient.restUrl)
