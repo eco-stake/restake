@@ -7,12 +7,16 @@ import {
   assertIsDeliverTxSuccess,
   GasPrice
 } from '@cosmjs/stargate'
+import {profileFromAny} from "@desmoslabs/desmjs";
 
 const SigningClient = async (rpcUrl, chainId, defaultGasPrice, signer, key) => {
 
   const client = rpcUrl && await SigningStargateClient.connectWithSigner(
     rpcUrl,
-    signer
+    signer,
+    {
+      accountParser: profileFromAny,
+    }
   )
 
   const getAddress = async () => {
