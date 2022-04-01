@@ -55,7 +55,9 @@ class Delegations extends React.Component {
       return this.refresh();
     }
 
-    const delegationsChanged = _.difference(Object.keys(this.props.delegations || {}), Object.keys(prevProps.delegations || {})).length > 0
+    if(!this.props.delegations) return
+
+    const delegationsChanged = _.difference(Object.keys(this.props.delegations), Object.keys(prevProps.delegations || {})).length > 0
     if (delegationsChanged) {
       this.getGrants()
     }
