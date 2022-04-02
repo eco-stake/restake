@@ -104,7 +104,7 @@ Update your local repository and pre-build your Docker containers with the follo
 
 ```bash
 git pull
-docker-compose run app --rm npm install
+docker-compose run --rm app npm install
 docker-compose build --no-cache
 ```
 
