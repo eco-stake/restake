@@ -55,7 +55,9 @@ class Delegations extends React.Component {
       return this.refresh();
     }
 
-    const delegationsChanged = _.difference(Object.keys(this.props.delegations || {}), Object.keys(prevProps.delegations || {})).length > 0
+    if(!this.props.delegations) return
+
+    const delegationsChanged = _.difference(Object.keys(this.props.delegations), Object.keys(prevProps.delegations || {})).length > 0
     if (delegationsChanged) {
       this.getGrants()
     }
@@ -127,6 +129,8 @@ class Delegations extends React.Component {
     const calls = ordered.map((operator) => {
       return () => {
         const { botAddress, address } = operator;
+        if(!this.props.operators.includes(operator)) return;
+
         return this.props.queryClient.getGrants(botAddress, this.props.address).then(
           (result) => {
             let grantValidators;
