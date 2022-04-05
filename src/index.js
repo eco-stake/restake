@@ -30,7 +30,6 @@ ReactDOM.render(
         <Routes>
           <Route path="/" element={<NetworkFinder />} />
           <Route path="/:network" element={<NetworkFinder />} />
-          <Route path="/:network/:operator" element={<NetworkFinder />} />
         </Routes>
       </BrowserRouter>
     </React.StrictMode>
