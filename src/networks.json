@@ -150,7 +150,7 @@
   },
   {
     "name": "fetchhub",
-    "authzSupport": false
+    "authzSupport": true
   },
   {
     "name": "cerberus",
