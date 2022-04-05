@@ -244,7 +244,7 @@ class Delegations extends React.Component {
       error: null,
       validatorLoading: _.set(state.validatorLoading, operator.address, false),
     }));
-    setTimeout(() => this.getGrants(), 10_000);
+    setTimeout(() => this.getGrants(), 60_000);
   }
 
   onRevoke(operator) {
