@@ -136,13 +136,19 @@ const QueryClient = async (chainId, rpcUrls, restUrls) => {
         const stakeGrant = result.grants.find((el) => {
           if (
             el.authorization["@type"] ===
-            "/cosmos.staking.v1beta1.StakeAuthorization"
+            "/cosmos.staking.v1beta1.StakeAuthorization" || (
+              // Handle GenericAuthorization for Ledger
+              el.authorization["@type"] ===
+              "/cosmos.authz.v1beta1.GenericAuthorization" &&
+              el.authorization.msg ===
+              "/cosmos.staking.v1beta1.MsgDelegate"
+            )
           ) {
             return Date.parse(el.expiration) > new Date();
           } else {
             return false;
           }
-        });
+        })
         return {
           claimGrant,
           stakeGrant,
