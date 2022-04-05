@@ -180,5 +180,10 @@
     "name": "rizon",
     "gasPrice": "0.0001uatolo",
     "authzSupport": true
+  },
+  {
+    "name": "decentr",
+    "gasPrice": "0.025udec",
+    "authzSupport": false
   }
 ]
