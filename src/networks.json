@@ -47,7 +47,7 @@
   {
     "name": "sentinel",
     "gasPrice": "0.02udvpn",
-    "authzSupport": false
+    "authzSupport": true
   },
   {
     "name": "dig",
