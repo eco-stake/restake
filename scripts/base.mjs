@@ -197,7 +197,8 @@ export class Autostake {
       .then(
         (result) => {
           if (result.claimGrant && result.stakeGrant) {
-            if (result.stakeGrant.authorization['@type'] !== "/cosmos.authz.v1beta1.GenericAuthorization") {
+            if (result.stakeGrant.authorization['@type'] === "/cosmos.authz.v1beta1.GenericAuthorization") {
+              timeStamp(delegatorAddress, "Using GenericAuthorization, allowed")
               return [client.operator.address];
             }
 
