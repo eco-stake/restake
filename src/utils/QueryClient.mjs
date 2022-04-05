@@ -142,6 +142,17 @@ const QueryClient = async (chainId, rpcUrls, restUrls) => {
           } else {
             return false;
           }
+        }) || result.grants.find((el) => {
+          if (
+              el.authorization["@type"] ===
+              "/cosmos.authz.v1beta1.GenericAuthorization" &&
+              el.authorization.msg ===
+              "/cosmos.staking.v1beta1.MsgDelegate"
+          ) {
+            return Date.parse(el.expiration) > new Date();
+          } else {
+            return false;
+          }
         });
         return {
           claimGrant,
