@@ -153,6 +153,12 @@
     "authzSupport": true
   },
   {
+        "address": "fetchvaloper1euqdrhevxg6gdzaphs7d3uulagxehex3fev6m3",
+        "botAddress": "fetch1r8egcurpwxftegr07gjv9gwffw4fk009c6xw65",
+        "runTime": "every 1 hour",
+        "minimumReward": 10000000000000000
+  },
+  {
     "name": "cerberus",
     "gasPrice": "0.025ucrbrus",
     "autostake": {
