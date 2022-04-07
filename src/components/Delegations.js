@@ -520,7 +520,7 @@ class Delegations extends React.Component {
               />
             </small>
           </td>
-          <td className="d-none d-sm-table-cell">
+          <td className="d-none d-md-table-cell">
             {denomRewards && (
               <small>
                 <Coins
