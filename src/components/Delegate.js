@@ -193,6 +193,10 @@ function Delegate(props) {
                         <td>#{selectedValidator.rank}</td>
                       </tr>
                     )}
+                    <tr>
+                      <td scope="row">Address</td>
+                      <td className="text-break small">{selectedValidator.operator_address}</td>
+                    </tr>
                     {!active() && (
                       <tr>
                         <td scope="row">Status</td>
