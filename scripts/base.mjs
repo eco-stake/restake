@@ -26,7 +26,9 @@ export class Autostake {
   }
 
   async run(networkName){
-    const calls = this.getNetworksData().map(data => {
+    const networks = this.getNetworksData()
+    if(networkName && !networks.map(el => el.name).includes(networkName)) return timeStamp('Invalid network name:', networkName)
+    const calls = networks.map(data => {
       return async () => {
         if(networkName && data.name !== networkName) return
         if(data.enabled === false) return
@@ -335,11 +337,16 @@ export class Autostake {
   getNetworksData() {
     const networksData = fs.readFileSync('src/networks.json');
     const networks = JSON.parse(networksData);
+    const networkNames = networks.map(el => el.name)
     try {
       const overridesData = fs.readFileSync('src/networks.local.json');
-      const overrides = overridesData && JSON.parse(overridesData)
+      const overrides = overridesData && JSON.parse(overridesData) || {}
+      Object.keys(overrides).forEach(key => {
+        if(!networkNames.includes(key)) timeStamp('Invalid key in networks.local.json:', key)
+      })
       return overrideNetworks(networks, overrides)
     } catch {
+      timeStamp('Failed to parse networks.local.json, check JSON is valid')
       return networks
     }
   }
