@@ -121,14 +121,14 @@ export class Autostake {
 
     timeStamp('Bot address is', botAddress)
 
+    const operator = network.getOperatorByBotAddress(botAddress)
+    if (!operator) return timeStamp('Not an operator')
+
     if (network.slip44 && network.slip44 !== slip44) {
       timeStamp("!! You are not using the preferred derivation path !!")
       timeStamp("!! You should switch to the correct path unless you have grants. Check the README !!")
     }
 
-    const operatorData = network.operators.find(el => el.botAddress === botAddress)
-
-    if (!operatorData) return timeStamp('Not an operator')
     if (!network.authzSupport) return timeStamp('No Authz support')
 
     network = await Network(data)
@@ -138,9 +138,6 @@ export class Autostake {
     const client = await network.signingClient(wallet)
     client.registry.register("/cosmos.authz.v1beta1.MsgExec", MsgExec)
 
-    const validators = await network.getValidators()
-    const operators = network.getOperators(validators)
-    const operator = network.getOperatorByBotAddress(operators, botAddress)
 
     return {
       network,
@@ -239,7 +236,7 @@ export class Autostake {
 
     const perValidatorReward = parseInt(totalRewards / validators.length)
 
-    if (perValidatorReward < client.operator.data.minimumReward) {
+    if (perValidatorReward < client.operator.minimumReward) {
       timeStamp(address, perValidatorReward, client.network.denom, 'reward is too low, skipping')
       return
     }
