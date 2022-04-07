@@ -186,7 +186,7 @@ function Delegate(props) {
             <Tabs activeKey={activeTab} onSelect={(k) => setActiveTab(k)} id="validator-tabs" className="mb-3">
               <Tab eventKey="profile" title="Profile">
                 <Table>
-                  <tbody className="table-sm">
+                  <tbody className="table-sm small">
                     {active() && (
                       <tr>
                         <td scope="row">Rank</td>
@@ -253,7 +253,7 @@ function Delegate(props) {
                       <td scope="row">REStake</td>
                       <td>
                         {!!operator() ? (
-                          <small>{operator().runTimesString()} (<Coins coins={minimumReward()} denom={network.denom} decimals={network.decimals} /> min)</small>
+                          <span>{operator().runTimesString()} (<Coins coins={minimumReward()} denom={network.denom} decimals={network.decimals} /> min)</span>
                         ) :
                           <TooltipIcon icon={<XCircle className="opacity-50 p-0" />} identifier={selectedValidator.operator_address} tooltip="This validator is not a REStake operator" />
                         }
