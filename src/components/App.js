@@ -180,6 +180,12 @@ class App extends React.Component {
                   <span role="button"><span className={'nav-link disabled clipboard' + (this.state.copied ? ' copied' : '')}>{this.state.address}</span></span>
                 </CopyToClipboard>
               </li>
+              <li className="nav-item d-none d-lg-block d-xl-none">
+                <CopyToClipboard text={this.state.address}
+                  onCopy={() => this.setCopied()}>
+                  <span role="button"><span style={{maxWidth: 300}} className={'nav-link disabled small d-block text-truncate clipboard' + (this.state.copied ? ' copied' : '')}>{this.state.address}</span></span>
+                </CopyToClipboard>
+              </li>
               <li className="nav-item d-none d-md-block">
                 <span className="nav-link">
                   <Badge>
