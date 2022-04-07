@@ -1,10 +1,13 @@
 import moment from 'moment'
 import parse from 'parse-duration'
 
-const Operator = (data, validatorData) => {
+const Operator = (data) => {
+  const { address } = data
+  const botAddress = data.restake.address
+  const runTime = data.restake.run_time
+  const minimumReward = data.restake.minimum_reward
 
   function runsPerDay() {
-    const { runTime } = data
     if(Array.isArray(runTime)){
       return runTime.length
     }else{
@@ -17,8 +20,8 @@ const Operator = (data, validatorData) => {
   }
 
   function runTimes() {
-    if(Array.isArray(data.runTime)) return data.runTime
-    return [data.runTime]
+    if(Array.isArray(runTime)) return runTime
+    return [runTime]
   }
 
   function runTimesString(){
@@ -30,29 +33,29 @@ const Operator = (data, validatorData) => {
   }
 
   function frequency() {
-    if(Array.isArray(data.runTime)){
-      return data.runTime.length + 'x per day'
+    if(Array.isArray(runTime)){
+      return runTime.length + 'x per day'
     }else{
-      if(data.runTime.startsWith('every')){
-        return data.runTime.replace('every ', '')
+      if(runTime.startsWith('every')){
+        return runTime.replace('every ', '')
       }
       return 'daily'
     }
   }
 
   function nextRun() {
-    if (!data.runTime) return
+    if (!runTime) return
 
-    if (Array.isArray(data.runTime)) {
-      return data.runTime
+    if (Array.isArray(runTime)) {
+      return runTime
         .map(el => nextRunFromRuntime(el))
         .sort((a, b) => a.valueOf() - b.valueOf())
         .find(el => el.isAfter());
     } else {
-      if(data.runTime.startsWith('every')){
-        return nextRunFromInterval(data.runTime)
+      if(runTime.startsWith('every')){
+        return nextRunFromInterval(runTime)
       }
-      return nextRunFromRuntime(data.runTime)
+      return nextRunFromRuntime(runTime)
     }
   }
 
@@ -69,11 +72,12 @@ const Operator = (data, validatorData) => {
   }
 
   return {
-    address: data.address,
-    botAddress: data.botAddress,
-    moniker: validatorData && validatorData.description.moniker,
-    description: validatorData && validatorData.description,
-    validatorData,
+    address,
+    botAddress,
+    runTime,
+    minimumReward,
+    moniker: data.description?.moniker,
+    description: data.description,
     data,
     nextRun,
     frequency,

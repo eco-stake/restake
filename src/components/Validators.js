@@ -6,62 +6,80 @@ import TooltipIcon from './TooltipIcon'
 
 import {
   Table,
-  Button
+  Button,
+  Spinner,
+  Tab,
+  Tabs
 } from 'react-bootstrap'
 
 import {
   CheckCircle, XCircle
 } from 'react-bootstrap-icons'
+import ValidatorName from './ValidatorName';
 
 function Validators(props) {
+  const { validators, operators } = props
+
   const [filter, setFilter] = useState()
+  const [results, setResults] = useState([])
 
-  function filteredOperators(){
-    const results = _.pick(props.validators, props.operators.map(el => el.address))
-    return Object.entries(filteredResults(results))
-  }
+  useEffect(() => {
+    if (!validators) return
 
-  function filteredValidators(){
-    const results = _.omit(props.validators, props.operators.map(el => el.address))
-    return Object.entries(filteredResults(results))
-  }
+    setResults(filteredValidators())
+  }, [filter, validators, operators]);
 
   function filterValidators(event){
     setFilter(event.target.value)
   }
 
-  function filteredResults(validators){
-    if(!validators) return {}
+  function filteredValidators(){
+    let searchResults = validators
+    if (props.exclude) searchResults = _.omit(searchResults, props.exclude)
 
-    if(props.exclude) validators = _.omit(validators, props.exclude)
-
-    if(!filter || filter === '') return validators
+    if (!filter || filter === '') return Object.values(searchResults)
 
     const searcher = new FuzzySearch(
-      Object.values(validators), ['description.moniker'],
-      {sort: true}
+      Object.values(searchResults), ['description.moniker'],
+      { sort: true }
     )
 
-    const results =  searcher.search(filter)
-    return results.reduce((a, v) => ({ ...a, [v.operator_address]: v}), {})
+    return searcher.search(filter)
   }
 
-  function renderItem(item, isOperator){
+  function statusResults(status){
+    return results.filter(result => {
+      if(status === 'active'){
+        return result.status === 'BOND_STATUS_BONDED'
+      }else{
+        return result.status !== 'BOND_STATUS_BONDED'
+      }
+    })
+  }
+
+  function renderItem(item, isActive){
     const address = item.operator_address
-    let variant = isOperator ? 'warning' : null
+    const isOperator = operators.map(el => el.address).includes(address)
+    let variant = null
     variant = variant ? 'table-' + variant : ''
     return (
       <tr key={address} className={variant}>
+        {isActive && (
+          <td>{item.rank}</td>
+        )}
         <td>
           <div className="row">
             <div className="col-1 me-2">
-              <ValidatorImage validator={item} imageUrl={props.getValidatorImage(props.network, address)} width={30} height={30} />
+              <ValidatorImage validator={item} width={30} height={30} />
             </div>
             <div className="col">
-              <span className="align-middle">{item.description.moniker}</span>
+              <span className="align-middle"><ValidatorName validator={item} hideWarning={true} /></span>
             </div>
           </div>
         </td>
+        {!isActive && (
+          <td>{item.jailed ? 'Jailed' : ''}</td>
+        )}
         <td className="text-center">
           {isOperator
             ? <TooltipIcon icon={<CheckCircle className="text-success" />} identifier={address}
@@ -70,7 +88,7 @@ function Validators(props) {
               tooltip="This validator is not a REStake operator" />
           }
         </td>
-        {props.network.data.apyEnabled !== false && (
+        {isActive && props.network.data.apyEnabled !== false && (
           <td className="d-none d-lg-table-cell text-center">
             {Object.keys(props.validatorApy).length > 0
               ? props.validatorApy[address]
@@ -95,35 +113,48 @@ function Validators(props) {
   return (
     <>
       <input className="form-control mb-3" id="myInput" onKeyUp={filterValidators} type="text" placeholder="Search.." />
-      {(filteredOperators().length > 0 || filteredValidators().length > 0) &&
-        <Table className="align-middle">
-          <tbody>
-            <tr>
-              <th>Validator</th>
-              <th className="text-center">REStake</th>
-              {props.network.apyEnabled !== false && (
-                <th>
-                  <TooltipIcon
-                    icon={<span className="text-decoration-underline">APY</span>}
-                    identifier="validators-apy"
-                  >
-                    <div className="mt-2 text-center">
-                      <p>Based on commission, compounding frequency and estimated block times.</p>
-                      <p>This is an estimate and best case scenario.</p>
-                    </div>
-                  </TooltipIcon>
-                </th>
-              )}
-              <th></th>
-            </tr>
-            {filteredOperators().map(([validator_address, item], i) => renderItem(item, true))}
-            {filteredValidators().map(([validator_address, item], i) => renderItem(item))}
-          </tbody>
-        </Table>
-      }
-      {filteredOperators().length < 1 && filteredValidators().length < 1 &&
-        <p>No results found</p>
-      }
+      <Tabs defaultActiveKey="active" id="validators-tabs" className="mb-3">
+        {['active', 'inactive'].map(status => {
+          return (
+            <Tab key={status} eventKey={status} title={_.startCase(status)}>
+              {statusResults(status).length > 0 &&
+                <Table className="align-middle">
+                  <tbody>
+                    <tr>
+                      {status === 'active' && (
+                        <th>#</th>
+                      )}
+                      <th>Validator</th>
+                      {status !== 'active' && (
+                        <th>Status</th>
+                      )}
+                      <th className="text-center">REStake</th>
+                      {status === 'active' && props.network.apyEnabled !== false && (
+                        <th>
+                          <TooltipIcon
+                            icon={<span className="text-decoration-underline">APY</span>}
+                            identifier="validators-apy"
+                          >
+                            <div className="mt-2 text-center">
+                              <p>Based on commission, compounding frequency and estimated block times.</p>
+                              <p>This is an estimate and best case scenario.</p>
+                            </div>
+                          </TooltipIcon>
+                        </th>
+                      )}
+                      <th></th>
+                    </tr>
+                    {statusResults(status).map(item => renderItem(item, status === 'active'))}
+                  </tbody>
+                </Table>
+              }
+              {statusResults(status).length < 1 &&
+                <p>No results found</p>
+              }
+            </Tab>
+          )
+        })}
+      </Tabs>
     </>
   )
 }
