@@ -6,6 +6,7 @@ import {timeStamp, mapSync, executeSync, overrideNetworks} from '../src/utils/He
 import {
   coin
 } from '@cosmjs/stargate'
+import { divide, bignumber, floor } from 'mathjs'
 
 import { MsgWithdrawDelegatorReward } from "cosmjs-types/cosmos/distribution/v1beta1/tx.js";
 import { MsgDelegate } from "cosmjs-types/cosmos/staking/v1beta1/tx.js";
@@ -234,7 +235,7 @@ export class Autostake {
   async getAutostakeMessage(client, address, validators) {
     const totalRewards = await this.totalRewards(client, address, validators)
 
-    const perValidatorReward = parseInt(totalRewards / validators.length)
+    const perValidatorReward = floor(divide(totalRewards, validators.length))
 
     if (perValidatorReward < client.operator.minimumReward) {
       timeStamp(address, perValidatorReward, client.network.denom, 'reward is too low, skipping')
@@ -303,7 +304,7 @@ export class Autostake {
       value: MsgDelegate.encode(MsgDelegate.fromPartial({
         delegatorAddress: address,
         validatorAddress: validatorAddress,
-        amount: coin(amount, denom)
+        amount: coin(amount.toString(), denom)
       })).finish()
     }]
   }
@@ -316,7 +317,7 @@ export class Autostake {
           const total = Object.values(rewards).reduce((sum, item) => {
             const reward = item.reward.find(el => el.denom === client.network.denom)
             if (reward && validators.includes(item.validator_address)) {
-              return sum + parseInt(reward.amount)
+              return sum + bignumber(reward.amount)
             }
             return sum
           }, 0)

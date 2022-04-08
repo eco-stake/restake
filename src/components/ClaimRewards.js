@@ -11,6 +11,8 @@ import {
   Badge
 } from 'react-bootstrap'
 
+import { add, subtract, multiply, divide, bignumber, floor } from 'mathjs'
+
 function ClaimRewards(props) {
   async function claim(){
     props.setLoading(true)
@@ -30,16 +32,16 @@ function ClaimRewards(props) {
     const fee = props.stargateClient.getFee(gas)
     const feeAmount = fee.amount[0].amount
 
-    const totalReward = props.validatorRewards.reduce((sum, validatorReward) => sum + validatorReward.reward, 0);
+    const totalReward = props.validatorRewards.reduce((sum, validatorReward) => add(sum, bignumber(validatorReward.reward)), 0);
     const adjustedValidatorRewards = props.validatorRewards.map(validatorReward => {
-      const shareOfFee = (validatorReward.reward / totalReward) * feeAmount; // To take a proportional amount from each validator relative to total reward
+      const shareOfFee = multiply(divide(validatorReward.reward, totalReward), feeAmount); // To take a proportional amount from each validator relative to total reward
       return {
         validatorAddress: validatorReward.validatorAddress,
-        reward: validatorReward.reward - shareOfFee,
+        reward: subtract(validatorReward.reward, shareOfFee),
       }
     })
 
-      signAndBroadcast = props.stargateClient.signAndBroadcastWithoutBalanceCheck
+    signAndBroadcast = props.stargateClient.signAndBroadcastWithoutBalanceCheck
 
     if(!props.commission && adjustedValidatorRewards.some(validatorReward => validatorReward.reward <= 0)) {
       props.setLoading(false)
@@ -96,7 +98,7 @@ function ClaimRewards(props) {
           value: MsgDelegate.fromPartial({
             delegatorAddress: props.address,
             validatorAddress: validatorReward.validatorAddress,
-            amount: coin(parseInt(validatorReward.reward), props.network.denom)
+            amount: coin(floor(validatorReward.reward).toString(), props.network.denom)
           })
         })
       }
