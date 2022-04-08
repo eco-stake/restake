@@ -13,7 +13,7 @@ jobs:
       - name: build
         run: |
           echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u "${{ secrets.GHCR_USER }}" --password-stdin
-          docker build -f Dockerfile.production . --tag ghcr.io/${{ github.repository }}:${GITHUB_REF#refs/tags/}
+          docker build -f Dockerfile.production . --tag ghcr.io/${{ github.repository }}:${GITHUB_REF#refs/tags/} --build-arg BUGSNAG_KEY="${{ secrets.BUGSNAG_KEY }}"
           docker tag ghcr.io/${{ github.repository }}:${GITHUB_REF#refs/tags/} ghcr.io/${{ github.repository }}:latest
           docker push ghcr.io/${{ github.repository }}:${GITHUB_REF#refs/tags/}
           docker push ghcr.io/${{ github.repository }}:latest
