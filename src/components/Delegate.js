@@ -1,11 +1,11 @@
+import React, { useState, useEffect } from 'react';
+
 import DelegateForm from './DelegateForm'
 import Validators from './Validators'
 import ValidatorImage from './ValidatorImage'
 import ValidatorLink from './ValidatorLink'
 import Coins from './Coins'
 import TooltipIcon from './TooltipIcon'
-
-import React, { useState } from 'react';
 
 import {
   Dropdown,
@@ -28,6 +28,12 @@ function Delegate(props) {
   const [show, setShow] = useState(false);
   const [selectedValidator, setSelectedValidator] = useState(!redelegate && validator);
   const [activeTab, setActiveTab] = useState(props.activeTab || (redelegate || undelegate) ? 'delegate' : 'profile');
+
+  useEffect(() => {
+    if(props.activeTab != activeTab){
+      setActiveTab(props.activeTab)
+    }
+  }, [props.activeTab])
 
   const handleOpen = () => {
     setShow(true)
@@ -262,6 +268,11 @@ function Delegate(props) {
                   </tbody>
                 </Table>
                 <p>{selectedValidator.description.details}</p>
+                <p className="text-end">
+                  <Button variant="primary" onClick={() => { setActiveTab('delegate') }}>
+                    {actionText()}
+                  </Button>
+                </p>
               </Tab>
               <Tab eventKey="delegate" title="Delegate">
                 <h5 className="mb-3">

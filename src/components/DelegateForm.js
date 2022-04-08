@@ -140,12 +140,14 @@ class DelegateForm extends React.Component {
             <Form.Label>Memo</Form.Label>
             <Form.Control name="memo" as="textarea" rows={3} value={this.state.memo} onChange={this.handleInputChange} />
           </Form.Group>
-          {!this.state.loading
-            ? <Button type="submit" className="btn btn-primary">{this.actionText()}</Button>
-            : <Button className="btn btn-primary" type="button" disabled>
-              <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>&nbsp;
-            </Button>
-          }
+          <p className="text-end">
+            {!this.state.loading
+              ? <Button type="submit" className="btn btn-primary">{this.actionText()}</Button>
+              : <Button className="btn btn-primary" type="button" disabled>
+                <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>&nbsp;
+              </Button>
+            }
+          </p>
         </Form>
       </>
     )
