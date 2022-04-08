@@ -14,13 +14,9 @@ const Network = async (data, withoutQueryClient) => {
 
   const chain = await Chain(data)
   const directory = CosmosDirectory()
-  const operators = data.operators || (await directory.getOperators(data.name)).map(el => {
-    return {
-      address: el.address,
-      botAddress: el.restake.address,
-      runTime: el.restake.run_time,
-      minimumReward: el.restake.minimum_reward
-    }
+  const validators = await directory.getValidators(data.name)
+  const operators = data.operators || validators.filter(el => el.restake).map(el => {
+    return Operator(el)
   })
 
   const rpcUrl = data.rpcUrl || directory.rpcUrl(data.name)
@@ -41,19 +37,16 @@ const Network = async (data, withoutQueryClient) => {
 
   const apyClient = queryClient && ApyClient(chain, queryClient.rpcUrl, queryClient.restUrl)
 
-  const getOperator = (operators, operatorAddress) => {
+  const getOperator = (operatorAddress) => {
     return operators.find(elem => elem.address === operatorAddress)
   }
 
-  const getOperatorByBotAddress = (operators, botAddress) => {
+  const getOperatorByBotAddress = (botAddress) => {
     return operators.find(elem => elem.botAddress === botAddress)
   }
 
-  const getOperators = (validators) => {
-    return sortOperators().map(operator => {
-      const validator = validators[operator.address]
-      return Operator(operator, validator)
-    })
+  const getOperators = () => {
+    return sortOperators()
   }
 
   const sortOperators = () => {
@@ -66,8 +59,13 @@ const Network = async (data, withoutQueryClient) => {
 
   const getValidators = (opts) => {
     opts = opts || {}
-    opts.status = opts.status || 'BOND_STATUS_BONDED'
-    return queryClient.getAllValidators(150, opts)
+    return validators.filter(validator => {
+      if(opts.status) return validator.status === opts.status
+      return true
+    }).reduce(
+      (a, v) => ({ ...a, [v.operator_address]: v }),
+      {}
+    )
   }
 
   return {
@@ -88,8 +86,9 @@ const Network = async (data, withoutQueryClient) => {
     testAddress: data.testAddress,
     restUrl: queryClient && queryClient.restUrl,
     rpcUrl: queryClient && queryClient.rpcUrl,
-    operators: operators,
     authzSupport: chain.authzSupport,
+    validators,
+    operators,
     data,
     chain,
     queryClient,

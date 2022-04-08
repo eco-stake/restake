@@ -1,6 +1,8 @@
+import ValidatorName from "./ValidatorName"
+
 function ValidatorLink(props) {
   let validator = props.validator
-  if(!validator && props.operator) validator = props.operator.validatorData
+  if(!validator && props.operator) validator = props.operator
   if(!validator) return props.fallback || null
 
   const website = () => {
@@ -11,12 +13,12 @@ function ValidatorLink(props) {
   }
 
   if(!website()){
-    return props.children || validator.description.moniker
+    return props.children || <ValidatorName validator={validator} hideWarning={props.hideWarning} />
   }
 
   return (
     <a href={website()} target="_blank" rel="noreferrer" className={[props.className, "text-dark text-decoration-none"].join(' ')}>
-      {props.children || validator.description.moniker}
+      {props.children || <ValidatorName validator={validator} hideWarning={props.hideWarning} />}
     </a>
   );
 }

@@ -26,7 +26,9 @@ export class Autostake {
   }
 
   async run(networkName){
-    const calls = this.getNetworksData().map(data => {
+    const networks = this.getNetworksData()
+    if(networkName && !networks.map(el => el.name).includes(networkName)) return timeStamp('Invalid network name:', networkName)
+    const calls = networks.map(data => {
       return async () => {
         if(networkName && data.name !== networkName) return
         if(data.enabled === false) return
@@ -121,14 +123,14 @@ export class Autostake {
 
     timeStamp('Bot address is', botAddress)
 
+    const operator = network.getOperatorByBotAddress(botAddress)
+    if (!operator) return timeStamp('Not an operator')
+
     if (network.slip44 && network.slip44 !== slip44) {
       timeStamp("!! You are not using the preferred derivation path !!")
       timeStamp("!! You should switch to the correct path unless you have grants. Check the README !!")
     }
 
-    const operatorData = network.operators.find(el => el.botAddress === botAddress)
-
-    if (!operatorData) return timeStamp('Not an operator')
     if (!network.authzSupport) return timeStamp('No Authz support')
 
     network = await Network(data)
@@ -138,9 +140,6 @@ export class Autostake {
     const client = await network.signingClient(wallet)
     client.registry.register("/cosmos.authz.v1beta1.MsgExec", MsgExec)
 
-    const validators = await network.getValidators()
-    const operators = network.getOperators(validators)
-    const operator = network.getOperatorByBotAddress(operators, botAddress)
 
     return {
       network,
@@ -239,7 +238,7 @@ export class Autostake {
 
     const perValidatorReward = parseInt(totalRewards / validators.length)
 
-    if (perValidatorReward < client.operator.data.minimumReward) {
+    if (perValidatorReward < client.operator.minimumReward) {
       timeStamp(address, perValidatorReward, client.network.denom, 'reward is too low, skipping')
       return
     }
@@ -335,11 +334,16 @@ export class Autostake {
   getNetworksData() {
     const networksData = fs.readFileSync('src/networks.json');
     const networks = JSON.parse(networksData);
+    const networkNames = networks.map(el => el.name)
     try {
       const overridesData = fs.readFileSync('src/networks.local.json');
-      const overrides = overridesData && JSON.parse(overridesData)
+      const overrides = overridesData && JSON.parse(overridesData) || {}
+      Object.keys(overrides).forEach(key => {
+        if(!networkNames.includes(key)) timeStamp('Invalid key in networks.local.json:', key)
+      })
       return overrideNetworks(networks, overrides)
     } catch {
+      timeStamp('Failed to parse networks.local.json, check JSON is valid')
       return networks
     }
   }

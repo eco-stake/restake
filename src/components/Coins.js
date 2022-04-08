@@ -5,7 +5,8 @@ function Coins(props) {
     if (!decimals) {
       decimals = 6
     }
-    return _.round(coins.amount / Math.pow(10, decimals), 6)
+    const precision = coins.amount >= (100 * Math.pow(10, decimals)) ? 2 : 6
+    return _.round(coins.amount / Math.pow(10, decimals), precision)
   }
 
   function denom(coins){

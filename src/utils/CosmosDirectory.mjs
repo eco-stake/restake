@@ -33,10 +33,9 @@ function CosmosDirectory(){
       .then(res => res.data)
   }
 
-  function getOperators(chainName){
+  function getValidators(chainName){
     return axios.get(validatorsUrl + '/chains/' + chainName)
-      .then(res => res.data)
-      .then(data => data.validators.filter(el => el.restake ))
+      .then(res => res.data.validators)
   }
 
   function getOperatorCounts(){
@@ -59,7 +58,7 @@ function CosmosDirectory(){
     getChains,
     getChainData,
     getTokenData,
-    getOperators,
+    getValidators,
     getOperatorCounts
   }
 }
