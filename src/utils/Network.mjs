@@ -22,6 +22,8 @@ const Network = async (data, withoutQueryClient) => {
   const rpcUrl = data.rpcUrl || directory.rpcUrl(data.name)
   const restUrl = data.restUrl || directory.restUrl(data.name)
 
+  const usingDirectory = !![restUrl, rpcUrl].find(el => el.match("cosmos.directory"))
+
   let queryClient
   if(!withoutQueryClient){
     queryClient = await QueryClient(chain.chainId, rpcUrl, restUrl)
@@ -92,6 +94,7 @@ const Network = async (data, withoutQueryClient) => {
     data,
     chain,
     queryClient,
+    usingDirectory,
     getApy: apyClient && apyClient.getApy,
     signingClient,
     getValidators,
