@@ -5,6 +5,9 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm ci
 COPY . ./
+
+ARG BUGSNAG_KEY
+ENV BUGSNAG_KEY=${BUGSNAG_KEY}
 ENV DIRECTORY_PROTOCOL=https
 ENV DIRECTORY_DOMAIN=cosmos.directory
 RUN npm run build
