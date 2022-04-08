@@ -42,12 +42,10 @@ export class Autostake {
 
         if(!client) return timeStamp('Skipping')
 
-        const { restUrl, rpcUrl } = client.network
+        const { restUrl, rpcUrl, usingDirectory } = client.network
 
         timeStamp('Using REST URL', restUrl)
         timeStamp('Using RPC URL', rpcUrl)
-
-        const usingDirectory = !![restUrl, rpcUrl].find(el => el.match("cosmos.directory"))
 
         if(usingDirectory){
           timeStamp('You are using public nodes, script may fail with many delegations. Check the README to use your own')
