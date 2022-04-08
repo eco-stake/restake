@@ -260,12 +260,12 @@ class App extends React.Component {
           </a>
 
           <div className="col-md-4 align-items-center text-center me-lg-auto">
-            <a href="https://ecostake.com" target="_blank" rel="noreferrer" className="link-dark text-decoration-none d-block mb-1">
-              <span className="d-none d-sm-inline">Built with 💚</span> by ECO Stake 🌱
+            <a href="https://ecostake.com" target="_blank" rel="noreferrer" className="link-dark text-decoration-none d-block mb-2">
+              <span className="d-none d-sm-inline">Built with 💚&nbsp;</span> by ECO Stake 🌱
             </a>
             {this.props.network?.usingDirectory && (
               <a href="https://cosmos.directory" target="_blank" className="link-dark text-decoration-none d-block small">
-                <span className="d-none d-sm-inline">Powered by</span> ⚛ cosmos.directory
+                <span className="d-none d-sm-inline">Interchain with</span> ⚛ cosmos.directory
               </a>
             )}
           </div>
