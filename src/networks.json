@@ -91,7 +91,8 @@
   },
   {
     "name": "sifchain",
-    "authzSupport": false
+    "authzSupport": false,
+    "gasPrice": "1500000000000rowan"
   },
   {
     "name": "lumnetwork",
@@ -150,6 +151,7 @@
   },
   {
     "name": "fetchhub",
+    "gasPrice": "5000afet",
     "authzSupport": true
   },
   {
