@@ -83,10 +83,14 @@ function NetworkSelect(props) {
       Network(data, true).then(network => {
         setSelectedNetwork(network)
         Network(data).then(network => {
-          setSelectedNetwork(network)
-          setValidators(network.getValidators())
-          setLoading(false)
-        }, (error) => {
+          if(network.connected){
+            setSelectedNetwork(network)
+            setValidators(network.getValidators())
+            setLoading(false)
+          }else{
+            throw false
+          }
+        }).catch(error => {
           setError('Unable to connect to this network currently. Try again later.')
           setLoading(false)
         })

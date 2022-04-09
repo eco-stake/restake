@@ -75,8 +75,12 @@ function NetworkFinder() {
         navigate("/" + networkName);
       }
       Network(data).then(network => {
-        setState({network: network})
-      }, (error) => {
+        if(network.connected){
+          setState({ network: network })
+        }else{
+          throw false
+        }
+      }).catch(error => {
         Network(data, true).then(network => {
           setState({ network: network, loading: false })
         })
