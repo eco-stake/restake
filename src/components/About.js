@@ -1,11 +1,30 @@
+import React, { useEffect } from 'react';
 import {
   Modal
 } from 'react-bootstrap'
 
+import { useSearchParams } from 'react-router-dom'
+
 function About(props) {
+  let [searchParams, setSearchParams] = useSearchParams();
+  const aboutParam = searchParams.get('about')
+
+  const show = props.show || aboutParam == 'restake'
+
+  useEffect(() => {
+    if (show && !aboutParam) {
+      setSearchParams({ about: 'restake' })
+    }
+  }, [show, aboutParam]);
+
+  function onHide(){
+    setSearchParams({})
+    props.onHide()
+  }
+
   return (
     <>
-      <Modal show={props.show} onHide={() => props.onHide()}>
+      <Modal show={show} onHide={() => onHide()}>
         <Modal.Header closeButton>
           <Modal.Title>About REStake</Modal.Title>
         </Modal.Header>
