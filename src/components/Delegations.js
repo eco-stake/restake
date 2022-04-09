@@ -123,21 +123,22 @@ class Delegations extends React.Component {
 
         return this.props.queryClient.getGrants(botAddress, this.props.address).then(
           (result) => {
+            const { claimGrant, stakeGrant } = result
             let grantValidators;
-            if (result.stakeGrant) {
+            if (stakeGrant) {
               grantValidators =
-                result.stakeGrant.authorization.allow_list.address;
+                stakeGrant.authorization.allow_list?.address;
             }
             const operatorGrant = {
-              claimGrant: result.claimGrant,
-              stakeGrant: result.stakeGrant,
+              claimGrant: claimGrant,
+              stakeGrant: stakeGrant,
               validators: grantValidators || [],
               grantsValid: !!(
-                result.claimGrant &&
-                result.stakeGrant &&
-                grantValidators.includes(address)
+                claimGrant &&
+                stakeGrant &&
+                (!grantValidators || grantValidators.includes(address))
               ),
-              grantsExist: !!(result.claimGrant || result.stakeGrant),
+              grantsExist: !!(claimGrant || stakeGrant),
             };
             this.setState((state, props) => ({
               operatorGrants: _.set(
@@ -376,13 +377,13 @@ class Delegations extends React.Component {
           </td>
           <td className="text-center">
             {operator ? (
-              this.restakePossible() && delegation ? (
+              this.authzSupport() && delegation ? (
                 this.grantsValid(operator) ? (
                   <CountdownRestake
                     network={this.props.network}
                     operator={operator}
                   />
-                ) : (
+                ) : this.restakePossible() ? (
                   <GrantRestake
                     size="sm"
                     variant="success"
@@ -392,6 +393,12 @@ class Delegations extends React.Component {
                     stargateClient={this.props.stargateClient}
                     onGrant={this.onGrant}
                     setError={this.setError}
+                  />
+                ) : (
+                  <TooltipIcon
+                    icon={<CheckCircle className="text-success" />}
+                    identifier={validatorAddress}
+                    tooltip="This validator can REStake your rewards"
                   />
                 )
               ) : (
