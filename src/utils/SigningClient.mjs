@@ -2,10 +2,10 @@ import _ from 'lodash'
 import {
   SigningStargateClient,
   assertIsDeliverTxSuccess,
-  GasPrice,
-  coins
+  GasPrice
 } from '@cosmjs/stargate'
 import { multiply, ceil, bignumber } from 'mathjs'
+import { coin } from './Helpers.mjs'
 
 async function SigningClient(rpcUrl, defaultGasPrice, signer, key, signerOpts) {
 
@@ -31,7 +31,7 @@ async function SigningClient(rpcUrl, defaultGasPrice, signer, key, signerOpts) {
     const { denom, amount: gasPriceAmount } = processedGasPrice;
     const amount = ceil(multiply(bignumber(gasPriceAmount.toString()), bignumber(gasLimit.toString())));
     return {
-      amount: coins(amount.toString(), denom),
+      amount: [coin(amount, denom)],
       gas: gasLimit.toString(),
     };
   }

@@ -1,14 +1,9 @@
-import Coins from './Coins'
-
-import {
-  coin
-} from '@cosmjs/stargate'
 import { MsgWithdrawDelegatorReward, MsgWithdrawValidatorCommission } from "cosmjs-types/cosmos/distribution/v1beta1/tx";
 import { MsgDelegate } from "cosmjs-types/cosmos/staking/v1beta1/tx";
+import { coin } from "../utils/Helpers.mjs";
 
 import {
-  Dropdown,
-  Badge
+  Dropdown
 } from 'react-bootstrap'
 
 import { add, subtract, multiply, divide, bignumber, floor } from 'mathjs'
@@ -98,7 +93,7 @@ function ClaimRewards(props) {
           value: MsgDelegate.fromPartial({
             delegatorAddress: props.address,
             validatorAddress: validatorReward.validatorAddress,
-            amount: coin(floor(validatorReward.reward).toString(), props.network.denom)
+            amount: coin(validatorReward.reward, props.network.denom)
           })
         })
       }
