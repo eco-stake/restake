@@ -11,6 +11,7 @@ import CountdownRestake from "./CountdownRestake";
 import Delegate from "./Delegate";
 import ValidatorImage from "./ValidatorImage";
 import TooltipIcon from "./TooltipIcon";
+import AboutLedger from "./AboutLedger";
 
 import { Table, Button, Dropdown, Spinner } from "react-bootstrap";
 
@@ -650,13 +651,21 @@ class Delegations extends React.Component {
         {this.authzSupport() &&
           this.props.operators.length > 0 &&
           this.state.isNanoLedger && (
-            <AlertMessage
-              variant="warning"
-              message="Ledger devices are unable to send authz transactions right now. We will support them as soon as possible, and you can manually restake for now."
-              dismissible={false}
-            />
+            <>
+              <AlertMessage
+                variant="warning"
+                message=""
+                dismissible={false}
+              >
+                <p>Ledger devices are not supported in the REStake UI currently. Support will be added as soon as it is possible.</p>
+                <p className="mb-0"><span onClick={() => this.setState({ showAboutLedger: true })} role="button" className="text-dark text-decoration-underline">A manual workaround is possible using the CLI</span></p>
+            </AlertMessage>
+          </>
           )}
         <AlertMessage message={this.state.error} />
+        {this.props.network && (
+          <AboutLedger show={this.state.showAboutLedger} onHide={() => this.setState({ showAboutLedger: false })} network={this.props.network} />
+        )}
       </>
     );
 

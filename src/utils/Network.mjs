@@ -32,6 +32,8 @@ const Network = async (data, withoutQueryClient) => {
     }
   })
 
+  const defaultGasPrice = multiply(0.000000025, pow(10, chain.decimals)).toString() + chain.denom
+
   let queryClient
   if(!withoutQueryClient){
     queryClient = await QueryClient(chain.chainId, rpcUrl, restUrl)
@@ -40,7 +42,6 @@ const Network = async (data, withoutQueryClient) => {
   const signingClient = (wallet, key) => {
     if(!queryClient) return 
     
-    const defaultGasPrice = multiply(0.000000025, pow(10, chain.decimals)).toString() + chain.denom
     const gasPrice = data.gasPrice || defaultGasPrice
     const client = SIGNERS[data.name] || SigningClient
     return client(queryClient.rpcUrl, gasPrice, wallet, key)
@@ -88,7 +89,7 @@ const Network = async (data, withoutQueryClient) => {
     chainId: chain.chainId,
     prefix: chain.prefix,
     slip44: chain.slip44,
-    gasPrice: data.gasPrice,
+    gasPrice: data.gasPrice || defaultGasPrice,
     denom: chain.denom,
     symbol: chain.symbol,
     decimals: chain.decimals,
