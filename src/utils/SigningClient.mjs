@@ -1,10 +1,11 @@
 import _ from 'lodash'
 import {
   SigningStargateClient,
-  calculateFee,
   assertIsDeliverTxSuccess,
-  GasPrice
+  GasPrice,
+  coins
 } from '@cosmjs/stargate'
+import { multiply, ceil, bignumber } from 'mathjs'
 
 async function SigningClient(rpcUrl, defaultGasPrice, signer, key, signerOpts) {
 
@@ -23,12 +24,22 @@ async function SigningClient(rpcUrl, defaultGasPrice, signer, key, signerOpts) {
     return key.isNanoLedger;
   }
 
+  // vendored to handle large integers
+  // https://github.com/cosmos/cosmjs/blob/0f0c9d8a754cbf01e17acf51d3f2dbdeaae60757/packages/stargate/src/fee.ts
+  function calculateFee(gasLimit, gasPrice) {
+    const processedGasPrice = typeof gasPrice === "string" ? GasPrice.fromString(gasPrice) : gasPrice;
+    const { denom, amount: gasPriceAmount } = processedGasPrice;
+    const amount = ceil(multiply(bignumber(gasPriceAmount.toString()), bignumber(gasLimit.toString())));
+    return {
+      amount: coins(amount.toString(), denom),
+      gas: gasLimit.toString(),
+    };
+  }
+
   function getFee(gas, gasPrice) {
     if (!gas)
       gas = 200000;
-    if (!gasPrice)
-      gasPrice = GasPrice.fromString(defaultGasPrice);
-    return calculateFee(gas, gasPrice);
+    return calculateFee(gas, gasPrice || defaultGasPrice);
   }
 
   function signAndBroadcastWithoutBalanceCheck(address, msgs, gas, memo, gasPrice) {

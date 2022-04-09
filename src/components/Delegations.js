@@ -1,5 +1,6 @@
 import React from "react";
 import _ from "lodash";
+import { bignumber } from 'mathjs'
 import { Bech32 } from '@cosmjs/encoding'
 import AlertMessage from "./AlertMessage";
 import Coins from "./Coins";
@@ -306,7 +307,7 @@ class Delegations extends React.Component {
           const reward = validatorReward.reward.find((el) => el.denom === denom)
           return {
             validatorAddress: validator,
-            reward: reward ? parseInt(reward.amount) : undefined,
+            reward: reward ? bignumber(reward.amount) : undefined,
           }
         })
         .filter(validatorReward => {

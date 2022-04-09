@@ -17,6 +17,7 @@
     "cosmjs-types": "^0.4.1",
     "dotenv": "^16.0.0",
     "fuzzy-search": "^3.2.1",
+    "mathjs": "^10.4.3",
     "moment": "^2.29.1",
     "parse-duration": "^1.0.2",
     "path": "^0.12.7",

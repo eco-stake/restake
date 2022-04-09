@@ -2,14 +2,19 @@ import axios from "axios";
 import _ from "lodash";
 
 const QueryClient = async (chainId, rpcUrls, restUrls) => {
-  const rpcUrl = await findAvailableUrl(
-    Array.isArray(rpcUrls) ? rpcUrls : [rpcUrls],
-    "rpc"
-  );
-  const restUrl = await findAvailableUrl(
-    Array.isArray(restUrls) ? restUrls : [restUrls],
-    "rest"
-  );
+  let rpcUrl, restUrl
+  try {
+    rpcUrl = await findAvailableUrl(
+      Array.isArray(rpcUrls) ? rpcUrls : [rpcUrls],
+      "rpc"
+    );
+  } catch {}
+  try {
+    restUrl = await findAvailableUrl(
+      Array.isArray(restUrls) ? restUrls : [restUrls],
+      "rest"
+    );
+  } catch {}
 
   const getAllValidators = (pageSize, opts, pageCallback) => {
     return getAllPages((nextKey) => {

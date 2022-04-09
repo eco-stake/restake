@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import { multiply, pow } from 'mathjs'
 import QueryClient from './QueryClient.mjs'
 import SigningClient from './SigningClient.mjs'
 import ApyClient from '../ApyClient.mjs'
@@ -22,7 +23,14 @@ const Network = async (data, withoutQueryClient) => {
   const rpcUrl = data.rpcUrl || directory.rpcUrl(data.name)
   const restUrl = data.restUrl || directory.restUrl(data.name)
 
-  const usingDirectory = !![restUrl, rpcUrl].find(el => el.match("cosmos.directory"))
+  const usingDirectory = !![restUrl, rpcUrl].find(el => {
+    const match = el => el.match("cosmos.directory")
+    if(Array.isArray(el)){
+      return el.find(match)
+    }else{
+      return match(el)
+    }
+  })
 
   let queryClient
   if(!withoutQueryClient){
@@ -31,8 +39,9 @@ const Network = async (data, withoutQueryClient) => {
 
   const signingClient = (wallet, key) => {
     if(!queryClient) return 
-
-    const gasPrice = data.gasPrice || '0.0025' + chain.denom
+    
+    const defaultGasPrice = multiply(0.000000025, pow(10, chain.decimals)).toString() + chain.denom
+    const gasPrice = data.gasPrice || defaultGasPrice
     const client = SIGNERS[data.name] || SigningClient
     return client(queryClient.rpcUrl, gasPrice, wallet, key)
   }

@@ -101,7 +101,7 @@ function Delegate(props) {
   const bondedTokens = () => {
     if (!selectedValidator) return
 
-    const amount = parseInt(selectedValidator.tokens)
+    const amount = selectedValidator.tokens
     return <Coins coins={{ amount: amount, denom: network.denom }} />
   }
 
