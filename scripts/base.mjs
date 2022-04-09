@@ -1,12 +1,9 @@
 import { DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
 import { Slip10RawIndex, pathToString } from "@cosmjs/crypto";
 import Network from '../src/utils/Network.mjs'
-import {timeStamp, mapSync, executeSync, overrideNetworks} from '../src/utils/Helpers.mjs'
+import {coin, timeStamp, mapSync, executeSync, overrideNetworks} from '../src/utils/Helpers.mjs'
 
-import {
-  coin
-} from '@cosmjs/stargate'
-import { divide, bignumber, floor } from 'mathjs'
+import { divide, bignumber, floor, format } from 'mathjs'
 
 import { MsgWithdrawDelegatorReward } from "cosmjs-types/cosmos/distribution/v1beta1/tx.js";
 import { MsgDelegate } from "cosmjs-types/cosmos/staking/v1beta1/tx.js";
@@ -304,7 +301,7 @@ export class Autostake {
       value: MsgDelegate.encode(MsgDelegate.fromPartial({
         delegatorAddress: address,
         validatorAddress: validatorAddress,
-        amount: coin(amount.toString(), denom)
+        amount: coin(amount, denom)
       })).finish()
     }]
   }

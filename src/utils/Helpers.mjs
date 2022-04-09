@@ -1,7 +1,13 @@
 import _ from 'lodash'
+import { format, floor } from 'mathjs'
+import { coin as _coin } from  '@cosmjs/stargate'
 
 export function timeStamp(...args) {
   console.log('[' + new Date().toISOString().substring(11, 23) + ']', ...args);
+}
+
+export function coin(amount, denom){
+  return _coin(format(floor(amount), {notation: 'fixed'}), denom)
 }
 
 export function overrideNetworks(networks, overrides){

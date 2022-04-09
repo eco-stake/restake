@@ -1,9 +1,6 @@
 import React from 'react'
 import Coins from './Coins'
-
-import {
-  coin
-} from '@cosmjs/stargate'
+import { coin } from '../utils/Helpers.mjs'
 
 import {
   Button,
@@ -11,7 +8,7 @@ import {
   Alert
 } from 'react-bootstrap'
 
-import { pow, multiply, divide, floor, subtract } from 'mathjs'
+import { pow, multiply, divide, floor, subtract, format } from 'mathjs'
 
 class DelegateForm extends React.Component {
   constructor(props) {
@@ -75,7 +72,7 @@ class DelegateForm extends React.Component {
           delegatorAddress: address,
           validatorSrcAddress: this.props.validator.operator_address,
           validatorDstAddress: validatorAddress,
-          amount: coin(floor(amount).toString(), this.props.network.denom),
+          amount: coin(amount, this.props.network.denom)
         }
       })
     }else{
@@ -85,7 +82,7 @@ class DelegateForm extends React.Component {
         value: {
           delegatorAddress: address,
           validatorAddress: validatorAddress,
-          amount: coin(floor(amount).toString(), this.props.network.denom),
+          amount: coin(amount, this.props.network.denom)
         }
       })
     }
