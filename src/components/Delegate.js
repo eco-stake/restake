@@ -6,6 +6,7 @@ import ValidatorImage from './ValidatorImage'
 import ValidatorLink from './ValidatorLink'
 import Coins from './Coins'
 import TooltipIcon from './TooltipIcon'
+import AboutLedger from './AboutLedger';
 
 import {
   Dropdown,
@@ -39,6 +40,14 @@ function Delegate(props) {
     setShow(true)
     if (!validator || redelegate) {
       setSelectedValidator(null)
+    }
+  }
+
+  const handleClose = () => {
+    if(selectedValidator && (!validator || redelegate) && selectedValidator !== validator){
+      setSelectedValidator(null)
+    }else{
+      setShow(false)
     }
   }
 
@@ -164,7 +173,7 @@ function Delegate(props) {
   return (
     <>
       {button()}
-      <Modal size={selectedValidator ? '' : 'lg'} show={show} onHide={() => setShow(false)}>
+      <Modal size={selectedValidator ? 'lg' : 'lg'} show={show} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title>
             {selectedValidator
@@ -200,9 +209,15 @@ function Delegate(props) {
                       </tr>
                     )}
                     <tr>
-                      <td scope="row">Address</td>
-                      <td className="text-break small">{selectedValidator.operator_address}</td>
+                      <td scope="row">Validator Address</td>
+                      <td className="text-break">{selectedValidator.operator_address}</td>
                     </tr>
+                    {operator() && (
+                    <tr>
+                      <td scope="row">REStake Address</td>
+                      <td className="text-break">{operator().botAddress}</td>
+                    </tr>
+                    )}
                     {!active() && (
                       <tr>
                         <td scope="row">Status</td>
@@ -212,7 +227,7 @@ function Delegate(props) {
                     {!!website() && (
                       <tr>
                         <td scope="row">Website</td>
-                        <td><ValidatorLink validator={selectedValidator}>{website()}</ValidatorLink></td>
+                        <td><ValidatorLink className="text-decoration-underline" validator={selectedValidator}>{website()}</ValidatorLink></td>
                       </tr>
                     )}
                     <tr>
@@ -270,7 +285,7 @@ function Delegate(props) {
                 <p>{selectedValidator.description.details}</p>
                 <p className="text-end">
                   <Button variant="primary" onClick={() => { setActiveTab('delegate') }}>
-                    {actionText()}
+                    Delegate
                   </Button>
                 </p>
               </Tab>
@@ -292,6 +307,11 @@ function Delegate(props) {
                   stargateClient={props.stargateClient}
                   onDelegate={onDelegate} />
               </Tab>
+              {network.authzSupport && operator() && (
+                <Tab eventKey="ledger" title="Ledger Instructions">
+                  <AboutLedger network={network} validator={selectedValidator} modal={false} />
+                </Tab>
+              )}
             </Tabs>
           )}
         </Modal.Body>

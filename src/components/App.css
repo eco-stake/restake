@@ -26,3 +26,12 @@ header a.moniker{
   line-height: 70px;
   font-size: 1.3rem;
 }
+
+code {
+  padding: 0.5rem;
+  line-height:1.5rem;
+}
+
+code p{
+  margin-bottom: 0.5rem;
+}
