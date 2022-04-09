@@ -6,7 +6,7 @@ import {
 function ValidatorName(props) {
   const { validator, hideWarning, fallback } = props
   if(!validator) return fallback || null
-  const { moniker } = validator.description
+  const moniker = validator.description?.moniker || validator.name || 'Unknown'
 
   let warning = false
   let warningClass
