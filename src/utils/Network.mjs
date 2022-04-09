@@ -23,7 +23,14 @@ const Network = async (data, withoutQueryClient) => {
   const rpcUrl = data.rpcUrl || directory.rpcUrl(data.name)
   const restUrl = data.restUrl || directory.restUrl(data.name)
 
-  const usingDirectory = !![restUrl, rpcUrl].find(el => el.match("cosmos.directory"))
+  const usingDirectory = !![restUrl, rpcUrl].find(el => {
+    const match = el => el.match("cosmos.directory")
+    if(Array.isArray(el)){
+      return el.find(match)
+    }else{
+      return match(el)
+    }
+  })
 
   let queryClient
   if(!withoutQueryClient){
