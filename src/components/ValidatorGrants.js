@@ -196,6 +196,10 @@ function ValidatorGrants(props) {
           <Form.Control type="date" name='expiryDateValue' required={true} value={state.expiryDateValue} onChange={handleInputChange} />
           <div className="form-text text-end">Date the grant will expire. After this date you will need to re-grant</div>
         </Form.Group>
+        <p className="small">The following Authz authorisations will be made, allowing {operator.moniker} to carry out certain transactions on your behalf.</p>
+        <p className="small"><strong>WidthdrawDelegatorRewards</strong> - allowed to withdraw/claim rewards <em>for any validator</em>, however REStake only withdraws from {operator.moniker}'s reward balance.</p>
+        <p className="small"><strong>Delegate</strong> - allowed to delegate <em>{maxTokensDenom() ? <Coins coins={{amount: maxTokensDenom(), denom: network.denom}} decimals={network.decimals} /> : 'any amount'}</em> to <em>only their own validator</em>. REStake only re-delegates {operator.moniker}'s accrued rewards and tries not to touch your balance.</p>
+        <p className="small">Both of these grants will expire automatically on <em>{state.expiryDateValue}</em>.</p>
         <p className="text-end">
           {!loading
             ? (
