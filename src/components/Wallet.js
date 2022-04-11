@@ -10,7 +10,6 @@ class Wallet extends React.Component {
     super(props);
     this.state = {}
     this.getDelegations = this.getDelegations.bind(this);
-    this.onAddValidator = this.onAddValidator.bind(this);
   }
 
   componentDidMount() {
@@ -40,10 +39,6 @@ class Wallet extends React.Component {
       this.getDelegations(true)
     }, 30_000)
     this.setState({refreshInterval: interval})
-  }
-
-  onAddValidator(){
-    setTimeout(() => this.getDelegations(), 3_000)
   }
 
   async getDelegations(hideError) {
@@ -102,8 +97,7 @@ class Wallet extends React.Component {
           delegations={this.state.delegations}
           queryClient={this.props.queryClient}
           stargateClient={this.props.stargateClient}
-          getDelegations={this.getDelegations}
-          onAddValidator={this.onAddValidator} />
+          getDelegations={this.getDelegations} />
       </div>
     )
   }

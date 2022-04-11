@@ -8,12 +8,12 @@ import ClaimRewards from "./ClaimRewards";
 import RevokeRestake from "./RevokeRestake";
 import ManageGrant from "./ManageGrant";
 import CountdownRestake from "./CountdownRestake";
-import Delegate from "./Delegate";
+import ValidatorModal from "./ValidatorModal";
 import ValidatorImage from "./ValidatorImage";
 import TooltipIcon from "./TooltipIcon";
 import AboutLedger from "./AboutLedger";
 
-import { Table, Button, Dropdown, Spinner } from "react-bootstrap";
+import { Table, Button, Dropdown, Spinner, OverlayTrigger, Tooltip } from "react-bootstrap";
 
 import { CheckCircle, XCircle } from "react-bootstrap-icons";
 import ValidatorName from "./ValidatorName";
@@ -21,13 +21,14 @@ import ValidatorName from "./ValidatorName";
 class Delegations extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { operatorGrants: {}, validatorLoading: {}, validatorApy: {} };
+    this.state = { operatorGrants: {}, validatorLoading: {}, validatorApy: {}, validatorModal: {} };
 
     this.setError = this.setError.bind(this);
     this.setClaimLoading = this.setClaimLoading.bind(this);
     this.onClaimRewards = this.onClaimRewards.bind(this);
     this.onGrant = this.onGrant.bind(this);
     this.onRevoke = this.onRevoke.bind(this);
+    this.hideValidatorModal = this.hideValidatorModal.bind(this);
     this.defaultGrant = {
       claimGrant: null,
       stakeGrant: null,
@@ -338,6 +339,44 @@ class Delegations extends React.Component {
     );
   }
 
+  showValidatorModal(address, opts){
+    opts = opts || {}
+    const validator = address && this.props.validators[address]
+    this.setState({validatorModal: {show: true, validator: validator, ...opts}})
+  }
+
+  hideValidatorModal(opts){
+    opts = opts || {}
+    this.setState((state, props) => {
+      return {validatorModal: {...state.validatorModal, show: false}}
+    })
+  }
+
+  renderValidatorModal(){
+    const validatorModal = this.state.validatorModal
+
+    return (
+      <ValidatorModal
+        show={validatorModal.show}
+        validator={validatorModal.validator}
+        activeTab={validatorModal.activeTab}
+        redelegate={validatorModal.redelegate}
+        undelegate={validatorModal.undelegate}
+        network={this.props.network}
+        address={this.props.address}
+        validators={this.props.validators}
+        validatorApy={this.state.validatorApy}
+        operators={this.props.operators}
+        balance={this.props.balance}
+        rewards={this.state.rewards}
+        delegations={this.props.delegations}
+        stargateClient={this.props.stargateClient}
+        hideModal={this.hideValidatorModal}
+        onDelegate={this.onClaimRewards}
+      />
+    )
+  }
+
   renderValidator(validatorAddress, delegation) {
     const validator = this.props.validators[validatorAddress];
     const isValidatorOperator = this.isValidatorOperator(validator)
@@ -377,18 +416,9 @@ class Delegations extends React.Component {
             />
           </td>
           <td>
-            <Delegate
-              network={this.props.network}
-              address={this.props.address}
-              validator={validator}
-              validatorApy={this.state.validatorApy}
-              operators={this.props.operators}
-              availableBalance={this.props.balance}
-              stargateClient={this.props.stargateClient}
-              onDelegate={this.onClaimRewards}
-            >
+            <span role="button" onClick={() => this.showValidatorModal(validatorAddress, {activeTab: 'profile'})}>
               <ValidatorName validator={validator} />
-            </Delegate>
+            </span>
           </td>
           <td className="text-center">
             {operator ? (
@@ -572,64 +602,30 @@ class Delegations extends React.Component {
                         </>
                       )}
                       <hr />
-                      <Delegate
-                        activeTab="delegate"
-                        network={this.props.network}
-                        address={this.props.address}
-                        validator={validator}
-                        validatorApy={this.state.validatorApy}
-                        operators={this.props.operators}
-                        availableBalance={this.props.balance}
-                        stargateClient={this.props.stargateClient}
-                        onDelegate={this.onClaimRewards}
-                      />
-                      <Delegate
-                        redelegate={true}
-                        network={this.props.network}
-                        address={this.props.address}
-                        validator={validator}
-                        validators={this.props.validators}
-                        validatorApy={this.state.validatorApy}
-                        operators={this.props.operators}
-                        availableBalance={
-                          (this.props.delegations[validatorAddress] || {})
-                            .balance
-                        }
-                        stargateClient={this.props.stargateClient}
-                        onDelegate={this.onClaimRewards}
-                      />
-                      <Delegate
-                        undelegate={true}
-                        network={this.props.network}
-                        address={this.props.address}
-                        validator={validator}
-                        validatorApy={this.state.validatorApy}
-                        operators={this.props.operators}
-                        availableBalance={
-                          (this.props.delegations[validatorAddress] || {})
-                            .balance
-                        }
-                        stargateClient={this.props.stargateClient}
-                        onDelegate={this.onClaimRewards}
-                      />
+                      <Dropdown.Item onClick={() => this.showValidatorModal(validatorAddress, {activeTab: 'delegate'})}>
+                        Delegate
+                      </Dropdown.Item>
+                      <Dropdown.Item onClick={() => this.showValidatorModal(validatorAddress, {redelegate: true})}>
+                        Redelegate
+                      </Dropdown.Item>
+                      <Dropdown.Item onClick={() => this.showValidatorModal(validatorAddress, {undelegate: true})}>
+                        Undelegate
+                      </Dropdown.Item>
                     </Dropdown.Menu>
                   </Dropdown>
                 ) : (
-                  <Delegate
-                    button={true}
-                    variant="primary"
-                    size="sm"
-                    tooltip="Delegate to enable REStake"
-                    activeTab="delegate"
-                    network={this.props.network}
-                    address={this.props.address}
-                    validator={validator}
-                    validatorApy={this.state.validatorApy}
-                    operators={this.props.operators}
-                    availableBalance={this.props.balance}
-                    stargateClient={this.props.stargateClient}
-                    onDelegate={this.onClaimRewards}
-                  />
+                  <OverlayTrigger
+                    placement="top"
+                    overlay={
+                      <Tooltip id={`tooltip-${validatorAddress}`}>
+                        Delegate to enable REStake
+                      </Tooltip>
+                    }
+                  >
+                    <Button variant="primary" size="sm" onClick={() => this.showValidatorModal(validatorAddress, { activeTab: 'delegate' })}>
+                      Delegate
+                    </Button>
+                  </OverlayTrigger>
                 )
               ) : (
                 <Button className="btn-sm btn-secondary mr-5" disabled>
@@ -707,19 +703,10 @@ class Delegations extends React.Component {
               There are no REStake operators for this network yet. You can
               delegate to other validators in the meantime.
             </p>
-            <Delegate
-              button={true}
-              variant="primary"
-              network={this.props.network}
-              address={this.props.address}
-              delegations={this.props.delegations}
-              operators={this.props.operators}
-              validators={this.props.validators}
-              validatorApy={this.state.validatorApy}
-              availableBalance={this.props.balance}
-              stargateClient={this.props.stargateClient}
-              onDelegate={this.props.onAddValidator}
-            />
+            <Button variant="primary" onClick={() => this.showValidatorModal()}>
+              Add Validator
+            </Button>
+            {this.renderValidatorModal()}
           </div>
         </>
       );
@@ -776,18 +763,9 @@ class Delegations extends React.Component {
         )}
         <div className="row">
           <div className="col">
-            <Delegate
-              button={true}
-              network={this.props.network}
-              operators={this.props.operators}
-              address={this.props.address}
-              validators={this.props.validators}
-              validatorApy={this.state.validatorApy}
-              delegations={this.props.delegations}
-              availableBalance={this.props.balance}
-              stargateClient={this.props.stargateClient}
-              onDelegate={this.props.onAddValidator}
-            />
+            <Button variant="secondary" onClick={() => this.showValidatorModal()}>
+              Add Validator
+            </Button>
           </div>
           <div className="col">
             <div className="d-grid gap-2 d-md-flex justify-content-end">
@@ -837,6 +815,7 @@ class Delegations extends React.Component {
             </div>
           </div>
         </div>
+        {this.renderValidatorModal()}
       </>
     );
   }

@@ -8,7 +8,7 @@ import {
   Alert
 } from 'react-bootstrap'
 
-import { pow, multiply, divide, floor, subtract, format } from 'mathjs'
+import { pow, multiply, divide, subtract } from 'mathjs'
 
 class DelegateForm extends React.Component {
   constructor(props) {
