@@ -41,6 +41,10 @@ class Delegations extends React.Component {
     this.setState({ isNanoLedger: isNanoLedger });
     this.getGrants()
     this.refresh();
+
+    if(this.props.validator){
+      this.showValidatorModal(this.props.validator.operator_address)
+    }
   }
 
   async componentDidUpdate(prevProps) {
@@ -69,6 +73,10 @@ class Delegations extends React.Component {
     const delegationsChanged = _.difference(Object.keys(this.props.delegations), Object.keys(prevProps.delegations || {})).length > 0
     if (delegationsChanged) {
       this.getGrants()
+    }
+
+    if(prevProps.validator !== this.props.validator && !this.state.validatorModal.show){
+      this.showValidatorModal(this.props.validator.operator_address)
     }
   }
 
@@ -452,21 +460,23 @@ class Delegations extends React.Component {
           </td>
           <td className="d-none d-lg-table-cell text-center">
             {operator && (
-              <TooltipIcon
-                icon={<small className="text-decoration-underline">{operator.frequency()}</small>}
-                identifier={operator.address}
-              >
-                <div className="mt-2 text-center">
-                  <p>REStakes {operator.runTimesString()}</p>
-                  <p>
-                    Minimum reward is{" "}
-                    <Coins
-                      coins={minimumReward}
-                      decimals={this.props.network.decimals}
-                    />
-                  </p>
-                </div>
-              </TooltipIcon>
+              <span role="button" onClick={() => this.showValidatorModal(validatorAddress, { activeTab: 'restake' })}>
+                <TooltipIcon
+                  icon={<small className="text-decoration-underline">{operator.frequency()}</small>}
+                  identifier={operator.address}
+                >
+                  <div className="mt-2 text-center">
+                    <p>REStakes {operator.runTimesString()}</p>
+                    <p>
+                      Minimum reward is{" "}
+                      <Coins
+                        coins={minimumReward}
+                        decimals={this.props.network.decimals}
+                      />
+                    </p>
+                  </div>
+                </TooltipIcon>
+              </span>
             )}
           </td>
           {this.props.network.apyEnabled !== false && (

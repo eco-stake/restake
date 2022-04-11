@@ -134,7 +134,7 @@ function ValidatorGrants(props) {
           <tbody className="table-sm small">
             <tr>
               <td scope="row">REStake Address</td>
-              <td className="text-break">{operator.botAddress}</td>
+              <td className="text-break"><span>{operator.botAddress}</span></td>
             </tr>
             <tr>
               <td scope="row">Frequency</td>
@@ -179,7 +179,7 @@ function ValidatorGrants(props) {
           <Form.Label>Total delegation</Form.Label>
           <div className="mb-3">
             <div className="input-group">
-              <Form.Control name="maxTokensValue" className={!maxTokensValid() ? 'is-invalid' : 'is-valid'} type="number" step={0.000001} placeholder={divide(maxTokens, pow(10, network.decimals))} required={false} value={state.maxTokensValue} onChange={handleInputChange} />
+              <Form.Control name="maxTokensValue" className={!maxTokensValid() ? 'is-invalid' : 'is-valid'} type="number" step={0.000001} placeholder={maxTokens ? divide(maxTokens, pow(10, network.decimals)) : '10'} required={false} value={state.maxTokensValue} onChange={handleInputChange} />
               <span className="input-group-text">{network.symbol.toUpperCase()}</span>
             </div>
             <div className="form-text text-end">

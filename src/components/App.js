@@ -236,6 +236,7 @@ class App extends React.Component {
                 address={this.state.address}
                 operators={this.props.operators}
                 validators={this.props.validators}
+                validator={this.props.validator}
                 balance={this.state.balance}
                 getBalance={this.getBalance}
                 queryClient={this.state.queryClient}

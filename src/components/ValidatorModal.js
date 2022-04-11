@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from "react-router-dom";
 import { bignumber } from 'mathjs'
 
 import Validators from './Validators'
@@ -19,8 +20,18 @@ import ValidatorGrants from './ValidatorGrants';
 
 function ValidatorModal(props) {
   const { redelegate, undelegate, validator, delegations, operators, network, validators, grants } = props
-  const [selectedValidator, setSelectedValidator] = useState();
+  const [selectedValidator, setSelectedValidator] = useState(!redelegate && validator);
   const [activeTab, setActiveTab] = useState();
+  const navigate = useNavigate()
+  const params = useParams();
+
+  useEffect(() => {
+    if(props.show && selectedValidator && params.validator !== selectedValidator.operator_address){
+      navigate(`/${network.name}/${selectedValidator.operator_address}`)
+    }else if(params.validator && !props.show){
+      navigate(`/${network.name}`)
+    }
+  }, [props.show, params.validator, selectedValidator])
 
   useEffect(() => {
     if(props.activeTab && props.activeTab != activeTab){
@@ -72,7 +83,7 @@ function ValidatorModal(props) {
   }
 
   const rewards = () => {
-    if (!rewards) return 0;
+    if (!props.rewards) return 0;
     const denom = network.denom;
     const validatorReward = props.rewards[selectedValidator.address];
     const reward = validatorReward && validatorReward.reward.find((el) => el.denom === denom)
@@ -135,6 +146,7 @@ function ValidatorModal(props) {
                   availableBalance={availableBalance()}
                   delegation={delegations[selectedValidator.operator_address]}
                   rewards={rewards()}
+                  validatorApy={props.validatorApy}
                   stargateClient={props.stargateClient}
                   onDelegate={onDelegate} />
               </Tab>

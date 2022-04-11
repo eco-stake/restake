@@ -93,6 +93,7 @@ class Wallet extends React.Component {
           balance={this.props.balance}
           operators={this.props.operators}
           validators={this.props.validators}
+          validator={this.props.validator}
           getBalance={this.props.getBalance}
           delegations={this.state.delegations}
           queryClient={this.props.queryClient}

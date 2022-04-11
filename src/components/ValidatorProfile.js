@@ -73,12 +73,12 @@ function ValidatorProfile(props) {
           {active() && (
             <tr>
               <td scope="row">Rank</td>
-              <td>#{validator.rank}</td>
+              <td><span>#{validator.rank}</span></td>
             </tr>
           )}
           <tr>
             <td scope="row">Validator Address</td>
-            <td className="text-break">{validator.operator_address}</td>
+            <td className="text-break"><span>{validator.operator_address}</span></td>
           </tr>
           {!active() && (
             <tr>
@@ -94,13 +94,13 @@ function ValidatorProfile(props) {
           )}
           <tr>
             <td scope="row">Commission</td>
-            <td>{validator.commission.commission_rates.rate * 100}%</td>
+            <td><span>{validator.commission.commission_rates.rate * 100}%</span></td>
           </tr>
           {network.data.apyEnabled !== false && (
             <tr>
               <td scope="row">
                 <TooltipIcon
-                  icon={<span className="p-0 text-decoration-underline">APY</span>}
+                  icon={<span className="text-decoration-underline">APY</span>}
                   identifier="delegations-apy"
                 >
                   <div className="mt-2 text-center">
@@ -112,7 +112,7 @@ function ValidatorProfile(props) {
               <td>
                 {Object.keys(props.validatorApy).length > 0
                   ? props.validatorApy[validator.operator_address]
-                    ? Math.round(props.validatorApy[validator.operator_address] * 100) + "%"
+                    ? <span>{Math.round(props.validatorApy[validator.operator_address] * 100)}%</span>
                     : "-"
                   : (
                     <Spinner animation="border" role="status" className="spinner-border-sm text-secondary">
@@ -130,7 +130,7 @@ function ValidatorProfile(props) {
           )}
           <tr>
             <td scope="row">Voting power</td>
-            <td>{bondedTokens()}</td>
+            <td><span>{bondedTokens()}</span></td>
           </tr>
           <tr>
             <td scope="row">REStake</td>
@@ -138,7 +138,7 @@ function ValidatorProfile(props) {
               {!!operator ? (
                 <span>{operator.runTimesString()} (<Coins coins={minimumReward()} denom={network.denom} decimals={network.decimals} /> min)</span>
               ) :
-                <TooltipIcon icon={<XCircle className="opacity-50 p-0" />} identifier={validator.operator_address} tooltip="This validator is not a REStake operator" />
+                <TooltipIcon icon={<XCircle className="opacity-50" />} identifier={validator.operator_address} tooltip="This validator is not a REStake operator" />
               }
             </td>
           </tr>
