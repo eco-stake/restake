@@ -3,7 +3,7 @@ import { Slip10RawIndex, pathToString } from "@cosmjs/crypto";
 import Network from '../src/utils/Network.mjs'
 import {coin, timeStamp, mapSync, executeSync, overrideNetworks} from '../src/utils/Helpers.mjs'
 
-import { divide, bignumber, floor, format } from 'mathjs'
+import { divide, bignumber, floor, smaller } from 'mathjs'
 
 import { MsgWithdrawDelegatorReward } from "cosmjs-types/cosmos/distribution/v1beta1/tx.js";
 import { MsgDelegate } from "cosmjs-types/cosmos/staking/v1beta1/tx.js";
@@ -64,7 +64,7 @@ export class Autostake {
   async runNetwork(client){
     timeStamp('Running autostake')
     const balance = await this.checkBalance(client)
-    if (!balance || balance < 1_000) {
+    if (!balance || smaller(balance, 1_000)) {
       timeStamp('Bot balance is too low')
       return
     }
@@ -173,8 +173,8 @@ export class Autostake {
     let grantCalls = addresses.map(item => {
       return async () => {
         try {
-          const validators = await this.getGrantValidators(client, item)
-          return validators ? item : undefined
+          const grant = await this.getGrants(client, item)
+          return grant ? { address: item, grant: grant } : undefined
         } catch (error) {
           timeStamp(item, 'Failed to get address', error.message)
         }
@@ -186,7 +186,7 @@ export class Autostake {
     return _.compact(grantedAddresses.flat())
   }
 
-  getGrantValidators(client, delegatorAddress) {
+  getGrants(client, delegatorAddress) {
     let timeout = client.network.data.autostake?.delegatorTimeout || 5000
     return client.queryClient.getGrants(client.operator.botAddress, delegatorAddress, { timeout })
       .then(
@@ -203,7 +203,12 @@ export class Autostake {
               return
             }
 
-            return grantValidators
+            const maxTokens = result.stakeGrant.authorization.max_tokens
+
+            return {
+              maxTokens: maxTokens && bignumber(maxTokens.amount),
+              validators: grantValidators,
+            }
           }
         },
         (error) => {
@@ -212,9 +217,9 @@ export class Autostake {
       )
   }
 
-  async getAutostakeMessages(client, addresses, validators) {
+  async getAutostakeMessages(client, grantAddresses, validators) {
     let batchSize = client.network.data.autostake?.batchQueries || 50
-    let calls = addresses.map(item => {
+    let calls = grantAddresses.map(item => {
       return async () => {
         try {
           return await this.getAutostakeMessage(client, item, validators)
@@ -229,13 +234,19 @@ export class Autostake {
     return _.compact(messages.flat())
   }
 
-  async getAutostakeMessage(client, address, validators) {
+  async getAutostakeMessage(client, grantAddress, validators) {
+    const { address, grant } = grantAddress
     const totalRewards = await this.totalRewards(client, address, validators)
 
     const perValidatorReward = floor(divide(totalRewards, validators.length))
 
-    if (perValidatorReward < bignumber(client.operator.minimumReward)) {
+    if (smaller(perValidatorReward, bignumber(client.operator.minimumReward))) {
       timeStamp(address, perValidatorReward, client.network.denom, 'reward is too low, skipping')
+      return
+    }
+
+    if (grant.maxTokens && smaller(grant.maxTokens, perValidatorReward)) {
+      timeStamp(address, grant.maxTokens, client.network.denom, 'grant balance is too low, skipping')
       return
     }
 
