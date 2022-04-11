@@ -86,6 +86,7 @@ class Delegations extends React.Component {
   }
 
   async refresh() {
+    this.getWithdrawAddress();
     this.getRewards();
     this.calculateApy();
     this.refreshInterval();
@@ -100,6 +101,13 @@ class Delegations extends React.Component {
       this.getGrants();
     }, 60_000);
     this.setState({ refreshInterval, grantInterval });
+  }
+
+  async getWithdrawAddress(){
+    const withdraw = await this.props.queryClient.getWithdrawAddress(this.props.address)
+    if(withdraw !== this.props.address){
+      this.setState({error: 'You have a different withdraw address set. REStake WILL NOT WORK!'})
+    }
   }
 
   getRewards(hideError) {
