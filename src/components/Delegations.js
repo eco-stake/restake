@@ -75,7 +75,7 @@ class Delegations extends React.Component {
       this.getGrants()
     }
 
-    if(prevProps.validator !== this.props.validator && !this.state.validatorModal.show){
+    if(prevProps.validator !== this.props.validator && this.props.validator && !this.state.validatorModal.show){
       this.showValidatorModal(this.props.validator.operator_address)
     }
   }

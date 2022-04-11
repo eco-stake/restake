@@ -21,29 +21,33 @@ function ValidatorGrants(props) {
   const { claimGrant, stakeGrant, maxTokens, grantsValid, grantsExist } = grants
   const defaultExpiry = moment().add(1, 'year')
   const [loading, setLoading] = useState(false);
-  const [state, setState] = useState({ maxTokensValue: '', expiryDateValue: defaultExpiry });
+  const [state, setState] = useState({ maxTokensValue: '', expiryDateValue: defaultExpiry.format('YYYY-MM-DD') });
 
   useEffect(() => {
-    const claimExpiry = claimGrant && claimGrant.expiration && moment(claimGrant.expiration)
-    const stakeExpiry = stakeGrant && stakeGrant.expiration && moment(stakeGrant.expiration)
-    const expiryDate = claimExpiry && stakeExpiry && claimExpiry > stakeExpiry ? stakeExpiry : claimExpiry || stakeExpiry
     setState({
       ...state,
       maxTokens,
-      expiryDate,
-      expiryDateValue: (expiryDate || defaultExpiry).format('YYYY-MM-DD')
+      expiryDate: expiryDate(),
     })
   }, [grants, operator])
 
   useEffect(() => {
     setState({
       ...state,
+      expiryDateValue: (expiryDate() || defaultExpiry).format('YYYY-MM-DD'),
       maxTokensValue: maxTokens && state.maxTokensValue === '' ? divide(maxTokens, pow(10, network.decimals)) : maxTokens ? state.maxTokensValue : '',
     })
   }, [operator])
 
   function handleInputChange(e) {
     setState({ ...state, [e.target.name]: e.target.value });
+  }
+
+  function expiryDate(){
+    const claimExpiry = claimGrant && claimGrant.expiration && moment(claimGrant.expiration)
+    const stakeExpiry = stakeGrant && stakeGrant.expiration && moment(stakeGrant.expiration)
+    const expiryDate = claimExpiry && stakeExpiry && claimExpiry > stakeExpiry ? stakeExpiry : claimExpiry || stakeExpiry
+    return expiryDate
   }
 
   function maxTokensDenom() {

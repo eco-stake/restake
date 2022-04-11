@@ -104,6 +104,8 @@ function NetworkFinder() {
     const validatorAddresses = state.validators && Object.keys(state.validators)
     if(validatorAddresses && validatorAddresses.includes(params.validator)){
       setState({ validator: state.validators[params.validator] })
+    }else if(state.validator){
+      setState({ validator: null })
     }
   }, [state.validators, params.validator])
 
