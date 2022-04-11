@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { bignumber } from 'mathjs'
 
 import Validators from './Validators'
 import ValidatorImage from './ValidatorImage'
@@ -14,9 +15,10 @@ import {
 
 import ValidatorDelegate from './ValidatorDelegate';
 import ValidatorProfile from './ValidatorProfile';
+import ValidatorGrants from './ValidatorGrants';
 
 function ValidatorModal(props) {
-  const { redelegate, undelegate, validator, delegations, operators, network, validators } = props
+  const { redelegate, undelegate, validator, delegations, operators, network, validators, grants } = props
   const [selectedValidator, setSelectedValidator] = useState();
   const [activeTab, setActiveTab] = useState();
 
@@ -69,6 +71,14 @@ function ValidatorModal(props) {
     }
   }
 
+  const rewards = () => {
+    if (!rewards) return 0;
+    const denom = network.denom;
+    const validatorReward = props.rewards[selectedValidator.address];
+    const reward = validatorReward && validatorReward.reward.find((el) => el.denom === denom)
+    return reward ? bignumber(reward.amount) : 0
+  }
+
   const actionText = () => {
     if (redelegate) return 'Redelegate'
     if (undelegate) return 'Undelegate'
@@ -113,11 +123,6 @@ function ValidatorModal(props) {
                   validator={selectedValidator}
                   operator={operator()}
                   validatorApy={props.validatorApy} />
-                <p className="text-end">
-                  <Button variant="primary" onClick={() => { setActiveTab('delegate') }}>
-                    {actionText()}
-                  </Button>
-                </p>
               </Tab>
               <Tab eventKey="delegate" title="Delegate">
                 <ValidatorDelegate
@@ -128,9 +133,26 @@ function ValidatorModal(props) {
                   selectedValidator={selectedValidator}
                   address={props.address}
                   availableBalance={availableBalance()}
+                  delegation={delegations[selectedValidator.operator_address]}
+                  rewards={rewards()}
                   stargateClient={props.stargateClient}
                   onDelegate={onDelegate} />
               </Tab>
+              {network.authzSupport && operator() && (
+                <Tab eventKey="restake" title="REStake">
+                  <ValidatorGrants
+                    address={props.address}
+                    network={network}
+                    operator={operator()}
+                    grants={grants[operator().botAddress]}
+                    rewards={rewards()}
+                    stargateClient={props.stargateClient}
+                    onGrant={props.onGrant}
+                    onRevoke={props.onRevoke}
+                    setError={props.setError}
+                  />
+                </Tab>
+              )}
               {network.authzSupport && operator() && (
                 <Tab eventKey="ledger" title="Ledger Instructions">
                   <AboutLedger network={network} validator={selectedValidator} modal={false} />

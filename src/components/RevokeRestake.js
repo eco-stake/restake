@@ -1,5 +1,6 @@
 import {
-  Dropdown
+  Dropdown,
+  Button
 } from 'react-bootstrap'
 
 function RevokeRestake(props) {
@@ -32,6 +33,14 @@ function RevokeRestake(props) {
         msgTypeUrl: type
       },
     }
+  }
+
+  if(props.button){
+    return (
+      <Button variant="danger" onClick={() => revoke()}>
+        Disable REStake
+      </Button>
+    )
   }
 
   return (

@@ -6,8 +6,6 @@ import AlertMessage from "./AlertMessage";
 import Coins from "./Coins";
 import ClaimRewards from "./ClaimRewards";
 import RevokeRestake from "./RevokeRestake";
-import ManageGrant from "./ManageGrant";
-import CountdownRestake from "./CountdownRestake";
 import ValidatorModal from "./ValidatorModal";
 import ValidatorImage from "./ValidatorImage";
 import TooltipIcon from "./TooltipIcon";
@@ -15,8 +13,8 @@ import AboutLedger from "./AboutLedger";
 
 import { Table, Button, Dropdown, Spinner, OverlayTrigger, Tooltip } from "react-bootstrap";
 
-import { CheckCircle, XCircle } from "react-bootstrap-icons";
 import ValidatorName from "./ValidatorName";
+import ManageRestake from "./ManageRestake";
 
 class Delegations extends React.Component {
   constructor(props) {
@@ -48,12 +46,14 @@ class Delegations extends React.Component {
   async componentDidUpdate(prevProps) {
     if (this.props.network !== prevProps.network) {
       clearInterval(this.state.refreshInterval);
+      clearInterval(this.state.grantInterval);
     }
 
     if (!this.props.address) return;
 
     if (this.props.address !== prevProps.address) {
       clearInterval(this.state.refreshInterval);
+      clearInterval(this.state.grantInterval);
       const isNanoLedger = this.props.stargateClient.getIsNanoLedger();
       this.setState({
         isNanoLedger: isNanoLedger,
@@ -74,6 +74,7 @@ class Delegations extends React.Component {
 
   componentWillUnmount() {
     clearInterval(this.state.refreshInterval);
+    clearInterval(this.state.grantInterval);
   }
 
   async refresh() {
@@ -83,11 +84,14 @@ class Delegations extends React.Component {
   }
 
   refreshInterval() {
-    const interval = setInterval(() => {
+    const refreshInterval = setInterval(() => {
       this.props.getBalance();
       this.getRewards(true);
     }, 15_000);
-    this.setState({ refreshInterval: interval });
+    const grantInterval = setInterval(() => {
+      this.getGrants();
+    }, 60_000);
+    this.setState({ refreshInterval, grantInterval });
   }
 
   getRewards(hideError) {
@@ -168,11 +172,13 @@ class Delegations extends React.Component {
   }
 
   onGrant(operator, expired, maxTokens) {
+    clearInterval(this.state.refreshInterval);
+    clearInterval(this.state.grantInterval);
     const operatorGrant = expired ? this.defaultGrant : {
       claimGrant: {},
       stakeGrant: {},
       validators: [operator.address],
-      maxTokens: bignumber(maxTokens.amount)
+      maxTokens: maxTokens ? bignumber(maxTokens.amount) : null
     };
     this.setState((state, props) => ({
       operatorGrants: _.set(
@@ -183,10 +189,12 @@ class Delegations extends React.Component {
       error: null,
       validatorLoading: _.set(state.validatorLoading, operator.address, false),
     }));
-    setTimeout(() => this.getGrants(), 60_000);
+    this.refreshInterval()
   }
 
   onRevoke(operator) {
+    clearInterval(this.state.refreshInterval);
+    clearInterval(this.state.grantInterval);
     this.setState((state, props) => ({
       operatorGrants: _.set(
         state.operatorGrants,
@@ -196,6 +204,7 @@ class Delegations extends React.Component {
       error: null,
       validatorLoading: _.set(state.validatorLoading, operator.address, false),
     }));
+    this.refreshInterval()
   }
 
   onClaimRewards() {
@@ -227,19 +236,23 @@ class Delegations extends React.Component {
     return this.props.network.authzSupport
   }
 
-  operatorGrants(operator) {
-    const grant = this.state.operatorGrants[operator.botAddress] 
-    if(!grant) return this.defaultGrant;
-    return {
-      ...grant,
-      grantsValid: !!(
-        grant.claimGrant &&
-        grant.stakeGrant &&
-        (!grant.validators || grant.validators.includes(operator.address)) &&
-        (grant.maxTokens === null || larger(grant.maxTokens, this.validatorReward(operator.address)))
-      ),
-      grantsExist: !!(grant.claimGrant || grant.stakeGrant),
-    }
+  operatorGrants() {
+    if(!this.state.operatorGrants) return {}
+    return this.props.operators.reduce((sum, operator) => {
+      let grant = this.state.operatorGrants[operator.botAddress]
+      if (!grant) grant = this.defaultGrant;
+      sum[operator.botAddress] = {
+        ...grant,
+        grantsValid: !!(
+          grant.claimGrant &&
+          grant.stakeGrant &&
+          (!grant.validators || grant.validators.includes(operator.address)) &&
+          (grant.maxTokens === null || larger(grant.maxTokens, this.validatorReward(operator.address)))
+        ),
+        grantsExist: !!(grant.claimGrant || grant.stakeGrant),
+      }
+      return sum
+    }, {})
   }
 
   restakePossible() {
@@ -370,9 +383,13 @@ class Delegations extends React.Component {
         balance={this.props.balance}
         rewards={this.state.rewards}
         delegations={this.props.delegations}
+        grants={this.operatorGrants()}
         stargateClient={this.props.stargateClient}
         hideModal={this.hideValidatorModal}
         onDelegate={this.onClaimRewards}
+        onGrant={this.onGrant}
+        onRevoke={this.onRevoke}
+        setError={this.setError}
       />
     )
   }
@@ -385,7 +402,7 @@ class Delegations extends React.Component {
         this.state.rewards && this.state.rewards[validatorAddress];
       const denomRewards = rewards && this.denomRewards(rewards);
       const operator = this.operatorForValidator(validatorAddress);
-      const grants = operator && this.operatorGrants(operator)
+      const grants = operator && this.operatorGrants()[operator.botAddress]
       let rowVariant =
         operator && delegation
           ? grants.grantsValid
@@ -421,48 +438,17 @@ class Delegations extends React.Component {
             </span>
           </td>
           <td className="text-center">
-            {operator ? (
-              this.authzSupport() && delegation ? (
-                this.operatorGrants(operator).grantsValid ? (
-                  <CountdownRestake
-                    network={this.props.network}
-                    operator={operator}
-                  />
-                ) : this.restakePossible() ? (
-                  <ManageGrant
-                    size="sm"
-                    variant="success"
-                    tooltip="Authorize validator to REStake for you"
-                    address={this.props.address}
-                    network={this.props.network}
-                    operator={operator}
-                    grants={this.operatorGrants(operator)}
-                    rewards={this.validatorReward(validatorAddress)}
-                    stargateClient={this.props.stargateClient}
-                    onGrant={this.onGrant}
-                    setError={this.setError}
-                  />
-                ) : (
-                  <TooltipIcon
-                    icon={<CheckCircle className="text-success" />}
-                    identifier={validatorAddress}
-                    tooltip="This validator can REStake your rewards"
-                  />
-                )
-              ) : (
-                <TooltipIcon
-                  icon={<CheckCircle className="text-success" />}
-                  identifier={validatorAddress}
-                  tooltip="This validator can REStake your rewards"
-                />
-              )
-            ) : (
-              <TooltipIcon
-                icon={<XCircle className="opacity-50" />}
-                identifier={validatorAddress}
-                tooltip="This validator is not a REStake operator"
-              />
-            )}
+            <ManageRestake
+              size="sm"
+              network={this.props.network}
+              validator={validator}
+              operator={operator}
+              grants={this.operatorGrants()[operator.botAddress]}
+              delegation={delegation}
+              authzSupport={this.authzSupport()}
+              restakePossible={this.restakePossible()}
+              openGrants={() => this.showValidatorModal(validatorAddress, { activeTab: 'restake' })}
+            />
           </td>
           <td className="d-none d-lg-table-cell text-center">
             {operator && (
@@ -527,23 +513,14 @@ class Delegations extends React.Component {
                     >
                       Manage
                     </Dropdown.Toggle>
-
                     <Dropdown.Menu>
                       {operator &&
                         this.restakePossible() && (
                           <>
-                            <ManageGrant
-                              dropdownItem={true}
-                              address={this.props.address}
-                              network={this.props.network}
-                              operator={operator}
-                              grants={this.operatorGrants(operator)}
-                              rewards={this.validatorReward(validatorAddress)}
-                              stargateClient={this.props.stargateClient}
-                              onGrant={this.onGrant}
-                              setError={this.setError}
-                            />
-                            {this.operatorGrants(operator).grantsExist && (
+                            <Dropdown.Item onClick={() => this.showValidatorModal(validatorAddress, { activeTab: 'restake' })}>
+                              {this.operatorGrants()[operator.botAddress].grantsValid ? 'Manage REStake' : 'Enable REStake'}
+                            </Dropdown.Item>
+                            {this.operatorGrants()[operator.botAddress].grantsExist && (
                               <RevokeRestake
                                 address={this.props.address}
                                 operator={operator}
@@ -602,13 +579,13 @@ class Delegations extends React.Component {
                         </>
                       )}
                       <hr />
-                      <Dropdown.Item onClick={() => this.showValidatorModal(validatorAddress, {activeTab: 'delegate'})}>
+                      <Dropdown.Item onClick={() => this.showValidatorModal(validatorAddress, { activeTab: 'delegate' })}>
                         Delegate
                       </Dropdown.Item>
-                      <Dropdown.Item onClick={() => this.showValidatorModal(validatorAddress, {redelegate: true})}>
+                      <Dropdown.Item onClick={() => this.showValidatorModal(validatorAddress, { redelegate: true })}>
                         Redelegate
                       </Dropdown.Item>
-                      <Dropdown.Item onClick={() => this.showValidatorModal(validatorAddress, {undelegate: true})}>
+                      <Dropdown.Item onClick={() => this.showValidatorModal(validatorAddress, { undelegate: true })}>
                         Undelegate
                       </Dropdown.Item>
                     </Dropdown.Menu>

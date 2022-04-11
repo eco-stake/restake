@@ -80,12 +80,6 @@ function ValidatorProfile(props) {
             <td scope="row">Validator Address</td>
             <td className="text-break">{validator.operator_address}</td>
           </tr>
-          {operator && (
-            <tr>
-              <td scope="row">REStake Address</td>
-              <td className="text-break">{operator.botAddress}</td>
-            </tr>
-          )}
           {!active() && (
             <tr>
               <td scope="row">Status</td>
