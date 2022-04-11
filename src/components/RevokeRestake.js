@@ -1,12 +1,8 @@
-import React, { useState } from 'react';
-
 import {
   Dropdown
 } from 'react-bootstrap'
 
 function RevokeRestake(props) {
-  const [loading, setLoading] = useState(false);
-
   function revoke(){
     props.setLoading(true)
 

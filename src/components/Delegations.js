@@ -1,12 +1,12 @@
 import React from "react";
 import _ from "lodash";
-import { bignumber } from 'mathjs'
+import { larger, bignumber } from 'mathjs'
 import { Bech32 } from '@cosmjs/encoding'
 import AlertMessage from "./AlertMessage";
 import Coins from "./Coins";
 import ClaimRewards from "./ClaimRewards";
 import RevokeRestake from "./RevokeRestake";
-import GrantRestake from "./GrantRestake";
+import ManageGrant from "./ManageGrant";
 import CountdownRestake from "./CountdownRestake";
 import Delegate from "./Delegate";
 import ValidatorImage from "./ValidatorImage";
@@ -28,6 +28,13 @@ class Delegations extends React.Component {
     this.onClaimRewards = this.onClaimRewards.bind(this);
     this.onGrant = this.onGrant.bind(this);
     this.onRevoke = this.onRevoke.bind(this);
+    this.defaultGrant = {
+      claimGrant: null,
+      stakeGrant: null,
+      validators: [],
+      grantsValid: false,
+      grantsExist: false,
+    }
   }
 
   async componentDidMount() {
@@ -125,21 +132,17 @@ class Delegations extends React.Component {
         return this.props.queryClient.getGrants(botAddress, this.props.address).then(
           (result) => {
             const { claimGrant, stakeGrant } = result
-            let grantValidators;
+            let grantValidators, maxTokens;
             if (stakeGrant) {
               grantValidators =
                 stakeGrant.authorization.allow_list?.address;
+              maxTokens = stakeGrant.authorization.max_tokens
             }
             const operatorGrant = {
               claimGrant: claimGrant,
               stakeGrant: stakeGrant,
               validators: grantValidators || [],
-              grantsValid: !!(
-                claimGrant &&
-                stakeGrant &&
-                (!grantValidators || grantValidators.includes(address))
-              ),
-              grantsExist: !!(claimGrant || stakeGrant),
+              maxTokens: maxTokens && bignumber(maxTokens.amount)
             };
             this.setState((state, props) => ({
               operatorGrants: _.set(
@@ -163,10 +166,12 @@ class Delegations extends React.Component {
     }
   }
 
-  onGrant(operator) {
-    const operatorGrant = {
-      grantsValid: true,
-      grantsExist: true,
+  onGrant(operator, expired, maxTokens) {
+    const operatorGrant = expired ? this.defaultGrant : {
+      claimGrant: {},
+      stakeGrant: {},
+      validators: [operator.address],
+      maxTokens: bignumber(maxTokens.amount)
     };
     this.setState((state, props) => ({
       operatorGrants: _.set(
@@ -181,18 +186,11 @@ class Delegations extends React.Component {
   }
 
   onRevoke(operator) {
-    const operatorGrant = {
-      claimGrant: null,
-      stakeGrant: null,
-      validators: [],
-      grantsValid: false,
-      grantsExist: false,
-    };
     this.setState((state, props) => ({
       operatorGrants: _.set(
         state.operatorGrants,
         operator.botAddress,
-        operatorGrant
+        this.defaultGrant
       ),
       error: null,
       validatorLoading: _.set(state.validatorLoading, operator.address, false),
@@ -228,9 +226,19 @@ class Delegations extends React.Component {
     return this.props.network.authzSupport
   }
 
-  grantsValid(operator) {
-    const grants = this.state.operatorGrants[operator.botAddress];
-    return grants && grants.grantsValid;
+  operatorGrants(operator) {
+    const grant = this.state.operatorGrants[operator.botAddress] 
+    if(!grant) return this.defaultGrant;
+    return {
+      ...grant,
+      grantsValid: !!(
+        grant.claimGrant &&
+        grant.stakeGrant &&
+        (!grant.validators || grant.validators.includes(operator.address)) &&
+        (grant.maxTokens === null || larger(grant.maxTokens, this.validatorReward(operator.address)))
+      ),
+      grantsExist: !!(grant.claimGrant || grant.stakeGrant),
+    }
   }
 
   restakePossible() {
@@ -299,22 +307,27 @@ class Delegations extends React.Component {
     };
   }
 
+  validatorReward(validatorAddress) {
+    if (!this.state.rewards) return 0;
+    const denom = this.props.network.denom;
+    const validatorReward = this.state.rewards[validatorAddress];
+    const reward = validatorReward && validatorReward.reward.find((el) => el.denom === denom)
+    return reward ? bignumber(reward.amount) : 0
+  }
+
   validatorRewards(validators) {
     if (!this.state.rewards) return [];
 
-    const denom = this.props.network.denom;
     const validatorRewards = Object.keys(this.state.rewards)
-        .map(validator => {
-          const validatorReward = this.state.rewards[validator];
-          const reward = validatorReward.reward.find((el) => el.denom === denom)
-          return {
-            validatorAddress: validator,
-            reward: reward ? bignumber(reward.amount) : undefined,
-          }
-        })
-        .filter(validatorReward => {
-          return validatorReward.reward && (validators === undefined || validators.includes(validatorReward.validatorAddress))
-        });
+      .map(validator => {
+        return {
+          validatorAddress: validator,
+          reward: this.validatorReward(validator),
+        }
+      })
+      .filter(validatorReward => {
+        return validatorReward.reward && (validators === undefined || validators.includes(validatorReward.validatorAddress))
+      });
 
     return validatorRewards;
   }
@@ -333,11 +346,12 @@ class Delegations extends React.Component {
         this.state.rewards && this.state.rewards[validatorAddress];
       const denomRewards = rewards && this.denomRewards(rewards);
       const operator = this.operatorForValidator(validatorAddress);
+      const grants = operator && this.operatorGrants(operator)
       let rowVariant =
         operator && delegation
-          ? this.grantsValid(operator)
+          ? grants.grantsValid
             ? "table-success"
-            : "table-warning"
+            : grants.grantsExist ? "table-danger" : "table-warning"
           : undefined;
 
       if(isValidatorOperator) rowVariant = 'table-info'
@@ -379,18 +393,21 @@ class Delegations extends React.Component {
           <td className="text-center">
             {operator ? (
               this.authzSupport() && delegation ? (
-                this.grantsValid(operator) ? (
+                this.operatorGrants(operator).grantsValid ? (
                   <CountdownRestake
                     network={this.props.network}
                     operator={operator}
                   />
                 ) : this.restakePossible() ? (
-                  <GrantRestake
+                  <ManageGrant
                     size="sm"
                     variant="success"
                     tooltip="Authorize validator to REStake for you"
                     address={this.props.address}
+                    network={this.props.network}
                     operator={operator}
+                    grants={this.operatorGrants(operator)}
+                    rewards={this.validatorReward(validatorAddress)}
                     stargateClient={this.props.stargateClient}
                     onGrant={this.onGrant}
                     setError={this.setError}
@@ -483,22 +500,34 @@ class Delegations extends React.Component {
 
                     <Dropdown.Menu>
                       {operator &&
-                        this.restakePossible() &&
-                        this.grantsValid(operator) && (
+                        this.restakePossible() && (
                           <>
-                            <RevokeRestake
+                            <ManageGrant
+                              dropdownItem={true}
                               address={this.props.address}
+                              network={this.props.network}
                               operator={operator}
+                              grants={this.operatorGrants(operator)}
+                              rewards={this.validatorReward(validatorAddress)}
                               stargateClient={this.props.stargateClient}
-                              onRevoke={this.onRevoke}
-                              setLoading={(loading) =>
-                                this.setValidatorLoading(
-                                  validatorAddress,
-                                  loading
-                                )
-                              }
+                              onGrant={this.onGrant}
                               setError={this.setError}
                             />
+                            {this.operatorGrants(operator).grantsExist && (
+                              <RevokeRestake
+                                address={this.props.address}
+                                operator={operator}
+                                stargateClient={this.props.stargateClient}
+                                onRevoke={this.onRevoke}
+                                setLoading={(loading) =>
+                                  this.setValidatorLoading(
+                                    validatorAddress,
+                                    loading
+                                  )
+                                }
+                                setError={this.setError}
+                              />
+                            )}
                             <hr />
                           </>
                         )}
