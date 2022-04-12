@@ -98,7 +98,7 @@ class Delegations extends React.Component {
       this.getRewards(true);
     }, 15_000);
     const grantInterval = setInterval(() => {
-      this.getGrants();
+      this.getGrants(true);
     }, 60_000);
     this.setState({ refreshInterval, grantInterval });
   }
@@ -142,7 +142,7 @@ class Delegations extends React.Component {
     })
   }
 
-  async getGrants() {
+  async getGrants(hideError) {
     if(!this.authzSupport() || !this.props.operators.length) return
 
     const calls = this.orderedOperators().map((operator) => {
@@ -174,7 +174,9 @@ class Delegations extends React.Component {
             }));
           },
           (error) => {
-            this.setState({ error: "Failed to get grants. Please refresh" });
+            if(!hideError){
+              this.setState({ error: "Failed to get grants. Please refresh" });
+            }
           }
         );
       }
