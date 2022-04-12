@@ -459,7 +459,7 @@ class Delegations extends React.Component {
               network={this.props.network}
               validator={validator}
               operator={operator}
-              grants={this.operatorGrants()[operator.botAddress]}
+              grants={operator && this.operatorGrants()[operator.botAddress]}
               delegation={delegation}
               authzSupport={this.authzSupport()}
               restakePossible={this.restakePossible()}
