@@ -189,7 +189,7 @@ function ValidatorGrants(props) {
           <Form.Label>Total delegation</Form.Label>
           <div className="mb-3">
             <div className="input-group">
-              <Form.Control name="maxTokensValue" className={!maxTokensValid() ? 'is-invalid' : 'is-valid'} type="number" step={0.000001} placeholder={maxTokens ? divide(maxTokens, pow(10, network.decimals)) : '10'} required={false} value={state.maxTokensValue} onChange={handleInputChange} />
+              <Form.Control type="number" name="maxTokensValue" min={0} className={!maxTokensValid() ? 'is-invalid' : 'is-valid'} step={0.000001} placeholder={maxTokens ? divide(maxTokens, pow(10, network.decimals)) : '10'} required={false} value={state.maxTokensValue} onChange={handleInputChange} />
               <span className="input-group-text">{network.symbol.toUpperCase()}</span>
             </div>
             <div className="form-text text-end">
@@ -199,7 +199,7 @@ function ValidatorGrants(props) {
         </Form.Group>
         <Form.Group className="mb-3">
           <Form.Label>Expiry date</Form.Label>
-          <Form.Control type="date" name='expiryDateValue' required={true} value={state.expiryDateValue} onChange={handleInputChange} />
+          <Form.Control type="date" name='expiryDateValue' min={moment().format('YYYY-MM-DD')} required={true} value={state.expiryDateValue} onChange={handleInputChange} />
           <div className="form-text text-end">Date the grant will expire. After this date you will need to re-grant</div>
         </Form.Group>
         <p className="small">The following Authz authorisations will be made, allowing {operator.moniker} to carry out certain transactions on your behalf.</p>
