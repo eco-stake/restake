@@ -142,7 +142,8 @@
     "authzSupport": false
   },
   {
-    "name": "sommelier"
+    "name": "sommelier",
+    "authzSupport": true
   },
   {
     "name": "konstellation",
