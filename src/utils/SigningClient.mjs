@@ -29,7 +29,7 @@ async function SigningClient(rpcUrl, defaultGasPrice, signer, key, signerOpts) {
   function calculateFee(gasLimit, gasPrice) {
     const processedGasPrice = typeof gasPrice === "string" ? GasPrice.fromString(gasPrice) : gasPrice;
     const { denom, amount: gasPriceAmount } = processedGasPrice;
-    const amount = ceil(multiply(bignumber(gasPriceAmount.toString()), bignumber(gasLimit.toString())));
+    const amount = ceil(bignumber(multiply(bignumber(gasPriceAmount.toString()), bignumber(gasLimit.toString()))));
     return {
       amount: [coin(amount, denom)],
       gas: gasLimit.toString(),

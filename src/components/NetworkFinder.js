@@ -100,6 +100,15 @@ function NetworkFinder() {
     }
   }, [state.network])
 
+  useEffect(() => {
+    const validatorAddresses = state.validators && Object.keys(state.validators)
+    if(validatorAddresses && validatorAddresses.includes(params.validator)){
+      setState({ validator: state.validators[params.validator] })
+    }else if(state.validator){
+      setState({ validator: null })
+    }
+  }, [state.validators, params.validator])
+
   if (state.error) {
     return <AlertMessage message={state.error} variant="danger" dismissible={false} />
   }
@@ -115,7 +124,7 @@ function NetworkFinder() {
   }
 
   return <App networks={state.networks} network={state.network}
-  operators={state.operators} validators={state.validators}
+  operators={state.operators} validators={state.validators} validator={state.validator}
   changeNetwork={(network, validators) => changeNetwork(network, validators)}
   />;
 }

@@ -2,6 +2,8 @@ import _ from 'lodash'
 
 function Coins(props) {
   function amount(coins, decimals){
+    if(props.inBaseDenom) return coins.amount
+
     if (!decimals) {
       decimals = 6
     }

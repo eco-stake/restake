@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import { multiply, pow } from 'mathjs'
+import { multiply, pow, format, bignumber } from 'mathjs'
 import QueryClient from './QueryClient.mjs'
 import SigningClient from './SigningClient.mjs'
 import ApyClient from '../ApyClient.mjs'
@@ -32,7 +32,7 @@ const Network = async (data, withoutQueryClient) => {
     }
   })
 
-  const defaultGasPrice = multiply(0.000000025, pow(10, chain.decimals)).toString() + chain.denom
+  const defaultGasPrice = format(bignumber(multiply(0.000000025, pow(10, chain.decimals))), {notation: 'fixed'}) + chain.denom
 
   let queryClient
   if(!withoutQueryClient){

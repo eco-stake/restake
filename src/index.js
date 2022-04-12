@@ -19,6 +19,7 @@ const app = (
       <Routes>
         <Route path="/" element={<NetworkFinder />} />
         <Route path="/:network" element={<NetworkFinder />} />
+        <Route path="/:network/:validator" element={<NetworkFinder />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>

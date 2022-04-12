@@ -5,16 +5,19 @@ import TooltipIcon from './TooltipIcon';
 import Countdown from 'react-countdown';
 
 import {
-  ClockHistory
+  ClockHistory, Clock
 } from 'react-bootstrap-icons'
+import Coins from './Coins';
 
 function CountdownRestake(props) {
-  const { operator } = props
+  const { operator, network, maxAmount } = props
 
   const nextRun = () => {
     if(!operator) return null
     return operator.nextRun() + (60 * 1000)
   }
+
+  const icon = maxAmount ?  <ClockHistory className="p-0" /> : <Clock className="p-0" />
 
   const countdownRenderer = ({ hours, minutes, seconds, completed }) => {
     if (completed) {
@@ -31,12 +34,15 @@ function CountdownRestake(props) {
     }
   }
   return (
-    <TooltipIcon icon={<ClockHistory className="p-0" />} identifier={operator.address}>
+    <TooltipIcon icon={icon} identifier={operator.address}>
       <div className="mt-2 text-center">
         <Countdown
           date={nextRun()}
           renderer={countdownRenderer}
         />
+        {maxAmount && (
+          <p>Grant remaining: <Coins coins={{amount: maxAmount, denom: props.network.denom}} decimals={network.decimals} /></p>
+        )}
       </div>
     </TooltipIcon>
   )

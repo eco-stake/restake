@@ -1,12 +1,9 @@
-import React, { useState } from 'react';
-
 import {
-  Dropdown
+  Dropdown,
+  Button
 } from 'react-bootstrap'
 
 function RevokeRestake(props) {
-  const [loading, setLoading] = useState(false);
-
   function revoke(){
     props.setLoading(true)
 
@@ -36,6 +33,14 @@ function RevokeRestake(props) {
         msgTypeUrl: type
       },
     }
+  }
+
+  if(props.button){
+    return (
+      <Button variant="danger" onClick={() => revoke()}>
+        Disable REStake
+      </Button>
+    )
   }
 
   return (

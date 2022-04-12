@@ -224,7 +224,7 @@ export class Autostake {
         try {
           return await this.getAutostakeMessage(client, item, validators)
         } catch (error) {
-          timeStamp(item, 'Failed to get address', error.message)
+          timeStamp(item.address, 'Failed to get address', error.message)
         }
       }
     })

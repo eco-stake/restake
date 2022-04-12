@@ -8,7 +8,7 @@ import {
   Alert
 } from 'react-bootstrap'
 
-import { pow, multiply, divide, floor, subtract, format } from 'mathjs'
+import { pow, multiply, divide, subtract, bignumber } from 'mathjs'
 
 class DelegateForm extends React.Component {
   constructor(props) {
@@ -40,7 +40,7 @@ class DelegateForm extends React.Component {
     const client = this.props.stargateClient
 
     const decimals = pow(10, this.props.network.decimals)
-    const denomAmount = multiply(amount, decimals)
+    const denomAmount = bignumber(multiply(amount, decimals))
 
     let messages = this.buildMessages(denomAmount)
     let gas
