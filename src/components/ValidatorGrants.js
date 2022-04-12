@@ -15,6 +15,7 @@ import {
 import Coins from './Coins';
 import { coin } from '../utils/Helpers.mjs';
 import RevokeRestake from './RevokeRestake';
+import AlertMessage from './AlertMessage';
 
 function ValidatorGrants(props) {
   const { grants, operator, address, network } = props
@@ -133,6 +134,11 @@ function ValidatorGrants(props) {
 
   return (
     <>
+      {!props.delegation && (
+      <AlertMessage variant="warning" dismissible={false}>
+        You must delegate to {operator.moniker} before they can REStake for you.
+      </AlertMessage>
+      )}
       <Form onSubmit={handleSubmit}>
         <Table>
           <tbody className="table-sm small">

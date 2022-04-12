@@ -26,7 +26,7 @@ function ValidatorModal(props) {
   const params = useParams();
 
   useEffect(() => {
-    if(props.show && selectedValidator && params.validator !== selectedValidator.operator_address){
+    if(props.show && selectedValidator && validator.operator_address === selectedValidator.operator_address && params.validator !== selectedValidator.operator_address){
       navigate(`/${network.name}/${selectedValidator.operator_address}`)
     }else if(params.validator && !props.show){
       navigate(`/${network.name}`)
@@ -41,11 +41,13 @@ function ValidatorModal(props) {
     }else if(!activeTab){
       setActiveTab('profile')
     }
-  }, [props.activeTab, redelegate, undelegate, validator])
+  }, [props.activeTab, redelegate, undelegate, selectedValidator])
 
   useEffect(() => {
-    setSelectedValidator(!redelegate && validator)
-  }, [validator, redelegate])
+    if(props.show){
+      setSelectedValidator(!redelegate && validator)
+    }
+  }, [validator, redelegate, props.show])
 
   const handleClose = () => {
     if(selectedValidator && (!validator || redelegate) && selectedValidator !== validator){
@@ -53,6 +55,11 @@ function ValidatorModal(props) {
     }else{
       props.hideModal()
     }
+  }
+
+  const selectValidator = (selectedValidator) => {
+    setSelectedValidator(selectedValidator)
+    setActiveTab('profile')
   }
 
   const onDelegate = () => {
@@ -125,7 +132,7 @@ function ValidatorModal(props) {
               validators={validators}
               validatorApy={props.validatorApy}
               delegations={delegations}
-              selectValidator={(selectedValidator) => setSelectedValidator(selectedValidator)} />}
+              selectValidator={(selectedValidator) => selectValidator(selectedValidator)} />}
           {selectedValidator && (
             <Tabs activeKey={activeTab} onSelect={(k) => setActiveTab(k)} id="validator-tabs" className="mb-3">
               <Tab eventKey="profile" title="Profile">
@@ -157,6 +164,7 @@ function ValidatorModal(props) {
                     network={network}
                     operator={operator()}
                     grants={grants[operator().botAddress]}
+                    delegation={delegations[selectedValidator.operator_address]}
                     rewards={rewards()}
                     stargateClient={props.stargateClient}
                     onGrant={props.onGrant}
