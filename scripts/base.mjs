@@ -240,7 +240,7 @@ export class Autostake {
 
     const perValidatorReward = floor(divide(totalRewards, validators.length))
 
-    if (smaller(perValidatorReward, bignumber(client.operator.minimumReward))) {
+    if (smaller(bignumber(perValidatorReward), bignumber(client.operator.minimumReward))) {
       timeStamp(address, perValidatorReward, client.network.denom, 'reward is too low, skipping')
       return
     }
