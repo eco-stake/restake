@@ -8,7 +8,6 @@ import ValidatorLink from './ValidatorLink'
 import AboutLedger from './AboutLedger';
 
 import {
-  Button,
   Modal,
   Tabs,
   Tab
@@ -26,33 +25,33 @@ function ValidatorModal(props) {
   const params = useParams();
 
   useEffect(() => {
-    if(props.show && selectedValidator && validator?.operator_address === selectedValidator.operator_address && params.validator !== selectedValidator.operator_address){
+    if (props.show && selectedValidator && validator?.operator_address === selectedValidator.operator_address && params.validator !== selectedValidator.operator_address) {
       navigate(`/${network.name}/${selectedValidator.operator_address}`)
-    }else if(params.validator && !props.show){
+    } else if (params.validator && !props.show) {
       navigate(`/${network.name}`)
     }
   }, [props.show, params.validator, selectedValidator])
 
   useEffect(() => {
-    if(props.activeTab && props.activeTab != activeTab){
+    if (props.activeTab && props.activeTab != activeTab) {
       setActiveTab(props.activeTab)
-    }else if(redelegate || undelegate){
+    } else if (redelegate || undelegate) {
       setActiveTab('delegate')
-    }else if(!activeTab){
+    } else if (!activeTab) {
       setActiveTab('profile')
     }
   }, [props.activeTab, redelegate, undelegate, selectedValidator])
 
   useEffect(() => {
-    if(props.show){
+    if (props.show) {
       setSelectedValidator(!redelegate && validator)
     }
   }, [validator, redelegate, props.show])
 
   const handleClose = () => {
-    if(selectedValidator && (!validator || redelegate) && selectedValidator !== validator){
+    if (selectedValidator && (!validator || redelegate) && selectedValidator !== validator) {
       setSelectedValidator(null)
-    }else{
+    } else {
       props.hideModal()
     }
   }
@@ -82,9 +81,9 @@ function ValidatorModal(props) {
   }
 
   const availableBalance = () => {
-    if(redelegate || undelegate){
+    if (redelegate || undelegate) {
       return (props.delegations[validator.address] || {}).balance
-    }else{
+    } else {
       return props.balance
     }
   }
@@ -136,7 +135,7 @@ function ValidatorModal(props) {
           {selectedValidator && (
             <Tabs activeKey={activeTab} onSelect={(k) => setActiveTab(k)} id="validator-tabs" className="mb-3">
               <Tab eventKey="profile" title="Profile">
-                <ValidatorProfile 
+                <ValidatorProfile
                   network={network}
                   validator={selectedValidator}
                   operator={operator()}
@@ -157,15 +156,17 @@ function ValidatorModal(props) {
                   stargateClient={props.stargateClient}
                   onDelegate={onDelegate} />
               </Tab>
-              {network.authzSupport && operator() && (
+              {operator() && (
                 <Tab eventKey="restake" title="REStake">
                   <ValidatorGrants
                     address={props.address}
                     network={network}
                     operator={operator()}
-                    grants={grants[operator().botAddress]}
+                    grants={grants[operator()?.botAddress]}
                     delegation={delegations[selectedValidator.operator_address]}
                     rewards={rewards()}
+                    authzSupport={props.authzSupport}
+                    restakePossible={props.restakePossible}
                     stargateClient={props.stargateClient}
                     onGrant={props.onGrant}
                     onRevoke={props.onRevoke}
