@@ -24,25 +24,57 @@ function NetworkSelect(props) {
     {networks: [], operators: [], network: {value: ''}}
   )
 
-  const handleOpen = () => {
-    setSelectedNetwork(props.network)
-    setValidators(props.validators)
+  function handleOpen() {
+    setSelectedNetwork(props.network);
+    setValidators(props.validators);
     CosmosDirectory().getOperatorCounts().then(counts => {
-      setOperatorCounts(counts)
-    })
-    setShow(true)
+      setOperatorCounts(counts);
+    });
+    setShow(true);
   }
 
-  const handleClose = () => {
-    setShow(false)
-    props.onHide()
+  function handleClose() {
+    setShow(false);
+    props.onHide();
   }
 
-  const handleSubmit = (event) => {
+  function handleSubmit(event) {
     event.preventDefault();
 
-    props.changeNetwork(selectedNetwork, validators)
-    handleClose()
+    props.changeNetwork(selectedNetwork, validators);
+    handleClose();
+  }
+
+  function selectNetwork(newValue) {
+    const data = props.networks[newValue.value];
+    if (data) {
+      setLoading(true);
+      setError(false);
+      const network = new Network(data);
+      network.load().then(() => {
+        setSelectedNetwork(network);
+        if (network.usingDirectory && !directoryConnected(data)) {
+          throw false;
+        }
+        network.connect().then(() => {
+          if (network.connected) {
+            setValidators(network.getValidators());
+            setLoading(false);
+          } else {
+            throw false;
+          }
+        });
+      }).catch(error => {
+        console.log(error);
+        setError('Unable to connect to this network currently. Try again later.');
+        setLoading(false);
+      });
+    }
+  }
+
+  function directoryConnected(data) {
+    // replace with available status when added to directory
+    return ['rpc', 'rest'].every(type => data['best_apis'][type].length > 0)
   }
 
   useEffect(() => {
@@ -69,34 +101,11 @@ function NetworkSelect(props) {
         value: selectedNetwork.name,
         label: selectedNetwork.prettyName,
         image: selectedNetwork.image,
-        operatorCount: selectedNetwork.operators.length,
+        operatorCount: selectedNetwork.operators?.length,
         authz: selectedNetwork.authzSupport
       }
     })
   }, [props.networks, selectedNetwork, operatorCounts])
-
-  const selectNetwork = (newValue) => {
-    const data = props.networks[newValue.value]
-    if(data){
-      setLoading(true)
-      setError(false)
-      Network(data, true).then(network => {
-        setSelectedNetwork(network)
-        Network(data).then(network => {
-          if(network.connected){
-            setSelectedNetwork(network)
-            setValidators(network.getValidators())
-            setLoading(false)
-          }else{
-            throw false
-          }
-        }).catch(error => {
-          setError('Unable to connect to this network currently. Try again later.')
-          setLoading(false)
-        })
-      })
-    }
-  }
 
   return (
     <>
@@ -161,7 +170,7 @@ function NetworkSelect(props) {
             {!error && !selectedNetwork.authzSupport &&
               <p><em>This network does not support Authz yet. You can manually stake and compound for now</em></p>
             }
-            {!error && selectedNetwork.authzSupport && selectedNetwork.operators.length < 1 &&
+            {!error && selectedNetwork.authzSupport && selectedNetwork.operators?.length < 1 &&
               <p><em>This network supports Authz but there are no operators just yet. You can manually REStake for now</em></p>
             }
             {!loading

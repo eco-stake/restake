@@ -2,14 +2,8 @@ import axios from "axios";
 import _ from "lodash";
 
 const QueryClient = async (chainId, rpcUrls, restUrls) => {
-  const rpcUrl = await findAvailableUrl(
-    Array.isArray(rpcUrls) ? rpcUrls : [rpcUrls],
-    "rpc"
-  );
-  const restUrl = await findAvailableUrl(
-    Array.isArray(restUrls) ? restUrls : [restUrls],
-    "rest"
-  );
+  let rpcUrl = await findAvailableUrl(rpcUrls, "rpc")
+  let restUrl = await findAvailableUrl(restUrls, "rest")
 
   const getAllValidators = (pageSize, opts, pageCallback) => {
     return getAllPages((nextKey) => {
@@ -183,6 +177,13 @@ const QueryClient = async (chainId, rpcUrls, restUrls) => {
   };
 
   async function findAvailableUrl(urls, type) {
+    if (!Array.isArray(urls)) {
+      if(urls.match('cosmos.directory')){
+        return urls // cosmos.directory health checks already
+      }else{
+        urls = [urls]
+      }
+    }
     const path = type === "rest" ? "/blocks/latest" : "/block";
     return Promise.any(urls.map(async (url) => {
       try {

@@ -74,16 +74,18 @@ function NetworkFinder() {
       if(params.network != networkName){
         navigate("/" + networkName);
       }
-      Network(data).then(network => {
-        if(network.connected){
-          setState({ network: network })
-        }else{
-          throw false
-        }
-      }).catch(error => {
-        Network(data, true).then(network => {
-          setState({ network: network, loading: false })
+      const network = new Network(data)
+      network.load().then(() => {
+        return network.connect().then(() => {
+          if (network.connected) {
+            setState({ network: network })
+          } else {
+            throw false
+          }
         })
+      }).catch(error => {
+        console.log(error)
+        setState({ network: network, loading: false })
       })
     }
   }, [state.networks, state.network, params.network, navigate])

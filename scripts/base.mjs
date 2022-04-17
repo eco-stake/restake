@@ -89,8 +89,9 @@ export class Autostake {
   }
 
   async getClient(data) {
-    let network = await Network(data, true)
+    let network = new Network(data)
     let slip44
+    await network.load()
 
     timeStamp('⚛')
     timeStamp('Starting', network.prettyName)
@@ -129,7 +130,7 @@ export class Autostake {
 
     if (!network.authzSupport) return timeStamp('No Authz support')
 
-    network = await Network(data)
+    await network.connect()
     if (!network.rpcUrl) return timeStamp('Could not connect to RPC API')
     if (!network.restUrl) return timeStamp('Could not connect to REST API')
 
