@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import { format } from 'mathjs'
 
 function Coins(props) {
   function amount(coins, decimals){
@@ -7,8 +8,7 @@ function Coins(props) {
     if (!decimals) {
       decimals = 6
     }
-    const precision = coins.amount >= (100 * Math.pow(10, decimals)) ? 2 : 6
-    return _.round(coins.amount / Math.pow(10, decimals), precision)
+    return format(_.round(coins.amount / Math.pow(10, decimals), precision(coins, decimals)), {notation: 'fixed'})
   }
 
   function denom(coins){
@@ -24,6 +24,13 @@ function Coins(props) {
 
   if(!props.coins || !props.coins.denom){
     return null
+  }
+
+  function precision(coins, decimals){
+    if(props.fullPrecision) return decimals;
+    if(coins.amount >= (1000 * Math.pow(10, decimals))) return 2
+    if(coins.amount >= (100 * Math.pow(10, decimals))) return 3
+    return 6
   }
 
   return (

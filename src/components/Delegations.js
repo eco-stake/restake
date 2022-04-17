@@ -484,6 +484,7 @@ class Delegations extends React.Component {
                       <Coins
                         coins={minimumReward}
                         decimals={this.props.network.decimals}
+                        fullPrecision={true}
                       />
                     </p>
                   </div>
