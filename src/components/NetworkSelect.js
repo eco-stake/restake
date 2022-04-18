@@ -89,12 +89,14 @@ function NetworkSelect(props) {
     const networks = Object.values(props.networks).sort((a, b) => a.name > b.name ? 1 : -1)
     setOptions({
       networks: networks.map(el => {
+        const network = new Network(el)
         return {
           value: el.name, 
           label: el.pretty_name, 
           image: el.image,
           operatorCount: el.operators?.length || operatorCounts[el.name], 
-          authz: el.authzSupport
+          authz: el.authzSupport,
+          online: !network.usingDirectory || directoryConnected(el)
         }
       }),
       network: selectedNetwork && {
@@ -102,7 +104,8 @@ function NetworkSelect(props) {
         label: selectedNetwork.prettyName,
         image: selectedNetwork.image,
         operatorCount: selectedNetwork.operators?.length,
-        authz: selectedNetwork.authzSupport
+        authz: selectedNetwork.authzSupport,
+        online: true // modal will show status
       }
     })
   }, [props.networks, selectedNetwork, operatorCounts])
@@ -143,12 +146,12 @@ function NetworkSelect(props) {
                   options={options.networks}
                   onChange={selectNetwork}
                   formatOptionLabel={network => (
-                    <div className="row">
+                    <div className={ 'row' + (!network.online ? ' text-muted' : '') }>
                       <div className="col-1">
                         <img src={network.image} width={30} height={30} alt={network.label} />
                       </div>
                       <div className="col pt-1">
-                        <span className="ms-1">{network.label}</span>
+                        <span className="ms-1">{network.label} {!network.online && <small>(Offline)</small>}</span>
                       </div>
                       <div className="col text-end pt-1">
                         {network.operatorCount > 0 &&
