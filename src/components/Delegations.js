@@ -66,6 +66,9 @@ class Delegations extends React.Component {
         operatorGrants: {}
       });
       this.refresh();
+      if(this.props.delegations){
+        return this.getGrants()
+      }
     }
 
     if (!this.props.delegations) return
