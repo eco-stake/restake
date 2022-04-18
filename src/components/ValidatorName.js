@@ -11,11 +11,13 @@ function ValidatorName(props) {
   let warning = false
   let warningClass
 
-  if(validator.status === 'BOND_STATUS_UNBONDED') warning = 'Validator is not in the active set'
+  if(validator.status !== 'BOND_STATUS_BONDED') warning = 'Validator is not in the active set'
   if(validator.jailed) warning = 'Validator is jailed'
 
-  if(warning && !hideWarning) warningClass = 'text-danger'
-  if(validator.jailed) warningClass = warningClass + '  text-decoration-line-through'
+  if(!hideWarning){
+    if (warning) warningClass = 'text-danger'
+    if (validator.jailed) warningClass = warningClass + '  text-decoration-line-through'
+  }
 
   return (
     <>

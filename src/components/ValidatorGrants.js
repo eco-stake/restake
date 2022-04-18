@@ -27,7 +27,7 @@ function ValidatorGrants(props) {
   useEffect(() => {
     setState({
       ...state,
-      validators: validators || (!grantsExist && [operator.address]),
+      validators: validators || (!stakeGrant && [operator.address]),
       maxTokens,
       expiryDate: expiryDate(),
     })
