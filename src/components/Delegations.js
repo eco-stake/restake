@@ -65,7 +65,7 @@ class Delegations extends React.Component {
         validatorApy: {},
         operatorGrants: {}
       });
-      return this.refresh();
+      this.refresh();
     }
 
     if (!this.props.delegations) return
@@ -231,7 +231,7 @@ class Delegations extends React.Component {
       this.props.getBalance();
       this.props.getDelegations();
       this.getRewards();
-    }, 6_000);
+    }, 3_000);
   }
 
   setClaimLoading(value) {

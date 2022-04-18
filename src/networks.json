@@ -188,5 +188,11 @@
     "name": "decentr",
     "gasPrice": "0.025udec",
     "authzSupport": false
+  },
+  {
+    "name": "assetmantle",
+    "gasPrice": "0.025umntl",
+    "authzSupport": true,
+    "apyEnabled": false
   }
 ]
