@@ -194,6 +194,6 @@
     "gasPrice": "0.025umntl",
     "ownerAddress": "mantlevaloper1fqs7gakxdmujtk0qufdzth5pfyspus3yx394zd",
     "authzSupport": true,
-    "apyEnabled": false
+    "apyEnabled": true
   }
 ]
