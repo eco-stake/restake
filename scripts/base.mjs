@@ -3,7 +3,7 @@ import { Slip10RawIndex, pathToString } from "@cosmjs/crypto";
 import Network from '../src/utils/Network.mjs'
 import {coin, timeStamp, mapSync, executeSync, overrideNetworks} from '../src/utils/Helpers.mjs'
 
-import { divide, bignumber, floor, smaller } from 'mathjs'
+import { add, bignumber, floor, smaller, smallerEq } from 'mathjs'
 
 import { MsgWithdrawDelegatorReward } from "cosmjs-types/cosmos/distribution/v1beta1/tx.js";
 import { MsgDelegate } from "cosmjs-types/cosmos/staking/v1beta1/tx.js";
@@ -83,7 +83,7 @@ export class Autostake {
 
     timeStamp("Found", grantedAddresses.length, "delegators with valid grants...")
 
-    let grantMessages = await this.getAutostakeMessages(client, grantedAddresses, [client.operator.address])
+    let grantMessages = await this.getAutostakeMessages(client, grantedAddresses)
     await this.autostake(client, grantMessages)
     timeStamp(client.network.prettyName, "finished")
   }
@@ -218,12 +218,12 @@ export class Autostake {
       )
   }
 
-  async getAutostakeMessages(client, grantAddresses, validators) {
+  async getAutostakeMessages(client, grantAddresses) {
     let batchSize = client.network.data.autostake?.batchQueries || 50
     let calls = grantAddresses.map(item => {
       return async () => {
         try {
-          return await this.getAutostakeMessage(client, item, validators)
+          return await this.getAutostakeMessage(client, item)
         } catch (error) {
           timeStamp(item.address, 'Failed to get address', error.message)
         }
@@ -235,20 +235,26 @@ export class Autostake {
     return _.compact(messages.flat())
   }
 
-  async getAutostakeMessage(client, grantAddress, validators) {
+  async getAutostakeMessage(client, grantAddress) {
     const { address, grant } = grantAddress
-    const totalRewards = await this.totalRewards(client, address, validators)
+    const totalRewards = await this.totalRewards(client, address)
 
-    const perValidatorReward = floor(divide(totalRewards, validators.length))
+    let autostakeAmount = floor(totalRewards)
 
-    if (smaller(bignumber(perValidatorReward), bignumber(client.operator.minimumReward))) {
-      timeStamp(address, perValidatorReward, client.network.denom, 'reward is too low, skipping')
+    if (smaller(bignumber(autostakeAmount), bignumber(client.operator.minimumReward))) {
+      timeStamp(address, autostakeAmount, client.network.denom, 'reward is too low, skipping')
       return
     }
 
-    if (grant.maxTokens && smaller(grant.maxTokens, perValidatorReward)) {
-      timeStamp(address, grant.maxTokens, client.network.denom, 'grant balance is too low, skipping')
-      return
+    if (grant.maxTokens){
+      if(smallerEq(grant.maxTokens, 0)) {
+        timeStamp(address, grant.maxTokens, client.network.denom, 'grant balance is empty, skipping')
+        return
+      }
+      if(smaller(grant.maxTokens, autostakeAmount)) {
+        autostakeAmount = grant.maxTokens
+        timeStamp(address, grant.maxTokens, client.network.denom, 'grant balance is too low, using remaining')
+      }
     }
 
     let timeout = client.network.data.autostake?.delegatorTimeout || 5000
@@ -258,11 +264,9 @@ export class Autostake {
       return
     }
 
-    timeStamp(address, "Can autostake", perValidatorReward, client.network.denom, validators.length > 1 ? "per validator" : '')
+    timeStamp(address, "Can autostake", autostakeAmount, client.network.denom)
 
-    let messages = validators.map(el => {
-      return this.buildRestakeMessage(address, el, perValidatorReward, client.network.denom)
-    }).flat()
+    let messages = this.buildRestakeMessage(address, client.operator.address, autostakeAmount, client.network.denom)
 
     return this.buildExecMessage(client.operator.botAddress, messages)
   }
@@ -318,15 +322,15 @@ export class Autostake {
     }]
   }
 
-  totalRewards(client, address, validators) {
+  totalRewards(client, address) {
     let timeout = client.network.data.autostake?.delegatorTimeout || 5000
     return client.queryClient.getRewards(address, { timeout })
       .then(
         (rewards) => {
           const total = Object.values(rewards).reduce((sum, item) => {
             const reward = item.reward.find(el => el.denom === client.network.denom)
-            if (reward && validators.includes(item.validator_address)) {
-              return sum + bignumber(reward.amount)
+            if (reward && item.validator_address === client.operator.address) {
+              return add(sum, bignumber(reward.amount))
             }
             return sum
           }, 0)
