@@ -1,5 +1,6 @@
 import React from 'react'
 import Delegations from './Delegations'
+import AlertMessage from './AlertMessage';
 
 import {
   Spinner
@@ -56,14 +57,15 @@ class Wallet extends React.Component {
           });
         },
         (error) => {
-          this.setState({ isLoaded: true })
           if([404, 500].includes(error.response && error.response.status)){
             this.setState({
-              delegations: {}
+              delegations: {},
+              isLoaded: true
             });
           }else if(!hideError){
             this.setState({
-              error: 'Failed to load delegations. Please refresh.'
+              error: 'Failed to load delegations. API may be down.',
+              isLoaded: true
             });
           }
         }
@@ -82,7 +84,7 @@ class Wallet extends React.Component {
     }
     if (this.state.error) {
       return (
-        <p>Loading failed</p>
+        <AlertMessage message={this.state.error} />
       )
     }
     return (

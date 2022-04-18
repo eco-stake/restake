@@ -678,7 +678,6 @@ class Delegations extends React.Component {
             <>
               <AlertMessage
                 variant="warning"
-                message=""
                 dismissible={false}
               >
                 <p>Ledger devices are not supported in the REStake UI currently. Support will be added as soon as it is possible.</p>

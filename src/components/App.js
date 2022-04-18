@@ -42,7 +42,7 @@ class App extends React.Component {
     if(this.state.keplr != prevState.keplr){
       this.connect()
     }else if(this.props.network && this.props.network !== prevProps.network){
-      this.setState({ balance: undefined })
+      this.setState({ balance: undefined, address: undefined })
       this.connect()
     }
   }
@@ -103,7 +103,8 @@ class App extends React.Component {
       } catch (e) {
         console.log(e)
         return this.setState({
-          error: 'Failed to connect to signing client. API may be down'
+          error: 'Failed to connect to signing client. API may be down.',
+          loading: false
         })
       }
     }

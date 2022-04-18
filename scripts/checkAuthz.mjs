@@ -10,7 +10,9 @@ async function checkAuthz(networkName) {
     return async () => {
       if(networkName && data.name !== networkName) return
       try {
-        const network = await Network(data)
+        const network = new Network(data)
+        await network.load()
+        await network.connect()
         const support = await testAuthz(network)
         if (data.authzSupport !== support){
           console.log(network.name, 'support is different', support ? 'ENABLED' : 'DISABLED')
