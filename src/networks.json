@@ -51,9 +51,9 @@
   },
   {
     "name": "dig",
-    "gasPrice": "0.0025udig",
+    "gasPrice": "0.01udig",
     "ownerAddress": "digvaloper136avwnuvvy94dqmtnaue2nfvjes8xr37h9rzay",
-    "authzSupport": false
+    "authzSupport": true
   },
   {
     "name": "bitcanna",

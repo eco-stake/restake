@@ -51,12 +51,12 @@ function ValidatorDelegate(props) {
           )}
           <tr>
             <td scope="row">Current Delegation</td>
-            <td className="text-break"><Coins coins={props.delegation?.balance} denom={network.denom} /></td>
+            <td className="text-break"><Coins coins={props.delegation?.balance} decimals={network.decimals} fullPrecision={true} /></td>
           </tr>
           <tr>
             <td scope="row">Current Rewards</td>
             <td>
-              <Coins coins={{ amount: props.rewards, denom: network.denom }} decimals={network.decimals} />
+              <Coins coins={{ amount: props.rewards, denom: network.denom }} decimals={network.decimals} fullPrecision={true} />
             </td>
           </tr>
         </tbody>
