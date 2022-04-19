@@ -51,6 +51,7 @@ class Network {
     this.authzSupport = this.chain.authzSupport
     const defaultGasPrice = format(bignumber(multiply(0.000000025, pow(10, this.chain.decimals))), { notation: 'fixed' }) + this.chain.denom
     this.gasPrice = this.data.gasPrice || defaultGasPrice
+    this.gasPriceStep = this.data.gasPriceStep
   }
 
   async connect() {
