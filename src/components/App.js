@@ -142,7 +142,8 @@ class App extends React.Component {
         bech32PrefixConsPub: network.prefix + "valconspub"
       },
       currencies: [currency],
-      feeCurrencies: [currency]
+      feeCurrencies: [currency],
+      gasPriceStep: network.gasPriceStep
     })
   }
 
