@@ -1,5 +1,5 @@
 # dev env
-FROM node:alpine
+FROM node:17-alpine
 
 RUN apk add --update python3 make g++ && rm -rf /var/cache/apk/*
 
