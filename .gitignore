@@ -28,7 +28,7 @@ yarn-debug.log*
 yarn-error.log*
 
 .vim
-.iml
+*.iml
 
 # Parcel related files
 dist/

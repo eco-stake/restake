@@ -36,7 +36,7 @@
   "scripts": {
     "start": "npx parcel src/index.html",
     "prebuild": "rm -rf dist/",
-    "build": "npx parcel build src/index.html",
+    "build": "npx parcel build src/index.html --public-url /restake/",
     "autostake": "node scripts/autostake.mjs",
     "checkAuthz": "node scripts/checkAuthz.mjs"
   },

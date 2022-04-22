@@ -46,7 +46,7 @@ function NetworkFinder() {
       operators: network.getOperators()
     })
 
-    navigate("/" + network.name);
+    navigate("/restake/" + network.name);
   }
 
   useEffect(() => {
@@ -72,7 +72,7 @@ function NetworkFinder() {
         return
       }
       if(params.network != networkName){
-        navigate("/" + networkName);
+        navigate("/restake/" + networkName);
       }
       const network = new Network(data)
       network.load().then(() => {

@@ -35,3 +35,15 @@ code {
 code p{
   margin-bottom: 0.5rem;
 }
+
+.table-warning {
+  --bs-table-bg: none;
+  --bs-table-striped-color: none;
+  --bs-table-active-bg: none;
+  --bs-table-active-color: none;
+  --bs-table-hover-bg: none;
+  --bs-table-hover-color: none;
+  background-color: #bfffbe !important;
+  --bs-table-accent-bg: none;
+  --bs-table-striped-bg: none;
+}

@@ -447,7 +447,6 @@ class Delegations extends React.Component {
 
       return (
         <tr key={validatorAddress} className={rowVariant}>
-          <td>{validator.rank || '-'}</td>
           <td width={30}>
             <ValidatorImage
               validator={validator}
@@ -721,7 +720,6 @@ class Delegations extends React.Component {
           <Table className="align-middle table-striped">
             <thead>
               <tr>
-                <th>#</th>
                 <th colSpan={2}>Validator</th>
                 <th className="d-none d-sm-table-cell text-center">REStake</th>
                 <th className="d-none d-lg-table-cell text-center">
@@ -749,6 +747,7 @@ class Delegations extends React.Component {
               {this.orderedOperators().length > 0 &&
                 this.orderedOperators().map((operator) => {
                   const delegation =
+                      !_.isNull(operator) &&
                     this.props.delegations &&
                     this.props.delegations[operator.address];
                   return this.renderValidator(operator.address, delegation);

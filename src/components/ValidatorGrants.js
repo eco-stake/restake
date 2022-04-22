@@ -210,13 +210,20 @@ function ValidatorGrants(props) {
         <Form onSubmit={handleSubmit}>
           <Form.Group className="mb-3">
             <Form.Label>Total delegation</Form.Label>
+            <p>
+              <small>
+                This parameter keeps track of a limit to the amount of tokens that can be delegated/undelegated/redelegated.
+                <br/>
+                When the specified amount is reached (each restaked amount counts) the restaking process will end, even if the expiry date is not elapsed.
+              </small>
+            </p>
             <div className="mb-3">
               <div className="input-group">
                 <Form.Control type="number" name="maxTokensValue" min={0} className={!maxTokensValid() ? 'is-invalid' : 'is-valid'} step={0.000001} placeholder={maxTokens ? divide(maxTokens, pow(10, network.decimals)) : '10'} required={false} value={state.maxTokensValue} onChange={handleInputChange} />
                 <span className="input-group-text">{network.symbol.toUpperCase()}</span>
               </div>
               <div className="form-text text-end">
-                Reduces with every delegation made by the validator<br />Leave empty for unlimited
+                Reduces with every delegation made by the validator<br />Better to leave empty for unlimited
               </div>
             </div>
           </Form.Group>

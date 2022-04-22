@@ -21,7 +21,7 @@ import Logo from '../assets/logo.png'
 import Logo2x from '../assets/logo@2x.png'
 import Logo3x from '../assets/logo@3x.png'
 
-import PoweredByAkash from '../assets/powered-by-akash.svg'
+import PoweredByAkash from '../assets/logo@3x.png'
 
 class App extends React.Component {
   constructor(props) {
@@ -171,7 +171,7 @@ class App extends React.Component {
         <header className="d-flex flex-wrap justify-content-between py-3 mb-4 border-bottom">
           <div className="logo d-flex align-items-center mb-3 mb-md-0 text-dark text-decoration-none">
             <span onClick={() => this.setState({ showAbout: true })} role="button" className="text-dark text-decoration-none">
-              <img src={Logo} srcSet={`${Logo2x} 2x, ${Logo3x} 3x`} alt="REStake" />
+              <img src={Logo} srcSet={`${Logo2x} 2x, ${Logo3x} 3x`} alt="High Stakes" />
             </span>
           </div>
           {this.state.address &&

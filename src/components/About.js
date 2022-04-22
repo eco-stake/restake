@@ -30,19 +30,21 @@ function About(props) {
         </Modal.Header>
         <Modal.Body className="small">
           <h5>How REStake works</h5>
-          <p>REStake makes use of a new feature in Cosmos blockchains called Authz. This allows a validator (or any other wallet) to send certain pre-authorized transactions on your behalf.</p>
-          <p>When you enable REStake you authorize the validator to send WithdrawDelegatorReward for any address, and Delegate for their own validator address. The validator cannot delegate to any other validators, and the authorisation expires automatically after one year and you can revoke at any time.</p>
+          <p>REStake makes use of a new feature in Cosmos blockchains called Authz. This allows a High Stakes 🇨🇭 (or any other wallet) to send certain pre-authorized transactions on your behalf.</p>
+          <p>When you enable REStake you authorize High Stakes 🇨🇭 to send WithdrawDelegatorReward for any address, and Delegate for their own validator address. We <strong>cannot</strong> delegate to any other validators, and the authorisation expires automatically after one year and you can revoke at any time.</p>
+          <p><strong>The operation is absolutely safe</strong></p>
           <h5>How to use REStake</h5>
           <ol>
             <li>Choose a network. Some don't support Authz yet but many do.</li>
-            <li>Delegate to any validators who offers the REStake service.</li>
+            <li>Delegate to High Stakes 🇨🇭 or any validators who offers the REStake service.</li>
             <li>Enable REStake on the validators you want to compound rewards.</li>
             <li>Watch the countdown timer and profit!</li>
           </ol>
           <h5>Run REStake yourself</h5>
           <p>REStake is intended to be run by as many validators as possible, giving delegators the choice of who to auto-compound their rewards with. Ask your favourite validator to become an operator or run it yourself, it's easy!</p>
           <p>The project is entirely open source and instructions for running and contributing to REStake can be <a href="https://github.com/eco-stake/restake" target="_blank" rel="noreferrer">found on Github</a>.</p>
-          <h5>ECO Stake 🌱</h5>
+          <h5>Made by ECO Stake</h5>
+          <h6>ECO Stake 🌱</h6>
           <p>ECO Stake is a climate positive validator, but we care about the Cosmos ecosystem too. We built REStake to make it easy for all validators to run an autocompounder with Authz, and it's one of many projects we work on in the ecosystem. <a href="https://ecostake.com" target="_blank" rel="noreferrer">Delegate with us</a> to support more projects like this.</p>
         </Modal.Body>
       </Modal>
