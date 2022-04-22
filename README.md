@@ -58,7 +58,7 @@ In the future, `correctSlip44` will become the default and you will need to set 
 
 You can run the autostaking script using `docker-compose` or using `npm` directly. In both cases you will need to provide your mnemonic in a `MNEMONIC` environment variable.
 
-Instructions are provided for Docker Compose and will be expanded later.
+## Instructions for Docker Compose
 
 ### Install Docker and Docker Compose
 
@@ -95,6 +95,52 @@ Pass a network name to run the script for a single network at a time.
 ```bash
 docker-compose run --rm app npm run autostake osmosis
 ```
+## Instructions for systemd service
+
+### Install nodejs@v17
+
+```bash
+curl -sL https://deb.nodesource.com/setup_17.x -o /tmp/nodesource_setup.sh
+# read the script file and when you're sure it's safe run it
+chmod +x /tmp/nodesource_setup.sh
+/tmp/nodesource_setup.sh
+apt install nodejs -y
+node --version
+> v17.9.0
+npm --version
+> 8.5.5
+
+```
+### Clone the repository and build it
+
+```bash
+git clone https://github.com/eco-stake/restake
+cd restake
+npm install && npm run build
+```
+
+### Create systemd service
+
+```
+$ cat /etc/systemd/system/restake.service
+[Unit]
+Description=Restake service with timer
+After=network-online.target
+Wants=restake.timer # keep this line if you setup the restake.timer service below, remove for cron
+
+[Service]
+Type=oneshot
+User=cosmos
+WorkingDirectory=/path/to/cloned/repo
+Environment=MNEMONIC="your hot wallet mnemonic here"
+Environment=NODE_ENV=production
+Environment=DIRECTORY_DOMAIN=cosmos.directory
+Environment=DIRECTORY_PROTOCOL=https
+ExecStart=/usr/bin/npm run autostake
+
+[Install]
+WantedBy=multi-user.target
+```
 
 ### Updating your local version
 
@@ -106,6 +152,11 @@ Update your local repository and pre-build your Docker containers with the follo
 git pull
 docker-compose run --rm app npm install
 docker-compose build --no-cache
+```
+or without docker
+```bash
+git pull
+npm install && npm run build
 ```
 
 ### Setting up Cron to make sure the script runs daily
@@ -124,6 +175,13 @@ crontab -e
 
 0 21 * * * /bin/bash -c "cd restake && docker-compose run --rm app npm run autostake" > ./restake.log 2>&1
 ```
+or without docker
+```bash
+crontab -e
+
+0 21 * * * /bin/bash -c "systemctl start restake"
+```
+
 
 #### Using `systemd-timer`
 
