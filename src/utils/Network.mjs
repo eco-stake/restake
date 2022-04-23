@@ -49,9 +49,10 @@ class Network {
     this.image = this.chain.image
     this.coinGeckoId = this.chain.coinGeckoId
     this.authzSupport = this.chain.authzSupport
-    const defaultGasPrice = format(bignumber(multiply(0.000000025, pow(10, this.chain.decimals))), { notation: 'fixed' }) + this.chain.denom
+    const defaultGasPrice = format(bignumber(multiply(0.000000025, pow(10, this.decimals))), { notation: 'fixed' }) + this.denom
     this.gasPrice = this.data.gasPrice || defaultGasPrice
     this.gasPriceStep = this.data.gasPriceStep
+    this.gasPricePrefer = this.data.gasPricePrefer
   }
 
   async connect() {
@@ -68,12 +69,12 @@ class Network {
     }
   }
 
-  signingClient(wallet, key) {
+  signingClient(wallet, key, gasPrice) {
     if (!this.queryClient)
       return
 
     const client = this.SIGNERS[this.data.name] || SigningClient
-    return client(this.queryClient.rpcUrl, this.gasPrice, wallet, key)
+    return client(this.queryClient.rpcUrl, gasPrice || this.gasPrice, wallet, key)
   }
 
   getOperator(operatorAddress) {
