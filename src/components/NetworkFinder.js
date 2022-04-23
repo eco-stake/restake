@@ -45,7 +45,6 @@ function NetworkFinder() {
       validators: network.getValidators(),
       operators: network.getOperators()
     })
-
     navigate("/restake/" + network.name);
   }
 
@@ -71,7 +70,7 @@ function NetworkFinder() {
         setState({loading: false})
         return
       }
-      if(params.network != networkName){
+      if(_.isNil(params.network)) {
         navigate("/restake/" + networkName);
       }
       const network = new Network(data)

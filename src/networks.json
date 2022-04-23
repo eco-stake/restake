@@ -14,6 +14,7 @@
   {
     "name": "cosmoshub",
     "gasPrice": "0.0025uatom",
+    "ownerAddress": "cosmosvaloper1yh089p0cre4nhpdqw35uzde5amg3qzexkeggdn",
     "authzSupport": true
   },
   {
@@ -42,12 +43,14 @@
     "name": "terra",
     "apyEnabled": false,
     "gasPrice": "0.015uluna",
+    "ownerAddress": "terravaloper1uymwfafhq8fruvcjq8k67a29nqzrxnv9m6m427",
     "authzSupport": true
   },
   {
     "name": "sentinel",
     "gasPrice": "0.02udvpn",
-    "authzSupport": true
+    "authzSupport": true,
+    "ownerAddress": "sentvaloper1em47hyec6g6jcmywp5mpqvs66h7wdnj6kd5t6p"
   },
   {
     "name": "dig",
@@ -76,7 +79,8 @@
     "name": "desmos",
     "apyEnabled": false,
     "gasPrice": "0.001udsm",
-    "authzSupport": true
+    "authzSupport": true,
+    "ownerAddress": "desmosvaloper1mxt66nphve6pgkcwvjqmvjg9f7w569f5e500k4"
   },
   {
     "name": "cryptoorgchain",
@@ -92,10 +96,12 @@
   {
     "name": "sifchain",
     "authzSupport": false,
-    "gasPrice": "1500000000000rowan"
+    "gasPrice": "1500000000000rowan",
+    "ownerAddress": "sifvaloper10m3qfv03lzmm7tdn6k4ne0pdayu5tw706ej8xr"
   },
   {
     "name": "lumnetwork",
+    "ownerAddress": "lumvaloper1er7rqa90x643mf2wc3p63f647tchkkq53zy0f6",
     "authzSupport": true
   },
   {
@@ -124,7 +130,8 @@
   },
   {
     "name": "persistence",
-    "authzSupport": true
+    "authzSupport": true,
+    "ownerAddress": "persistencevaloper1yvcrahdpctyg77l67cnnhqf4ef5j8kanq8jeqv"
   },
   {
     "name": "agoric",
@@ -148,11 +155,13 @@
   {
     "name": "konstellation",
     "image": "https://raw.githubusercontent.com/Konstellation/DARC_token/main/darctoken.svg",
+    "ownerAddress": "darcvaloper1lwyfeqp7y3w7zxvmx5lnhh4duyxca3sdyg5khf",
     "authzSupport": false
   },
   {
     "name": "fetchhub",
     "gasPrice": "5000afet",
+    "ownerAddress": "fetchvaloper1jfxur0jse6u2h5qywhhdtnee3z4zd5cxgz2m5d",
     "authzSupport": true
   },
   {
@@ -182,6 +191,7 @@
   {
     "name": "rizon",
     "gasPrice": "0.0001uatolo",
+    "ownerAddress": "rizonvaloper1df9sd8q3cetvmxs5tkf5pc3sq82wkswlxvzl6p",
     "authzSupport": true
   },
   {
