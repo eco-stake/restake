@@ -135,6 +135,7 @@
   {
     "name": "impacthub",
     "gasPrice": "0.025uixo",
+    "gasPricePrefer": "0.1uixo",
     "authzSupport": false
   },
   {
@@ -168,6 +169,7 @@
   {
     "name": "secretnetwork",
     "gasPrice": "0.025uscrt",
+    "gasPricePrefer": "0.05uscrt",
     "authzSupport": true
   },
   {

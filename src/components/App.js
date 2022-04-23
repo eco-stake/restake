@@ -74,20 +74,26 @@ class App extends React.Component {
         error: 'Could not connect to any available API servers'
       })
     }
-    const chainId = this.props.network.chainId
+    const { network } = this.props
+    const chainId = network.chainId
     try {
       if (window.keplr) {
+        if(network.gasPricePrefer){
+          window.keplr.defaultOptions = {
+            sign: { preferNoSetFee: true }
+          }
+        }
         await window.keplr.enable(chainId);
       }
     } catch (e) {
       console.log(e.message, e)
-      await this.suggestChain(this.props.network)
+      await this.suggestChain(network)
     }
     if (window.getOfflineSigner) {
       try {
         const offlineSigner = await window.getOfflineSignerAuto(chainId)
         const key = await window.keplr.getKey(chainId);
-        const stargateClient = await this.props.network.signingClient(offlineSigner, key)
+        const stargateClient = await network.signingClient(offlineSigner, key, network.gasPricePrefer)
 
         const address = await stargateClient.getAddress()
 
@@ -96,7 +102,7 @@ class App extends React.Component {
         this.setState({
           address: address,
           stargateClient: stargateClient,
-          queryClient: this.props.network.queryClient,
+          queryClient: network.queryClient,
           error: false
         })
         this.getBalance()
