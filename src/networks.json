@@ -92,7 +92,8 @@
   {
     "name": "sifchain",
     "authzSupport": false,
-    "gasPrice": "1500000000000rowan"
+    "gasPrice": "1500000000000rowan",
+    "ownerAddress": "sifvaloper19t5nk5ceq5ga75epwdqhnupwg0v9339p096ydz"
   },
   {
     "name": "lumnetwork",
