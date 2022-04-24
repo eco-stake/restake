@@ -17,7 +17,7 @@ class AutostakeHealth {
   }
 
   error(...args){
-    this.errors = [...this.errors, "\n", ...args]
+    this.errors = [...(this.errors || []), "\n", ...args]
   }
 
   complete(...args){
