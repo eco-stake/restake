@@ -240,7 +240,27 @@ Arrays will be replaced and not merged. The file is `.gitignore`'d so it won't a
 
 Note that REStake requires a node with indexing enabled and minimum gas prices matching the `networks.json` gas price (or your local override).
 
-## Submiting your operator
+### Monitoring 
+
+The REStake autostaking script can integrate with [healthchecks.io](https://healthchecks.io/) to report the script status for each network. healthchecks.io can then integrate with many notification platforms to make sure you know about any failures.
+
+REStake will ping [healthchecks.io](https://healthchecks.io/) when the script starts, succeeds, or fails. It will include relevant error information in the check log and is simple to configure.
+
+Setup a Check for each network you run the script for, and configure the expected schedule. E.g. add a check for Osmosis every 12 hours, Cerberus every 1 hour etc. 
+
+Add your Check UUID to the relevant network in your `networks.local.json` config as below. You can also optionally set the `address` attribute if you want to [self-host the healthchecks.io platform](https://healthchecks.io/docs/self_hosted/).
+
+```JSON
+{
+  "osmosis": {
+    "healthCheck": {
+      "uuid": "77f02efd-c521-46cb-70g8-fa5v275au873"
+    }
+  }
+}
+```
+
+## Submitting your operator
 
 ### Setup your REStake operator
 
