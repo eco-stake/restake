@@ -10,7 +10,7 @@ function TooltipIcon(props) {
       {(props.children || props.tooltip) ? (
       <OverlayTrigger
         key={props.identifier}
-        placement="top"
+        placement={props.placement || 'top'}
         overlay={
           <Tooltip id={`tooltip-${props.key}`}>
             {props.children || props.tooltip}

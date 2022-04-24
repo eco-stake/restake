@@ -293,10 +293,15 @@ class Delegations extends React.Component {
   }
 
   orderedOperators() {
-    return _.sortBy(this.props.operators, ({ address }) => {
+    const grants = this.operatorGrants()
+    return _.sortBy(this.props.operators, ({ address, botAddress }) => {
       if (!this.props.delegations) return 0
 
-      return this.props.delegations[address] ? 0 : 1
+      if(this.props.delegations[address]){
+        return grants[botAddress]?.grantsExist ? -1 : 0
+      }else{
+        return 1
+      }
     });
   }
 
@@ -430,7 +435,7 @@ class Delegations extends React.Component {
         operator && delegation
           ? grants.grantsValid
             ? "table-success"
-            : grants.grantsExist ? "table-danger" : "table-warning"
+            : grants.grantsExist ? "table-danger" : undefined
           : undefined;
 
       if (isValidatorOperator) rowVariant = 'table-info'
@@ -685,7 +690,7 @@ class Delegations extends React.Component {
                 dismissible={false}
               >
                 <p>Ledger devices are not supported in the REStake UI currently. Support will be added as soon as it is possible.</p>
-                <p className="mb-0"><span onClick={() => this.setState({ showAboutLedger: true })} role="button" className="text-dark text-decoration-underline">A manual workaround is possible using the CLI</span></p>
+                <p className="mb-0"><span onClick={() => this.setState({ showAboutLedger: true })} role="button" className="text-reset text-decoration-underline">A manual workaround is possible using the CLI</span></p>
               </AlertMessage>
             </>
           )}

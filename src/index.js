@@ -10,8 +10,9 @@ import {
 } from "react-router-dom";
 
 import NetworkFinder from './components/NetworkFinder'
-import './index.css';
 import reportWebVitals from './utils/reportWebVitals';
+
+import './index.css';
 
 const app = (
   <React.StrictMode>
