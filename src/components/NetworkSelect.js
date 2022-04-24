@@ -20,8 +20,8 @@ function NetworkSelect(props) {
   const [validators, setValidators] = useState([]);
   const [operatorCounts, setOperatorCounts] = useState({});
   const [options, setOptions] = useReducer(
-    (state, newState) => ({...state, ...newState}),
-    {networks: [], operators: [], network: {value: ''}}
+    (state, newState) => ({ ...state, ...newState }),
+    { networks: [], operators: [], network: { value: '' } }
   )
 
   function handleOpen() {
@@ -78,9 +78,9 @@ function NetworkSelect(props) {
   }
 
   useEffect(() => {
-    if(props.show && !show){
+    if (props.show && !show) {
       handleOpen()
-    }else if(!props.show && show){
+    } else if (!props.show && show) {
       handleClose()
     }
   }, [props.show])
@@ -91,10 +91,10 @@ function NetworkSelect(props) {
       networks: networks.map(el => {
         const network = new Network(el)
         return {
-          value: el.name, 
-          label: el.pretty_name, 
+          value: el.name,
+          label: el.pretty_name,
           image: el.image,
-          operatorCount: el.operators?.length || operatorCounts[el.name], 
+          operatorCount: el.operators?.length || operatorCounts[el.name],
           authz: el.authzSupport,
           online: !network.usingDirectory || directoryConnected(el)
         }
@@ -112,7 +112,7 @@ function NetworkSelect(props) {
 
   return (
     <>
-      <Button onClick={handleOpen} variant="link" className="d-flex align-items-center text-dark text-decoration-none border-secondary btn-outline-light" role="button">
+      <Button onClick={handleOpen} variant="link" className="d-flex align-items-center text-reset text-decoration-none border-secondary btn-outline-light" role="button">
         <div className="avatar avatar-sm rounded-circle text-white">
           <img alt={props.network.prettyName} src={props.network.image} height={30} width={30} />
         </div>
@@ -135,56 +135,66 @@ function NetworkSelect(props) {
         </Modal.Header>
         <Modal.Body>
           {selectedNetwork &&
-          <Form onSubmit={handleSubmit}>
-            {props.networks &&
-            <div className="row mb-3">
-              <div className="col">
-                <Select
-                  value={options.network}
-                  isClearable={false}
-                  name="network"
-                  options={options.networks}
-                  onChange={selectNetwork}
-                  formatOptionLabel={network => (
-                    <div className={ 'row' + (!network.online ? ' text-muted' : '') }>
-                      <div className="col-1">
-                        <img src={network.image} width={30} height={30} alt={network.label} />
-                      </div>
-                      <div className="col pt-1">
-                        <span className="ms-1">{network.label} {!network.online && <small>(Offline)</small>}</span>
-                      </div>
-                      <div className="col text-end pt-1">
-                        {network.operatorCount > 0 &&
-                        <small>{network.operatorCount} Operator{network.operatorCount > 1 ? 's' : ''}</small>
-                        }
-                        {network.authz
-                          ? <Badge className="ms-3 rounded-pill" bg="success">Authz</Badge>
-                          : <Badge className="ms-3 rounded-pill text-decoration-line-through" bg="danger">Authz</Badge>
-                        }
-                      </div>
-                    </div>
-                  )}/>
-              </div>
-            </div>
-            }
-            {error &&
-              <p><em>{error}</em></p>
-            }
-            {!error && !selectedNetwork.authzSupport &&
-              <p><em>This network does not support Authz yet. You can manually stake and compound for now</em></p>
-            }
-            {!error && selectedNetwork.authzSupport && selectedNetwork.operators?.length < 1 &&
-              <p><em>This network supports Authz but there are no operators just yet. You can manually REStake for now</em></p>
-            }
-            {!loading
-              ? !error && <Button type="submit" className="btn btn-primary">Change</Button>
-              : (
-                <Button className="btn-sm btn-primary mr-5" disabled>
-                  <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>&nbsp;
-                  Updating...
-                </Button>
-              )}
-          </Form>
+            <Form onSubmit={handleSubmit}>
+              {props.networks &&
+                <div className="row mb-3">
+                  <div className="col">
+                    <Select
+                      value={options.network}
+                      isClearable={false}
+                      name="network"
+                      options={options.networks}
+                      onChange={selectNetwork}
+                      formatOptionLabel={network => (
+                        <div className={'row' + (!network.online ? ' text-muted' : '')}>
+                          <div className="col-1">
+                            <img src={network.image} width={30} height={30} alt={network.label} />
+                          </div>
+                          <div className="col pt-1">
+                            <span className="ms-1">{network.label} {!network.online && <small>(Offline)</small>}</span>
+                          </div>
+                          <div className="col text-end pt-1">
+                            {network.operatorCount > 0 &&
+                              <small>{network.operatorCount} Operator{network.operatorCount > 1 ? 's' : ''}</small>
+                            }
+                            {network.authz
+                              ? <Badge className="ms-3 rounded-pill" bg="success">Authz</Badge>
+                              : <Badge className="ms-3 rounded-pill text-decoration-line-through" bg="danger">Authz</Badge>
+                            }
+                          </div>
+                        </div>
+                      )}
+                      theme={(theme) => ({
+                        ...theme,
+                        colors: {
+                          ...theme.colors,
+                          neutral0: 'var(--bs-body-bg)',
+                          neutral80: 'var(--bs-body)',
+                          primary25: 'var(--bs-light)'
+                        },
+                      })}
+                    />
+                  </div>
+                </div>
+              }
+              {error &&
+                <p><em>{error}</em></p>
+              }
+              {!error && !selectedNetwork.authzSupport &&
+                <p><em>This network does not support Authz yet. You can manually stake and compound for now</em></p>
+              }
+              {!error && selectedNetwork.authzSupport && selectedNetwork.operators?.length < 1 &&
+                <p><em>This network supports Authz but there are no operators just yet. You can manually REStake for now</em></p>
+              }
+              {!loading
+                ? !error && <Button type="submit" className="btn btn-primary">Change</Button>
+                : (
+                  <Button className="btn-sm btn-primary mr-5" disabled>
+                    <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>&nbsp;
+                    Updating...
+                  </Button>
+                )}
+            </Form>
           }
         </Modal.Body>
       </Modal>

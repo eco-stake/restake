@@ -15,13 +15,23 @@ import {
   Button,
   Badge,
 } from 'react-bootstrap';
+import {
+  Droplet,
+  DropletFill,
+  DropletHalf
+} from 'react-bootstrap-icons'
 import {CopyToClipboard} from 'react-copy-to-clipboard';
 import GitHubButton from 'react-github-btn'
 import Logo from '../assets/logo.png'
 import Logo2x from '../assets/logo@2x.png'
 import Logo3x from '../assets/logo@3x.png'
+import LogoWhite from '../assets/logo-white.png'
+import LogoWhite2x from '../assets/logo-white@2x.png'
+import LogoWhite3x from '../assets/logo-white@3x.png'
 
 import PoweredByAkash from '../assets/powered-by-akash.svg'
+import PoweredByAkashWhite from '../assets/powered-by-akash-white.svg'
+import TooltipIcon from './TooltipIcon';
 
 class App extends React.Component {
   constructor(props) {
@@ -171,13 +181,40 @@ class App extends React.Component {
     }, 2000)
   }
 
+  themeIcon() {
+    const { theme, themeChoice, themeDefault, setThemeChoice } = this.props
+    let icon, switchTo
+    let iconProps = {
+      size: '1.4em',
+      className: 'me-3',
+      role: 'button',
+      onClick: () => setThemeChoice(switchTo)
+    }
+    if(themeChoice === 'auto'){
+      icon = <DropletHalf {...iconProps} />
+      switchTo = theme === 'dark' ? 'light' : 'dark'
+    }else{
+      icon = themeChoice === 'dark' ? <DropletFill {...iconProps} /> : <Droplet {...iconProps} />
+      switchTo = themeDefault !== theme ? 'auto' : theme === 'dark' ? 'light' : 'dark'
+    }
+    const tooltip = `Switch to ${switchTo} mode`
+    return (
+      <TooltipIcon icon={icon} tooltip={tooltip} placement="left" />
+    )
+  }
+
   render() {
     return (
       <Container>
         <header className="d-flex flex-wrap justify-content-between py-3 mb-4 border-bottom">
-          <div className="logo d-flex align-items-center mb-3 mb-md-0 text-dark text-decoration-none">
-            <span onClick={() => this.setState({ showAbout: true })} role="button" className="text-dark text-decoration-none">
-              <img src={Logo} srcSet={`${Logo2x} 2x, ${Logo3x} 3x`} alt="REStake" />
+          <div className="logo d-flex align-items-center mb-3 mb-md-0 text-reset text-decoration-none">
+            <span onClick={() => this.setState({ showAbout: true })} role="button" className="text-reset text-decoration-none">
+              {this.props.theme === 'light'
+               ? (
+                  <img src={Logo} srcSet={`${Logo2x} 2x, ${Logo3x} 3x`} alt="REStake" />
+               ) : (
+                  <img src={LogoWhite} srcSet={`${LogoWhite2x} 2x, ${LogoWhite3x} 3x`} alt="REStake" />
+               )}
             </span>
           </div>
           {this.state.address &&
@@ -211,7 +248,8 @@ class App extends React.Component {
               )}
             </ul>
           }
-          <div className="d-flex align-items-center mb-3 mb-md-0 text-dark text-decoration-none">
+          <div className="d-flex align-items-center mb-3 mb-md-0 text-reset text-decoration-none">
+            {this.themeIcon()}
             <NetworkSelect show={this.state.showNetworkSelect} onHide={() => { this.setState({ showNetworkSelect: false }) }} networks={this.props.networks}
               network={this.props.network}
               validators={this.props.validators}
@@ -253,7 +291,7 @@ class App extends React.Component {
           }
           <hr />
           <p className="mt-5 text-center">
-            Enabling REStake will authorize the validator to send <em>WithdrawDelegatorReward</em> and <em>Delegate</em> transactions on your behalf for 1 year using <a href="https://docs.cosmos.network/master/modules/authz/" target="_blank" rel="noreferrer">Authz</a>.<br />
+            Enabling REStake will authorize the validator to send <em>WithdrawDelegatorReward</em> and <em>Delegate</em> transactions on your behalf for 1 year <a href="https://docs.cosmos.network/master/modules/authz/" target="_blank" rel="noreferrer" className="text-reset">using Authz</a>.<br />
             They will only be authorized to delegate to their own validator. You can revoke the authorization at any time and everything is open source.
           </p>
           <p className="text-center mb-4">
@@ -265,22 +303,32 @@ class App extends React.Component {
         </div>
         <footer className="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
           <a href="https://akash.network" target="_blank" rel="noreferrer" className="col-md-4 mb-0 text-muted">
-            <img src={PoweredByAkash} alt="Powered by Akash" width={200} />
+            {this.props.theme === 'light'
+            ? (
+              <img src={PoweredByAkash} alt="Powered by Akash" width={200} />
+            ) : (
+              <img src={PoweredByAkashWhite} alt="Powered by Akash" width={200} />
+            )}
           </a>
 
           <div className="col-md-4 align-items-center text-center me-lg-auto">
-            <a href="https://ecostake.com" target="_blank" rel="noreferrer" className="link-dark text-decoration-none d-block mb-2">
+            <a href="https://ecostake.com" target="_blank" rel="noreferrer" className="text-reset text-decoration-none d-block mb-2">
               <span className="d-none d-sm-inline">Built with 💚&nbsp;</span> by ECO Stake 🌱
             </a>
             {this.props.network?.usingDirectory && (
-              <a href="https://cosmos.directory" target="_blank" className="link-dark text-decoration-none d-block small">
-                <span className="d-none d-sm-inline">Interchain with</span> ⚛ cosmos.directory
+              <a href="https://cosmos.directory" target="_blank" className="text-reset text-decoration-none d-block small">
+                <span className="d-none d-sm-inline">Interchain with</span> cosmos.directory
               </a>
             )}
           </div>
 
           <p className="col-md-4 mb-0 text-muted text-end justify-content-end d-none d-lg-flex">
-            <GitHubButton href="https://github.com/eco-stake/restake" data-icon="octicon-star" data-size="large" data-show-count="true" aria-label="Star eco-stake/restake on GitHub">Star</GitHubButton>
+            {this.props.theme === 'light'
+              ? (
+                <GitHubButton href="https://github.com/eco-stake/restake" data-icon="octicon-star" data-size="large" data-show-count="true" aria-label="Star eco-stake/restake on GitHub">Star</GitHubButton>
+              ) : (
+                <GitHubButton href="https://github.com/eco-stake/restake" data-icon="octicon-star" data-size="large" data-show-count="true" aria-label="Star eco-stake/restake on GitHub" data-color-scheme="no-preference: dark; light: dark; dark: dark;">Star</GitHubButton>
+              )}
           </p>
         </footer>
         <About show={this.state.showAbout} onHide={() => this.setState({ showAbout: false })} />

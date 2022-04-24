@@ -1,3 +1,18 @@
+body{
+  --bs-font-sans-serif: Lato,
+  -apple-system,
+  BlinkMacSystemFont,
+  "Segoe UI",
+  Roboto,
+  "Helvetica Neue",
+  Arial,
+  sans-serif,
+  "Apple Color Emoji",
+  "Segoe UI Emoji",
+  "Segoe UI Symbol";
+  --bs-body-font-family: var(--bs-font-sans-serif);
+}
+
 header a.moniker{
   margin-left: 15px;
 }
