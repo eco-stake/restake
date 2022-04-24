@@ -13,6 +13,7 @@ import fs from 'fs'
 import _ from 'lodash'
 
 import 'dotenv/config'
+import AutostakeHealth from "../src/utils/AutostakeHealth.mjs";
 
 export class Autostake {
   constructor(){
@@ -32,13 +33,15 @@ export class Autostake {
         if(data.enabled === false) return
 
         let client
+        let health = new AutostakeHealth(data.healthCheck)
+        health.started('⚛')
         try {
-          client = await this.getClient(data)
+          client = await this.getClient(data, health)
         } catch (error) {
-          return timeStamp('Failed to connect', error.message)
+          return health.failed('Failed to connect', error.message)
         }
 
-        if(!client) return timeStamp('Skipping')
+        if(!client) return health.success('Skipping')
 
         const { restUrl, rpcUrl, usingDirectory } = client.network
 
@@ -54,7 +57,7 @@ export class Autostake {
         try {
           await this.runNetwork(client)
         } catch (error) {
-          return timeStamp('Autostake failed, skipping network', error.message)
+          return health.failed('Autostake failed, skipping network', error.message)
         }
       }
     })
@@ -63,10 +66,10 @@ export class Autostake {
 
   async runNetwork(client){
     timeStamp('Running autostake')
+    const { network, health } = client 
     const balance = await this.checkBalance(client)
     if (!balance || smaller(balance, 1_000)) {
-      timeStamp('Bot balance is too low')
-      return
+      return health.failed('Bot balance is too low')
     }
 
     timeStamp('Finding delegators...')
@@ -85,15 +88,14 @@ export class Autostake {
 
     let grantMessages = await this.getAutostakeMessages(client, grantedAddresses)
     await this.autostake(client, grantMessages)
-    timeStamp(client.network.prettyName, "finished")
+    health.complete(network.prettyName, "finished")
   }
 
-  async getClient(data) {
+  async getClient(data, health) {
     let network = new Network(data)
     let slip44
     await network.load()
 
-    timeStamp('⚛')
     timeStamp('Starting', network.prettyName)
 
     if(network.data.autostake?.correctSlip44){
@@ -131,16 +133,16 @@ export class Autostake {
     if (!network.authzSupport) return timeStamp('No Authz support')
 
     await network.connect()
-    if (!network.rpcUrl) return timeStamp('Could not connect to RPC API')
-    if (!network.restUrl) return timeStamp('Could not connect to REST API')
+    if (!network.rpcUrl) throw new Error('Could not connect to RPC API')
+    if (!network.restUrl) throw new Error('Could not connect to REST API')
 
     const client = await network.signingClient(wallet)
     client.registry.register("/cosmos.authz.v1beta1.MsgExec", MsgExec)
 
-
     return {
       network,
       operator,
+      health,
       signingClient: client,
       queryClient: network.queryClient
     }
@@ -154,7 +156,7 @@ export class Autostake {
           return balance.amount
         },
         (error) => {
-          timeStamp("ERROR:", error.message || error)
+          client.health.error("Failed to get balance:", error.message || error)
         }
       )
   }
@@ -164,7 +166,7 @@ export class Autostake {
     return client.queryClient.getAllValidatorDelegations(client.operator.address, batchSize, (pages) => {
       timeStamp("...batch", pages.length)
     }).catch(error => {
-      timeStamp("ERROR:", error.message || error)
+      client.health.error("Failed to get delegations:", error.message || error)
       return []
     })
   }
@@ -177,7 +179,7 @@ export class Autostake {
           const grant = await this.getGrants(client, item)
           return grant ? { address: item, grant: grant } : undefined
         } catch (error) {
-          timeStamp(item, 'Failed to get address', error.message)
+          client.health.error(item, 'Failed to get address', error.message)
         }
       }
     })
@@ -213,7 +215,7 @@ export class Autostake {
           }
         },
         (error) => {
-          timeStamp(delegatorAddress, "ERROR skipping this run:", error.message || error)
+          client.health.error(delegatorAddress, "ERROR skipping this run:", error.message || error)
         }
       )
   }
@@ -225,7 +227,7 @@ export class Autostake {
         try {
           return await this.getAutostakeMessage(client, item)
         } catch (error) {
-          timeStamp(item.address, 'Failed to get address', error.message)
+          client.health.error(item.address, 'Failed to get address', error.message)
         }
       }
     })
@@ -285,10 +287,10 @@ export class Autostake {
           await client.signingClient.signAndBroadcast(client.operator.botAddress, batch, undefined, memo).then((result) => {
             timeStamp("Successfully broadcasted");
           }, (error) => {
-            timeStamp('Failed to broadcast:', error.message)
+            client.health.error('Failed to broadcast:', error.message)
           })
         } catch (error) {
-          timeStamp('ERROR: Skipping batch:', error.message)
+          client.health.error('ERROR: Skipping batch:', error.message)
         }
       }
     })
