@@ -17,14 +17,16 @@ class AutostakeHealth {
   }
 
   error(...args){
+    timeStamp(...args)
     this.errors = [...(this.errors || []), "\n", ...args]
   }
 
   complete(...args){
+    timeStamp(...args)
     if(this.errors){
-      this.failed(...[...this.errors, "\n", ...args])
+      this.ping('fail', ...[...this.errors, "\n", ...args])
     }else{
-      this.success(...args)
+      this.ping(undefined, ...args)
     }
   }
 
