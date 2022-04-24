@@ -12,7 +12,7 @@ class AutostakeHealth {
 
   started(...args){
     timeStamp(...args)
-    if(this.uuid) timeStamp('Starting health', this.uuid, this.address)
+    if(this.uuid) timeStamp('Starting health', [this.address, this.uuid].join('/'))
     this.ping('start', ...args)
   }
 

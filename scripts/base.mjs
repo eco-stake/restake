@@ -41,7 +41,7 @@ export class Autostake {
           return health.failed('Failed to connect', error.message)
         }
 
-        if(!client) return health.failed('Skipping')
+        if(!client) return health.success('Skipping')
 
         const { restUrl, rpcUrl, usingDirectory } = client.network
 
@@ -133,8 +133,8 @@ export class Autostake {
     if (!network.authzSupport) return timeStamp('No Authz support')
 
     await network.connect()
-    if (!network.rpcUrl) return timeStamp('Could not connect to RPC API')
-    if (!network.restUrl) return timeStamp('Could not connect to REST API')
+    if (!network.rpcUrl) throw new Error('Could not connect to RPC API')
+    if (!network.restUrl) throw new Error('Could not connect to REST API')
 
     const client = await network.signingClient(wallet)
     client.registry.register("/cosmos.authz.v1beta1.MsgExec", MsgExec)
