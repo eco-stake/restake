@@ -431,13 +431,8 @@ class Delegations extends React.Component {
       const denomRewards = rewards && this.denomRewards(rewards);
       const operator = this.operatorForValidator(validatorAddress);
       const grants = operator && this.operatorGrants()[operator.botAddress]
-      let rowVariant =
-        operator && delegation
-          ? grants.grantsValid
-            ? "table-success"
-            : grants.grantsExist ? "table-danger" : undefined
-          : undefined;
 
+      let rowVariant 
       if (isValidatorOperator) rowVariant = 'table-info'
 
       const delegationBalance = (delegation && delegation.balance) || {
@@ -471,7 +466,7 @@ class Delegations extends React.Component {
               network={this.props.network}
               validator={validator}
               operator={operator}
-              grants={operator && this.operatorGrants()[operator.botAddress]}
+              grants={grants}
               delegation={delegation}
               authzSupport={this.authzSupport()}
               restakePossible={this.restakePossible()}
@@ -549,9 +544,9 @@ class Delegations extends React.Component {
                         this.restakePossible() && (
                           <>
                             <Dropdown.Item onClick={() => this.showValidatorModal(validatorAddress, { activeTab: 'restake' })}>
-                              {this.operatorGrants()[operator.botAddress].grantsValid ? 'Manage REStake' : 'Enable REStake'}
+                              {grants.grantsValid ? 'Manage REStake' : 'Enable REStake'}
                             </Dropdown.Item>
-                            {this.operatorGrants()[operator.botAddress].grantsExist && (
+                            {grants.grantsExist && (
                               <RevokeRestake
                                 address={this.props.address}
                                 operator={operator}

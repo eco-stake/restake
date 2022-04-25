@@ -24,8 +24,8 @@ function CosmosDirectory(){
   }
 
   function getChainData(name) {
-    return axios.get([chainsUrl, name, 'chain'].join('/'))
-      .then(res => res.data)
+    return axios.get([chainsUrl, name].join('/'))
+      .then(res => res.data.chain)
   }
 
   async function getTokenData(name) {
