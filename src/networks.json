@@ -6,7 +6,6 @@
   },
   {
     "name": "juno",
-    "apyEnabled": false,
     "gasPrice": "0.0025ujuno"
   },
   {
@@ -61,7 +60,6 @@
   },
   {
     "name": "desmos",
-    "apyEnabled": false,
     "gasPrice": "0.001udsm"
   },
   {
@@ -87,7 +85,6 @@
   },
   {
     "name": "comdex",
-    "apyEnabled": false,
     "ownerAddress": "comdexvaloper17f70yjkvmvld379904jaddx9h0f74n32pjtmp6"
   },
   {
