@@ -56,7 +56,7 @@ function NetworkSelect(props) {
         if (network.usingDirectory && !directoryConnected(data)) {
           throw false;
         }
-        network.connect().then(() => {
+        return network.connect().then(() => {
           if (network.connected) {
             setValidators(network.getValidators());
             setLoading(false);
@@ -95,7 +95,7 @@ function NetworkSelect(props) {
           label: el.pretty_name,
           image: el.image,
           operatorCount: el.operators?.length || operatorCounts[el.name],
-          authz: el.authzSupport,
+          authz: el.params?.authz,
           online: !network.usingDirectory || directoryConnected(el)
         }
       }),
