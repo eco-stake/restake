@@ -53,6 +53,10 @@ class Delegations extends React.Component {
       clearInterval(this.state.grantInterval);
     }
 
+    if (prevProps.validator !== this.props.validator && this.props.validator && !this.state.validatorModal.show) {
+      this.showValidatorModal(this.props.validator.operator_address)
+    }
+
     if (!this.props.address) return;
 
     if (this.props.address !== prevProps.address) {
@@ -71,15 +75,11 @@ class Delegations extends React.Component {
       }
     }
 
-    if (!this.props.delegations) return
-
-    const delegationsChanged = _.difference(Object.keys(this.props.delegations), Object.keys(prevProps.delegations || {})).length > 0
-    if (delegationsChanged) {
-      this.getGrants()
-    }
-
-    if (prevProps.validator !== this.props.validator && this.props.validator && !this.state.validatorModal.show) {
-      this.showValidatorModal(this.props.validator.operator_address)
+    if (this.props.delegations && prevProps.delegations){
+      const delegationsChanged = _.difference(Object.keys(this.props.delegations), Object.keys(prevProps.delegations || {})).length > 0
+      if (delegationsChanged) {
+        this.getGrants()
+      }
     }
   }
 
