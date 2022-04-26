@@ -172,5 +172,9 @@
       "high": 0.04
     },
     "apyEnabled": false
+  },
+  {
+    "name": "meme",
+    "gasPrice": "0.025umeme"
   }
 ]
