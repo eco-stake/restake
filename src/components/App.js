@@ -119,7 +119,7 @@ class App extends React.Component {
       } catch (e) {
         console.log(e)
         return this.setState({
-          error: 'Failed to connect to signing client. API may be down.',
+          error: 'Failed to connect to signing client: ' + e.message,
           loading: false
         })
       }

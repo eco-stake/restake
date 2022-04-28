@@ -15,6 +15,7 @@ class Network {
 
     this.data = data
     this.enabled = data.enabled
+    this.experimental = data.experimental
     this.apyEnabled = data.apyEnabled
     this.name = data.name
     this.directory = CosmosDirectory()

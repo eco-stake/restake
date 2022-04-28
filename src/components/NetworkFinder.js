@@ -41,11 +41,16 @@ function NetworkFinder() {
       return {}
     }
 
-    const networks = networksData.filter(el => el.enabled !== false).map(data => {
-      const registryData = registryNetworks[data.name] || {}
-      return {...registryData, ...data}
+    const networks = Object.values(registryNetworks).map(data => {
+      const networkData = networksData.find(el => el.name === data.path)
+      if(networkData && networkData.enabled === false) return 
+      if(!data.image) return
+
+      if(!networkData) data.experimental = true
+
+      return {...data, ...networkData}
     })
-    return _.compact(networks).reduce((a, v) => ({ ...a, [v.name]: v}), {})
+    return _.compact(networks).reduce((a, v) => ({ ...a, [v.path]: v}), {})
   }
 
   const changeNetwork = (network) => {
