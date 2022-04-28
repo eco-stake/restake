@@ -73,7 +73,6 @@
   },
   {
     "name": "evmos",
-    "enabled": false,
     "apyEnabled": false
   },
   {
