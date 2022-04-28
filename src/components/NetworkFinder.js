@@ -108,7 +108,9 @@ function NetworkFinder() {
 
   useEffect(() => {
     if(Object.keys(state.networks).length && !state.network){
-      let networkName = params.network || Object.keys(state.networks)[0]
+      const networks = Object.values(state.networks)
+      const defaultNetwork = (networks.find(el => el.default === true) || networks[0])
+      let networkName = params.network || defaultNetwork.name
       let data = state.networks[networkName]
       if(params.network && !data){
         networkName = Object.keys(state.networks)[0]

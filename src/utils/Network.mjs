@@ -18,6 +18,7 @@ class Network {
     this.experimental = data.experimental
     this.apyEnabled = data.apyEnabled
     this.name = data.name
+    this.default = data.default
     this.directory = CosmosDirectory()
 
     this.rpcUrl = data.rpcUrl || this.directory.rpcUrl(data.name)
