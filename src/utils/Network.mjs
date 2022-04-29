@@ -21,8 +21,8 @@ class Network {
     this.default = data.default
     this.directory = CosmosDirectory()
 
-    this.rpcUrl = data.rpcUrl || this.directory.rpcUrl(data.name)
-    this.restUrl = data.restUrl || this.directory.restUrl(data.name)
+    this.rpcUrl = data.rpcUrl || this.directory.rpcUrl(this.name)
+    this.restUrl = data.restUrl || this.directory.restUrl(this.name)
 
     this.usingDirectory = !![this.restUrl, this.rpcUrl].find(el => {
       const match = el => el.match("cosmos.directory")
@@ -32,12 +32,16 @@ class Network {
         return match(el)
       }
     })
-    this.directoryConnected = ['rpc', 'rest'].every(type => data['best_apis'][type].length > 0)
+  }
+
+  connectedDirectory() {
+    const apis = this.chain ? this.chain.chainData['best_apis'] : this.data['best_apis']
+    return apis && ['rpc', 'rest'].every(type => apis[type].length > 0)
   }
 
   async load() {
     this.chain = await Chain(this.data)
-    this.validators = await this.directory.getValidators(this.data.name)
+    this.validators = await this.directory.getValidators(this.name)
     this.operators = this.data.operators || this.validators.filter(el => el.restake).map(el => {
       return Operator(el)
     })
@@ -63,7 +67,7 @@ class Network {
       this.queryClient = await QueryClient(this.chain.chainId, this.rpcUrl, this.restUrl)
       this.restUrl = this.queryClient.restUrl
       this.rpcUrl = this.queryClient.rpcUrl
-      this.connected = this.queryClient.connected && (!this.usingDirectory || this.directoryConnected)
+      this.connected = this.queryClient.connected && (!this.usingDirectory || this.connectedDirectory())
     } catch (error) {
       console.log(error)
       this.connected = false
@@ -92,7 +96,7 @@ class Network {
     if (!this.queryClient)
       return
 
-    const client = this.SIGNERS[this.data.name] || SigningClient
+    const client = this.SIGNERS[this.name] || SigningClient
     return client(this.queryClient.rpcUrl, gasPrice || this.gasPrice, wallet, key)
   }
 

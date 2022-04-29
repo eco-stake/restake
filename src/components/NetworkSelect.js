@@ -56,7 +56,7 @@ function NetworkSelect(props) {
       const network = new Network(data);
       network.load().then(() => {
         setSelectedNetwork(network);
-        if (network.usingDirectory && !network.directoryConnected) {
+        if (network.usingDirectory && !network.connectedDirectory()) {
           throw false;
         }
         return network.connect().then(() => {
@@ -118,7 +118,7 @@ function NetworkSelect(props) {
           image: el.image,
           operatorCount: el.operators?.length || operatorCounts[el.name],
           authz: el.params?.authz,
-          online: !network.usingDirectory || network.directoryConnected,
+          online: !network.usingDirectory || network.connectedDirectory(),
           experimental: network.experimental
         }
       }),
