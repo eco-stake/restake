@@ -113,7 +113,7 @@ function NetworkFinder() {
       let networkName = params.network || defaultNetwork.name
       let data = state.networks[networkName]
       if(params.network && !data){
-        networkName = Object.keys(state.networks)[0]
+        networkName = defaultNetwork.name
         data = state.networks[networkName]
       }
       if(!data){
