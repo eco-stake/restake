@@ -206,7 +206,7 @@ function NetworkSelect(props) {
                   renderCheck({
                     title: 'Authz support',
                     failTitle: 'No Authz support',
-                    failDescription: "This network doesn't support Authz just yet. You can stake and compound manaully for now and REStake will update automatically when support is added.",
+                    failDescription: "This network doesn't support Authz just yet. You can stake and compound manually for now and REStake will update automatically when support is added.",
                     state: selectedNetwork.authzSupport,
                     identifier: 'authz'
                   }),
