@@ -15,8 +15,10 @@ class Network {
 
     this.data = data
     this.enabled = data.enabled
+    this.experimental = data.experimental
     this.apyEnabled = data.apyEnabled
-    this.name = data.name
+    this.name = data.path || data.name
+    this.default = data.default
     this.directory = CosmosDirectory()
 
     this.rpcUrl = data.rpcUrl || this.directory.rpcUrl(data.name)
@@ -30,6 +32,7 @@ class Network {
         return match(el)
       }
     })
+    this.directoryConnected = ['rpc', 'rest'].every(type => data['best_apis'][type].length > 0)
   }
 
   async load() {
@@ -60,7 +63,7 @@ class Network {
       this.queryClient = await QueryClient(this.chain.chainId, this.rpcUrl, this.restUrl)
       this.restUrl = this.queryClient.restUrl
       this.rpcUrl = this.queryClient.rpcUrl
-      this.connected = this.queryClient.connected
+      this.connected = this.queryClient.connected && (!this.usingDirectory || this.directoryConnected)
     } catch (error) {
       console.log(error)
       this.connected = false

@@ -4,7 +4,6 @@ import {
 } from 'react-bootstrap'
 
 function TooltipIcon(props) {
-
   return (
     <>
       {(props.children || props.tooltip) ? (

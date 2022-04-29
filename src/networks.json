@@ -2,7 +2,8 @@
   {
     "name": "osmosis",
     "gasPrice": "0.0025uosmo",
-    "ownerAddress": "osmovaloper1u5v0m74mql5nzfx2yh43s2tke4mvzghr6m2n5t"
+    "ownerAddress": "osmovaloper1u5v0m74mql5nzfx2yh43s2tke4mvzghr6m2n5t",
+    "default": true
   },
   {
     "name": "juno",

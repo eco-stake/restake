@@ -663,18 +663,14 @@ class Delegations extends React.Component {
     const alerts = (
       <>
         {!this.authzSupport() && (
-          <AlertMessage variant="warning" dismissible={false}>
-            {this.props.network.prettyName} doesn't support Authz just yet. You
-            can manually restake for now and REStake is ready when support is
-            enabled
+          <AlertMessage variant="info" dismissible={false}>
+            {this.props.network.prettyName} doesn't support Authz just yet. You can stake and compound manaully for now and REStake will update automatically when support is added.
           </AlertMessage>
         )}
-        {this.authzSupport() && !this.props.operators.length && (
-          <AlertMessage
-            variant="warning"
-            message="There are no REStake operators for this network yet. You can compound manually, or check the About section to run one yourself"
-            dismissible={false}
-          />
+        {this.props.network.experimental && (
+          <AlertMessage variant="info" dismissible={false}>
+            This network was added to REStake automatically and has not been thoroughly tested yet. <a href="https://github.com/eco-stake/restake/issues" target="_blank">Raise an issue</a> if you have any problems.
+          </AlertMessage>
         )}
         {this.authzSupport() &&
           this.props.operators.length > 0 &&
