@@ -32,6 +32,7 @@ class Network {
         return match(el)
       }
     })
+    this.directoryConnected = ['rpc', 'rest'].every(type => data['best_apis'][type].length > 0)
   }
 
   async load() {
@@ -62,7 +63,7 @@ class Network {
       this.queryClient = await QueryClient(this.chain.chainId, this.rpcUrl, this.restUrl)
       this.restUrl = this.queryClient.restUrl
       this.rpcUrl = this.queryClient.rpcUrl
-      this.connected = this.queryClient.connected
+      this.connected = this.queryClient.connected && (!this.usingDirectory || this.directoryConnected)
     } catch (error) {
       console.log(error)
       this.connected = false

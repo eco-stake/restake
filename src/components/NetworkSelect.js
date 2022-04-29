@@ -56,7 +56,7 @@ function NetworkSelect(props) {
       const network = new Network(data);
       network.load().then(() => {
         setSelectedNetwork(network);
-        if (network.usingDirectory && !directoryConnected(data)) {
+        if (network.usingDirectory && !network.directoryConnected) {
           throw false;
         }
         return network.connect().then(() => {
@@ -73,11 +73,6 @@ function NetworkSelect(props) {
         setLoading(false);
       });
     }
-  }
-
-  function directoryConnected(data) {
-    // replace with available status when added to directory
-    return ['rpc', 'rest'].every(type => data['best_apis'][type].length > 0)
   }
 
   function renderCheck({ title, failTitle, description, failDescription, state, successClass, failClass, identifier }){
@@ -123,7 +118,7 @@ function NetworkSelect(props) {
           image: el.image,
           operatorCount: el.operators?.length || operatorCounts[el.name],
           authz: el.params?.authz,
-          online: !network.usingDirectory || directoryConnected(el),
+          online: !network.usingDirectory || network.directoryConnected,
           experimental: network.experimental
         }
       }),
@@ -199,15 +194,15 @@ function NetworkSelect(props) {
                 </div>
               }
               <ul className="list-group">
-                {renderCheck({
-                  title: 'API connected',
-                  failTitle: 'API offline',
-                  failDescription: error,
-                  state: !error,
-                  failClass: 'danger',
-                  identifier: 'network'
-                })}
-                {!error && ([
+                {([
+                  renderCheck({
+                    title: 'API connected',
+                    failTitle: 'API offline',
+                    failDescription: error,
+                    state: selectedNetwork.connected && !error,
+                    failClass: 'danger',
+                    identifier: 'network'
+                  }),
                   renderCheck({
                     title: 'Authz support',
                     failTitle: 'No Authz support',
