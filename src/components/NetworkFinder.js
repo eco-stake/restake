@@ -44,7 +44,7 @@ function NetworkFinder() {
     const networks = Object.values(registryNetworks).map(data => {
       const networkData = networksData.find(el => el.name === data.path)
       if(networkData && networkData.enabled === false) return 
-      if(!data.image) return
+      if(!data.image || data.status === 'killed') return
 
       if(!networkData) data.experimental = true
 
