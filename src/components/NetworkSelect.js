@@ -223,7 +223,7 @@ function NetworkSelect(props) {
                     title: 'Tested with REStake',
                     failTitle: 'Not tested with REStake',
                     failDescription: "This network was added to REStake automatically and has not been thoroughly tested yet.",
-                    state: selectedNetwork.operators?.length > 0,
+                    state: !selectedNetwork.experimental,
                     identifier: 'experimental'
                   })
                 ])}
