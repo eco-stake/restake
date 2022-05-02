@@ -4,7 +4,7 @@ import React from 'react'
 import _ from 'lodash'
 import AlertMessage from './AlertMessage'
 import NetworkSelect from './NetworkSelect'
-import Wallet from './Wallet'
+import Delegations from './Delegations';
 import Coins from './Coins'
 import About from './About'
 
@@ -14,13 +14,17 @@ import {
   Container,
   Button,
   Badge,
+  Dropdown,
+  ButtonGroup
 } from 'react-bootstrap';
 import {
   Droplet,
   DropletFill,
-  DropletHalf
+  DropletHalf,
+  Coin,
+  Inboxes
 } from 'react-bootstrap-icons'
-import {CopyToClipboard} from 'react-copy-to-clipboard';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
 import GitHubButton from 'react-github-btn'
 import Logo from '../assets/logo.png'
 import Logo2x from '../assets/logo@2x.png'
@@ -48,10 +52,10 @@ class App extends React.Component {
     window.addEventListener("keplr_keystorechange", this.connect)
   }
 
-  async componentDidUpdate(prevProps, prevState){
-    if(this.state.keplr != prevState.keplr){
+  async componentDidUpdate(prevProps, prevState) {
+    if (this.state.keplr != prevState.keplr) {
       this.connect()
-    }else if(this.props.network && this.props.network !== prevProps.network){
+    } else if (this.props.network && this.props.network !== prevProps.network) {
       this.setState({ balance: undefined, address: undefined })
       this.connect()
     }
@@ -62,8 +66,8 @@ class App extends React.Component {
     window.removeEventListener("keplr_keystorechange", this.connect)
   }
 
-  showNetworkSelect(){
-    this.setState({showNetworkSelect: true})
+  showNetworkSelect() {
+    this.setState({ showNetworkSelect: true })
   }
 
   connected() {
@@ -73,7 +77,7 @@ class App extends React.Component {
   connectKeplr() {
     if (this.state.keplr && !window.keplr) {
       this.setState({ keplr: false })
-    } else if(!this.state.keplr && window.keplr){
+    } else if (!this.state.keplr && window.keplr) {
       this.setState({ keplr: true })
     }
   }
@@ -88,7 +92,7 @@ class App extends React.Component {
     const chainId = network.chainId
     try {
       if (window.keplr) {
-        if(network.gasPricePrefer){
+        if (network.gasPricePrefer) {
           window.keplr.defaultOptions = {
             sign: { preferNoSetFee: true }
           }
@@ -191,10 +195,10 @@ class App extends React.Component {
       role: 'button',
       onClick: () => setThemeChoice(switchTo)
     }
-    if(themeChoice === 'auto'){
+    if (themeChoice === 'auto') {
       icon = <DropletHalf {...iconProps} />
       switchTo = theme === 'dark' ? 'light' : 'dark'
-    }else{
+    } else {
       icon = themeChoice === 'dark' ? <DropletFill {...iconProps} /> : <Droplet {...iconProps} />
       switchTo = themeDefault !== theme ? 'auto' : theme === 'dark' ? 'light' : 'dark'
     }
@@ -207,58 +211,77 @@ class App extends React.Component {
   render() {
     return (
       <Container>
-        <header className="d-flex flex-wrap justify-content-between py-3 mb-4 border-bottom">
-          <div className="logo d-flex align-items-center mb-3 mb-md-0 text-reset text-decoration-none">
-            <span onClick={() => this.setState({ showAbout: true })} role="button" className="text-reset text-decoration-none">
-              {this.props.theme === 'light'
-               ? (
-                  <img src={Logo} srcSet={`${Logo2x} 2x, ${Logo3x} 3x`} alt="REStake" />
-               ) : (
-                  <img src={LogoWhite} srcSet={`${LogoWhite2x} 2x, ${LogoWhite3x} 3x`} alt="REStake" />
-               )}
-            </span>
+        <header className="">
+          <div className="d-flex flex-wrap justify-content-between py-3 border-bottom">
+            <div className="logo d-flex align-items-center mb-3 mb-md-0 text-reset text-decoration-none">
+              <span onClick={() => this.setState({ showAbout: true })} role="button" className="text-reset text-decoration-none">
+                {this.props.theme === 'light'
+                  ? (
+                    <img src={Logo} srcSet={`${Logo2x} 2x, ${Logo3x} 3x`} alt="REStake" />
+                  ) : (
+                    <img src={LogoWhite} srcSet={`${LogoWhite2x} 2x, ${LogoWhite3x} 3x`} alt="REStake" />
+                  )}
+              </span>
+            </div>
+            <div className="d-flex align-items-center mb-3 mb-md-0 text-reset text-decoration-none">
+              {this.themeIcon()}
+              <NetworkSelect show={this.state.showNetworkSelect} onHide={() => { this.setState({ showNetworkSelect: false }) }} networks={this.props.networks}
+                network={this.props.network}
+                validators={this.props.validators}
+                changeNetwork={this.props.changeNetwork} />
+            </div>
           </div>
-          {this.state.address &&
-            <ul className="nav nav-pills justify-content-end">
-              <li className="nav-item d-none d-xl-block">
-                <CopyToClipboard text={this.state.address}
-                  onCopy={() => this.setCopied()}>
-                  <span role="button"><span className={'nav-link disabled clipboard' + (this.state.copied ? ' copied' : '')}>{this.state.address}</span></span>
-                </CopyToClipboard>
-              </li>
-              <li className="nav-item d-none d-lg-block d-xl-none">
-                <CopyToClipboard text={this.state.address}
-                  onCopy={() => this.setCopied()}>
-                  <span role="button"><span style={{maxWidth: 300}} className={'nav-link disabled small d-block text-truncate clipboard' + (this.state.copied ? ' copied' : '')}>{this.state.address}</span></span>
-                </CopyToClipboard>
-              </li>
-              <li className="nav-item d-none d-md-block">
-                <span className="nav-link">
-                  <Badge>
-                    <Coins
-                      coins={this.state.balance}
-                      decimals={this.props.network.decimals}
-                    />
-                  </Badge>
-                </span>
-              </li>
-              {false && (
-                <li className="nav-item">
-                  <Button onClick={() => this.disconnect()} className="nav-link btn-link" aria-current="page">Disconnect</Button>
-                </li>
-              )}
-            </ul>
-          }
-          <div className="d-flex align-items-center mb-3 mb-md-0 text-reset text-decoration-none">
-            {this.themeIcon()}
-            <NetworkSelect show={this.state.showNetworkSelect} onHide={() => { this.setState({ showNetworkSelect: false }) }} networks={this.props.networks}
-              network={this.props.network}
-              validators={this.props.validators}
-              changeNetwork={this.props.changeNetwork} />
+          <div className="d-flex flex-wrap justify-content-between border-bottom">
+            <nav className={`navbar navbar-expand ${this.props.theme === 'dark' ? 'navbar-dark' : 'navbar-light'}`}>
+              <div className="justify-content-center">
+                <ul className="navbar-nav">
+                  <li className="nav-item pe-2 border-end">
+                    <a className="nav-link active" aria-current="page" href="#"><Coin className="mb-1 me-1" /> Delegate</a>
+                  </li>
+                  <li className="nav-item ps-2">
+                    <a className="nav-link" href="#"><Inboxes className="mb-1 me-1" /> Govern</a>
+                  </li>
+                </ul>
+              </div>
+            </nav>
+            <nav className={`navbar navbar-expand-lg ${this.props.theme === 'dark' ? 'navbar-dark' : 'navbar-light'}`}>
+              <div className="justify-content-center">
+                <ul className="navbar-nav">
+                  <li className="nav-item pe-3 pt-2 border-end d-none d-lg-block">
+                    <CopyToClipboard text={this.state.address}
+                      onCopy={() => this.setCopied()}>
+                      <span role="button"><span className={'small d-block clipboard' + (this.state.copied ? ' copied' : '')}>{this.state.address}</span></span>
+                    </CopyToClipboard>
+                  </li>
+                  <li className="nav-item ps-3 pt-1">
+                    <Dropdown as={ButtonGroup}>
+                      <Dropdown.Toggle size="sm" className="rounded" id="dropdown-custom-1">
+                        <Coins
+                          coins={this.state.balance}
+                          decimals={this.props.network.decimals}
+                          className="me-1"
+                        />
+                      </Dropdown.Toggle>
+                      <Dropdown.Menu>
+                        <Dropdown.Header>Cerberus ECOStake</Dropdown.Header>
+                        <Dropdown.Item>
+                          <CopyToClipboard text={this.state.address}
+                            onCopy={() => this.setCopied()}>
+                            <span role="button"><span style={{ maxWidth: 200 }} className={'small d-block text-truncate clipboard' + (this.state.copied ? ' copied' : '')}>{this.state.address}</span></span>
+                          </CopyToClipboard>
+                        </Dropdown.Item>
+                        <Dropdown.Divider />
+                        <Dropdown.Item href="#/action-2">Disconnect</Dropdown.Item>
+                      </Dropdown.Menu>
+                    </Dropdown>
+                  </li>
+                </ul>
+              </div>
+            </nav>
           </div>
         </header>
         <div className="mb-5">
-          <p className="lead fs-3 text-center mt-5 mb-5">
+          <p className="lead fs-3 text-center my-5">
             REStake allows validators to <strong onClick={() => this.setState({ showAbout: true })} className="text-decoration-underline" role="button">auto-compound</strong> your <strong onClick={this.showNetworkSelect} className="text-decoration-underline" role="button">{this.props.network.prettyName}</strong> staking rewards for you
           </p>
           <AlertMessage message={this.state.error} variant="danger" dismissible={false} />
@@ -278,13 +301,13 @@ class App extends React.Component {
           )}
           {this.state.address &&
             <>
-              <Wallet
+              <Delegations
                 network={this.props.network}
                 address={this.state.address}
+                balance={this.state.balance}
                 operators={this.props.operators}
                 validators={this.props.validators}
                 validator={this.props.validator}
-                balance={this.state.balance}
                 getBalance={this.getBalance}
                 queryClient={this.state.queryClient}
                 stargateClient={this.state.stargateClient} />
@@ -305,11 +328,11 @@ class App extends React.Component {
         <footer className="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
           <a href="https://akash.network" target="_blank" rel="noreferrer" className="col-md-4 mb-0 text-muted">
             {this.props.theme === 'light'
-            ? (
-              <img src={PoweredByAkash} alt="Powered by Akash" width={200} />
-            ) : (
-              <img src={PoweredByAkashWhite} alt="Powered by Akash" width={200} />
-            )}
+              ? (
+                <img src={PoweredByAkash} alt="Powered by Akash" width={200} />
+              ) : (
+                <img src={PoweredByAkashWhite} alt="Powered by Akash" width={200} />
+              )}
           </a>
 
           <div className="col-md-4 align-items-center text-center me-lg-auto">
@@ -318,7 +341,7 @@ class App extends React.Component {
             </a>
             {this.props.network?.usingDirectory && (
               <a href="https://cosmos.directory" target="_blank" className="text-reset text-decoration-none d-block small">
-                <span className="d-none d-sm-inline">Interchain with</span> cosmos.directory
+                <span className="d-none d-sm-inline">Interchain data from</span> <u>cosmos.directory</u>
               </a>
             )}
           </div>
