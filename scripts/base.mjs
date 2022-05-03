@@ -122,13 +122,13 @@ export class Autostake {
 
     timeStamp('Bot address is', botAddress)
 
-    const operator = network.getOperatorByBotAddress(botAddress)
-    if (!operator) return timeStamp('Not an operator')
-
     if (network.slip44 && network.slip44 !== slip44) {
       timeStamp("!! You are not using the preferred derivation path !!")
       timeStamp("!! You should switch to the correct path unless you have grants. Check the README !!")
     }
+
+    const operator = network.getOperatorByBotAddress(botAddress)
+    if (!operator) return timeStamp('Not an operator')
 
     if (!network.authzSupport) return timeStamp('No Authz support')
 
