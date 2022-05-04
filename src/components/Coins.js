@@ -1,5 +1,4 @@
 import _ from 'lodash'
-import { format } from 'mathjs'
 
 function Coins(props) {
   function amount(coins, decimals){
@@ -8,7 +7,8 @@ function Coins(props) {
     if (!decimals) {
       decimals = 6
     }
-    return format(_.round(coins.amount / Math.pow(10, decimals), precision(coins, decimals)), {notation: 'fixed'})
+    const prec = precision(coins, decimals)
+    return _.round(coins.amount / Math.pow(10, decimals), prec).toLocaleString(undefined, {maximumFractionDigits: prec})
   }
 
   function denom(coins){
@@ -34,7 +34,7 @@ function Coins(props) {
   }
 
   return (
-    <span className="coins">
+    <span className={['coins', props.className].join(' ')}>
       <span className="amount">{amount(props.coins, props.decimals)}</span>&nbsp;
       <span className="denom">{denom(props.coins, props.decimals)}</span>
     </span>

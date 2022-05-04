@@ -162,17 +162,19 @@ function NetworkSelect(props) {
                       options={options.networks}
                       onChange={selectNetwork}
                       formatOptionLabel={network => (
-                        <div className={'row' + (!network.online ? ' text-muted' : '')}>
-                          <div className="col-1">
+                        <div className={'d-flex' + (!network.online ? ' text-muted' : '')}>
+                          <div className="pe-2">
                             <img src={network.image} width={30} height={30} alt={network.label} />
                           </div>
-                          <div className="col pt-1">
+                          <div className="pt-1 me-auto">
                             <span className="ms-1">{network.label} {!network.online && <small>(Offline)</small>}</span>
                           </div>
-                          <div className="col text-end pt-1">
+                          <div className="text-end pt-1 d-none d-sm-block">
                             {network.operatorCount > 0 &&
                               <small>{network.operatorCount} Operator{network.operatorCount > 1 ? 's' : ''}</small>
                             }
+                          </div>
+                          <div className="text-end pt-1">
                             {network.authz
                               ? <Badge className={`ms-3 rounded-pill` + (!network.online ? ' opacity-50' : '')} bg="success">Authz</Badge>
                               : <Badge className={`ms-3 rounded-pill text-decoration-line-through` + (!network.online ? ' opacity-50' : '')} bg="danger">Authz</Badge>
@@ -206,7 +208,7 @@ function NetworkSelect(props) {
                   renderCheck({
                     title: 'Authz support',
                     failTitle: 'No Authz support',
-                    failDescription: "This network doesn't support Authz just yet. You can stake and compound manaully for now and REStake will update automatically when support is added.",
+                    failDescription: "This network doesn't support Authz just yet. You can stake and compound manually for now and REStake will update automatically when support is added.",
                     state: selectedNetwork.authzSupport,
                     identifier: 'authz'
                   }),
@@ -221,7 +223,7 @@ function NetworkSelect(props) {
                     title: 'Tested with REStake',
                     failTitle: 'Not tested with REStake',
                     failDescription: "This network was added to REStake automatically and has not been thoroughly tested yet.",
-                    state: selectedNetwork.operators?.length > 0,
+                    state: !selectedNetwork.experimental,
                     identifier: 'experimental'
                   })
                 ])}

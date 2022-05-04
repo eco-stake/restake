@@ -65,7 +65,8 @@
   },
   {
     "name": "cryptoorgchain",
-    "gasPrice": "0.025basecro"
+    "gasPrice": "0.025basecro",
+    "ownerAddress": "crocncl10mfs428fyntu296dgh5fmhvdzrr2stlaekcrp9"
   },
   {
     "name": "evmos",
