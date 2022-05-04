@@ -7,7 +7,7 @@ import {
 import { multiply, ceil, bignumber } from 'mathjs'
 import { coin } from './Helpers.mjs'
 
-async function SigningClient(rpcUrl, defaultGasPrice, signer, key, signerOpts) {
+async function SigningClient(rpcUrl, defaultGasPrice, defaultGasModifier, signer, key, signerOpts) {
 
   const client = rpcUrl && await SigningStargateClient.connectWithSigner(
     rpcUrl,
@@ -78,7 +78,7 @@ async function SigningClient(rpcUrl, defaultGasPrice, signer, key, signerOpts) {
 
   async function simulate(address, msgs, memo, modifier) {
     const estimate = await client.simulate(address, msgs, memo);
-    return (parseInt(estimate * (modifier || 1.5)));
+    return (parseInt(estimate * (modifier || defaultGasModifier)));
   }
 
   return {
