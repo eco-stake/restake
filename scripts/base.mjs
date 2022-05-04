@@ -31,7 +31,7 @@ export class Autostake {
     }
     const calls = networks.map(data => {
       return async () => {
-        if(networkNames && !networkNames.includes(data.name)) return
+        if(networkNames && networkNames.length && !networkNames.includes(data.name)) return
         if(data.enabled === false) return
 
         let client
