@@ -24,12 +24,14 @@ export class Autostake {
     }
   }
 
-  async run(networkName){
+  async run(networkNames){
     const networks = this.getNetworksData()
-    if(networkName && !networks.map(el => el.name).includes(networkName)) return timeStamp('Invalid network name:', networkName)
+    for(const name of networkNames){
+      if (name && !networks.map(el => el.name).includes(name)) return timeStamp('Invalid network name:', name)
+    }
     const calls = networks.map(data => {
       return async () => {
-        if(networkName && data.name !== networkName) return
+        if(networkNames && !networkNames.includes(data.name)) return
         if(data.enabled === false) return
 
         let client

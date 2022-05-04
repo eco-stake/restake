@@ -89,10 +89,10 @@ Note you might need `sudo` depending on your docker install.
 docker-compose run --rm app npm run autostake
 ```
 
-Pass a network name to run the script for a single network at a time.
+Pass network names to restrict the script to certain networks.
 
 ```bash
-docker-compose run --rm app npm run autostake osmosis
+docker-compose run --rm app npm run autostake osmosis akash regen
 ```
 
 ### Updating your local version
