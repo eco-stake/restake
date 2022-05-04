@@ -13,7 +13,7 @@ export function coin(amount, denom){
 export function overrideNetworks(networks, overrides){
   networks = networks.reduce((a, v) => ({ ...a, [v.name]: v }), {})
   const names = [...Object.keys(networks), ...Object.keys(overrides)]
-  return names.map(name => {
+  return _.uniq(names).sort().map(name => {
     let network = networks[name]
     let override = overrides[name]
     if(!network || !network.name) network = { name, ...network }
