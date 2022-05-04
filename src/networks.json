@@ -29,7 +29,10 @@
   {
     "name": "regen",
     "gasPrice": "0.03uregen",
-    "ownerAddress": "regenvaloper1c4y3j05qx652rnxm5mg4yesqdkmhz2f6dl7hhk"
+    "ownerAddress": "regenvaloper1c4y3j05qx652rnxm5mg4yesqdkmhz2f6dl7hhk",
+    "autostake": {
+      "batchTxs": 5
+    }
   },
   {
     "name": "terra",
