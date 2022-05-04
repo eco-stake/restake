@@ -24,12 +24,14 @@ export class Autostake {
     }
   }
 
-  async run(networkName){
+  async run(networkNames){
     const networks = this.getNetworksData()
-    if(networkName && !networks.map(el => el.name).includes(networkName)) return timeStamp('Invalid network name:', networkName)
+    for(const name of networkNames){
+      if (name && !networks.map(el => el.name).includes(name)) return timeStamp('Invalid network name:', name)
+    }
     const calls = networks.map(data => {
       return async () => {
-        if(networkName && data.name !== networkName) return
+        if(networkNames && !networkNames.includes(data.name)) return
         if(data.enabled === false) return
 
         let client
@@ -94,7 +96,11 @@ export class Autostake {
   async getClient(data, health) {
     let network = new Network(data)
     let slip44
-    await network.load()
+    try {
+      await network.load()
+    } catch {
+      return timeStamp('Unable to load network data for', network.name)
+    }
 
     timeStamp('Starting', network.prettyName)
 
@@ -350,16 +356,12 @@ export class Autostake {
   getNetworksData() {
     const networksData = fs.readFileSync('src/networks.json');
     const networks = JSON.parse(networksData);
-    const networkNames = networks.map(el => el.name)
     try {
       const overridesData = fs.readFileSync('src/networks.local.json');
       const overrides = overridesData && JSON.parse(overridesData) || {}
-      Object.keys(overrides).forEach(key => {
-        if(!networkNames.includes(key)) timeStamp('Invalid key in networks.local.json:', key)
-      })
       return overrideNetworks(networks, overrides)
-    } catch {
-      timeStamp('Failed to parse networks.local.json, check JSON is valid')
+    } catch (error) {
+      timeStamp('Failed to parse networks.local.json, check JSON is valid', error.message)
       return networks
     }
   }

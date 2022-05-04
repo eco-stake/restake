@@ -11,8 +11,12 @@ export function coin(amount, denom){
 }
 
 export function overrideNetworks(networks, overrides){
-  return networks.map(network => {
-    let override = overrides[network.name]
+  networks = networks.reduce((a, v) => ({ ...a, [v.name]: v }), {})
+  const names = [...Object.keys(networks), ...Object.keys(overrides)]
+  return _.uniq(names).sort().map(name => {
+    let network = networks[name]
+    let override = overrides[name]
+    if(!network || !network.name) network = { name, ...network }
     if(!override) return network
     override.overriden = true
     return _.mergeWith(network, override, (a, b) =>
