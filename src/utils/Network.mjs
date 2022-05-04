@@ -60,6 +60,7 @@ class Network {
     this.gasPrice = this.data.gasPrice || defaultGasPrice
     this.gasPriceStep = this.data.gasPriceStep
     this.gasPricePrefer = this.data.gasPricePrefer
+    this.gasModifier = this.data.gasModifier || 1.25
   }
 
   async connect() {
@@ -97,7 +98,7 @@ class Network {
       return
 
     const client = this.SIGNERS[this.name] || SigningClient
-    return client(this.queryClient.rpcUrl, gasPrice || this.gasPrice, wallet, key)
+    return client(this.queryClient.rpcUrl, gasPrice || this.gasPrice, this.gasModifier, wallet, key)
   }
 
   getOperator(operatorAddress) {

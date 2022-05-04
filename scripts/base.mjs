@@ -284,7 +284,9 @@ export class Autostake {
         try {
           timeStamp('...batch', index + 1)
           const memo = 'REStaked by ' + client.operator.moniker
-          await client.signingClient.signAndBroadcast(client.operator.botAddress, batch, undefined, memo).then((result) => {
+          const gasModifier = client.network.data.autostake?.gasModifier || 1.1
+          const gas = await client.signingClient.simulate(client.operator.botAddress, batch, memo, gasModifier);
+          await client.signingClient.signAndBroadcast(client.operator.botAddress, batch, gas, memo).then((result) => {
             timeStamp("Successfully broadcasted");
           }, (error) => {
             client.health.error('Failed to broadcast:', error.message)
