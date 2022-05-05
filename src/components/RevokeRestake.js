@@ -4,19 +4,21 @@ import {
 } from 'react-bootstrap'
 
 function RevokeRestake(props) {
+  const { address, operator, grants, stargateClient } = props
+
   function revoke(){
     props.setLoading(true)
 
-    const messages = [
-      buildRevokeMsg("/cosmos.staking.v1beta1.MsgDelegate"),
-      buildRevokeMsg("/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward")
-    ]
+    const messages = []
+    if(grants.stakeGrant) messages.push(buildRevokeMsg("/cosmos.staking.v1beta1.MsgDelegate"))
+    if(grants.claimGrant) messages.push(buildRevokeMsg("/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward")) // clean-up now unnecessary MsgWithdraw grant
+      
     console.log(messages)
 
-    props.stargateClient.signAndBroadcast(props.address, messages).then((result) => {
+    stargateClient.signAndBroadcast(address, messages).then((result) => {
       console.log("Successfully broadcasted:", result);
       props.setLoading(false)
-      props.onRevoke(props.operator)
+      props.onRevoke(operator)
     }, (error) => {
       console.log('Failed to broadcast:', error)
       props.setLoading(false)
@@ -28,8 +30,8 @@ function RevokeRestake(props) {
     return {
       typeUrl: "/cosmos.authz.v1beta1.MsgRevoke",
       value: {
-        granter: props.address,
-        grantee: props.operator.botAddress,
+        granter: address,
+        grantee: operator.botAddress,
         msgTypeUrl: type
       },
     }

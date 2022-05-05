@@ -265,7 +265,6 @@ class Delegations extends React.Component {
       sum[operator.botAddress] = {
         ...grant,
         grantsValid: !!(
-          grant.claimGrant &&
           grant.stakeGrant &&
           (!grant.validators || grant.validators.includes(operator.address)) &&
           (grant.maxTokens === null || larger(grant.maxTokens, this.validatorReward(operator.address)))
@@ -550,6 +549,7 @@ class Delegations extends React.Component {
                               <RevokeRestake
                                 address={this.props.address}
                                 operator={operator}
+                                grants={grants}
                                 stargateClient={this.props.stargateClient}
                                 onRevoke={this.onRevoke}
                                 setLoading={(loading) =>
