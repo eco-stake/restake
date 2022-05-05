@@ -317,12 +317,6 @@ export class Autostake {
 
   buildRestakeMessage(address, validatorAddress, amount, denom) {
     return [{
-      typeUrl: "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward",
-      value: MsgWithdrawDelegatorReward.encode(MsgWithdrawDelegatorReward.fromPartial({
-        delegatorAddress: address,
-        validatorAddress: validatorAddress
-      })).finish()
-    }, {
       typeUrl: "/cosmos.staking.v1beta1.MsgDelegate",
       value: MsgDelegate.encode(MsgDelegate.fromPartial({
         delegatorAddress: address,
