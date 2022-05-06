@@ -144,6 +144,12 @@
   },
   {
     "name": "bostrom",
+    "restUrl": [
+      "https://lcd.bostrom.cybernode.ai/"
+    ],
+    "rpcUrl": [
+      "https://rpc.bostrom.cybernode.ai/"
+    ],
     "gasPrice": "0boot"
   },
   {
