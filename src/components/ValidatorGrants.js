@@ -122,7 +122,7 @@ function ValidatorGrants(props) {
     return (
       <>
         <p className="small">{operator.moniker} will be able to carry out the following transactions on your behalf.</p>
-        <p className="small"><strong>Delegate</strong> - allowed to delegate <em>{maxTokensDenom() ? <Coins coins={{ amount: maxTokensDenom(), denom: network.denom }} decimals={network.decimals} /> : 'any amount'}</em> to <em>{!state.validators ? 'any validator' : state.validators.length === 1 && state.validators.includes(operator.address) ? 'only their own validator' : 'validators ' + state.validators.join(', ')}</em>.</p>
+        <p className="small"><strong>Delegate</strong> - allowed to delegate <em>{maxTokensDenom() ? <Coins coins={{ amount: maxTokensDenom(), denom: network.denom }} decimals={network.decimals} /> : 'any amount'}</em> to <em>{!state.validators ? 'any validator' : !state.validators.length || (state.validators.length === 1 && state.validators.includes(operator.address)) ? 'only their own validator' : 'validators ' + state.validators.join(', ')}</em>.</p>
         <p className="small">REStake only re-delegates {operator.moniker}'s accrued rewards and tries not to touch your balance.</p>
         <p className="small">This grant will expire automatically on <em>{state.expiryDateValue}</em>.</p>
         <p className="small"><em>REStake previously required a Withdraw grant but this is no longer necessary.</em></p>

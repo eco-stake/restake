@@ -39,7 +39,7 @@ class Delegations extends React.Component {
   async componentDidMount() {
     const isNanoLedger = this.props.stargateClient.getIsNanoLedger();
     this.setState({ isNanoLedger: isNanoLedger });
-    this.getGrants()
+    this.getGrants(true)
     this.refresh();
 
     if (this.props.validator) {
@@ -71,14 +71,14 @@ class Delegations extends React.Component {
       });
       this.refresh();
       if(this.props.delegations){
-        return this.getGrants()
+        return this.getGrants(true)
       }
     }
 
     if (this.props.delegations && prevProps.delegations){
       const delegationsChanged = _.difference(Object.keys(this.props.delegations), Object.keys(prevProps.delegations || {})).length > 0
       if (delegationsChanged) {
-        this.getGrants()
+        this.getGrants(true)
       }
     }
   }
