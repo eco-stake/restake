@@ -720,6 +720,7 @@ class Delegations extends React.Component {
                 <th>#</th>
                 <th colSpan={2}>Validator</th>
                 <th className="d-none d-sm-table-cell text-center">REStake</th>
+                <th className="d-sm-none"></th>
                 <th className="d-none d-lg-table-cell text-center">
                   Frequency
                 </th>
@@ -737,8 +738,8 @@ class Delegations extends React.Component {
                   </th>
                 )}
                 <th className="d-none d-sm-table-cell">Delegation</th>
-                <th className="d-none d-sm-table-cell">Rewards</th>
-                <th width={110}></th>
+                <th className="d-none d-md-table-cell">Rewards</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
