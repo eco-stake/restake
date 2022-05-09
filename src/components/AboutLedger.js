@@ -30,10 +30,10 @@ function AboutLedger(props) {
 
   const content = (
     <>
-      <h5>How to use a Ledger with {validator ? validator.name : 'REStake'}</h5>
+      <h5>How to use a Ledger with {validator ? validator.moniker : 'REStake'}</h5>
       <p>Right now there is a limitation in Cosmos SDK which prevents using a Ledger device with the REStake UI. It is possible though to send a slightly modified version of the grants using the {network.prettyName} CLI client.</p>
       <p>The commands needed are detailed below thanks to the awesome <a href="https://twitter.com/gjermundbjaanes" target="_blank">@gjermundbjaanes</a> who put together <a href="https://gjermund.tech/blog/making-ledger-work-on-restake/" target="_blank">a more detailed guide and CLI tool</a> to make the process easier.</p>
-      <p>{!validator ? <span>You can find <strong>validator specific instructions</strong> in a tab on the validator's page, with their REStake address pre-filled.</span> : `${validator.name}'s REStake address has been pre-filled below.`} Instructions are specific to the Network you have selected.</p>
+      <p>{!validator ? <span>You can find <strong>validator specific instructions</strong> in a tab on the validator's page, with their REStake address pre-filled.</span> : `${validator.moniker}'s REStake address has been pre-filled below.`} Instructions are specific to the Network you have selected.</p>
       <p><strong>You should only attempt this if you have a basic understanding of using a command line tool.</strong></p>
       <h5>Download CLI client for {network.prettyName}</h5>
       <p>Skip this step if you've already installed <code>{daemon_name || network.prettyName}</code>.</p>
@@ -75,20 +75,14 @@ function AboutLedger(props) {
       <pre className="text-wrap"><code>
         <p>{daemon_name ? daemon_name : <kbd>DaemonName</kbd>} keys add <kbd>ledger</kbd> --ledger --keyring-backend file</p>
       </code></pre>
-      <h5>Grant permission to withdraw delegator rewards</h5>
-      <p>Next you need to grant the first of two permissions required for REStake to function. This is the <code>WithdrawDelegatorReward</code> grant and is identical to the one the REStake UI would set.</p>
-      {!validator && <p>Make sure you enter your validator's REStake address in place of {address}. You can find instructions in a tab on the validator's page with their address pre-filled.</p>}
-      {validator && <p>{validator.name}'s REStake address has been pre-filled below (<code>{address}</code>).</p>}
-      <pre className="text-wrap"><code>
-        <p>{daemon_name ? daemon_name : <kbd>DaemonName</kbd>} tx authz grant {address} generic --msg-type /cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward --from <kbd>ledger</kbd> --ledger --chain-id {chain_id} --node https://rpc.cosmos.directory:443/{network.name} --keyring-backend file --gas auto --gas-prices {network.gasPrice} --gas-adjustment 1.5</p>
-      </code></pre>
       <h5>Grant permission to delegate rewards</h5>
       <p>Finally you need to grant the final permission to allow the validator to send <code>Delegate</code> messages. This is different to the REStake UI which also limits the validator address the address can delegate to. The REStake script will handle this difference and it doesn't present much of a security problem.</p>
       {!validator && <p>Make sure you enter your validator's REStake address in place of {address}. You can find instructions in a tab on the validator's page with their address pre-filled.</p>}
-      {validator && <p>{validator.name}'s REStake address has been pre-filled below (<code>{address}</code>).</p>}
+      {validator && <p>{validator.moniker}'s REStake address has been pre-filled below (<code>{address}</code>).</p>}
       <pre className="text-wrap"><code>
         <p>{daemon_name ? daemon_name : <kbd>DaemonName</kbd>} tx authz grant {address} generic --msg-type /cosmos.staking.v1beta1.MsgDelegate --from <kbd>ledger</kbd> --ledger --chain-id {chain_id} --node https://rpc.cosmos.directory:443/{network.name} --keyring-backend file --gas auto --gas-prices {network.gasPrice} --gas-adjustment 1.5</p>
       </code></pre>
+      <p>REStake previously required a <code>Withdraw</code> grant however this is no longer necessary.</p>
       <h5>Fin.</h5>
       <p>That's it! <strong>So long as you have an active delegation with them,</strong> your validator should now pick up your ledger's address as a valid REStake user if they're running the latest version. If you don't see the restaking happening, reach out to them to update.</p>
       <p>The UI will show the current state of your grant with the validator, you just won't be able to revoke.</p>
@@ -98,10 +92,13 @@ function AboutLedger(props) {
       <h5>Revoke permissions</h5>
       <p>Revoking the grants is just another command. You need to revoke each permission individually.</p>
       {!validator && <p>Make sure you enter your validator's REStake address in place of {address}. You can find instructions in a tab on the validator's page with their address pre-filled.</p>}
-      {validator && <p>{validator.name}'s REStake address has been pre-filled below (<code>{address}</code>).</p>}
+      {validator && <p>{validator.moniker}'s REStake address has been pre-filled below (<code>{address}</code>).</p>}
+      <pre className="text-wrap"><code>
+        <p>{daemon_name ? daemon_name : <kbd>DaemonName</kbd>} tx authz revoke {address} /cosmos.staking.v1beta1.MsgDelegate --from <kbd>ledger</kbd> --ledger --chain-id {chain_id} --node https://rpc.cosmos.directory:443/{network.name} --keyring-backend file --gas auto --gas-prices {network.gasPrice} --gas-adjustment 1.5</p>
+      </code></pre>
+      <p>If you have previously granted <code>Withdraw</code> permissions, these are no longer required and can be safely removed.</p>
       <pre className="text-wrap"><code>
         <p>{daemon_name ? daemon_name : <kbd>DaemonName</kbd>} tx authz revoke {address} /cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward --from <kbd>ledger</kbd> --ledger --chain-id {chain_id} --node https://rpc.cosmos.directory:443/{network.name} --keyring-backend file --gas auto --gas-prices {network.gasPrice} --gas-adjustment 1.5</p>
-        <p>{daemon_name ? daemon_name : <kbd>DaemonName</kbd>} tx authz revoke {address} /cosmos.staking.v1beta1.MsgDelegate --from <kbd>ledger</kbd> --ledger --chain-id {chain_id} --node https://rpc.cosmos.directory:443/{network.name} --keyring-backend file --gas auto --gas-prices {network.gasPrice} --gas-adjustment 1.5</p>
       </code></pre>
     </>
   )

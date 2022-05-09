@@ -115,6 +115,7 @@ const QueryClient = async (chainId, rpcUrls, restUrls) => {
       .get(restUrl + "/cosmos/authz/v1beta1/grants?" + searchParams.toString(), opts)
       .then((res) => res.data)
       .then((result) => {
+        // claimGrant is removed but we track for now to allow revoke
         const claimGrant = result.grants.find((el) => {
           if (
             el.authorization["@type"] ===

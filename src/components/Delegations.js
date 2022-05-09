@@ -39,7 +39,7 @@ class Delegations extends React.Component {
   async componentDidMount() {
     const isNanoLedger = this.props.stargateClient.getIsNanoLedger();
     this.setState({ isNanoLedger: isNanoLedger });
-    this.getGrants()
+    this.getGrants(true)
     this.refresh();
 
     if (this.props.validator) {
@@ -71,14 +71,14 @@ class Delegations extends React.Component {
       });
       this.refresh();
       if(this.props.delegations){
-        return this.getGrants()
+        return this.getGrants(true)
       }
     }
 
     if (this.props.delegations && prevProps.delegations){
       const delegationsChanged = _.difference(Object.keys(this.props.delegations), Object.keys(prevProps.delegations || {})).length > 0
       if (delegationsChanged) {
-        this.getGrants()
+        this.getGrants(true)
       }
     }
   }
@@ -265,7 +265,6 @@ class Delegations extends React.Component {
       sum[operator.botAddress] = {
         ...grant,
         grantsValid: !!(
-          grant.claimGrant &&
           grant.stakeGrant &&
           (!grant.validators || grant.validators.includes(operator.address)) &&
           (grant.maxTokens === null || larger(grant.maxTokens, this.validatorReward(operator.address)))
@@ -550,6 +549,7 @@ class Delegations extends React.Component {
                               <RevokeRestake
                                 address={this.props.address}
                                 operator={operator}
+                                grants={grants}
                                 stargateClient={this.props.stargateClient}
                                 onRevoke={this.onRevoke}
                                 setLoading={(loading) =>

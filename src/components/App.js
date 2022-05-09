@@ -291,7 +291,7 @@ class App extends React.Component {
           }
           <hr />
           <p className="mt-5 text-center">
-            Enabling REStake will authorize the validator to send <em>WithdrawDelegatorReward</em> and <em>Delegate</em> transactions on your behalf for 1 year <a href="https://docs.cosmos.network/master/modules/authz/" target="_blank" rel="noreferrer" className="text-reset">using Authz</a>.<br />
+            Enabling REStake will authorize the validator to send <em>Delegate</em> transactions on your behalf for 1 year <a href="https://docs.cosmos.network/master/modules/authz/" target="_blank" rel="noreferrer" className="text-reset">using Authz</a>.<br />
             They will only be authorized to delegate to their own validator. You can revoke the authorization at any time and everything is open source.
           </p>
           <p className="text-center mb-4">

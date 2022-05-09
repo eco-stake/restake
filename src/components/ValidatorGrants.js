@@ -19,7 +19,7 @@ import AlertMessage from './AlertMessage';
 
 function ValidatorGrants(props) {
   const { grants, operator, address, network } = props
-  const { claimGrant, stakeGrant, maxTokens, validators, grantsValid, grantsExist } = grants || {}
+  const { stakeGrant, maxTokens, validators, grantsValid, grantsExist } = grants || {}
   const defaultExpiry = moment().add(1, 'year')
   const [loading, setLoading] = useState(false);
   const [state, setState] = useState({ maxTokensValue: '', expiryDateValue: defaultExpiry.format('YYYY-MM-DD') });
@@ -46,10 +46,8 @@ function ValidatorGrants(props) {
   }
 
   function expiryDate() {
-    const claimExpiry = claimGrant && claimGrant.expiration && moment(claimGrant.expiration)
     const stakeExpiry = stakeGrant && stakeGrant.expiration && moment(stakeGrant.expiration)
-    const expiryDate = claimExpiry && stakeExpiry && claimExpiry > stakeExpiry ? stakeExpiry : claimExpiry || stakeExpiry
-    return expiryDate
+    return stakeExpiry
   }
 
   function maxTokensDenom() {
@@ -83,12 +81,6 @@ function ValidatorGrants(props) {
           allowList: { address: [operator.address] },
           maxTokens: maxTokens,
           authorizationType: 1
-        })).finish(),
-        expiry
-      ),
-      buildGrantMsg("/cosmos.authz.v1beta1.GenericAuthorization",
-        GenericAuthorization.encode(GenericAuthorization.fromPartial({
-          msg: '/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward'
         })).finish(),
         expiry
       )
@@ -130,10 +122,10 @@ function ValidatorGrants(props) {
     return (
       <>
         <p className="small">{operator.moniker} will be able to carry out the following transactions on your behalf.</p>
-        <p className="small"><strong>WidthdrawDelegatorRewards</strong> - allowed to withdraw/claim rewards <em>for any validator</em>, however REStake only withdraws from {operator.moniker}'s reward balance.</p>
-        <p className="small"><strong>Delegate</strong> - allowed to delegate <em>{maxTokensDenom() ? <Coins coins={{ amount: maxTokensDenom(), denom: network.denom }} decimals={network.decimals} /> : 'any amount'}</em> to <em>{!state.validators ? 'any validator' : state.validators.length === 1 && state.validators.includes(operator.address) ? 'only their own validator' : 'validators ' + state.validators.join(', ')}</em>.</p>
+        <p className="small"><strong>Delegate</strong> - allowed to delegate <em>{maxTokensDenom() ? <Coins coins={{ amount: maxTokensDenom(), denom: network.denom }} decimals={network.decimals} /> : 'any amount'}</em> to <em>{!state.validators ? 'any validator' : !state.validators.length || (state.validators.length === 1 && state.validators.includes(operator.address)) ? 'only their own validator' : 'validators ' + state.validators.join(', ')}</em>.</p>
         <p className="small">REStake only re-delegates {operator.moniker}'s accrued rewards and tries not to touch your balance.</p>
-        <p className="small">Both of these grants will expire automatically on <em>{state.expiryDateValue}</em>.</p>
+        <p className="small">This grant will expire automatically on <em>{state.expiryDateValue}</em>.</p>
+        <p className="small"><em>REStake previously required a Withdraw grant but this is no longer necessary.</em></p>
       </>
     )
   }
@@ -235,6 +227,7 @@ function ValidatorGrants(props) {
                       button={true}
                       address={address}
                       operator={operator}
+                      grants={grants}
                       stargateClient={props.stargateClient}
                       onRevoke={props.onRevoke}
                       setLoading={(loading) => showLoading(loading)}
