@@ -6,7 +6,7 @@ import {
 function RevokeRestake(props) {
   const { address, operator, grants, stargateClient } = props
 
-  function revoke(){
+  async function revoke(){
     props.setLoading(true)
 
     const messages = []
@@ -15,15 +15,17 @@ function RevokeRestake(props) {
       
     console.log(messages)
 
-    stargateClient.signAndBroadcast(address, messages).then((result) => {
+    try {
+      const gas = await stargateClient.simulate(address, messages, undefined, 1.3)
+      const result = await stargateClient.signAndBroadcast(address, messages, gas)
       console.log("Successfully broadcasted:", result);
       props.setLoading(false)
       props.onRevoke(operator)
-    }, (error) => {
+    } catch (error) {
       console.log('Failed to broadcast:', error)
       props.setLoading(false)
       props.setError('Failed to broadcast: ' + error.message)
-    })
+    }
   }
 
   function buildRevokeMsg(type){
