@@ -60,7 +60,7 @@ class Network {
     this.gasPrice = this.data.gasPrice || defaultGasPrice
     this.gasPriceStep = this.data.gasPriceStep
     this.gasPricePrefer = this.data.gasPricePrefer
-    this.gasModifier = this.data.gasModifier || 1.25
+    this.gasModifier = this.data.gasModifier || 1.3
   }
 
   async connect() {
