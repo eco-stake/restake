@@ -83,7 +83,7 @@ cp .env.sample .env
 
 Running the autostake script manually is then simple.
 
-Note you might need `sudo` depending on your docker install. Some versions utilize `docker compose` instead of `docker-compose`. If you run into issues, try substituting `docker compose`.
+Note you might need `sudo` depending on your docker install. Some docker versions utilize `docker compose` instead of `docker-compose`. If you run into issues, try substituting `docker compose`.
 
 ```bash
 docker-compose run --rm app npm run autostake
@@ -118,7 +118,7 @@ Don't forget to [update often](#updating-your-local-version)!
 
 #### Using `crontab`
 
-Note: A helpful calculator for determining your REStake timer for both `crontab` can be found here: https://crontab.guru/.
+Note: A helpful calculator for determining your REStake timer for `crontab` can be found here: https://crontab.guru/.
 
 ```bash
 crontab -e
