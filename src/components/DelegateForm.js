@@ -118,6 +118,10 @@ class DelegateForm extends React.Component {
     return this.props.network.symbol.toUpperCase()
   }
 
+  step(){
+    return 1 / pow(10, this.props.network.decimals)
+  }
+
   render() {
     return (
       <>
@@ -131,7 +135,7 @@ class DelegateForm extends React.Component {
             <Form.Label>Amount</Form.Label>
             <div className="mb-3">
               <div className="input-group">
-                <Form.Control name="amount" type="number" min={0} step={0.000001} placeholder="10" required={true} value={this.state.amount} onChange={this.handleInputChange} />
+                <Form.Control name="amount" type="number" min={0} step={this.step()} placeholder="10" required={true} value={this.state.amount} onChange={this.handleInputChange} />
                 <span className="input-group-text">{this.denom()}</span>
               </div>
               {this.props.availableBalance &&
