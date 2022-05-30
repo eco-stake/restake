@@ -6,11 +6,20 @@ import Long from "long";
 import {
   defaultRegistryTypes as defaultStargateTypes,
   assertIsDeliverTxSuccess,
-  GasPrice
+  GasPrice,
+  AminoTypes,
+  createAuthzAminoConverters,
+  createBankAminoConverters,
+  createDistributionAminoConverters,
+  createFreegrantAminoConverters,
+  createGovAminoConverters,
+  createIbcAminoConverters,
+  createStakingAminoConverters,
 } from "@cosmjs/stargate";
 import { sleep } from "@cosmjs/utils";
 import { makeSignDoc, Registry } from "@cosmjs/proto-signing";
-import { toBase64, fromBase64, toHex } from '@cosmjs/encoding'
+import { makeSignDoc as makeAminoSignDoc } from "@cosmjs/amino";
+import { toBase64, fromBase64 } from '@cosmjs/encoding'
 import { PubKey } from "cosmjs-types/cosmos/crypto/secp256k1/keys.js";
 import { SignMode } from "cosmjs-types/cosmos/tx/signing/v1beta1/signing.js";
 import { AuthInfo, Fee, TxBody, TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx.js";
@@ -22,6 +31,15 @@ async function SigningClient(network, defaultGasPrice, signer, key, signerOpts) 
   const { restUrl, gasModifier: defaultGasModifier, slip44: coinType, chainId } = network
 
   const registry = new Registry(defaultStargateTypes);
+  const aminoTypes = new AminoTypes({
+    ...createAuthzAminoConverters(),
+    ...createBankAminoConverters(),
+    ...createDistributionAminoConverters(),
+    ...createGovAminoConverters(),
+    ...createStakingAminoConverters(network.prefix),
+    ...createIbcAminoConverters(),
+    ...createFreegrantAminoConverters(),
+  })
 
   async function getAddress() {
     const accounts = await signer.getAccounts();
@@ -95,15 +113,8 @@ async function SigningClient(network, defaultGasPrice, signer, key, signerOpts) 
       await sleep(pollIntervalMs);
       try {
         const response = await axios.get(restUrl + '/cosmos/tx/v1beta1/txs/' + txId);
-        const result = response.data.tx_response
-        return {
-          code: result.code,
-          height: result.height,
-          rawLog: result.raw_log,
-          transactionHash: txId,
-          gasUsed: result.gas_used,
-          gasWanted: result.gas_wanted,
-        }
+        const result = parseTxResult(response.data.tx_response)
+        return result
       } catch {
         return pollForTx(txId);
       }
@@ -113,9 +124,10 @@ async function SigningClient(network, defaultGasPrice, signer, key, signerOpts) 
       tx_bytes: toBase64(TxRaw.encode(txBody).finish()),
       mode: "BROADCAST_MODE_SYNC"
     })
-    const transactionId = response.data.tx_response.txhash
+    const result = parseTxResult(response.data.tx_response)
+    assertIsDeliverTxSuccess(result)
     return new Promise((resolve, reject) =>
-      pollForTx(transactionId).then(
+      pollForTx(result.transactionHash).then(
         (value) => {
           clearTimeout(txPollTimeout);
           assertIsDeliverTxSuccess(value)
@@ -131,15 +143,35 @@ async function SigningClient(network, defaultGasPrice, signer, key, signerOpts) 
 
   async function sign(address, messages, memo, fee){
     const account = await getAccount(address)
-    const { account_number: accountNumber } = account
+    const { account_number: accountNumber, sequence } = account
     const txBodyBytes = makeBodyBytes(messages, memo)
-    const authInfoBytes = await makeAuthInfoBytes(account, fee)
-    const signDoc = makeSignDoc(txBodyBytes, authInfoBytes, chainId, accountNumber);
-    const { signature, signed } = await signer.signDirect(address, signDoc);
-    return {
-      bodyBytes: signed.bodyBytes,
-      authInfoBytes: signed.authInfoBytes,
-      signatures: [fromBase64(signature.signature)],
+    if(getIsNanoLedger()){
+      // Convert to amino for ledger devices
+      const aminoMsgs = messages.map(el => aminoTypes.toAmino(el))
+      const signDoc = makeAminoSignDoc(aminoMsgs, fee, chainId, memo, accountNumber, sequence);
+      const signResponse = await signer.sign(address, signDoc);
+      const authInfoBytes = await makeAuthInfoBytes(account, {
+        amount: signResponse.signed.fee.amount,
+        gasLimit: signResponse.signed.fee.gas,
+      })
+      return {
+        bodyBytes: txBodyBytes,
+        authInfoBytes: authInfoBytes,
+        signatures: [Buffer.from(signResponse.signature.signature, "base64")],
+      }
+    }else{
+      // Sign using standard protobuf messages
+      const authInfoBytes = await makeAuthInfoBytes(account, {
+        amount: fee.amount,
+        gasLimit: fee.gas,
+      })
+      const signDoc = makeSignDoc(txBodyBytes, authInfoBytes, chainId, accountNumber);
+      const { signature, signed } = await signer.signDirect(address, signDoc);
+      return {
+        bodyBytes: signed.bodyBytes,
+        authInfoBytes: signed.authInfoBytes,
+        signatures: [fromBase64(signature.signature)],
+      }
     }
   }
 
@@ -157,6 +189,17 @@ async function SigningClient(network, defaultGasPrice, signer, key, signerOpts) 
     return (parseInt(estimate * (modifier || defaultGasModifier)));
   }
 
+  function parseTxResult(result){
+    return {
+      code: result.code,
+      height: result.height,
+      rawLog: result.raw_log,
+      transactionHash: result.txhash,
+      gasUsed: result.gas_used,
+      gasWanted: result.gas_wanted,
+    }
+  }
+
   function makeBodyBytes(messages, memo){
     const anyMsgs = messages.map((m) => registry.encodeAsAny(m));
     return TxBody.encode(
@@ -168,7 +211,7 @@ async function SigningClient(network, defaultGasPrice, signer, key, signerOpts) 
   }
 
   async function makeAuthInfoBytes(account, fee, mode){
-    mode = mode || SignMode.SIGN_MODE_DIRECT
+    mode = mode || getIsNanoLedger() ? SignMode.SIGN_MODE_LEGACY_AMINO_JSON : SignMode.SIGN_MODE_DIRECT
     const { address, sequence } = account
     const accountFromSigner = (await signer.getAccounts()).find(
       (account) => account.address === address,
