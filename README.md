@@ -211,9 +211,6 @@ Create a `src/networks.local.json` file and specify the networks you want to ove
     "restUrl": [
       "https://rest.validator.com/osmosis"
     ],
-    "rpcUrl": [
-      "https://rpc.validator.com/osmosis"
-    ],
     "gasPrice": "0.001uosmo",
     "autostake": {
       "batchTxs": 69,
