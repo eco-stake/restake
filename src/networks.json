@@ -73,7 +73,8 @@
   },
   {
     "name": "evmos",
-    "apyEnabled": false
+    "apyEnabled": false,
+    "txTimeout": 120000
   },
   {
     "name": "sifchain",
