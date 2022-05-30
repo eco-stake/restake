@@ -61,7 +61,7 @@ Instructions are provided for Docker Compose and will be expanded later.
 
 ### Install Docker and Docker Compose
 
-Best bet is to follow the Docker official guides. Install Docker first, then Docker Compose.
+Best bet is to follow the Docker official guides. Install Docker first, then Docker Compose. In recent versions, Docker and Docker Compose may combined into a single installation.
 
 Docker: [docs.docker.com/get-docker](https://docs.docker.com/get-docker/)
 
@@ -83,7 +83,9 @@ cp .env.sample .env
 
 Running the autostake script manually is then simple.
 
-Note you might need `sudo` depending on your docker install.
+Note you might need `sudo` depending on your docker install. 
+
+Some docker versions utilize `docker compose` instead of `docker-compose`. If you run into issues, try substituting `docker compose`.
 
 ```bash
 docker-compose run --rm app npm run autostake
@@ -118,6 +120,8 @@ Don't forget to [update often](#updating-your-local-version)!
 
 #### Using `crontab`
 
+Note: A helpful calculator for determining your REStake timer for `crontab` can be found here: https://crontab.guru/.
+
 ```bash
 crontab -e
 
@@ -126,7 +130,7 @@ crontab -e
 
 #### Using `systemd-timer`
 
-Systemd-timer allow to run a one-off service with specified rules.
+Systemd-timer allow to run a one-off service with specified rules. This can be used instead, if you run into issues with implementing `crontab`.
 
 ##### Create a systemd unit file
 
@@ -154,7 +158,9 @@ WantedBy=multi-user.target
 
 ##### Create a systemd timer file
 
-The timer file defines the rules for running the restake service every day. All rules are described in the [systemd documentation](https://www.freedesktop.org/software/systemd/man/systemd.timer.html).
+The timer file defines the rules for running the restake service every day. All rules are described in the [systemd documentation](https://www.freedesktop.org/software/systemd/man/systemd.timer.html). 
+
+Note: Helpful calculator for determining restake times for `OnCalendar` can also be found at https://crontab.guru/.
 
 ```bash
 sudo vim /etc/systemd/system/restake.timer
