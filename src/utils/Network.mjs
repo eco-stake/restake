@@ -31,7 +31,7 @@ class Network {
 
   connectedDirectory() {
     const apis = this.chain ? this.chain.chainData['best_apis'] : this.data['best_apis']
-    return apis && ['rpc', 'rest'].every(type => apis[type].length > 0)
+    return apis && ['rest'].every(type => apis[type].length > 0)
   }
 
   async load() {
