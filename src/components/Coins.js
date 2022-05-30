@@ -14,7 +14,7 @@ function Coins(props) {
   function denom(coins){
     if(!coins.denom) return
 
-    if(coins.denom.startsWith('base')){
+    if(coins.denom.startsWith('base') || coins.denom.startsWith('nano')){
       return coins.denom.slice(4).toUpperCase()
     }else if(['u', 'a', 'n'].includes(coins.denom[0])){
       return coins.denom.slice(1).toUpperCase()
