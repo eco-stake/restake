@@ -54,6 +54,7 @@ async function SigningClient(network, defaultGasPrice, signer, key, signerOpts) 
   };
 
   function getIsNanoLedger() {
+    if(!key) return false
     return key.isNanoLedger;
   }
 
