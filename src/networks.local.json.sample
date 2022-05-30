@@ -3,9 +3,6 @@
     "prettyName": "Akash",
     "restUrl": [
       "https://rest.validator.com/osmosis"
-    ],
-    "rpcUrl": [
-      "https://rpc.validator.com/osmosis"
     ]
   }
 }

@@ -44,10 +44,9 @@ export class Autostake {
 
         if(!client) return health.success('Skipping')
 
-        const { restUrl, rpcUrl, usingDirectory } = client.network
+        const { restUrl, usingDirectory } = client.network
 
         timeStamp('Using REST URL', restUrl)
-        timeStamp('Using RPC URL', rpcUrl)
 
         if(usingDirectory){
           timeStamp('You are using public nodes, script may fail with many delegations. Check the README to use your own')
@@ -138,7 +137,6 @@ export class Autostake {
     if (!network.authzSupport) return timeStamp('No Authz support')
 
     await network.connect()
-    if (!network.rpcUrl) throw new Error('Could not connect to RPC API')
     if (!network.restUrl) throw new Error('Could not connect to REST API')
 
     const client = await network.signingClient(wallet)

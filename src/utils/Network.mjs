@@ -5,14 +5,9 @@ import SigningClient from './SigningClient.mjs'
 import Operator from './Operator.mjs'
 import Chain from './Chain.mjs'
 import CosmosDirectory from './CosmosDirectory.mjs'
-import DesmosSigningClient from './DesmosSigningClient.mjs'
 
 class Network {
   constructor(data) {
-    this.SIGNERS = {
-      desmos: DesmosSigningClient
-    }
-
     this.data = data
     this.enabled = data.enabled
     this.experimental = data.experimental
@@ -24,7 +19,7 @@ class Network {
     this.rpcUrl = data.rpcUrl || this.directory.rpcUrl(this.name)
     this.restUrl = data.restUrl || this.directory.restUrl(this.name)
 
-    this.usingDirectory = !![this.restUrl, this.rpcUrl].find(el => {
+    this.usingDirectory = !![this.restUrl].find(el => {
       const match = el => el.match("cosmos.directory")
       if (Array.isArray(el)) {
         return el.find(match)
@@ -61,13 +56,13 @@ class Network {
     this.gasPriceStep = this.data.gasPriceStep
     this.gasPricePrefer = this.data.gasPricePrefer
     this.gasModifier = this.data.gasModifier || 1.3
+    this.txTimeout = this.data.txTimeout || 60_000
   }
 
   async connect() {
     try {
-      this.queryClient = await QueryClient(this.chain.chainId, this.rpcUrl, this.restUrl)
+      this.queryClient = await QueryClient(this.chain.chainId, this.restUrl)
       this.restUrl = this.queryClient.restUrl
-      this.rpcUrl = this.queryClient.rpcUrl
       this.connected = this.queryClient.connected && (!this.usingDirectory || this.connectedDirectory())
     } catch (error) {
       console.log(error)
@@ -97,8 +92,7 @@ class Network {
     if (!this.queryClient)
       return
 
-    const client = this.SIGNERS[this.name] || SigningClient
-    return client(this.queryClient.rpcUrl, gasPrice || this.gasPrice, this.gasModifier, wallet, key)
+    return SigningClient(this, gasPrice || this.gasPrice, wallet, key)
   }
 
   getOperator(operatorAddress) {
