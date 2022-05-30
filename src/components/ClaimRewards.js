@@ -69,15 +69,6 @@ function ClaimRewards(props) {
   function buildMessages(validatorRewards){
     return validatorRewards.map(validatorReward => {
       let valMessages = []
-      
-      if (props.commission) {
-        valMessages.push({
-          typeUrl: "/cosmos.distribution.v1beta1.MsgWithdrawValidatorCommission",
-          value: MsgWithdrawValidatorCommission.fromPartial({
-            validatorAddress: validatorReward.validatorAddress
-          })
-        })
-      }
 
       if(props.restake){
         valMessages.push({
@@ -93,6 +84,15 @@ function ClaimRewards(props) {
           typeUrl: "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward",
           value: MsgWithdrawDelegatorReward.fromPartial({
             delegatorAddress: props.address,
+            validatorAddress: validatorReward.validatorAddress
+          })
+        })
+      }
+      
+      if (props.commission) {
+        valMessages.push({
+          typeUrl: "/cosmos.distribution.v1beta1.MsgWithdrawValidatorCommission",
+          value: MsgWithdrawValidatorCommission.fromPartial({
             validatorAddress: validatorReward.validatorAddress
           })
         })
