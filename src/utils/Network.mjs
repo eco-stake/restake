@@ -16,7 +16,7 @@ class Network {
     this.default = data.default
     this.directory = CosmosDirectory()
 
-    this.rpcUrl = data.rpcUrl || this.directory.rpcUrl(this.name)
+    this.rpcUrl = this.directory.rpcUrl(this.name) // only used for Keplr suggestChain
     this.restUrl = data.restUrl || this.directory.restUrl(this.name)
 
     this.usingDirectory = !![this.restUrl].find(el => {

@@ -186,6 +186,7 @@ const QueryClient = async (chainId, restUrls) => {
     }
     const path = type === "rest" ? "/blocks/latest" : "/block";
     return Promise.any(urls.map(async (url) => {
+      url = url.replace(/\/$/, '')
       try {
         let data = await axios.get(url + path, { timeout: 10000 })
           .then((res) => res.data)
