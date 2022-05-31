@@ -181,5 +181,9 @@
   {
     "name": "meme",
     "gasPrice": "0.025umeme"
+  },
+  {
+    "name": "cronos",
+    "enabled": false
   }
 ]
