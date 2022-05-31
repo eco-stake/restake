@@ -105,7 +105,8 @@ class App extends React.Component {
         const key = await window.keplr.getKey(chainId);
         const stargateClient = await network.signingClient(offlineSigner, key, network.gasPricePrefer)
 
-        const address = await stargateClient.getAddress()
+        const accounts = await offlineSigner.getAccounts();
+        const address = accounts[0].address;
 
         stargateClient.registry.register("/cosmos.authz.v1beta1.MsgGrant", MsgGrant)
         stargateClient.registry.register("/cosmos.authz.v1beta1.MsgRevoke", MsgRevoke)
