@@ -26,7 +26,7 @@ import { AuthInfo, Fee, TxBody, TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx.
 
 import { coin } from './Helpers.mjs'
 
-async function SigningClient(network, defaultGasPrice, signer, key, signerOpts) {
+async function SigningClient(network, defaultGasPrice, signer, key) {
 
   const { restUrl, gasModifier: defaultGasModifier, slip44: coinType, chainId } = network
 
@@ -40,11 +40,6 @@ async function SigningClient(network, defaultGasPrice, signer, key, signerOpts) 
     ...createIbcAminoConverters(),
     ...createFreegrantAminoConverters(),
   })
-
-  async function getAddress() {
-    const accounts = await signer.getAccounts();
-    return accounts[0].address;
-  }
 
   function getAccount(address) {
     return axios
@@ -150,15 +145,15 @@ async function SigningClient(network, defaultGasPrice, signer, key, signerOpts) 
       // Convert to amino for ledger devices
       const aminoMsgs = messages.map(el => aminoTypes.toAmino(el))
       const signDoc = makeAminoSignDoc(aminoMsgs, fee, chainId, memo, accountNumber, sequence);
-      const signResponse = await signer.sign(address, signDoc);
+      const { signature, signed } = await signer.sign(address, signDoc);
       const authInfoBytes = await makeAuthInfoBytes(account, {
-        amount: signResponse.signed.fee.amount,
-        gasLimit: signResponse.signed.fee.gas,
+        amount: signed.fee.amount,
+        gasLimit: signed.fee.gas,
       })
       return {
         bodyBytes: txBodyBytes,
         authInfoBytes: authInfoBytes,
-        signatures: [Buffer.from(signResponse.signature.signature, "base64")],
+        signatures: [Buffer.from(signature.signature, "base64")],
       }
     }else{
       // Sign using standard protobuf messages
@@ -213,10 +208,8 @@ async function SigningClient(network, defaultGasPrice, signer, key, signerOpts) 
 
   async function makeAuthInfoBytes(account, fee, mode){
     mode = mode || getIsNanoLedger() ? SignMode.SIGN_MODE_LEGACY_AMINO_JSON : SignMode.SIGN_MODE_DIRECT
-    const { address, sequence } = account
-    const accountFromSigner = (await signer.getAccounts()).find(
-      (account) => account.address === address,
-    );
+    const { sequence } = account
+    const accountFromSigner = (await signer.getAccounts())[0]
     if (!accountFromSigner) {
       throw new Error("Failed to retrieve account from signer");
     }
@@ -243,7 +236,6 @@ async function SigningClient(network, defaultGasPrice, signer, key, signerOpts) 
 
   return {
     registry,
-    getAddress,
     getFee,
     getIsNanoLedger,
     simulate,

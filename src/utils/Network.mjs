@@ -37,7 +37,7 @@ class Network {
   async load() {
     this.chain = await Chain(this.data)
     this.validators = await this.directory.getValidators(this.name)
-    this.operators = this.data.operators || this.validators.filter(el => el.restake).map(el => {
+    this.operators = (this.data.operators || this.validators.filter(el => el.restake)).map(el => {
       return Operator(el)
     })
     this.prettyName = this.chain.prettyName
