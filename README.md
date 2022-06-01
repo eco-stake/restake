@@ -21,6 +21,7 @@ A script is also provided which allows a validator to automatically search their
 - As of writing, Ledger is unable to send the necessary transactions to enable Authz. This is purely due to the way transactions are sent to a Ledger device and a workaround should be possible soon.
 - Authz is also not fully supported yet. Many chains are yet to update. The REStake UI will fall back to being a manual staking app with useful manual compounding features.
 - Currently REStake needs the browser extension version of Keplr, but WalletConnect and Keplr iOS functionality will be added ASAP.
+- RESTake requires Nodejs version 17.x or later, it will not work with earlier versions.
 
 ## Become an operator
 
