@@ -74,7 +74,8 @@
   {
     "name": "evmos",
     "apyEnabled": false,
-    "txTimeout": 120000
+    "txTimeout": 120000,
+    "ownerAddress": "evmosvaloper1umk407eed7af6anvut6llg2zevnf0dn0feqqny"
   },
   {
     "name": "sifchain",
