@@ -21,8 +21,9 @@ import EthSigner from '../src/utils/EthSigner.mjs';
 import 'dotenv/config'
 
 export class Autostake {
-  constructor(){
+  constructor(opts){
     this.mnemonic = process.env.MNEMONIC
+    this.opts = opts || {}
     if(!this.mnemonic){
       timeStamp('Please provide a MNEMONIC environment variable')
       process.exit()
@@ -40,7 +41,7 @@ export class Autostake {
         if(data.enabled === false) return
 
         let client
-        let health = new AutostakeHealth(data.healthCheck)
+        let health = new AutostakeHealth(data.healthCheck, { dryRun: this.opts.dryRun })
         health.started('⚛')
         try {
           client = await this.getClient(data, health)
@@ -315,11 +316,15 @@ export class Autostake {
           const memo = 'REStaked by ' + client.operator.moniker
           const gasModifier = client.network.data.autostake?.gasModifier || 1.1
           const gas = await client.signingClient.simulate(client.operator.botAddress, batch, memo, gasModifier);
-          await client.signingClient.signAndBroadcast(client.operator.botAddress, batch, gas, memo).then((result) => {
-            timeStamp("Successfully broadcasted");
-          }, (error) => {
-            client.health.error('Failed to broadcast:', error.message)
-          })
+          if(this.opts.dryRun){
+            timeStamp("DRYRUN: Would autostake", batch.length, "TXs using", gas, "gas")
+          }else{
+            await client.signingClient.signAndBroadcast(client.operator.botAddress, batch, gas, memo).then((result) => {
+              timeStamp("Successfully broadcasted");
+            }, (error) => {
+              client.health.error('Failed to broadcast:', error.message)
+            })
+          }
         } catch (error) {
           client.health.error('ERROR: Skipping batch:', error.message)
         }
