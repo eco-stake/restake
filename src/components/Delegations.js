@@ -15,6 +15,7 @@ import { Table, Button, Dropdown, Spinner, OverlayTrigger, Tooltip } from "react
 
 import ValidatorName from "./ValidatorName";
 import ManageRestake from "./ManageRestake";
+import { parseGrants } from "../utils/Helpers.mjs";
 
 class Delegations extends React.Component {
   constructor(props) {
@@ -148,33 +149,20 @@ class Delegations extends React.Component {
   async getGrants(hideError) {
     if (!this.authzSupport() || !this.props.operators.length) return
 
+    let allGrants
+    try {
+      allGrants = await this.props.queryClient.getGranterGrants(this.props.address)
+    } catch (e) { console.log('Failed to get all grants in batch') }
+
     const calls = this.orderedOperators().map((operator) => {
       return () => {
-        const { botAddress, address } = operator;
+        const { botAddress } = operator;
         if (!this.props.operators.includes(operator)) return;
+        if(allGrants) return new Promise(() => this.setGrants(allGrants, botAddress, this.props.address))
 
         return this.props.queryClient.getGrants(botAddress, this.props.address).then(
           (result) => {
-            const { claimGrant, stakeGrant } = result
-            let grantValidators, maxTokens;
-            if (stakeGrant) {
-              grantValidators =
-                stakeGrant.authorization.allow_list?.address;
-              maxTokens = stakeGrant.authorization.max_tokens
-            }
-            const operatorGrant = {
-              claimGrant: claimGrant,
-              stakeGrant: stakeGrant,
-              validators: grantValidators,
-              maxTokens: maxTokens ? bignumber(maxTokens.amount) : null
-            };
-            this.setState((state, props) => ({
-              operatorGrants: _.set(
-                state.operatorGrants,
-                botAddress,
-                operatorGrant
-              ),
-            }));
+            this.setGrants(result, botAddress, this.props.address)
           },
           (error) => {
             if (!hideError) {
@@ -190,6 +178,29 @@ class Delegations extends React.Component {
     for (const batchCall of batchCalls) {
       await Promise.allSettled(batchCall.map(call => call()))
     }
+  }
+
+  setGrants(grants, grantee, granter){
+    const { claimGrant, stakeGrant } = parseGrants(grants, grantee, granter)
+    let grantValidators, maxTokens;
+    if (stakeGrant) {
+      grantValidators =
+        stakeGrant.authorization.allow_list?.address;
+      maxTokens = stakeGrant.authorization.max_tokens
+    }
+    const operatorGrant = {
+      claimGrant: claimGrant,
+      stakeGrant: stakeGrant,
+      validators: grantValidators,
+      maxTokens: maxTokens ? bignumber(maxTokens.amount) : null
+    };
+    this.setState((state, props) => ({
+      operatorGrants: _.set(
+        state.operatorGrants,
+        grantee,
+        operatorGrant
+      ),
+    }));
   }
 
   onGrant(operator, expired, maxTokens) {
@@ -296,9 +307,9 @@ class Delegations extends React.Component {
     return _.sortBy(this.props.operators, ({ address, botAddress }) => {
       if (!this.props.delegations) return 0
 
-      if(this.props.delegations[address]){
+      if (this.props.delegations[address]) {
         return grants[botAddress]?.grantsExist ? -1 : 0
-      }else{
+      } else {
         return 1
       }
     });
@@ -431,7 +442,7 @@ class Delegations extends React.Component {
       const operator = this.operatorForValidator(validatorAddress);
       const grants = operator && this.operatorGrants()[operator.botAddress]
 
-      let rowVariant 
+      let rowVariant
       if (isValidatorOperator) rowVariant = 'table-info'
 
       const delegationBalance = (delegation && delegation.balance) || {

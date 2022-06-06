@@ -105,48 +105,47 @@ const QueryClient = async (chainId, restUrls) => {
       });
   };
 
+  const getGranteeGrants = (grantee, opts) => {
+    const { pageSize } = opts || {}
+    return getAllPages((nextKey) => {
+      const searchParams = new URLSearchParams();
+      searchParams.append("pagination.limit", pageSize || 100);
+      if (nextKey) searchParams.append("pagination.key", nextKey);
+
+      return axios
+        .get(restUrl + "/cosmos/authz/v1beta1/grants/grantee/" + grantee + "?" +
+          searchParams.toString(), opts)
+        .then((res) => res.data)
+    }).then((pages) => {
+      return pages.map(el => el.grants).flat();
+    });
+  };
+
+  const getGranterGrants = (granter, opts) => {
+    const { pageSize } = opts || {}
+    return getAllPages((nextKey) => {
+      const searchParams = new URLSearchParams();
+      searchParams.append("pagination.limit", pageSize || 100);
+      if (nextKey) searchParams.append("pagination.key", nextKey);
+
+      return axios
+        .get(restUrl + "/cosmos/authz/v1beta1/grants/granter/" + granter + "?" +
+          searchParams.toString(), opts)
+        .then((res) => res.data)
+    }).then((pages) => {
+      return pages.map(el => el.grants).flat();
+    });
+  };
+
   const getGrants = (botAddress, address, opts) => {
     const searchParams = new URLSearchParams();
     if(botAddress) searchParams.append("grantee", botAddress);
     if(address) searchParams.append("granter", address);
-    // searchParams.append("msg_type_url", "/cosmos.staking.v1beta1.MsgDelegate");
     return axios
       .get(restUrl + "/cosmos/authz/v1beta1/grants?" + searchParams.toString(), opts)
       .then((res) => res.data)
       .then((result) => {
-        // claimGrant is removed but we track for now to allow revoke
-        const claimGrant = result.grants.find((el) => {
-          if (
-            el.authorization["@type"] ===
-              "/cosmos.authz.v1beta1.GenericAuthorization" &&
-            el.authorization.msg ===
-              "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward"
-          ) {
-            return Date.parse(el.expiration) > new Date();
-          } else {
-            return false;
-          }
-        });
-        const stakeGrant = result.grants.find((el) => {
-          if (
-            el.authorization["@type"] ===
-            "/cosmos.staking.v1beta1.StakeAuthorization" || (
-              // Handle GenericAuthorization for Ledger
-              el.authorization["@type"] ===
-              "/cosmos.authz.v1beta1.GenericAuthorization" &&
-              el.authorization.msg ===
-              "/cosmos.staking.v1beta1.MsgDelegate"
-            )
-          ) {
-            return Date.parse(el.expiration) > new Date();
-          } else {
-            return false;
-          }
-        })
-        return {
-          claimGrant,
-          stakeGrant,
-        };
+        return result.grants
       });
   };
 
@@ -178,9 +177,9 @@ const QueryClient = async (chainId, restUrls) => {
 
   async function findAvailableUrl(urls, type) {
     if (!Array.isArray(urls)) {
-      if(urls.match('cosmos.directory')){
+      if (urls.match('cosmos.directory')) {
         return urls // cosmos.directory health checks already
-      }else{
+      } else {
         urls = [urls]
       }
     }
@@ -209,6 +208,8 @@ const QueryClient = async (chainId, restUrls) => {
     getDelegations,
     getRewards,
     getGrants,
+    getGranteeGrants,
+    getGranterGrants,
     getWithdrawAddress
   };
 };
