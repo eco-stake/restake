@@ -225,6 +225,7 @@ export class Autostake {
   }
 
   getGrants(client, delegatorAddress) {
+    const { botAddress, address } = client.operator
     let timeout = client.network.data.autostake?.delegatorTimeout || 5000
     return client.queryClient.getGrants(botAddress, delegatorAddress, { timeout })
       .then(
