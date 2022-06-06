@@ -206,7 +206,7 @@ export class Autostake {
     let allGrants
     try {
       allGrants = await client.queryClient.getGranteeGrants(botAddress)
-    } catch (e) { console.log(e.message) }
+    } catch (e) {  }
     let grantCalls = addresses.map(item => {
       return async () => {
         if(allGrants) return this.parseGrantResponse(allGrants, botAddress, item, address)
