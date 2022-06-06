@@ -298,9 +298,7 @@ export class Autostake {
 
     timeStamp(address, "Can autostake", autostakeAmount, client.network.denom)
 
-    let messages = this.buildRestakeMessage(address, client.operator.address, autostakeAmount, client.network.denom)
-
-    return this.buildExecMessage(client.operator.botAddress, messages)
+    return this.buildRestakeMessage(address, client.operator.address, autostakeAmount, client.network.denom)
   }
 
   async autostake(client, messages) {
@@ -313,13 +311,14 @@ export class Autostake {
       return async () => {
         try {
           timeStamp('...batch', index + 1)
+          const execMsg = this.buildExecMessage(client.operator.botAddress, batch)
           const memo = 'REStaked by ' + client.operator.moniker
           const gasModifier = client.network.data.autostake?.gasModifier || 1.1
-          const gas = await client.signingClient.simulate(client.operator.botAddress, batch, memo, gasModifier);
+          const gas = await client.signingClient.simulate(client.operator.botAddress, [execMsg], memo, gasModifier);
           if(this.opts.dryRun){
             timeStamp("DRYRUN: Would autostake", batch.length, "TXs using", gas, "gas")
           }else{
-            await client.signingClient.signAndBroadcast(client.operator.botAddress, batch, gas, memo).then((result) => {
+            await client.signingClient.signAndBroadcast(client.operator.botAddress, [execMsg], gas, memo).then((result) => {
               timeStamp("Successfully broadcasted");
             }, (error) => {
               client.health.error('Failed to broadcast:', error.message)
