@@ -98,7 +98,7 @@ Pass network names to restrict the script to certain networks.
 docker-compose run --rm app npm run autostake osmosis akash regen
 ```
 
-A `Dry Run` script is also included, which runs the normal script but just skips sending the final TX, and skips any health check pings.
+A _Dry Run_ script is also included, which runs the normal autostake script but skips sending the final TXs, and skips any health check pings.
 
 ```bash
 docker-compose run --rm app npm run dryrun osmosis

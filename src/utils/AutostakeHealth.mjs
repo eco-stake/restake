@@ -43,7 +43,7 @@ class AutostakeHealth {
 
   ping(action, ...args){
     if(!this.uuid) return
-    if(this.dryRun) timeStamp('DRYRUN: Skipping health check ping')
+    if(this.dryRun) return timeStamp('DRYRUN: Skipping health check ping')
 
     axios.request({
       method: 'POST',
