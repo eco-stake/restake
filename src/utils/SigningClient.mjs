@@ -207,10 +207,14 @@ async function SigningClient(network, defaultGasPrice, signer, key) {
       signatures: [new Uint8Array()],
     }
 
-    const estimate = await axios.post(restUrl + '/cosmos/tx/v1beta1/simulate', {
-      tx_bytes: toBase64(TxRaw.encode(txBody).finish()),
-    }).then(el => el.data.gas_info.gas_used)
-    return (parseInt(estimate * (modifier || defaultGasModifier)));
+    try {
+      const estimate = await axios.post(restUrl + '/cosmos/tx/v1beta1/simulate', {
+        tx_bytes: toBase64(TxRaw.encode(txBody).finish()),
+      }).then(el => el.data.gas_info.gas_used)
+      return (parseInt(estimate * (modifier || defaultGasModifier)));
+    } catch (error) {
+      throw new Error(error.response?.data?.message || error.message)
+    }
   }
 
   function parseTxResult(result){
