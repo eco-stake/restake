@@ -39,6 +39,7 @@
     "start": "npx parcel src/index.html",
     "prebuild": "rm -rf dist/",
     "build": "npx parcel build src/index.html",
+    "dryrun": "NODE_OPTIONS=--openssl-legacy-provider node scripts/dryrun.mjs",
     "autostake": "NODE_OPTIONS=--openssl-legacy-provider node scripts/autostake.mjs"
   },
   "eslintConfig": {

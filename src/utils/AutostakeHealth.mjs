@@ -3,11 +3,12 @@ import axios from 'axios'
 import { timeStamp } from './Helpers.mjs'
 
 class AutostakeHealth {
-  constructor(config) {
+  constructor(config, opts) {
     const { address, uuid } = config || {}
+    const { dryRun } = opts || {}
     this.address = address || 'https://hc-ping.com'
     this.uuid = uuid
-    this.config = config
+    this.dryRun = dryRun
   }
 
   started(...args){
@@ -42,6 +43,7 @@ class AutostakeHealth {
 
   ping(action, ...args){
     if(!this.uuid) return
+    if(this.dryRun) return timeStamp('DRYRUN: Skipping health check ping')
 
     axios.request({
       method: 'POST',

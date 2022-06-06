@@ -98,6 +98,12 @@ Pass network names to restrict the script to certain networks.
 docker-compose run --rm app npm run autostake osmosis akash regen
 ```
 
+A _Dry Run_ script is also included, which runs the normal autostake script but skips sending the final TXs, and skips any health check pings.
+
+```bash
+docker-compose run --rm app npm run dryrun osmosis
+```
+
 ### Updating your local version
 
 REStake is MVP. Very MVP. Updates are happening all the time and there are bugs that still need fixing. Make sure you update often.
