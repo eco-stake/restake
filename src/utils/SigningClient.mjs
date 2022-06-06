@@ -45,7 +45,35 @@ async function SigningClient(network, defaultGasPrice, signer, key) {
     return axios
       .get(restUrl + "/cosmos/auth/v1beta1/accounts/" + address)
       .then((res) => res.data.account)
-      .then((value) => value.BaseAccount || value.baseAccount || value.base_account || value)
+      .then((value) => {
+        // see https://github.com/chainapsis/keplr-wallet/blob/7ca025d32db7873b7a870e69a4a42b525e379132/packages/cosmos/src/account/index.ts#L73
+        // If the chain modifies the account type, handle the case where the account type embeds the base account.
+        // (Actually, the only existent case is ethermint, and this is the line for handling ethermint)
+        const baseAccount =
+          value.BaseAccount || value.baseAccount || value.base_account;
+        if (baseAccount) {
+          value = baseAccount;
+        }
+
+        // If the account is the vesting account that embeds the base vesting account,
+        // the actual base account exists under the base vesting account.
+        // But, this can be different according to the version of cosmos-sdk.
+        // So, anyway, try to parse it by some ways...
+        const baseVestingAccount =
+          value.BaseVestingAccount ||
+          value.baseVestingAccount ||
+          value.base_vesting_account;
+        if (baseVestingAccount) {
+          value = baseVestingAccount;
+
+          const baseAccount =
+            value.BaseAccount || value.baseAccount || value.base_account;
+          if (baseAccount) {
+            value = baseAccount;
+          }
+        }
+        return value 
+      })
   };
 
   function getIsNanoLedger() {
