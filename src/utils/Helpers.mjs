@@ -25,6 +25,46 @@ export function overrideNetworks(networks, overrides){
   })
 }
 
+export function parseGrants(grants, grantee, granter) {
+  // claimGrant is removed but we track for now to allow revoke
+  const claimGrant = grants.find((el) => {
+    if (
+      (!el.grantee || el.grantee === grantee) && 
+      (!el.granter || el.granter === granter) &&
+      (el.authorization["@type"] ===
+      "/cosmos.authz.v1beta1.GenericAuthorization" &&
+      el.authorization.msg ===
+      "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward")
+    ) {
+      return Date.parse(el.expiration) > new Date();
+    } else {
+      return false;
+    }
+  });
+  const stakeGrant = grants.find((el) => {
+    if (
+      (!el.grantee || el.grantee === grantee) && 
+      (!el.granter || el.granter === granter) &&
+      (el.authorization["@type"] ===
+      "/cosmos.staking.v1beta1.StakeAuthorization" || (
+        // Handle GenericAuthorization for Ledger
+        el.authorization["@type"] ===
+        "/cosmos.authz.v1beta1.GenericAuthorization" &&
+        el.authorization.msg ===
+        "/cosmos.staking.v1beta1.MsgDelegate"
+      ))
+    ) {
+      return Date.parse(el.expiration) > new Date();
+    } else {
+      return false;
+    }
+  })
+  return {
+    claimGrant,
+    stakeGrant,
+  };
+}
+
 export function mapAsync(array, callbackfn) {
   return Promise.all(array.map(callbackfn));
 }
@@ -41,20 +81,20 @@ export function filterAsync(array, callbackfn) {
   });
 }
 
-export async function mapSync(calls, count, batchCallback){
+export async function mapSync(calls, count, batchCallback) {
   const batchCalls = _.chunk(calls, count);
   let results = []
   let index = 0
   for (const batchCall of batchCalls) {
-    const batchResults =  await mapAsync(batchCall, call => call())
+    const batchResults = await mapAsync(batchCall, call => call())
     results.push(batchResults)
-    if(batchCallback) batchCallback(batchResults, index)
+    if (batchCallback) batchCallback(batchResults, index)
     index++
   }
   return results.flat()
 }
 
-export async function executeSync(calls, count){
+export async function executeSync(calls, count) {
   const batchCalls = _.chunk(calls, count);
   for (const batchCall of batchCalls) {
     await mapAsync(batchCall, call => call())

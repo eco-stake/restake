@@ -15,7 +15,7 @@ import { MsgExec } from "cosmjs-types/cosmos/authz/v1beta1/tx.js";
 
 import Network from '../src/utils/Network.mjs'
 import AutostakeHealth from "../src/utils/AutostakeHealth.mjs";
-import {coin, timeStamp, mapSync, executeSync, overrideNetworks} from '../src/utils/Helpers.mjs'
+import {coin, timeStamp, mapSync, executeSync, overrideNetworks, parseGrants} from '../src/utils/Helpers.mjs'
 import EthSigner from '../src/utils/EthSigner.mjs';
 
 import 'dotenv/config'
@@ -202,17 +202,22 @@ export class Autostake {
   }
 
   async getGrantedAddresses(client, addresses) {
-    let batchSize = client.network.data.autostake?.batchQueries || 50
+    const { botAddress, address } = client.operator
+    let allGrants
+    try {
+      allGrants = await client.queryClient.getGranteeGrants(botAddress)
+    } catch (e) { console.log(e.message) }
     let grantCalls = addresses.map(item => {
       return async () => {
+        if(allGrants) return this.parseGrantResponse(allGrants, botAddress, item, address)
         try {
-          const grant = await this.getGrants(client, item)
-          return grant ? { address: item, grant: grant } : undefined
+          return await this.getGrants(client, item)
         } catch (error) {
-          client.health.error(item, 'Failed to get address', error.message)
+          client.health.error(item, 'Failed to get grants', error.message)
         }
       }
     })
+    let batchSize = client.network.data.autostake?.batchQueries || 50
     let grantedAddresses = await mapSync(grantCalls, batchSize, (batch, index) => {
       timeStamp('...batch', index + 1)
     })
@@ -221,33 +226,39 @@ export class Autostake {
 
   getGrants(client, delegatorAddress) {
     let timeout = client.network.data.autostake?.delegatorTimeout || 5000
-    return client.queryClient.getGrants(client.operator.botAddress, delegatorAddress, { timeout })
+    return client.queryClient.getGrants(botAddress, delegatorAddress, { timeout })
       .then(
         (result) => {
-          if (result.stakeGrant) {
-            if (result.stakeGrant.authorization['@type'] === "/cosmos.authz.v1beta1.GenericAuthorization") {
-              timeStamp(delegatorAddress, "Using GenericAuthorization, allowed")
-              return [client.operator.address];
-            }
-
-            const grantValidators = result.stakeGrant.authorization.allow_list.address
-            if (!grantValidators.includes(client.operator.address)) {
-              timeStamp(delegatorAddress, "Not autostaking for this validator, skipping")
-              return
-            }
-
-            const maxTokens = result.stakeGrant.authorization.max_tokens
-
-            return {
-              maxTokens: maxTokens && bignumber(maxTokens.amount),
-              validators: grantValidators,
-            }
-          }
+          return this.parseGrantResponse(result, botAddress, delegatorAddress, address)
         },
         (error) => {
           client.health.error(delegatorAddress, "ERROR skipping this run:", error.message || error)
         }
       )
+  }
+
+  parseGrantResponse(grants, botAddress, delegatorAddress, validatorAddress){
+    const result = parseGrants(grants, botAddress, delegatorAddress)
+    let grantValidators, maxTokens
+    if (result.stakeGrant) {
+      if (result.stakeGrant.authorization['@type'] === "/cosmos.authz.v1beta1.GenericAuthorization") {
+        timeStamp(delegatorAddress, "Using GenericAuthorization, allowed")
+        grantValidators = [validatorAddress];
+      }else{
+        grantValidators = result.stakeGrant.authorization.allow_list.address
+        if (!grantValidators.includes(validatorAddress)) {
+          timeStamp(delegatorAddress, "Not autostaking for this validator, skipping")
+          return
+        }
+        maxTokens = result.stakeGrant.authorization.max_tokens
+      }
+
+      const grant = {
+        maxTokens: maxTokens && bignumber(maxTokens.amount),
+        validators: grantValidators,
+      }
+      return { address: delegatorAddress, grant: grant }
+    }
   }
 
   async getAutostakeMessages(client, grantAddresses) {
@@ -257,7 +268,7 @@ export class Autostake {
         try {
           return await this.getAutostakeMessage(client, item)
         } catch (error) {
-          client.health.error(item.address, 'Failed to get address', error.message)
+          client.health.error(item.address, 'Failed to get autostake message', error.message)
         }
       }
     })
