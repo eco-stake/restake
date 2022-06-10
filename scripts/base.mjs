@@ -273,6 +273,8 @@ export class Autostake {
 
     const totalRewards = await this.totalRewards(client, address)
 
+    if(totalRewards === undefined) return
+
     let autostakeAmount = floor(totalRewards)
 
     if (smaller(bignumber(autostakeAmount), bignumber(client.operator.minimumReward))) {
@@ -414,7 +416,6 @@ export class Autostake {
         },
         (error) => {
           timeStamp(address, "ERROR skipping this run:", error.message || error)
-          return 0
         }
       )
   }
