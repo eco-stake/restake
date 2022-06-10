@@ -94,7 +94,6 @@ export class Autostake {
     timeStamp("Found", grantedAddresses.length, "delegators with valid grants...")
 
     await this.autostake(client, grantedAddresses)
-    health.complete(network.prettyName, "finished")
   }
 
   async getClient(data, health) {
@@ -299,7 +298,8 @@ export class Autostake {
   }
 
   async autostake(client, grantedAddresses) {
-    let batchSize = client.network.data.autostake?.batchTxs || 50
+    const { network, health } = client
+    let batchSize = network.data.autostake?.batchTxs || 50
     timeStamp('Calculating and autostaking in batches of', batchSize)
 
     this.batch = []
@@ -312,22 +312,23 @@ export class Autostake {
         try {
           messages = await this.getAutostakeMessage(client, item)
         } catch (error) {
-          client.health.error(item.address, 'Failed to get autostake message', error.message)
+          health.error(item.address, 'Failed to get autostake message', error.message)
         }
         this.processed[item.address] = true
 
         await this.sendInBatches(client, messages, batchSize, grantedAddresses.length)
       }
     })
-    let querySize = client.network.data.autostake?.batchQueries || _.clamp(batchSize, 50)
+    let querySize = network.data.autostake?.batchQueries || _.clamp(batchSize, 50)
     await executeSync(calls, querySize)
 
     const results = await Promise.all(this.messages)
     const errors = results.filter(result => result.error)
-    timeStamp(`Sent ${results.length - errors.length}/${results.length} messages successfully`);
+    timeStamp(`${network.prettyName} summary:`);
     for (let [index, result] of results.entries()) {
-      timeStamp(`Message ${index + 1}:`, result.message);
+      timeStamp(`TX ${index + 1}:`, result.message);
     }
+    health.complete(`${network.prettyName} finished: Sent ${results.length - errors.length}/${results.length} messages`)
   }
 
   async sendInBatches(client, messages, batchSize, total){
@@ -363,11 +364,11 @@ export class Autostake {
         return { message }
       } else {
         return await client.signingClient.signAndBroadcast(client.operator.botAddress, [execMsg], gas, memo).then((response) => {
-          const message = `Sent ${messages.length} TXs: ${response.transactionHash}`
+          const message = `Sent ${messages.length} messages - ${response.transactionHash}`
           timeStamp(message)
           return { message }
         }, (error) => {
-          const message = `Failed ${messages.length} TXs: ${error.message}`
+          const message = `Failed ${messages.length} messages - ${error.message}`
           client.health.error(message)
           return { message, error }
         })
