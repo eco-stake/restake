@@ -23,9 +23,6 @@ import 'dotenv/config'
 export class Autostake {
   constructor(opts){
     this.opts = opts || {}
-    this.batch = []
-    this.messages = []
-    this.processed = {}
     this.mnemonic = process.env.MNEMONIC
     if(!this.mnemonic){
       timeStamp('Please provide a MNEMONIC environment variable')
@@ -302,6 +299,10 @@ export class Autostake {
   async autostake(client, grantedAddresses) {
     let batchSize = client.network.data.autostake?.batchTxs || 50
     timeStamp('Calculating and autostaking in batches of', batchSize)
+
+    this.batch = []
+    this.messages = []
+    this.processed = {}
 
     const calls = grantedAddresses.map((item, index) => {
       return async () => {
