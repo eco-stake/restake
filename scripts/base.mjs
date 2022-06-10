@@ -367,13 +367,13 @@ export class Autostake {
         }, (error) => {
           const message = `Failed ${messages.length} TXs: ${error.message}`
           client.health.error(message)
-          return { message }
+          return { message, error }
         })
       }
     } catch (error) {
       const message = `Failed ${messages.length} TXs: ${error.message}`
       client.health.error(message)
-      return { message }
+      return { message, error }
     }
   }
 
