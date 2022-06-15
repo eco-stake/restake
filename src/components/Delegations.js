@@ -152,13 +152,14 @@ class Delegations extends React.Component {
     let allGrants
     try {
       allGrants = await this.props.queryClient.getGranterGrants(this.props.address)
+      this.setAllGrants(allGrants, this.orderedOperators(), this.props.address)
+      return
     } catch (e) { console.log('Failed to get all grants in batch') }
 
     const calls = this.orderedOperators().map((operator) => {
       return () => {
         const { botAddress } = operator;
         if (!this.props.operators.includes(operator)) return;
-        if(allGrants) return new Promise(() => this.setGrants(allGrants, botAddress, this.props.address))
 
         return this.props.queryClient.getGrants(botAddress, this.props.address).then(
           (result) => {
@@ -180,7 +181,7 @@ class Delegations extends React.Component {
     }
   }
 
-  setGrants(grants, grantee, granter){
+  buildGrants(grants, grantee, granter){
     const { claimGrant, stakeGrant } = parseGrants(grants, grantee, granter)
     let grantValidators, maxTokens;
     if (stakeGrant) {
@@ -188,12 +189,25 @@ class Delegations extends React.Component {
         stakeGrant.authorization.allow_list?.address;
       maxTokens = stakeGrant.authorization.max_tokens
     }
-    const operatorGrant = {
+    return {
       claimGrant: claimGrant,
       stakeGrant: stakeGrant,
       validators: grantValidators,
       maxTokens: maxTokens ? bignumber(maxTokens.amount) : null
     };
+  }
+
+  setAllGrants(grants, operators, granter){
+    const operatorGrants = operators.reduce((sum, operator) => {
+      const grantee = operator.botAddress
+      sum[grantee] = this.buildGrants(grants, grantee, granter)
+      return sum
+    }, {})
+    this.setState({operatorGrants: operatorGrants})
+  }
+
+  setGrants(grants, grantee, granter){
+    const operatorGrant = this.buildGrants(grants, grantee, granter)
     this.setState((state, props) => ({
       operatorGrants: _.set(
         state.operatorGrants,
