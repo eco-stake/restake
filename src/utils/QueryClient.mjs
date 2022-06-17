@@ -105,6 +105,34 @@ const QueryClient = async (chainId, restUrls) => {
       });
   };
 
+  const getProposals = (opts) => {
+    const { pageSize } = opts || {}
+    return getAllPages((nextKey) => {
+      const searchParams = new URLSearchParams();
+      searchParams.append("pagination.limit", pageSize || 100);
+      if (nextKey) searchParams.append("pagination.key", nextKey);
+
+      return axios
+        .get(restUrl + "/cosmos/gov/v1beta1/proposals?" +
+          searchParams.toString(), opts)
+        .then((res) => res.data)
+    }).then((pages) => {
+      return pages.map(el => el.proposals).flat();
+    });
+  };
+
+  const getProposalTally = (proposal_id, opts) => {
+    return axios
+      .get(restUrl + "/cosmos/gov/v1beta1/proposals/" + proposal_id + '/tally', opts)
+      .then((res) => res.data)
+  };
+
+  const getProposalVote = (proposal_id, address, opts) => {
+    return axios
+      .get(restUrl + "/cosmos/gov/v1beta1/proposals/" + proposal_id + '/votes/' + address, opts)
+      .then((res) => res.data)
+  };
+
   const getGranteeGrants = (grantee, opts) => {
     const { pageSize } = opts || {}
     return getAllPages((nextKey) => {
@@ -207,6 +235,9 @@ const QueryClient = async (chainId, restUrls) => {
     getBalance,
     getDelegations,
     getRewards,
+    getProposals,
+    getProposalTally,
+    getProposalVote,
     getGrants,
     getGranteeGrants,
     getGranterGrants,

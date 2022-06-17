@@ -15,7 +15,9 @@ import {
   Button,
   Badge,
   Dropdown,
-  ButtonGroup
+  ButtonGroup,
+  Navbar,
+  Nav
 } from 'react-bootstrap';
 import {
   Droplet,
@@ -36,12 +38,14 @@ import LogoWhite3x from '../assets/logo-white@3x.png'
 import PoweredByAkash from '../assets/powered-by-akash.svg'
 import PoweredByAkashWhite from '../assets/powered-by-akash-white.svg'
 import TooltipIcon from './TooltipIcon';
+import Governance from './Governance';
 
 class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {}
     this.connect = this.connect.bind(this);
+    this.disconnect = this.disconnect.bind(this);
     this.showNetworkSelect = this.showNetworkSelect.bind(this);
     this.getBalance = this.getBalance.bind(this);
   }
@@ -82,7 +86,17 @@ class App extends React.Component {
     }
   }
 
-  async connect() {
+  disconnect(){
+    localStorage.removeItem('connected')
+    this.setState({
+      address: null,
+      balance: null,
+      queryClient: null,
+      stargateClient: null
+    })
+  }
+
+  async connect(manual) {
     if (!this.connected()) {
       return this.setState({
         error: 'Could not connect to any available API servers'
@@ -90,6 +104,15 @@ class App extends React.Component {
     }
     const { network } = this.props
     const chainId = network.chainId
+
+    if(localStorage.getItem('connected') !== '1'){
+      if(manual){
+        localStorage.setItem('connected', '1')
+      }else{
+        return
+      }
+    }
+
     try {
       if (window.keplr) {
         if (network.gasPricePrefer) {
@@ -116,6 +139,7 @@ class App extends React.Component {
         stargateClient.registry.register("/cosmos.authz.v1beta1.MsgRevoke", MsgRevoke)
         this.setState({
           address: address,
+          accountName: key.name,
           stargateClient: stargateClient,
           queryClient: network.queryClient,
           error: false
@@ -129,13 +153,6 @@ class App extends React.Component {
         })
       }
     }
-  }
-
-  async disconnect() {
-    this.setState({
-      address: null,
-      stargateClient: null
-    })
   }
 
   suggestChain(network) {
@@ -232,49 +249,63 @@ class App extends React.Component {
             </div>
           </div>
           <div className="d-flex flex-wrap justify-content-between border-bottom">
-            <nav className={`navbar navbar-expand ${this.props.theme === 'dark' ? 'navbar-dark' : 'navbar-light'}`}>
+            <Navbar className={`navbar navbar-expand ${this.props.theme === 'dark' ? 'navbar-dark' : 'navbar-light'}`}>
               <div className="justify-content-center">
-                <ul className="navbar-nav">
-                  <li className="nav-item pe-2 border-end">
-                    <a className="nav-link active" aria-current="page" href="#"><Coin className="mb-1 me-1" /> Delegate</a>
-                  </li>
-                  <li className="nav-item ps-2">
-                    <a className="nav-link" href="#"><Inboxes className="mb-1 me-1" /> Govern</a>
-                  </li>
-                </ul>
+                <Nav activeKey={this.props.active} onSelect={(e) => this.props.setActive(e)}>
+                  <div className="nav-item pe-2 border-end">
+                    <Nav.Link eventKey="delegations">
+                      <Coin className="mb-1 me-1" /> Delegate
+                    </Nav.Link>
+                  </div>
+                  <div className="nav-item ps-2">
+                    <Nav.Link eventKey="governance">
+                      <Inboxes className="mb-1 me-1" /> Govern
+                    </Nav.Link>
+                  </div>
+                </Nav>
               </div>
-            </nav>
+            </Navbar>
             <nav className={`navbar navbar-expand-lg ${this.props.theme === 'dark' ? 'navbar-dark' : 'navbar-light'}`}>
               <div className="justify-content-center">
                 <ul className="navbar-nav">
-                  <li className="nav-item pe-3 pt-2 border-end d-none d-lg-block">
-                    <CopyToClipboard text={this.state.address}
-                      onCopy={() => this.setCopied()}>
-                      <span role="button"><span className={'small d-block clipboard' + (this.state.copied ? ' copied' : '')}>{this.state.address}</span></span>
-                    </CopyToClipboard>
-                  </li>
-                  <li className="nav-item ps-3 pt-1">
-                    <Dropdown as={ButtonGroup}>
-                      <Dropdown.Toggle size="sm" className="rounded" id="dropdown-custom-1">
-                        <Coins
-                          coins={this.state.balance}
-                          decimals={this.props.network.decimals}
-                          className="me-1"
-                        />
-                      </Dropdown.Toggle>
-                      <Dropdown.Menu>
-                        <Dropdown.Header>Cerberus ECOStake</Dropdown.Header>
-                        <Dropdown.Item>
-                          <CopyToClipboard text={this.state.address}
-                            onCopy={() => this.setCopied()}>
-                            <span role="button"><span style={{ maxWidth: 200 }} className={'small d-block text-truncate clipboard' + (this.state.copied ? ' copied' : '')}>{this.state.address}</span></span>
-                          </CopyToClipboard>
-                        </Dropdown.Item>
-                        <Dropdown.Divider />
-                        <Dropdown.Item href="#/action-2">Disconnect</Dropdown.Item>
-                      </Dropdown.Menu>
-                    </Dropdown>
-                  </li>
+                  {this.state.address ? (
+                    <>
+                      <li className="nav-item pe-3 pt-2 border-end d-none d-lg-block">
+                        <CopyToClipboard text={this.state.address}
+                          onCopy={() => this.setCopied()}>
+                          <span role="button"><span className={'small d-block clipboard' + (this.state.copied ? ' copied' : '')}>{this.state.address}</span></span>
+                        </CopyToClipboard>
+                      </li>
+                      <li className="nav-item ps-3 pt-1">
+                        <Dropdown as={ButtonGroup}>
+                          <Dropdown.Toggle size="sm" className="rounded" id="dropdown-custom-1">
+                            <Coins
+                              coins={this.state.balance}
+                              decimals={this.props.network.decimals}
+                              className="me-1"
+                            />
+                          </Dropdown.Toggle>
+                          <Dropdown.Menu>
+                            <Dropdown.Header>{this.state.accountName || 'Wallet'}</Dropdown.Header>
+                            <Dropdown.Item>
+                              <CopyToClipboard text={this.state.address}
+                                onCopy={() => this.setCopied()}>
+                                <span role="button"><span style={{ maxWidth: 200 }} className={'small d-block text-truncate clipboard' + (this.state.copied ? ' copied' : '')}>{this.state.address}</span></span>
+                              </CopyToClipboard>
+                            </Dropdown.Item>
+                            <Dropdown.Divider />
+                            <Dropdown.Item onClick={this.disconnect}>Disconnect</Dropdown.Item>
+                          </Dropdown.Menu>
+                        </Dropdown>
+                      </li>
+                    </>
+                  ) : (
+                    <>
+                      <li className="nav-item ps-3">
+                        <Button onClick={() => this.connect(true)} className="btn-sm">Connect</Button>
+                      </li>
+                    </>
+                  )}
                 </ul>
               </div>
             </nav>
@@ -284,6 +315,11 @@ class App extends React.Component {
           <p className="lead fs-3 text-center my-5">
             REStake allows validators to <strong onClick={() => this.setState({ showAbout: true })} className="text-decoration-underline" role="button">auto-compound</strong> your <strong onClick={this.showNetworkSelect} className="text-decoration-underline" role="button">{this.props.network.prettyName}</strong> staking rewards for you
           </p>
+          {this.props.network.experimental && (
+            <AlertMessage variant="info" dismissible={false}>
+              This network was added to REStake automatically and has not been thoroughly tested yet. <a href="https://github.com/eco-stake/restake/issues" target="_blank">Raise an issue</a> if you have any problems.
+            </AlertMessage>
+          )}
           <AlertMessage message={this.state.error} variant="danger" dismissible={false} />
           {!this.state.address && (
             !this.state.keplr
@@ -293,13 +329,20 @@ class App extends React.Component {
                 </AlertMessage>
               ) : (
                 <div className="mb-5 text-center">
-                  <Button onClick={this.connect}>
+                  <Button onClick={() => this.connect(true)}>
                     Connect Keplr
                   </Button>
                 </div>
               )
           )}
-          {this.state.address &&
+          {this.props.active === 'governance' && this.state.address && (
+          <Governance
+            network={this.props.network}
+            address={this.state.address}
+            queryClient={this.state.queryClient}
+            stargateClient={this.state.stargateClient} />
+          )}
+          {this.props.active === 'delegations' && this.state.address &&
             <>
               <Delegations
                 network={this.props.network}
@@ -341,7 +384,7 @@ class App extends React.Component {
             </a>
             {this.props.network?.usingDirectory && (
               <a href="https://cosmos.directory" target="_blank" className="text-reset text-decoration-none d-block small">
-                <span className="d-none d-sm-inline">Interchain data from</span> <u>cosmos.directory</u>
+                <span className="d-none d-sm-inline">Interchain APIs from</span> <u>cosmos.directory</u>
               </a>
             )}
           </div>

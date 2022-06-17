@@ -114,7 +114,7 @@ class Delegations extends React.Component {
   }
 
   async getDelegations(hideError) {
-    this.props.queryClient.getDelegations(this.props.address)
+    return this.props.queryClient.getDelegations(this.props.address)
       .then(
         (delegations) => {
           const orderedAddresses = Object.keys(this.props.validators)
@@ -446,11 +446,6 @@ class Delegations extends React.Component {
         {!this.authzSupport() && (
           <AlertMessage variant="info" dismissible={false}>
             {this.props.network.prettyName} doesn't support Authz just yet. You can stake and compound manually for now and REStake will update automatically when support is added.
-          </AlertMessage>
-        )}
-        {this.props.network.experimental && (
-          <AlertMessage variant="info" dismissible={false}>
-            This network was added to REStake automatically and has not been thoroughly tested yet. <a href="https://github.com/eco-stake/restake/issues" target="_blank">Raise an issue</a> if you have any problems.
           </AlertMessage>
         )}
         {this.authzSupport() &&

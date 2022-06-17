@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import React, { useEffect, useState, useReducer } from 'react';
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useMatch } from "react-router-dom";
 import Network from '../utils/Network.mjs'
 import CosmosDirectory from '../utils/CosmosDirectory.mjs'
 import App from './App';
@@ -18,6 +18,7 @@ const DARK_THEME = 'superhero'
 function NetworkFinder() {
   const params = useParams();
   const navigate = useNavigate()
+  const govMatch = useMatch("/:network/govern/*");
 
   const directory = CosmosDirectory()
 
@@ -60,7 +61,21 @@ function NetworkFinder() {
       operators: network.getOperators()
     })
 
-    navigate("/" + network.name);
+    if(govMatch){
+      navigate("/" + network.name + '/govern');
+    }else{
+      navigate("/" + network.name);
+    }
+  }
+
+  const setActive = (active) => {
+    if(!state.network) return
+    if(active === 'governance'){
+      navigate("/" + state.network.name + '/govern');
+    }else{
+      navigate("/" + state.network.name);
+    }
+    setState({active})
   }
 
   useEffect(() => {
@@ -142,7 +157,7 @@ function NetworkFinder() {
   useEffect(() => {
     if(state.error) return
     if(!state.network || !state.network.connected) return
-    if(state.network && (!Object.keys(state.validators).length)){
+    if(state.network && !Object.keys(state.validators).length){
       setState({
         validators: state.network.getValidators(),
         operators: state.network.getOperators(),
@@ -152,8 +167,15 @@ function NetworkFinder() {
   }, [state.network])
 
   useEffect(() => {
-    const validatorAddresses = state.validators && Object.keys(state.validators)
-    if(validatorAddresses && validatorAddresses.includes(params.validator)){
+    if(govMatch){
+      setState({active: 'governance'})
+    }else{
+      setState({active: 'delegations'})
+    }
+  }, [govMatch])
+
+  useEffect(() => {
+    if(params.validator && state.validators[params.validator]){
       setState({ validator: state.validators[params.validator] })
     }else if(state.validator){
       setState({ validator: null })
@@ -174,9 +196,9 @@ function NetworkFinder() {
     )
   }
 
-  return <App networks={state.networks} network={state.network}
+  return <App networks={state.networks} network={state.network} active={state.active}
   operators={state.operators} validators={state.validators} validator={state.validator}
-  changeNetwork={(network, validators) => changeNetwork(network, validators)}
+  changeNetwork={(network, validators) => changeNetwork(network, validators)} setActive={setActive}
   theme={theme} themeChoice={themeChoice} themeDefault={themeDefault} setThemeChoice={setThemeChoice}
   />;
 }

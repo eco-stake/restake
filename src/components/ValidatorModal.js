@@ -27,7 +27,7 @@ function ValidatorModal(props) {
   useEffect(() => {
     if (props.show && selectedValidator && validator?.operator_address === selectedValidator.operator_address && params.validator !== selectedValidator.operator_address) {
       navigate(`/${network.name}/${selectedValidator.operator_address}`)
-    } else if (params.validator && !props.show) {
+    } else if (params.validator && props.show === false) {
       navigate(`/${network.name}`)
     }
   }, [props.show, params.validator, selectedValidator])

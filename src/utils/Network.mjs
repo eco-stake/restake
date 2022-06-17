@@ -55,7 +55,7 @@ class Network {
     this.gasPrice = this.data.gasPrice || this.defaultGasPrice
     this.gasPriceStep = this.data.gasPriceStep
     this.gasPricePrefer = this.data.gasPricePrefer
-    this.gasModifier = this.data.gasModifier || 1.3
+    this.gasModifier = this.data.gasModifier || 1.5
     this.txTimeout = this.data.txTimeout || 60_000
   }
 

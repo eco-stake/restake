@@ -3,7 +3,7 @@ import _ from 'lodash'
 import FuzzySearch from 'fuzzy-search'
 import { Bech32 } from '@cosmjs/encoding'
 
-import { add } from 'mathjs'
+import { format, add } from 'mathjs'
 
 import Coins from "./Coins";
 import ClaimRewards from "./ClaimRewards";
@@ -217,6 +217,9 @@ function Validators(props) {
               )}
           </td>
         )}
+        <td className="d-none d-lg-table-cell text-center">
+          <small>{format(validator.commission.commission_rates.rate * 100, 2)}%</small>
+        </td>
         <td className="d-none d-sm-table-cell">
           <small>
             <Coins
@@ -225,17 +228,19 @@ function Validators(props) {
             />
           </small>
         </td>
-        <td className="d-none d-md-table-cell">
-          {denomRewards && (
-            <small>
-              <Coins
-                key={denomRewards.denom}
-                coins={denomRewards}
-                decimals={network.decimals}
-              />
-            </small>
-          )}
-        </td>
+        {!props.modal && (
+          <td className="d-none d-md-table-cell">
+            {denomRewards && (
+              <small>
+                <Coins
+                  key={denomRewards.denom}
+                  coins={denomRewards}
+                  decimals={network.decimals}
+                />
+              </small>
+            )}
+          </td>
+        )}
         <td>
           <div className="d-grid gap-2 d-md-flex justify-content-end">
             {props.manageButton ? (
@@ -367,7 +372,7 @@ function Validators(props) {
           <div className="input-group">
             <input className="form-control border-right-0 border" onChange={filterValidators} value={filter.keywords} type="text" placeholder="Search.." style={{maxWidth: 150}} />
             <span className="input-group-append">
-              <button className="btn btn-outline-secondary border-left-0 border" type="button" onClick={() => setFilter({...filter, keywords: ''})}>
+              <button className="btn btn-light text-dark border-left-0 border" type="button" onClick={() => setFilter({...filter, keywords: ''})}>
                 <XCircle />
               </button>
             </span>
@@ -419,8 +424,11 @@ function Validators(props) {
                   </TooltipIcon>
                 </th>
               )}
+              <th className="d-none d-lg-table-cell text-center">Fee</th>
               <th className="d-none d-sm-table-cell">Delegation</th>
-              <th className="d-none d-md-table-cell">Rewards</th>
+              {!props.modal && (
+                <th className="d-none d-md-table-cell">Rewards</th>
+              )}
               <th></th>
             </tr>
           </thead>
@@ -430,11 +438,15 @@ function Validators(props) {
           <tfoot>
             <tr>
               <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td>
+              <td colSpan={2}></td>
+              <td className="d-none d-sm-table-cell text-center"></td>
+              <td className="d-sm-none"></td>
+              <td className="d-none d-lg-table-cell text-center"></td>
+              {network.apyEnabled !== false && (
+                <td className="d-none d-lg-table-cell text-center"></td>
+              )}
+              <td className="d-none d-lg-table-cell"></td>
+              <td className="d-none d-sm-table-cell">
                 <strong className="small">
                   <Coins
                     coins={{
@@ -449,23 +461,25 @@ function Validators(props) {
                     decimals={network.decimals} />
                 </strong>
               </td>
-              <td>
-                {props.rewards && (
-                  <strong className="small">
-                    <Coins
-                      coins={{
-                        amount: results.reduce((sum, result) => {
-                          const reward = props.rewards[result.operator_address]?.reward?.find(el => el.denom === network.denom)
-                          if(!reward) return sum
+              {!props.modal && (
+                <td className="d-none d-sm-table-cell">
+                  {props.rewards && (
+                    <strong className="small">
+                      <Coins
+                        coins={{
+                          amount: results.reduce((sum, result) => {
+                            const reward = props.rewards[result.operator_address]?.reward?.find(el => el.denom === network.denom)
+                            if (!reward) return sum
 
-                          return add(sum, reward.amount)
-                        }, 0),
-                        denom: network.denom
-                      }}
-                      decimals={network.decimals} />
-                  </strong>
-                )}
-              </td>
+                            return add(sum, reward.amount)
+                          }, 0),
+                          denom: network.denom
+                        }}
+                        decimals={network.decimals} />
+                    </strong>
+                  )}
+                </td>
+              )}
               <td></td>
             </tr>
           </tfoot>
