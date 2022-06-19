@@ -37,7 +37,7 @@ function Validators(props) {
     while(filtered.length < 1 && group !== 'all'){
       group = group === 'delegated' ? 'operators' : 'all'
       filtered = filteredValidators(validators, {...filter, group})
-      if(filtered.length > 0){
+      if(filtered.length > 0 || group === 'all'){
         return setFilter({ ...filter, group })
       }
     }
@@ -378,10 +378,10 @@ function Validators(props) {
             </span>
           </div>
         </div>
-        <div className="d-flex justify-content-center align-self-center">
-          <Nav fill variant="pills" activeKey={filter.group} className={`flex-column flex-md-row${props.modal ? ' small' : ''}`} onSelect={(e) => setFilter({...filter, group: e})}>
+        <div className={`${!props.modal && 'd-lg-flex'} d-none position-absolute mx-auto justify-content-center align-self-center`}>
+          <Nav fill variant="pills" activeKey={filter.group} className={`flex-row${props.modal ? ' small' : ''}`} onSelect={(e) => setFilter({...filter, group: e})}>
             <Nav.Item>
-              <Nav.Link eventKey="delegated" disabled={filteredValidators(validators, {...filter, group: 'delegated'}).length < 1}>Delegations</Nav.Link>
+              <Nav.Link eventKey="delegated" disabled={filteredValidators(validators, {...filter, group: 'delegated'}).length < 1}>My Delegations</Nav.Link>
             </Nav.Item>
             <Nav.Item>
               <Nav.Link eventKey="operators" disabled={filteredValidators(validators, {...filter, group: 'operators'}).length < 1}>REStake Operators</Nav.Link>
@@ -391,8 +391,15 @@ function Validators(props) {
             </Nav.Item>
           </Nav>
         </div>
+        <div className={`d-flex ${!props.modal && 'd-lg-none'} justify-content-center`}>
+          <select className="form-select w-auto h-auto" aria-label="Delegation group" value={filter.group} onChange={(e) => setFilter({...filter, group: e.target.value})}>
+            <option value="delegated">My Delegations</option>
+            <option value="operators">REStake Operators</option>
+            <option value="all">All</option>
+          </select>
+        </div>
         <div className="flex-fill d-flex justify-content-end">
-          <select className="form-select form-select-sm w-auto h-auto" aria-label="Validator status" value={filter.status} onChange={(e) => setFilter({...filter, status: e.target.value})}>
+          <select className="form-select w-auto h-auto" aria-label="Validator status" value={filter.status} onChange={(e) => setFilter({...filter, status: e.target.value})}>
             <option value="active">Active</option>
             <option value="inactive">Inactive</option>
             <option value="all">All</option>

@@ -24,7 +24,9 @@ import {
   DropletFill,
   DropletHalf,
   Coin,
-  Inboxes
+  Inboxes,
+  Hurricane,
+  Stars
 } from 'react-bootstrap-icons'
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import GitHubButton from 'react-github-btn'
@@ -39,15 +41,18 @@ import PoweredByAkash from '../assets/powered-by-akash.svg'
 import PoweredByAkashWhite from '../assets/powered-by-akash-white.svg'
 import TooltipIcon from './TooltipIcon';
 import Governance from './Governance';
+import Networks from './Networks';
 
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {}
+    const favouriteJson = localStorage.getItem('favourites')
+    this.state = {favourites: favouriteJson ? JSON.parse(favouriteJson) : []}
     this.connect = this.connect.bind(this);
     this.disconnect = this.disconnect.bind(this);
     this.showNetworkSelect = this.showNetworkSelect.bind(this);
     this.getBalance = this.getBalance.bind(this);
+    this.toggleFavourite = this.toggleFavourite.bind(this);
   }
 
   async componentDidMount() {
@@ -57,9 +62,11 @@ class App extends React.Component {
   }
 
   async componentDidUpdate(prevProps, prevState) {
+    if(!this.props.network) return
+
     if (this.state.keplr != prevState.keplr) {
       this.connect()
-    } else if (this.props.network && this.props.network !== prevProps.network) {
+    } else if (this.props.network !== prevProps.network) {
       this.setState({ balance: undefined, address: undefined })
       this.connect()
     }
@@ -75,7 +82,7 @@ class App extends React.Component {
   }
 
   connected() {
-    return this.props.network.connected && Object.values(this.props.validators).length > 0
+    return this.props.network?.connected && Object.values(this.props.validators).length > 0
   }
 
   connectKeplr() {
@@ -97,7 +104,7 @@ class App extends React.Component {
   }
 
   async connect(manual) {
-    if (!this.connected()) {
+    if (this.props.network && !this.connected()) {
       return this.setState({
         error: 'Could not connect to any available API servers'
       })
@@ -185,6 +192,18 @@ class App extends React.Component {
     })
   }
 
+  toggleFavourite(network){
+    const { favourites } = this.state
+    let newFavourites
+    if(favourites.includes(network.path)){
+      newFavourites = favourites.filter(el => el !== network.path)
+    }else{
+      newFavourites = [...favourites, network.path]
+    }
+    localStorage.setItem('favourites', JSON.stringify(newFavourites))
+    this.setState({ favourites: newFavourites })
+  }
+
   async getBalance() {
     this.state.queryClient.getBalance(this.state.address, this.props.network.denom)
       .then(
@@ -229,9 +248,9 @@ class App extends React.Component {
     return (
       <Container>
         <header className="">
-          <div className="d-flex flex-wrap justify-content-between py-3 border-bottom">
-            <div className="logo d-flex align-items-center mb-3 mb-md-0 text-reset text-decoration-none">
-              <span onClick={() => this.setState({ showAbout: true })} role="button" className="text-reset text-decoration-none">
+          <div className="d-flex justify-content-between py-3 border-bottom">
+            <div className="logo d-flex align-items-center text-reset text-decoration-none">
+              <span onClick={() => this.props.setActive('networks')} role="button" className="text-reset text-decoration-none">
                 {this.props.theme === 'light'
                   ? (
                     <img src={Logo} srcSet={`${Logo2x} 2x, ${Logo3x} 3x`} alt="REStake" />
@@ -240,7 +259,12 @@ class App extends React.Component {
                   )}
               </span>
             </div>
-            <div className="d-flex align-items-center mb-3 mb-md-0 text-reset text-decoration-none">
+            <div className="d-flex align-items-center text-reset text-decoration-none">
+              <p className="lead fs-6 text-center m-0 px-5 d-lg-block d-none">
+                REStake allows validators to <strong onClick={() => this.setState({ showAbout: true })} className="text-decoration-underline" role="button">auto-compound</strong> your {this.props.network && <strong onClick={this.showNetworkSelect} className="text-decoration-underline" role="button">{this.props.network.prettyName}</strong>} staking rewards
+              </p>
+            </div>
+            <div className="d-flex align-items-center text-reset text-decoration-none">
               {this.themeIcon()}
               <NetworkSelect show={this.state.showNetworkSelect} onHide={() => { this.setState({ showNetworkSelect: false }) }} networks={this.props.networks}
                 network={this.props.network}
@@ -248,27 +272,36 @@ class App extends React.Component {
                 changeNetwork={this.props.changeNetwork} />
             </div>
           </div>
-          <div className="d-flex flex-wrap justify-content-between border-bottom">
+          <div className="d-flex justify-content-between border-bottom">
             <Navbar className={`navbar navbar-expand ${this.props.theme === 'dark' ? 'navbar-dark' : 'navbar-light'}`}>
               <div className="justify-content-center">
                 <Nav activeKey={this.props.active} onSelect={(e) => this.props.setActive(e)}>
-                  <div className="nav-item pe-2 border-end">
-                    <Nav.Link eventKey="delegations">
-                      <Coin className="mb-1 me-1" /> Delegate
-                    </Nav.Link>
-                  </div>
-                  <div className="nav-item ps-2">
-                    <Nav.Link eventKey="governance">
-                      <Inboxes className="mb-1 me-1" /> Govern
-                    </Nav.Link>
-                  </div>
+                      <div className="nav-item pe-2 border-end">
+                        <Nav.Link eventKey="networks">
+                          <Stars className="mb-1 me-1" /> Explore
+                        </Nav.Link>
+                      </div>
+                  {this.props.network && (
+                    <>
+                      <div className="nav-item px-2 border-end">
+                        <Nav.Link eventKey="delegations">
+                          <Coin className="mb-1 me-1" /> Delegate
+                        </Nav.Link>
+                      </div>
+                      <div className="nav-item ps-2">
+                        <Nav.Link eventKey="governance">
+                          <Inboxes className="mb-1 me-1" /> Govern
+                        </Nav.Link>
+                      </div>
+                    </>
+                  )}
                 </Nav>
               </div>
             </Navbar>
             <nav className={`navbar navbar-expand-lg ${this.props.theme === 'dark' ? 'navbar-dark' : 'navbar-light'}`}>
               <div className="justify-content-center">
                 <ul className="navbar-nav">
-                  {this.state.address ? (
+                  {this.props.network && this.state.address ? (
                     <>
                       <li className="nav-item pe-3 pt-2 border-end d-none d-lg-block">
                         <CopyToClipboard text={this.state.address}
@@ -299,7 +332,7 @@ class App extends React.Component {
                         </Dropdown>
                       </li>
                     </>
-                  ) : (
+                  ) : this.props.network && (
                     <>
                       <li className="nav-item ps-3">
                         <Button onClick={() => this.connect(true)} className="btn-sm">Connect</Button>
@@ -311,29 +344,33 @@ class App extends React.Component {
             </nav>
           </div>
         </header>
-        <div className="mb-5">
-          <p className="lead fs-3 text-center my-5">
-            REStake allows validators to <strong onClick={() => this.setState({ showAbout: true })} className="text-decoration-underline" role="button">auto-compound</strong> your <strong onClick={this.showNetworkSelect} className="text-decoration-underline" role="button">{this.props.network.prettyName}</strong> staking rewards for you
-          </p>
-          {this.props.network.experimental && (
+        <div className="my-4">
+          {this.props.network?.experimental && (
             <AlertMessage variant="info" dismissible={false}>
               This network was added to REStake automatically and has not been thoroughly tested yet. <a href="https://github.com/eco-stake/restake/issues" target="_blank">Raise an issue</a> if you have any problems.
             </AlertMessage>
           )}
           <AlertMessage message={this.state.error} variant="danger" dismissible={false} />
-          {!this.state.address && (
+          {!this.state.address && this.props.network && (
             !this.state.keplr
               ? (
                 <AlertMessage variant="warning" dismissible={false}>
                   Please install the <a href="https://chrome.google.com/webstore/detail/keplr/dmkamcknogkgcdfhhbddcghachkejeap?hl=en" target="_blank" rel="noreferrer">Keplr browser extension</a> using desktop Google Chrome.<br />WalletConnect and mobile support is coming soon.
                 </AlertMessage>
-              ) : (
+              ) : this.props.active !== 'networks' && (
                 <div className="mb-5 text-center">
                   <Button onClick={() => this.connect(true)}>
                     Connect Keplr
                   </Button>
                 </div>
               )
+          )}
+          {this.props.active === 'networks' && (
+            <Networks 
+              networks={Object.values(this.props.networks)} 
+              changeNetwork={this.props.changeNetwork} 
+              favourites={this.state.favourites} 
+              toggleFavourite={this.toggleFavourite} />
           )}
           {this.props.active === 'governance' && this.state.address && (
           <Governance

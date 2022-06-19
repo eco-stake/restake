@@ -8,13 +8,13 @@ import {
   Button,
   Nav,
 } from 'react-bootstrap'
-import { CheckCircle, XCircle } from "react-bootstrap-icons";
+import { XCircle } from "react-bootstrap-icons";
 
 import ProposalProgress from './ProposalProgress';
 import { PROPOSAL_STATUSES } from '../utils/Proposal.mjs';
 
 function Proposals(props) {
-  const { address, network, proposals, tallies, votes } = props
+  const { proposals, tallies, votes } = props
 
   const [filter, setFilter] = useState({keywords: '', status: '', group: 'voting'})
   const [results, setResults] = useState([])
@@ -25,7 +25,7 @@ function Proposals(props) {
     while(filtered.length < 1 && group !== 'all'){
       group = 'all'
       filtered = filteredProposals(proposals, {...filter, group})
-      if(filtered.length > 0){
+      if(filtered.length > 0 || group === 'all'){
         return setFilter({ ...filter, group })
       }
     }
@@ -84,7 +84,7 @@ function Proposals(props) {
             {proposal.content.title}
           </span>
         </td>
-        <td className="text-center">
+        <td className="d-none d-lg-table-cell text-center">
           {proposal.statusHuman}
         </td>
         <td className="text-center">
@@ -97,7 +97,7 @@ function Proposals(props) {
             vote ? vote.optionHuman : <XCircle className="opacity-50" />
           )}
         </td>
-        <td className="text-center">
+        <td className="d-none d-md-table-cell text-center">
           <ProposalProgress
             proposal={proposal}
             tally={tallies[proposalId]} />
@@ -126,8 +126,8 @@ function Proposals(props) {
             </span>
           </div>
         </div>
-        <div className="d-flex justify-content-center align-self-center">
-          <Nav fill variant="pills" activeKey={filter.group} className={`flex-column flex-md-row${props.modal ? ' small' : ''}`} onSelect={(e) => setFilter({...filter, group: e})}>
+        <div className="d-md-flex d-none d-flex position-absolute mx-auto justify-content-center align-self-center">
+          <Nav fill variant="pills" activeKey={filter.group} className={`${props.modal ? ' small' : ''}`} onSelect={(e) => setFilter({...filter, group: e})}>
             <Nav.Item>
               <Nav.Link eventKey="voting" disabled={filteredProposals(proposals, {...filter, group: 'voting'}).length < 1}>Voting Period</Nav.Link>
             </Nav.Item>
@@ -135,6 +135,12 @@ function Proposals(props) {
               <Nav.Link eventKey="all">All Proposals</Nav.Link>
             </Nav.Item>
           </Nav>
+        </div>
+        <div className="d-flex d-md-none justify-content-center">
+          <select className="form-select w-auto h-auto d-md-none" aria-label="Proposal group" value={filter.group} onChange={(e) => setFilter({...filter, group: e.target.value})}>
+            <option value="voting">Voting Period</option>
+            <option value="all">All</option>
+          </select>
         </div>
         <div className="flex-fill d-flex justify-content-end">
           <select className="form-select form-select-sm w-auto h-auto" aria-label="Proposal status" value={filter.status} onChange={(e) => setFilter({...filter, status: e.target.value})}>
@@ -153,10 +159,10 @@ function Proposals(props) {
             <tr>
               <th>#</th>
               <th>Proposal</th>
-              <th className="text-center">Status</th>
+              <th className="d-none d-lg-table-cell text-center">Status</th>
               <th className="text-center">End Time</th>
               <th className="text-center">Voted</th>
-              <th className="text-center">Progress</th>
+              <th className="d-none d-md-table-cell text-center">Progress</th>
               <th></th>
             </tr>
           </thead>

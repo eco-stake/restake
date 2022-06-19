@@ -1,13 +1,10 @@
-import React, { useState, useEffect, useReducer } from 'react';
+import React, { useState } from 'react';
 import Moment from 'react-moment';
 
 import {
   Table,
 } from 'react-bootstrap'
 
-import {
-  XCircle
-} from 'react-bootstrap-icons'
 import Coins from './Coins';
 import ProposalProgress from './ProposalProgress';
 import VoteForm from './VoteForm';

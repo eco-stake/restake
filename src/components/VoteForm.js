@@ -1,13 +1,11 @@
-import React, { useState, useEffect, useReducer } from 'react';
+import React, { useState } from 'react';
 import _ from 'lodash'
 
 import {
-  Alert,
   Form,
   Button
 } from 'react-bootstrap'
 import Vote from '../utils/Vote.mjs';
-import AlertMessage from './AlertMessage.js';
 
 
 function VoteForm(props) {
@@ -103,7 +101,7 @@ function VoteForm(props) {
     <>
       <Form onSubmit={handleSubmit}>
         <Form.Group className="border-top pt-2 my-2">
-          <div className="row pe-5">
+          <div className="row pe-lg-5">
             {_.chunk(Object.entries(choices), 2).map((group, index) => {
               return (
                 <div key={index} className="col">

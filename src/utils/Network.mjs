@@ -7,12 +7,17 @@ import Chain from './Chain.mjs'
 import CosmosDirectory from './CosmosDirectory.mjs'
 
 class Network {
-  constructor(data) {
+  constructor(data, operatorCount) {
     this.data = data
     this.enabled = data.enabled
     this.experimental = data.experimental
+    this.authzSupport = data.params?.authz
+    this.operatorCount = data.operators?.length || operatorCount
     this.apyEnabled = data.apyEnabled
     this.name = data.path || data.name
+    this.path = data.path || data.name
+    this.image = data.image
+    this.prettyName = data.pretty_name
     this.default = data.default
     this.directory = CosmosDirectory()
 
@@ -27,6 +32,7 @@ class Network {
         return match(el)
       }
     })
+    this.online = !this.usingDirectory || this.connectedDirectory()
   }
 
   connectedDirectory() {
@@ -40,6 +46,7 @@ class Network {
     this.operators = (this.data.operators || this.validators.filter(el => el.restake)).map(el => {
       return Operator(el)
     })
+    this.operatorCount = this.operators.length
     this.prettyName = this.chain.prettyName
     this.chainId = this.chain.chainId
     this.prefix = this.chain.prefix

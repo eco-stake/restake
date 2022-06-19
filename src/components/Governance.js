@@ -103,9 +103,7 @@ function Governance(props) {
       (error) => {
         if(!proposals) setProposals([])
         if (!hideError) {
-          this.setState({
-            error: `Failed to load proposals: ${error.message}`,
-          });
+          setError(`Failed to load proposals: ${error.message}`);
         }
       }
     )
@@ -117,7 +115,8 @@ function Governance(props) {
         const { proposal_id, final_tally_result: result } = proposal
         if (tallies[proposal_id]) return
 
-        if (_.every(Object.values(result), el => el === '0')) {
+        const talliesInvalid = _.every(Object.values(result), el => el === '0')
+        if (proposal.isVoting && talliesInvalid) {
           return props.queryClient.getProposalTally(proposal_id).then(result => {
             return setTallies({ [proposal_id]: result.tally })
           }).catch(error => { })
