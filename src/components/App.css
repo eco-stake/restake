@@ -51,16 +51,18 @@ code p{
   margin-bottom: 0.5rem;
 }
 
-.favourite-on .on,
-.favourite-on:hover .off,
-.favourite-off .off,
-.favourite-off:hover .on{
-  display: inline;
-}
+@media (hover: hover) and (pointer: fine) {
+  .favourite-on .on,
+  .favourite-on:hover .off,
+  .favourite-off .off,
+  .favourite-off:hover .on {
+    display: inline;
+  }
 
-.favourite-on .off,
-.favourite-on:hover .on,
-.favourite-off .on,
-.favourite-off:hover .off{
-  display: none;
+  .favourite-on .off,
+  .favourite-on:hover .on,
+  .favourite-off .on,
+  .favourite-off:hover .off {
+    display: none;
+  }
 }

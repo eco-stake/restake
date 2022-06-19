@@ -50,6 +50,7 @@ class App extends React.Component {
     this.state = {favourites: favouriteJson ? JSON.parse(favouriteJson) : []}
     this.connect = this.connect.bind(this);
     this.disconnect = this.disconnect.bind(this);
+    this.connectKeplr = this.connectKeplr.bind(this);
     this.showNetworkSelect = this.showNetworkSelect.bind(this);
     this.getBalance = this.getBalance.bind(this);
     this.toggleFavourite = this.toggleFavourite.bind(this);
