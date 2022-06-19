@@ -77,7 +77,7 @@ function Networks(props) {
 
   function renderNetworks(networks, opts){
     return (
-      <Row xs={2} sm={2} lg={3} xxl={4} className="g-4 justify-content-center">
+      <Row xs={1} sm={2} lg={3} xxl={4} className="g-4 justify-content-center">
         {networks.map((network) => (
           <Col key={network.path} className={network.online ? '' : 'opacity-50'}>
             <Card>
