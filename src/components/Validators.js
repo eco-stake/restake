@@ -54,10 +54,9 @@ function Validators(props) {
 
       const delegation = delegations && delegations[address]
       const operator = operators && operators.find(el => el.address === address)
-      const grants = operator && operatorGrants && operatorGrants[operator.botAddress]
 
       if (delegation) {
-        return grants?.grantsExist ? -3 : operator ? -2 : -1
+        return operator ? -2 : -1
       } else {
         return operator ? 0 : 1
       }
