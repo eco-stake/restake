@@ -43,6 +43,8 @@ import TooltipIcon from './TooltipIcon';
 import Governance from './Governance';
 import Networks from './Networks';
 
+const directoryDomain = process.env.DIRECTORY_DOMAIN || 'cosmos.directory'
+
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -423,11 +425,9 @@ class App extends React.Component {
             <a href="https://ecostake.com" target="_blank" rel="noreferrer" className="text-reset text-decoration-none d-block mb-2">
               <span className="d-none d-sm-inline">Built with 💚&nbsp;</span> by ECO Stake 🌱
             </a>
-            {this.props.network?.usingDirectory && (
-              <a href="https://cosmos.directory" target="_blank" className="text-reset text-decoration-none d-block small">
-                <span className="d-none d-sm-inline">Interchain APIs from</span> <u>cosmos.directory</u>
-              </a>
-            )}
+            <a href={`https://${directoryDomain}`} target="_blank" className="text-reset text-decoration-none d-block small">
+              <span className="d-none d-sm-inline">Interchain APIs from</span> <u>cosmos.directory</u>
+            </a>
           </div>
 
           <p className="col-md-4 mb-0 text-muted text-end justify-content-end d-none d-lg-flex">

@@ -10,6 +10,7 @@ import {
 } from 'react-bootstrap'
 import { XCircle, BookmarkStar, BookmarkStarFill } from "react-bootstrap-icons";
 import NetworkChecks from './NetworkChecks';
+import NetworkImage from './NetworkImage';
 
 function Networks(props) {
   const { networks, favourites } = props
@@ -87,7 +88,7 @@ function Networks(props) {
               <span role="button" className="stretched-link" onClick={() => changeNetwork(network)}>
                 <Row className="g-0">
                   <Col md={3} className="text-center">
-                    <img src={network.image} width={60} height={60} className="m-2 shadow overflow-hidden rounded-circle" />
+                    <NetworkImage network={network} width={60} height={60} className="m-2 shadow overflow-hidden rounded-circle" />
                   </Col>
                   <Col md={9}>
                     <Card.Body>
