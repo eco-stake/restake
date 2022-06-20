@@ -12,6 +12,7 @@ import {
 
 import Select from 'react-select';
 import NetworkChecks from './NetworkChecks.js';
+import NetworkImage from './NetworkImage.js';
 
 function NetworkSelect(props) {
   const [show, setShow] = useState(props.show);
@@ -148,7 +149,7 @@ function NetworkSelect(props) {
                     formatOptionLabel={network => (
                       <div className={'d-flex' + (!network.online ? ' text-muted' : '')}>
                         <div className="pe-2">
-                          <img src={network.image} width={30} height={30} alt={network.label} />
+                          <NetworkImage network={network} width={30} height={30} alt={network.label} />
                         </div>
                         <div className="pt-1 me-auto">
                           <span className="ms-1">{network.label} {!network.online && <small>(Offline)</small>}</span>
