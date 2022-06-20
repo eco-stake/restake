@@ -27,7 +27,7 @@ function ValidatorModal(props) {
   useEffect(() => {
     if (props.show && selectedValidator && validator?.operator_address === selectedValidator.operator_address && params.validator !== selectedValidator.operator_address) {
       navigate(`/${network.name}/${selectedValidator.operator_address}`)
-    } else if (params.validator && !props.show) {
+    } else if (params.validator && props.show === false) {
       navigate(`/${network.name}`)
     }
   }, [props.show, params.validator, selectedValidator])
@@ -56,9 +56,9 @@ function ValidatorModal(props) {
     }
   }
 
-  const selectValidator = (selectedValidator) => {
+  const selectValidator = (selectedValidator, opts) => {
     setSelectedValidator(selectedValidator)
-    setActiveTab('profile')
+    setActiveTab(opts.activeTab || 'profile')
   }
 
   const onDelegate = () => {
@@ -70,7 +70,7 @@ function ValidatorModal(props) {
     if (redelegate) {
       return [validator.operator_address]
     } else if (delegations) {
-      return [...Object.keys(delegations), ...operators.map(el => el.address)]
+      return [...Object.keys(delegations)]
     }
   }
 
@@ -97,7 +97,7 @@ function ValidatorModal(props) {
   }
 
   const actionText = () => {
-    if (redelegate) return 'Redelegate'
+    if (redelegate) return <span>Redelegate from <ValidatorLink validator={validator} /></span>
     if (undelegate) return 'Undelegate'
     if (validator) {
       return 'Delegate'
@@ -124,14 +124,21 @@ function ValidatorModal(props) {
         <Modal.Body>
           {!selectedValidator &&
             <Validators
+              modal={true}
               redelegate={redelegate}
               network={network}
+              address={props.address}
+              validators={validators}
               operators={operators}
               exclude={excludeValidators()}
-              validators={validators}
               validatorApy={props.validatorApy}
+              rewards={props.rewards}
               delegations={delegations}
-              selectValidator={(selectedValidator) => selectValidator(selectedValidator)} />}
+              operatorGrants={props.grants}
+              authzSupport={props.authzSupport}
+              restakePossible={props.restakePossible}
+              showValidator={selectValidator}
+              manageButton={redelegate ? 'Redelegate' : 'Delegate'} />}
           {selectedValidator && (
             <Tabs activeKey={activeTab} onSelect={(k) => setActiveTab(k)} id="validator-tabs" className="mb-3">
               <Tab eventKey="profile" title="Profile">

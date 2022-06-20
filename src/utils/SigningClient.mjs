@@ -169,15 +169,18 @@ async function SigningClient(network, defaultGasPrice, signer, key) {
     const account = await getAccount(address)
     const { account_number: accountNumber, sequence } = account
     const txBodyBytes = makeBodyBytes(messages, memo)
-    if(getIsNanoLedger()){
-      // Convert to amino for ledger devices
-      const aminoMsgs = messages.map(el => aminoTypes.toAmino(el))
+    let aminoMsgs
+    try {
+      aminoMsgs = messages.map(el => aminoTypes.toAmino(el))
+    } catch { }
+    if(aminoMsgs){
+      // Sign as amino if possible for Ledger and Keplr support
       const signDoc = makeAminoSignDoc(aminoMsgs, fee, chainId, memo, accountNumber, sequence);
       const { signature, signed } = await signer.sign(address, signDoc);
       const authInfoBytes = await makeAuthInfoBytes(account, {
         amount: signed.fee.amount,
         gasLimit: signed.fee.gas,
-      })
+      }, SignMode.SIGN_MODE_LEGACY_AMINO_JSON)
       return {
         bodyBytes: txBodyBytes,
         authInfoBytes: authInfoBytes,
@@ -188,7 +191,7 @@ async function SigningClient(network, defaultGasPrice, signer, key) {
       const authInfoBytes = await makeAuthInfoBytes(account, {
         amount: fee.amount,
         gasLimit: fee.gas,
-      })
+      }, SignMode.SIGN_MODE_DIRECT)
       const signDoc = makeSignDoc(txBodyBytes, authInfoBytes, chainId, accountNumber);
       const { signature, signed } = await signer.signDirect(address, signDoc);
       return {
@@ -239,7 +242,6 @@ async function SigningClient(network, defaultGasPrice, signer, key) {
   }
 
   async function makeAuthInfoBytes(account, fee, mode){
-    mode = mode || getIsNanoLedger() ? SignMode.SIGN_MODE_LEGACY_AMINO_JSON : SignMode.SIGN_MODE_DIRECT
     const { sequence } = account
     const accountFromSigner = (await signer.getAccounts())[0]
     if (!accountFromSigner) {

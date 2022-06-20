@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import React, { useEffect, useState, useReducer } from 'react';
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useMatch } from "react-router-dom";
 import Network from '../utils/Network.mjs'
 import CosmosDirectory from '../utils/CosmosDirectory.mjs'
 import App from './App';
@@ -11,6 +11,7 @@ import {
 } from 'react-bootstrap';
 
 import networksData from '../networks.json';
+import Proposal from '../utils/Proposal.mjs';
 
 const LIGHT_THEME = 'cosmo'
 const DARK_THEME = 'superhero'
@@ -18,6 +19,7 @@ const DARK_THEME = 'superhero'
 function NetworkFinder() {
   const params = useParams();
   const navigate = useNavigate()
+  const govMatch = useMatch("/:network/govern/*");
 
   const directory = CosmosDirectory()
 
@@ -33,13 +35,15 @@ function NetworkFinder() {
   )
 
   const getNetworks = async () => {
-    let registryNetworks
+    let registryNetworks, operatorCounts
     try {
       registryNetworks = await directory.getChains()
+      operatorCounts = await directory.getOperatorCounts()
     } catch (error) {
       setState({error: error.message, loading: false})
       return {}
     }
+    
 
     const networks = Object.values(registryNetworks).map(data => {
       const networkData = networksData.find(el => el.name === data.path)
@@ -48,7 +52,7 @@ function NetworkFinder() {
 
       if(!networkData) data.experimental = true
 
-      return {...data, ...networkData}
+      return new Network({...data, ...networkData}, operatorCounts[data.path])
     })
     return _.compact(networks).reduce((a, v) => ({ ...a, [v.path]: v}), {})
   }
@@ -57,11 +61,35 @@ function NetworkFinder() {
     setState({
       network: network,
       validators: network.getValidators(),
-      operators: network.getOperators()
+      operators: network.getOperators(),
+      loading: false
     })
-
-    navigate("/" + network.name);
+    if(govMatch){
+      setActive('governance', network)
+    }else{
+      setActive('delegations', network)
+    }
   }
+
+  const setActive = (active, network) => {
+    network = network || state.network
+    switch (active) {
+      case 'governance':
+        navigate("/" + network.path + '/govern');
+        break;
+      case 'delegations':
+        navigate("/" + network.path);
+        break;
+      default:
+        navigate("/");
+        break;
+    }
+    setState({active})
+
+    const body = document.querySelector('#root');
+    body.scrollIntoView({}, 500)
+  }
+
 
   useEffect(() => {
     const setThemeEvent = (event) => {
@@ -107,53 +135,46 @@ function NetworkFinder() {
   }, [state.networks])
 
   useEffect(() => {
+    if(!params.network){
+      setState({active: 'networks'})
+    }
+  }, [govMatch, params.network])
+
+  useEffect(() => {
     if(Object.keys(state.networks).length && !state.network){
-      const networks = Object.values(state.networks)
-      const defaultNetwork = (networks.find(el => el.default === true) || networks[0])
-      let networkName = params.network || defaultNetwork.name
-      let data = state.networks[networkName]
-      if(params.network && !data){
-        networkName = defaultNetwork.name
-        data = state.networks[networkName]
-      }
-      if(!data){
+      let networkName = params.network
+      const network = state.networks[networkName]
+      if(!network){
+        navigate("/");
         setState({loading: false})
         return
       }
       if(params.network != networkName){
         navigate("/" + networkName);
       }
-      const network = new Network(data)
       network.load().then(() => {
         return network.connect().then(() => {
           if (network.connected) {
-            setState({ network: network })
+            setState({
+              active: govMatch ? 'governance' : 'delegations',
+              network: network,
+              validators: network.getValidators(),
+              operators: network.getOperators(),
+              loading: false
+            })
           } else {
             throw false
           }
         })
       }).catch(error => {
         console.log(error)
-        setState({ network: network, loading: false })
+        changeNetwork(network)
       })
     }
   }, [state.networks, state.network, params.network, navigate])
 
   useEffect(() => {
-    if(state.error) return
-    if(!state.network || !state.network.connected) return
-    if(state.network && (!Object.keys(state.validators).length)){
-      setState({
-        validators: state.network.getValidators(),
-        operators: state.network.getOperators(),
-        loading: false
-      })
-    }
-  }, [state.network])
-
-  useEffect(() => {
-    const validatorAddresses = state.validators && Object.keys(state.validators)
-    if(validatorAddresses && validatorAddresses.includes(params.validator)){
+    if(params.validator && state.validators[params.validator]){
       setState({ validator: state.validators[params.validator] })
     }else if(state.validator){
       setState({ validator: null })
@@ -174,9 +195,9 @@ function NetworkFinder() {
     )
   }
 
-  return <App networks={state.networks} network={state.network}
+  return <App networks={state.networks} network={state.network} active={state.active}
   operators={state.operators} validators={state.validators} validator={state.validator}
-  changeNetwork={(network, validators) => changeNetwork(network, validators)}
+  changeNetwork={(network, validators) => changeNetwork(network, validators)} setActive={setActive}
   theme={theme} themeChoice={themeChoice} themeDefault={themeDefault} setThemeChoice={setThemeChoice}
   />;
 }

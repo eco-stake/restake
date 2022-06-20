@@ -16,7 +16,7 @@ function AlertMessage(props) {
   return (
     <>
       {show &&
-      <Alert className="text-center" variant={props.variant || 'danger'} onClose={() => setShow(false)} dismissible={dismissible}>
+      <Alert className={`text-center ${props.className}`} variant={props.variant || 'danger'} onClose={() => setShow(false)} dismissible={dismissible}>
         {props.message || props.children}
       </Alert>
       }

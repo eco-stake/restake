@@ -50,3 +50,25 @@ code {
 code p{
   margin-bottom: 0.5rem;
 }
+  
+.favourite-on .on,
+.favourite-off .off {
+  display: inline;
+}
+
+.favourite-on .off,
+.favourite-off .on{
+  display: none;
+}
+
+@media (hover: hover) {
+  .favourite-on:hover .off,
+  .favourite-off:hover .on {
+    display: inline;
+  }
+
+  .favourite-on:hover .on,
+  .favourite-off:hover .off {
+    display: none;
+  }
+}
