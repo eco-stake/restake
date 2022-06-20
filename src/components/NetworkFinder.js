@@ -145,6 +145,7 @@ function NetworkFinder() {
       let networkName = params.network
       const network = state.networks[networkName]
       if(!network){
+        navigate("/");
         setState({loading: false})
         return
       }

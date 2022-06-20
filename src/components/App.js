@@ -110,8 +110,6 @@ class App extends React.Component {
         error: 'Could not connect to any available API servers'
       })
     }
-    const { network } = this.props
-    const chainId = network.chainId
 
     if(localStorage.getItem('connected') !== '1'){
       if(manual){
@@ -120,6 +118,11 @@ class App extends React.Component {
         return
       }
     }
+
+    const { network } = this.props
+    if(!network) return
+
+    const chainId = network.chainId
 
     try {
       if (window.keplr) {
