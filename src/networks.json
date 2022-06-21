@@ -186,5 +186,11 @@
   {
     "name": "cronos",
     "enabled": false
+  },
+  {
+    "name": "harpoon",
+    "ownerAddress": "kujiravaloper1vue5lawr3s0au9zj0aqeft5aknx6cjq6w5ghca",
+    "apyEnabled": false,
+    "testnet": true
   }
 ]

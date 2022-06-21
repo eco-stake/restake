@@ -1,8 +1,6 @@
 import CosmosDirectory from './CosmosDirectory.mjs'
 
-const Chain = async (data) => {
-  const directory = CosmosDirectory()
-
+const Chain = async (data, directory) => {
   const chainData = await directory.getChainData(data.name);
   const tokenData = await directory.getTokenData(data.name);
 

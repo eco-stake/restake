@@ -19,7 +19,8 @@ class Network {
     this.image = data.image
     this.prettyName = data.pretty_name
     this.default = data.default
-    this.directory = CosmosDirectory()
+    this.testnet = data.testnet || data.network_type === 'testnet'
+    this.directory = CosmosDirectory(this.testnet)
 
     this.rpcUrl = this.directory.rpcUrl(this.name) // only used for Keplr suggestChain
     this.restUrl = data.restUrl || this.directory.restUrl(this.name)
@@ -41,7 +42,7 @@ class Network {
   }
 
   async load() {
-    this.chain = await Chain(this.data)
+    this.chain = await Chain(this.data, this.directory)
     this.validators = await this.directory.getValidators(this.name)
     this.operators = (this.data.operators || this.validators.filter(el => el.restake)).map(el => {
       return Operator(el)
