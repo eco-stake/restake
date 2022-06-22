@@ -1,12 +1,14 @@
 import axios from 'axios'
 
-function CosmosDirectory(){
-  const directoryProtocol = process.env.DIRECTORY_PROTOCOL || 'https'
-  const directoryDomain = process.env.DIRECTORY_DOMAIN || 'cosmos.directory'
-  const rpcBase = `${directoryProtocol}://rpc.${directoryDomain}`
-  const restBase = `${directoryProtocol}://rest.${directoryDomain}`
-  const chainsUrl = `${directoryProtocol}://chains.${directoryDomain}`
-  const validatorsUrl = `${directoryProtocol}://validators.${directoryDomain}`
+function CosmosDirectory(testnet){
+  const protocol = process.env.DIRECTORY_PROTOCOL || 'https'
+  const mainnetDomain = process.env.DIRECTORY_DOMAIN || 'cosmos.directory'
+  const testnetDomain = process.env.DIRECTORY_DOMAIN_TESTNET || 'testcosmos.directory'
+  const domain = testnet ? testnetDomain : mainnetDomain
+  const rpcBase = `${protocol}://rpc.${domain}`
+  const restBase = `${protocol}://rest.${domain}`
+  const chainsUrl = `${protocol}://chains.${domain}`
+  const validatorsUrl = `${protocol}://validators.${domain}`
 
   function rpcUrl(name){
     return rpcBase + '/' + name
@@ -52,9 +54,10 @@ function CosmosDirectory(){
   }
 
   return {
+    testnet,
+    domain,
     rpcUrl,
     restUrl,
-    chainsUrl,
     getChains,
     getChainData,
     getTokenData,

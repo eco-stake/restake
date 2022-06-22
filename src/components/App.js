@@ -13,7 +13,6 @@ import { MsgGrant, MsgRevoke } from "cosmjs-types/cosmos/authz/v1beta1/tx.js";
 import {
   Container,
   Button,
-  Badge,
   Dropdown,
   ButtonGroup,
   Navbar,
@@ -25,8 +24,9 @@ import {
   DropletHalf,
   Coin,
   Inboxes,
-  Hurricane,
-  Stars
+  Stars,
+  WrenchAdjustableCircle,
+  WrenchAdjustableCircleFill
 } from 'react-bootstrap-icons'
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import GitHubButton from 'react-github-btn'
@@ -42,8 +42,6 @@ import PoweredByAkashWhite from '../assets/powered-by-akash-white.svg'
 import TooltipIcon from './TooltipIcon';
 import Governance from './Governance';
 import Networks from './Networks';
-
-const directoryDomain = process.env.DIRECTORY_DOMAIN || 'cosmos.directory'
 
 class App extends React.Component {
   constructor(props) {
@@ -246,7 +244,34 @@ class App extends React.Component {
     }
     const tooltip = `Switch to ${switchTo} mode`
     return (
-      <TooltipIcon icon={icon} tooltip={tooltip} placement="left" />
+      <span>
+        <TooltipIcon icon={icon} tooltip={tooltip} placement="left" />
+      </span>
+    )
+  }
+
+  networkIcon() {
+    let icon, mode
+    let iconProps = {
+      size: '1.4em',
+      className: 'me-3',
+      role: 'button',
+      onClick: () => this.props.changeNetworkMode(mode)
+    }
+    if (this.props.directory.testnet) {
+      iconProps.className = 'me-3 text-warning'
+      icon = <WrenchAdjustableCircleFill {...iconProps} />
+      mode = 'mainnet'
+    } else {
+      iconProps.className = 'me-3 text-muted'
+      icon = <WrenchAdjustableCircle {...iconProps} />
+      mode = 'testnet'
+    }
+    const tooltip = `Switch to ${mode}`
+    return (
+      <span className="text-reset">
+        <TooltipIcon icon={icon} tooltip={tooltip} placement="left" />
+      </span>
     )
   }
 
@@ -255,7 +280,7 @@ class App extends React.Component {
       <Container>
         <header className="">
           <div className="d-flex justify-content-between py-3 border-bottom">
-            <div className="logo d-flex align-items-center text-reset text-decoration-none">
+            <div className="logo d-flex align-items-end text-reset text-decoration-none">
               <span onClick={() => this.props.setActive('networks')} role="button" className="text-reset text-decoration-none">
                 {this.props.theme === 'light'
                   ? (
@@ -264,6 +289,9 @@ class App extends React.Component {
                     <img src={LogoWhite} srcSet={`${LogoWhite2x} 2x, ${LogoWhite3x} 3x`} alt="REStake" />
                   )}
               </span>
+              {this.props.directory.testnet && (
+                <small className="ms-2 text-muted">testnet</small>
+              )}
             </div>
             <div className="d-flex align-items-center text-reset text-decoration-none">
               <p className="lead fs-6 text-center m-0 px-5 d-lg-block d-none">
@@ -271,6 +299,7 @@ class App extends React.Component {
               </p>
             </div>
             <div className="d-flex align-items-center text-reset text-decoration-none">
+              {this.networkIcon()}
               {this.themeIcon()}
               <NetworkSelect show={this.state.showNetworkSelect} onHide={() => { this.setState({ showNetworkSelect: false }) }} networks={this.props.networks}
                 network={this.props.network}
@@ -425,7 +454,7 @@ class App extends React.Component {
             <a href="https://ecostake.com" target="_blank" rel="noreferrer" className="text-reset text-decoration-none d-block mb-2">
               <span className="d-none d-sm-inline">Built with 💚&nbsp;</span> by ECO Stake 🌱
             </a>
-            <a href={`https://${directoryDomain}`} target="_blank" className="text-reset text-decoration-none d-block small">
+            <a href={`https://${this.props.directory.domain}`} target="_blank" className="text-reset text-decoration-none d-block small">
               <span className="d-none d-sm-inline">Interchain APIs from</span> <u>cosmos.directory</u>
             </a>
           </div>
