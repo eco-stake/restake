@@ -11,7 +11,6 @@ import {
 } from 'react-bootstrap';
 
 import networksData from '../networks.json';
-import Proposal from '../utils/Proposal.mjs';
 
 const LIGHT_THEME = 'cosmo'
 const DARK_THEME = 'superhero'
@@ -21,7 +20,8 @@ function NetworkFinder() {
   const navigate = useNavigate()
   const govMatch = useMatch("/:network/govern/*");
 
-  const directory = CosmosDirectory()
+  const networkMode = process.env.TESTNET_MODE === '1' ? 'testnet' : 'mainnet'
+  const directory = CosmosDirectory(networkMode === 'testnet')
 
   const LS_THEME_KEY = "restake-theme";
   const LS_THEME = localStorage.getItem(LS_THEME_KEY)
@@ -31,14 +31,14 @@ function NetworkFinder() {
   const [themeDefault, setThemeDefault] = useState('light')
   const [state, setState] = useReducer(
     (state, newState) => ({...state, ...newState}),
-    {loading: true, networks: {}, operators: [], validators: {}}
+    {loading: true, networks: {}, operators: [], validators: {}, networkMode, directory}
   )
 
   const getNetworks = async () => {
     let registryNetworks, operatorCounts
     try {
-      registryNetworks = await directory.getChains()
-      operatorCounts = await directory.getOperatorCounts()
+      registryNetworks = await state.directory.getChains()
+      operatorCounts = await state.directory.getOperatorCounts()
     } catch (error) {
       setState({error: error.message, loading: false})
       return {}
@@ -55,6 +55,16 @@ function NetworkFinder() {
       return new Network({...data, ...networkData}, operatorCounts[data.path])
     })
     return _.compact(networks).reduce((a, v) => ({ ...a, [v.path]: v}), {})
+  }
+
+  const changeNetworkMode = (networkMode) => {
+    let domain = networkMode === 'testnet' ? process.env.TESTNET_DOMAIN : process.env.MAINNET_DOMAIN
+    if(domain){
+      window.location.replace('https://' + domain)
+    }else{
+      const directory = CosmosDirectory(networkMode === 'testnet')
+      setState({ networkMode, directory, active: 'networks', network: null, networks: {}, validators: {}, operators: [] })
+    }
   }
 
   const changeNetwork = (network) => {
@@ -195,7 +205,8 @@ function NetworkFinder() {
     )
   }
 
-  return <App networks={state.networks} network={state.network} active={state.active}
+  return <App networks={state.networks} network={state.network} active={state.active} 
+  networkMode={state.networkMode} directory={state.directory} changeNetworkMode={changeNetworkMode}
   operators={state.operators} validators={state.validators} validator={state.validator}
   changeNetwork={(network, validators) => changeNetwork(network, validators)} setActive={setActive}
   theme={theme} themeChoice={themeChoice} themeDefault={themeDefault} setThemeChoice={setThemeChoice}
