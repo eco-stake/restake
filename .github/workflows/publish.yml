@@ -19,7 +19,7 @@ jobs:
           docker push ghcr.io/${{ github.repository }}:${GITHUB_REF#refs/tags/}
           docker push ghcr.io/${{ github.repository }}:latest
 
-          docker build -f Dockerfile.production . --tag ghcr.io/${{ github.repository }}:${GITHUB_REF#refs/tags/}-testnet --build-arg \
+          docker build -f Dockerfile.production . --tag ghcr.io/${{ github.repository }}:${GITHUB_REF#refs/tags/}-testnet \
             --build-arg BUGSNAG_KEY="${{ secrets.BUGSNAG_KEY }}" --build-arg MAINNET_DOMAIN="restake.app" --build-arg TESTNET_DOMAIN="testnet.restake.app" --build-arg TESTNET_MODE="1"
           docker tag ghcr.io/${{ github.repository }}:${GITHUB_REF#refs/tags/}-testnet ghcr.io/${{ github.repository }}:latest-testnet
           docker push ghcr.io/${{ github.repository }}:${GITHUB_REF#refs/tags/}-testnet
