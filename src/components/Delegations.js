@@ -119,7 +119,9 @@ class Delegations extends React.Component {
         (delegations) => {
           const orderedAddresses = Object.keys(this.props.validators)
           delegations = orderedAddresses.reduce((sum, address) => {
-            if(delegations[address]) sum[address] = delegations[address]
+            if(delegations[address] && delegations[address].balance.amount !== '0'){
+              sum[address] = delegations[address]
+            }
             return sum
           }, {})
           this.setState({
