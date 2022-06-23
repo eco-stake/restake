@@ -19,7 +19,6 @@ function NetworkSelect(props) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const [selectedNetwork, setSelectedNetwork] = useState();
-  const [operatorCounts, setOperatorCounts] = useState({});
   const [options, setOptions] = useReducer(
     (state, newState) => ({ ...state, ...newState }),
     { networks: [], operators: [], network: { value: '' } }
@@ -27,9 +26,6 @@ function NetworkSelect(props) {
 
   function handleOpen() {
     setSelectedNetwork(props.network);
-    CosmosDirectory().getOperatorCounts().then(counts => {
-      setOperatorCounts(counts);
-    });
     setShow(true);
   }
 
@@ -100,7 +96,7 @@ function NetworkSelect(props) {
       }),
       network: selectedNetwork && selectedNetwork.name
     })
-  }, [props.networks, selectedNetwork, operatorCounts])
+  }, [props.networks, selectedNetwork])
 
   return (
     <>

@@ -7,12 +7,13 @@ import Chain from './Chain.mjs'
 import CosmosDirectory from './CosmosDirectory.mjs'
 
 class Network {
-  constructor(data, operatorCount) {
+  constructor(data, operatorAddresses) {
     this.data = data
     this.enabled = data.enabled
     this.experimental = data.experimental
     this.authzSupport = data.params?.authz
-    this.operatorCount = data.operators?.length || operatorCount
+    this.operatorAddresses = operatorAddresses || {}
+    this.operatorCount = data.operators?.length || this.estimateOperatorCount()
     this.apyEnabled = data.apyEnabled
     this.name = data.path || data.name
     this.path = data.path || data.name
@@ -41,10 +42,23 @@ class Network {
     return apis && ['rest'].every(type => apis[type].length > 0)
   }
 
+  estimateOperatorCount() {
+    if(!this.operatorAddresses) return 0 
+    return Object.keys(this.operatorAddresses).filter(el => this.allowOperator(el)).length
+  }
+
+  allowOperator(address){
+    const allow = this.data.allowOperators
+    const block = this.data.blockOperators
+    if(allow && !allow.includes(address)) return false
+    if(block && block.includes(address)) return false
+    return true
+  }
+
   async load() {
     this.chain = await Chain(this.data, this.directory)
     this.validators = await this.directory.getValidators(this.name)
-    this.operators = (this.data.operators || this.validators.filter(el => el.restake)).map(el => {
+    this.operators = (this.data.operators || this.validators.filter(el => el.restake && this.allowOperator(el.operator_address))).map(el => {
       return Operator(el)
     })
     this.operatorCount = this.operators.length

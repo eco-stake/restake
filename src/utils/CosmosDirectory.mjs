@@ -40,15 +40,17 @@ function CosmosDirectory(testnet){
       .then(res => res.data.validators)
   }
 
-  function getOperatorCounts(){
+  function getOperatorAddresses(){
     return axios.get(validatorsUrl)
       .then(res => res.data)
       .then(data => Array.isArray(data) ? data : data.validators) // deprecate
       .then(data => data.reduce((sum, validator) => {
         validator.chains.forEach(chain => {
-          sum[chain.name] = sum[chain.name] || 0
-          if(!!chain.restake) sum[chain.name]++
-        })
+          sum[chain.name] = sum[chain.name] || {}
+          if(chain.restake){
+            sum[chain.name][chain.address] = chain.restake
+          }
+        }, {})
         return sum
       }, {}))
   }
@@ -62,7 +64,7 @@ function CosmosDirectory(testnet){
     getChainData,
     getTokenData,
     getValidators,
-    getOperatorCounts
+    getOperatorAddresses
   }
 }
 
