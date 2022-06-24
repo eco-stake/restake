@@ -87,10 +87,10 @@ function Networks(props) {
               </span>
               <span role="button" className="stretched-link" onClick={() => changeNetwork(network)}>
                 <Row className="g-0">
-                  <Col md={3} className="text-center">
+                  <Col xs={3} className="text-center">
                     <NetworkImage network={network} width={60} height={60} className="m-2 shadow overflow-hidden rounded-circle" />
                   </Col>
-                  <Col md={9}>
+                  <Col xs={9}>
                     <Card.Body>
                       <Card.Title className="text-truncate">{network.prettyName}</Card.Title>
                       <NetworkChecks network={network} className="small" skipConnected={true} style={{position: 'relative', zIndex: 2}} />

@@ -13,13 +13,6 @@ body{
   --bs-body-font-family: var(--bs-font-sans-serif);
 }
 
-body > #root {
-  width: 100vw;
-  height: 100vh;
-  overflow-y: scroll;
-  -webkit-overflow-scrolling: touch; /* enables “momentum” (smooth) scrolling */
-}
-
 header a.moniker{
   margin-left: 15px;
 }
