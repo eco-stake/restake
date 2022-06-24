@@ -9,8 +9,8 @@ import AboutLedger from './AboutLedger';
 
 import {
   Modal,
-  Tabs,
-  Tab
+  Tab,
+  Nav
 } from 'react-bootstrap'
 
 import ValidatorDelegate from './ValidatorDelegate';
@@ -140,53 +140,83 @@ function ValidatorModal(props) {
               showValidator={selectValidator}
               manageButton={redelegate ? 'Redelegate' : 'Delegate'} />}
           {selectedValidator && (
-            <Tabs activeKey={activeTab} onSelect={(k) => setActiveTab(k)} id="validator-tabs" className="mb-3 flex-sm-row flex-column">
-              <Tab eventKey="profile" title="Profile">
-                <ValidatorProfile
-                  network={network}
-                  validator={selectedValidator}
-                  operator={operator()}
-                  validatorApy={props.validatorApy} />
-              </Tab>
-              <Tab eventKey="delegate" title="Delegate">
-                <ValidatorDelegate
-                  redelegate={redelegate}
-                  undelegate={undelegate}
-                  network={network}
-                  validator={validator}
-                  selectedValidator={selectedValidator}
-                  address={props.address}
-                  availableBalance={availableBalance()}
-                  delegation={delegations[selectedValidator.operator_address]}
-                  rewards={rewards()}
-                  validatorApy={props.validatorApy}
-                  stargateClient={props.stargateClient}
-                  onDelegate={onDelegate} />
-              </Tab>
-              {operator() && (
-                <Tab eventKey="restake" title="REStake">
-                  <ValidatorGrants
-                    address={props.address}
+            <Tab.Container activeKey={activeTab} onSelect={(k) => setActiveTab(k)} id="validator-tabs">
+              <Nav variant="tabs" className="mb-3 d-none d-sm-flex">
+                <Nav.Item>
+                  <Nav.Link role="button" eventKey="profile">Profile</Nav.Link>
+                </Nav.Item>
+                <Nav.Item>
+                  <Nav.Link role="button" eventKey="delegate">Delegate</Nav.Link>
+                </Nav.Item>
+                {operator() && (
+                  <Nav.Item>
+                    <Nav.Link role="button" eventKey="restake">REStake</Nav.Link>
+                  </Nav.Item>
+                )}
+                {network.authzSupport && operator() && (
+                  <Nav.Item>
+                    <Nav.Link role="button" eventKey="ledger">Ledger Instructions</Nav.Link>
+                  </Nav.Item>
+                )}
+              </Nav>
+              <select className="form-select w-100 mb-3 d-block d-sm-none" aria-label="Section" value={activeTab} onChange={(e) => setActiveTab(e.target.value)}>
+                <option value="profile">Profile</option>
+                <option value="delegate">Delegate</option>
+                {operator() && (
+                  <option value="restake">REStake</option>
+                )}
+                {network.authzSupport && operator() && (
+                  <option value="ledger">Ledger Instructions</option>
+                )}
+              </select>
+              <Tab.Content>
+                <Tab.Pane eventKey="profile">
+                  <ValidatorProfile
                     network={network}
+                    validator={selectedValidator}
                     operator={operator()}
-                    grants={grants[operator()?.botAddress]}
+                    validatorApy={props.validatorApy} />
+                </Tab.Pane>
+                <Tab.Pane eventKey="delegate">
+                  <ValidatorDelegate
+                    redelegate={redelegate}
+                    undelegate={undelegate}
+                    network={network}
+                    validator={validator}
+                    selectedValidator={selectedValidator}
+                    address={props.address}
+                    availableBalance={availableBalance()}
                     delegation={delegations[selectedValidator.operator_address]}
                     rewards={rewards()}
-                    authzSupport={props.authzSupport}
-                    restakePossible={props.restakePossible}
+                    validatorApy={props.validatorApy}
                     stargateClient={props.stargateClient}
-                    onGrant={props.onGrant}
-                    onRevoke={props.onRevoke}
-                    setError={props.setError}
-                  />
-                </Tab>
-              )}
-              {network.authzSupport && operator() && (
-                <Tab eventKey="ledger" title="Ledger Instructions">
-                  <AboutLedger network={network} validator={selectedValidator} modal={false} />
-                </Tab>
-              )}
-            </Tabs>
+                    onDelegate={onDelegate} />
+                </Tab.Pane>
+                {operator() && (
+                  <Tab.Pane eventKey="restake">
+                    <ValidatorGrants
+                      address={props.address}
+                      network={network}
+                      operator={operator()}
+                      grants={grants[operator()?.botAddress]}
+                      delegation={delegations[selectedValidator.operator_address]}
+                      rewards={rewards()}
+                      authzSupport={props.authzSupport}
+                      restakePossible={props.restakePossible}
+                      stargateClient={props.stargateClient}
+                      onGrant={props.onGrant}
+                      onRevoke={props.onRevoke}
+                      setError={props.setError}
+                    />
+                  </Tab.Pane>
+                )}
+                {network.authzSupport && operator() && (
+                  <Tab.Pane eventKey="ledger">
+                    <AboutLedger network={network} validator={selectedValidator} modal={false} />
+                  </Tab.Pane>
+                )}
+              </Tab.Content>
+            </Tab.Container>
           )}
         </Modal.Body>
       </Modal>
