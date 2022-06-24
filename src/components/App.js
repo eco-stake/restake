@@ -111,6 +111,12 @@ class App extends React.Component {
       })
     }
 
+    if(manual && !this.state.keplr){
+      return this.setState({
+        keplrError: true
+      })
+    }
+
     if(localStorage.getItem('connected') !== '1'){
       if(manual){
         localStorage.setItem('connected', '1')
@@ -387,8 +393,8 @@ class App extends React.Component {
             </AlertMessage>
           )}
           <AlertMessage message={this.state.error} variant="danger" dismissible={false} />
-          {!this.state.address && this.props.network && !this.state.keplr && (
-            <AlertMessage variant="warning" dismissible={false}>
+          {!this.state.keplr && this.state.keplrError && (
+            <AlertMessage variant="warning" dismissible={true}>
               Please install the <a href="https://chrome.google.com/webstore/detail/keplr/dmkamcknogkgcdfhhbddcghachkejeap?hl=en" target="_blank" rel="noreferrer">Keplr browser extension</a> using desktop Google Chrome.<br />WalletConnect and mobile support is coming soon.
             </AlertMessage>
           )}
