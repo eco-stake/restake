@@ -168,7 +168,7 @@ function Validators(props) {
             <ValidatorName validator={validator} />
           </span>
         </td>
-        <td className="text-center">
+        <td className="d-none d-sm-table-cell text-center">
           <ManageRestake
             size="sm"
             network={network}
@@ -334,7 +334,7 @@ function Validators(props) {
                     </Dropdown.Item>
                   </Dropdown.Menu>
                 </Dropdown>
-              ) : (
+              ) : props.address ? (
                 <OverlayTrigger
                   placement="top"
                   overlay={
@@ -347,6 +347,10 @@ function Validators(props) {
                     Delegate
                   </Button>
                 </OverlayTrigger>
+              ) : (
+                <Button variant="primary" size="sm" onClick={() => props.showValidator(validator)}>
+                  View
+                </Button>
               )
             ) : (
               <Button className="btn-sm btn-secondary mr-5" disabled>
@@ -367,7 +371,17 @@ function Validators(props) {
   return (
     <>
       <div className="d-flex flex-wrap justify-content-center align-items-start mb-3">
-        <div className="flex-fill flex-md-grow-0 me-2 me-md-5 mb-2 mb-md-0">
+        <div className="d-none d-md-flex me-5">
+          <div className="input-group">
+            <input className="form-control border-right-0 border" onChange={filterValidators} value={filter.keywords} type="text" placeholder="Search.." />
+            <span className="input-group-append">
+              <button className="btn btn-light text-dark border-left-0 border" type="button" onClick={() => setFilter({...filter, keywords: ''})}>
+                <XCircle />
+              </button>
+            </span>
+          </div>
+        </div>
+        <div className="w-100 d-flex d-md-none mb-2">
           <div className="input-group">
             <input className="form-control border-right-0 border" onChange={filterValidators} value={filter.keywords} type="text" placeholder="Search.." />
             <span className="input-group-append">
@@ -413,7 +427,6 @@ function Validators(props) {
               <th>#</th>
               <th colSpan={2}>Validator</th>
               <th className="d-none d-sm-table-cell text-center">REStake</th>
-              <th className="d-sm-none"></th>
               <th className="d-none d-lg-table-cell text-center">
                 Frequency
               </th>
@@ -446,7 +459,6 @@ function Validators(props) {
               <td></td>
               <td colSpan={2}></td>
               <td className="d-none d-sm-table-cell text-center"></td>
-              <td className="d-sm-none"></td>
               <td className="d-none d-lg-table-cell text-center"></td>
               {network.apyEnabled !== false && (
                 <td className="d-none d-lg-table-cell text-center"></td>
@@ -468,7 +480,7 @@ function Validators(props) {
                 </strong>
               </td>
               {!props.modal && (
-                <td className="d-none d-sm-table-cell">
+                <td className="d-none d-md-table-cell">
                   {props.rewards && (
                     <strong className="small">
                       <Coins

@@ -254,16 +254,16 @@ class App extends React.Component {
     let icon, mode
     let iconProps = {
       size: '1.4em',
-      className: 'me-3',
+      className: 'mx-2 mx-md-3',
       role: 'button',
       onClick: () => this.props.changeNetworkMode(mode)
     }
     if (this.props.directory.testnet) {
-      iconProps.className = 'me-3 text-warning'
+      iconProps.className = iconProps.className + ' text-warning'
       icon = <WrenchAdjustableCircleFill {...iconProps} />
       mode = 'mainnet'
     } else {
-      iconProps.className = 'me-3 text-muted'
+      iconProps.className = iconProps.className + ' text-muted'
       icon = <WrenchAdjustableCircle {...iconProps} />
       mode = 'testnet'
     }
@@ -279,7 +279,7 @@ class App extends React.Component {
     return (
       <Container>
         <header className="">
-          <div className="d-flex justify-content-between py-3 border-bottom">
+          <div className="d-flex justify-content-between align-items-center py-3 border-bottom">
             <div className="logo d-flex align-items-end text-reset text-decoration-none">
               <span onClick={() => this.props.setActive('networks')} role="button" className="text-reset text-decoration-none">
                 {this.props.theme === 'light'

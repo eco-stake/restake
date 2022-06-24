@@ -116,7 +116,17 @@ function Proposals(props) {
   return (
     <>
       <div className="d-flex flex-wrap justify-content-center align-items-start mb-3">
-        <div className="flex-fill flex-md-grow-0 me-2 me-md-5 mb-2 mb-md-0">
+        <div className="d-none d-md-flex me-5">
+          <div className="input-group">
+            <input className="form-control border-right-0 border" onChange={filterProposals} value={filter.keywords} type="text" placeholder="Search.." />
+            <span className="input-group-append">
+              <button className="btn btn-light text-dark border-left-0 border" type="button" onClick={() => setFilter({...filter, keywords: ''})}>
+                <XCircle />
+              </button>
+            </span>
+          </div>
+        </div>
+        <div className="w-100 d-flex d-md-none mb-2">
           <div className="input-group">
             <input className="form-control border-right-0 border" onChange={filterProposals} value={filter.keywords} type="text" placeholder="Search.." />
             <span className="input-group-append">

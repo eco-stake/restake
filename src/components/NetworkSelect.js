@@ -106,10 +106,10 @@ function NetworkSelect(props) {
             <div className="avatar avatar-sm rounded-circle text-white">
               <img alt={props.network.prettyName} src={props.network.image} height={30} width={30} />
             </div>
-            <div className="d-none d-sm-block ms-2">
+            <div className="d-none d-md-block ms-2">
               <span className="h6">{props.network.prettyName}</span>
             </div>
-            <div className="d-none d-sm-block ms-2">
+            <div className="d-none d-md-block ms-2">
               {props.network.authzSupport
                 ? <Badge className="rounded-pill" bg="success">Authz</Badge>
                 : <Badge className="rounded-pill text-decoration-line-through" bg="danger">Authz</Badge>
