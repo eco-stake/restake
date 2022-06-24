@@ -258,7 +258,6 @@ class Delegations extends React.Component {
   onGrant(operator, expired, maxTokens) {
     this.clearRefreshInterval()
     const operatorGrant = expired ? this.defaultGrant : {
-      claimGrant: {},
       stakeGrant: {},
       validators: [operator.address],
       maxTokens: maxTokens ? bignumber(maxTokens.amount) : null
