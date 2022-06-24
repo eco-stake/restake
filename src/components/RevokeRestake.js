@@ -16,7 +16,7 @@ function RevokeRestake(props) {
     console.log(messages)
 
     try {
-      const gas = await stargateClient.simulate(address, messages, undefined, 1.3)
+      const gas = await stargateClient.simulate(address, messages)
       const result = await stargateClient.signAndBroadcast(address, messages, gas)
       console.log("Successfully broadcasted:", result);
       props.setLoading(false)

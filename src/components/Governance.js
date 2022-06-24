@@ -1,33 +1,14 @@
 import React, { useState, useEffect, useReducer } from 'react';
 import _ from 'lodash'
-import FuzzySearch from 'fuzzy-search'
-import { Bech32 } from '@cosmjs/encoding'
-
-import { add } from 'mathjs'
-
-import Coins from "./Coins";
-import ClaimRewards from "./ClaimRewards";
-import RevokeRestake from "./RevokeRestake";
-import ValidatorImage from './ValidatorImage'
-import TooltipIcon from './TooltipIcon'
 
 import {
-  Table,
-  Button,
   Spinner,
-  Dropdown, 
-  OverlayTrigger, 
-  Tooltip,
-  Nav
 } from 'react-bootstrap'
-import { FilterSquare, XCircle } from "react-bootstrap-icons";
 import { useParams, useNavigate } from "react-router-dom";
 
-import ValidatorName from "./ValidatorName";
-import ManageRestake from "./ManageRestake";
 import AlertMessage from './AlertMessage';
 import Proposals from './Proposals';
-import { executeSync, mapSync } from '../utils/Helpers.mjs';
+import { executeSync } from '../utils/Helpers.mjs';
 import ProposalModal from './ProposalModal';
 import Proposal from '../utils/Proposal.mjs';
 import Vote from '../utils/Vote.mjs';
@@ -50,12 +31,9 @@ function Governance(props) {
   const params = useParams();
 
   useEffect(() => {
-    setProposals()
-    setTallies({})
-    setVotes({})
-
+    setProposals(false)
     getProposals()
-  }, [props.queryClient]);
+  }, [network]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -82,9 +60,15 @@ function Governance(props) {
   }, [proposals]);
 
   useEffect(() => {
-    if(!proposals || !address) return
+    if(!proposals) return
 
-    getVotes(proposals)
+    if(address){
+      getVotes(proposals)
+    }else{
+      proposals.forEach(proposal => {
+        setVotes({ [proposal.proposal_id]: undefined })
+      })
+    }
   }, [proposals, address]);
 
   async function getProposals(hideError) {

@@ -35,7 +35,7 @@ class Delegations extends React.Component {
   }
 
   async componentDidMount() {
-    const isNanoLedger = this.props.stargateClient.getIsNanoLedger();
+    const isNanoLedger = this.props.stargateClient?.getIsNanoLedger();
     this.setState({ isNanoLedger: isNanoLedger });
     await this.getDelegations()
     this.getGrants(true)
@@ -49,22 +49,19 @@ class Delegations extends React.Component {
   async componentDidUpdate(prevProps, prevState) {
     if (this.props.network !== prevProps.network) {
       this.clearRefreshInterval()
-      this.setState({ delegations: undefined })
+      this.setState({ delegations: undefined, validatorApy: {} })
     }
 
     if (prevProps.validator !== this.props.validator && this.props.validator && !this.state.validatorModal.show) {
       this.showValidatorModal(this.props.validator)
     }
 
-    if (!this.props.address) return;
-
     if (this.props.address !== prevProps.address) {
       this.clearRefreshInterval()
-      const isNanoLedger = this.props.stargateClient.getIsNanoLedger();
+      const isNanoLedger = this.props.stargateClient?.getIsNanoLedger();
       this.setState({
         isNanoLedger: isNanoLedger,
         error: null,
-        validatorApy: {},
         operatorGrants: {}
       });
       await this.getDelegations()
@@ -87,9 +84,9 @@ class Delegations extends React.Component {
   }
 
   async refresh() {
+    this.calculateApy();
     this.getWithdrawAddress();
     this.getRewards();
-    this.calculateApy();
     this.refreshInterval();
   }
 
@@ -114,6 +111,8 @@ class Delegations extends React.Component {
   }
 
   async getDelegations(hideError) {
+    if(!this.props.address) return
+
     return this.props.queryClient.getDelegations(this.props.address)
       .then(
         (delegations) => {
@@ -143,6 +142,8 @@ class Delegations extends React.Component {
   }
 
   async getWithdrawAddress() {
+    if(!this.props.address) return
+
     const withdraw = await this.props.queryClient.getWithdrawAddress(this.props.address)
     if (withdraw !== this.props.address) {
       this.setState({ error: 'You have a different withdraw address set. REStake WILL NOT WORK!' })
@@ -150,6 +151,8 @@ class Delegations extends React.Component {
   }
 
   getRewards(hideError) {
+    if(!this.props.address) return
+
     this.props.queryClient
       .getRewards(this.props.address, this.props.network.denom)
       .then(
@@ -182,7 +185,7 @@ class Delegations extends React.Component {
   }
 
   async getGrants(hideError) {
-    if (!this.authzSupport() || !this.props.operators.length) return
+    if (!this.props.address || !this.authzSupport() || !this.props.operators.length) return
 
     let allGrants
     try {
@@ -194,7 +197,7 @@ class Delegations extends React.Component {
     const calls = this.orderedOperators().map((operator) => {
       return () => {
         const { botAddress } = operator;
-        if (!this.props.operators.includes(operator)) return;
+        if (!this.props.address || !this.props.operators.includes(operator)) return;
 
         return this.props.queryClient.getGrants(botAddress, this.props.address).then(
           (result) => {
@@ -255,7 +258,6 @@ class Delegations extends React.Component {
   onGrant(operator, expired, maxTokens) {
     this.clearRefreshInterval()
     const operatorGrant = expired ? this.defaultGrant : {
-      claimGrant: {},
       stakeGrant: {},
       validators: [operator.address],
       maxTokens: maxTokens ? bignumber(maxTokens.amount) : null
@@ -340,7 +342,7 @@ class Delegations extends React.Component {
   }
 
   restakePossible() {
-    return !this.state.isNanoLedger && this.authzSupport();
+    return this.props.address && !this.state.isNanoLedger && this.authzSupport();
   }
 
   totalRewards(validators) {
@@ -418,7 +420,7 @@ class Delegations extends React.Component {
         operators={this.props.operators}
         balance={this.props.balance}
         rewards={this.state.rewards}
-        delegations={this.state.delegations}
+        delegations={this.state.delegations || {}}
         grants={this.operatorGrants()}
         authzSupport={this.authzSupport()}
         restakePossible={this.restakePossible()}
@@ -433,7 +435,7 @@ class Delegations extends React.Component {
   }
 
   render() {
-    if (!this.state.delegations || !this.props.validators) {
+    if (!this.props.validators) {
       return (
         <div className="text-center">
           <Spinner animation="border" role="status">
@@ -480,7 +482,7 @@ class Delegations extends React.Component {
             validators={this.props.validators}
             operators={this.props.operators}
             validatorApy={this.state.validatorApy}
-            delegations={this.state.delegations}
+            delegations={this.state.delegations || {}}
             rewards={this.state.rewards}
             stargateClient={this.props.stargateClient}
             validatorLoading={this.state.validatorLoading}
@@ -496,9 +498,11 @@ class Delegations extends React.Component {
         </div>
         <div className="row">
           <div className="col">
-            <Button variant="secondary" onClick={() => this.showValidatorModal()}>
-              Add Validator
-            </Button>
+            {this.props.address && (
+              <Button variant="secondary" onClick={() => this.showValidatorModal()}>
+                Add Validator
+              </Button>
+            )}
           </div>
           <div className="col">
             <div className="d-grid gap-2 d-md-flex justify-content-end">

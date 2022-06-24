@@ -100,16 +100,16 @@ function NetworkSelect(props) {
 
   return (
     <>
-      <Button onClick={handleOpen} variant="link" className="d-flex align-items-center text-reset text-decoration-none border-secondary btn-outline-light" role="button">
+      <Button onClick={handleOpen} variant="link" className="d-flex flex-nowrap text-nowrap align-items-center text-reset text-decoration-none border-secondary btn-outline-light" role="button">
         {props.network ? (
           <>
             <div className="avatar avatar-sm rounded-circle text-white">
               <img alt={props.network.prettyName} src={props.network.image} height={30} width={30} />
             </div>
-            <div className="d-none d-sm-block ms-2">
+            <div className="d-none d-md-block ms-2">
               <span className="h6">{props.network.prettyName}</span>
             </div>
-            <div className="d-none d-sm-block ms-2">
+            <div className="d-none d-md-block ms-2">
               {props.network.authzSupport
                 ? <Badge className="rounded-pill" bg="success">Authz</Badge>
                 : <Badge className="rounded-pill text-decoration-line-through" bg="danger">Authz</Badge>
@@ -118,12 +118,12 @@ function NetworkSelect(props) {
           </>
         ) : (
           <>
-            <div className="d-none d-sm-block ms-2">
+            <div className="d-none d-md-block ms-2">
               <span className="h6">Choose a Network</span>
             </div>
           </>
         )}
-        <div className="d-none d-md-block ms-md-2">
+        <div className="ms-2">
           <i className="bi bi-chevron-down text-muted text-xs"></i>
         </div>
       </Button>

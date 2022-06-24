@@ -45,7 +45,7 @@ class DelegateForm extends React.Component {
     let messages = this.buildMessages(denomAmount)
     let gas
     try {
-       gas = await client.simulate(this.props.address, messages, undefined, this.modifier())
+       gas = await client.simulate(this.props.address, messages)
     } catch (error) {
       this.setState({ loading: false, error: error.message })
       return
@@ -89,14 +89,10 @@ class DelegateForm extends React.Component {
     return messages
   }
 
-  modifier(){
-    if(this.props.undelegate) return 1.5
-  }
-
   async setAvailableAmount(){
     this.setState({error: undefined})
     const messages = this.buildMessages(multiply(this.props.availableBalance.amount, 0.95))
-    this.props.stargateClient.simulate(this.props.address, messages, undefined, this.modifier()).then(gas => {
+    this.props.stargateClient.simulate(this.props.address, messages).then(gas => {
       const saveTxFeeNum = (this.props.redelegate || this.props.undelegate) ? 0 : 10
       const gasPrice = this.props.stargateClient.getFee(gas).amount[0].amount
       const decimals = pow(10, this.props.network.decimals || 6)
@@ -131,32 +127,34 @@ class DelegateForm extends React.Component {
         </Alert>
         }
         <Form onSubmit={this.handleSubmit}>
-          <Form.Group className="mb-3">
-            <Form.Label>Amount</Form.Label>
-            <div className="mb-3">
-              <div className="input-group">
-                <Form.Control name="amount" type="number" min={0} step={this.step()} placeholder="10" required={true} value={this.state.amount} onChange={this.handleInputChange} />
-                <span className="input-group-text">{this.denom()}</span>
+          <fieldset disabled={!this.props.address}>
+            <Form.Group className="mb-3">
+              <Form.Label>Amount</Form.Label>
+              <div className="mb-3">
+                <div className="input-group">
+                  <Form.Control name="amount" type="number" min={0} step={this.step()} placeholder="10" required={true} value={this.state.amount} onChange={this.handleInputChange} />
+                  <span className="input-group-text">{this.denom()}</span>
+                </div>
+                {this.props.availableBalance &&
+                  <div className="form-text text-end"><span role="button" onClick={() => this.setAvailableAmount()}>
+                    Available: <Coins coins={this.props.availableBalance} decimals={this.props.network.decimals} />
+                  </span></div>
+                }
               </div>
-              {this.props.availableBalance &&
-              <div className="form-text text-end"><span role="button" onClick={() => this.setAvailableAmount()}>
-                Available: <Coins coins={this.props.availableBalance} decimals={this.props.network.decimals} />
-              </span></div>
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Memo</Form.Label>
+              <Form.Control name="memo" as="textarea" rows={3} value={this.state.memo} onChange={this.handleInputChange} />
+            </Form.Group>
+            <p className="text-end">
+              {!this.state.loading
+                ? <Button type="submit" className="btn btn-primary">{this.actionText()}</Button>
+                : <Button className="btn btn-primary" type="button" disabled>
+                  <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>&nbsp;
+                </Button>
               }
-            </div>
-          </Form.Group>
-          <Form.Group className="mb-3">
-            <Form.Label>Memo</Form.Label>
-            <Form.Control name="memo" as="textarea" rows={3} value={this.state.memo} onChange={this.handleInputChange} />
-          </Form.Group>
-          <p className="text-end">
-            {!this.state.loading
-              ? <Button type="submit" className="btn btn-primary">{this.actionText()}</Button>
-              : <Button className="btn btn-primary" type="button" disabled>
-                <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>&nbsp;
-              </Button>
-            }
-          </p>
+            </p>
+          </fieldset>
         </Form>
       </>
     )
