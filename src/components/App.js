@@ -22,6 +22,7 @@ import {
   Droplet,
   DropletFill,
   DropletHalf,
+  CashCoin,
   Coin,
   Inboxes,
   Stars,
@@ -99,7 +100,6 @@ class App extends React.Component {
     this.setState({
       address: null,
       balance: null,
-      queryClient: null,
       stargateClient: null
     })
   }
@@ -152,15 +152,13 @@ class App extends React.Component {
           address: address,
           accountName: key.name,
           stargateClient: stargateClient,
-          queryClient: network.queryClient,
           error: false
         })
         this.getBalance()
       } catch (e) {
         console.log(e)
         return this.setState({
-          error: 'Failed to connect to signing client: ' + e.message,
-          loading: false
+          error: 'Failed to connect to signer: ' + e.message
         })
       }
     }
@@ -209,7 +207,9 @@ class App extends React.Component {
   }
 
   async getBalance() {
-    this.state.queryClient.getBalance(this.state.address, this.props.network.denom)
+    if(!this.state.address) return
+
+    this.props.queryClient.getBalance(this.state.address, this.props.network.denom)
       .then(
         (balance) => {
           this.setState({
@@ -350,8 +350,9 @@ class App extends React.Component {
                             <Coins
                               coins={this.state.balance}
                               decimals={this.props.network.decimals}
-                              className="me-1"
+                              className="me-1 d-none d-sm-inline"
                             />
+                            <CashCoin className="d-inline d-sm-none" />
                           </Dropdown.Toggle>
                           <Dropdown.Menu>
                             <Dropdown.Header>{this.state.accountName || 'Wallet'}</Dropdown.Header>
@@ -386,19 +387,10 @@ class App extends React.Component {
             </AlertMessage>
           )}
           <AlertMessage message={this.state.error} variant="danger" dismissible={false} />
-          {!this.state.address && this.props.network && (
-            !this.state.keplr
-              ? (
-                <AlertMessage variant="warning" dismissible={false}>
-                  Please install the <a href="https://chrome.google.com/webstore/detail/keplr/dmkamcknogkgcdfhhbddcghachkejeap?hl=en" target="_blank" rel="noreferrer">Keplr browser extension</a> using desktop Google Chrome.<br />WalletConnect and mobile support is coming soon.
-                </AlertMessage>
-              ) : this.props.active !== 'networks' && (
-                <div className="mb-5 text-center">
-                  <Button onClick={() => this.connect(true)}>
-                    Connect Keplr
-                  </Button>
-                </div>
-              )
+          {!this.state.address && this.props.network && !this.state.keplr && (
+            <AlertMessage variant="warning" dismissible={false}>
+              Please install the <a href="https://chrome.google.com/webstore/detail/keplr/dmkamcknogkgcdfhhbddcghachkejeap?hl=en" target="_blank" rel="noreferrer">Keplr browser extension</a> using desktop Google Chrome.<br />WalletConnect and mobile support is coming soon.
+            </AlertMessage>
           )}
           {this.props.active === 'networks' && (
             <Networks 
@@ -407,14 +399,14 @@ class App extends React.Component {
               favourites={this.state.favourites} 
               toggleFavourite={this.toggleFavourite} />
           )}
-          {this.props.active === 'governance' && this.state.address && (
+          {this.props.active === 'governance' && (
           <Governance
             network={this.props.network}
             address={this.state.address}
-            queryClient={this.state.queryClient}
+            queryClient={this.props.queryClient}
             stargateClient={this.state.stargateClient} />
           )}
-          {this.props.active === 'delegations' && this.state.address &&
+          {this.props.active === 'delegations' &&
             <>
               <Delegations
                 network={this.props.network}
@@ -424,7 +416,7 @@ class App extends React.Component {
                 validators={this.props.validators}
                 validator={this.props.validator}
                 getBalance={this.getBalance}
-                queryClient={this.state.queryClient}
+                queryClient={this.props.queryClient}
                 stargateClient={this.state.stargateClient} />
             </>
           }

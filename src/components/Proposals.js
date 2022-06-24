@@ -78,21 +78,21 @@ function Proposals(props) {
     const vote = votes[proposalId]
     return (
       <tr key={proposalId}>
-        <td>{proposalId}</td>
+        <td className="d-none d-md-table-cell">{proposalId}</td>
         <td>
-          <span role="button" className="d-block text-truncate" style={{maxWidth: 400}} onClick={() => props.showProposal(proposal)}>
+          <span role="button" onClick={() => props.showProposal(proposal)}>
             {proposal.content.title}
           </span>
         </td>
-        <td className="d-none d-lg-table-cell text-center">
+        <td className="d-none d-lg-table-cell text-center text-nowrap">
           {proposal.statusHuman}
         </td>
-        <td className="text-center">
+        <td className="d-none d-md-table-cell text-center text-nowrap">
           <Moment fromNow>
             {proposal.isDeposit ? proposal.deposit_end_time : proposal.voting_end_time}
           </Moment>
         </td>
-        <td className="text-center">
+        <td className="d-none d-lg-table-cell text-center">
           {proposal.isVoting && (
             vote ? vote.optionHuman : <XCircle className="opacity-50" />
           )}
@@ -105,7 +105,7 @@ function Proposals(props) {
         <td>
           <div className="d-grid gap-2 d-md-flex justify-content-end">
             <Button size="sm" onClick={() => props.showProposal(proposal)}>
-              View Proposal
+              View
             </Button>
           </div>
         </td>
@@ -115,10 +115,10 @@ function Proposals(props) {
 
   return (
     <>
-      <div className="d-flex flex-wrap justify-content-center align-items-center mb-3">
-        <div className="flex-fill">
+      <div className="d-flex flex-wrap justify-content-center align-items-start mb-3">
+        <div className="flex-fill flex-md-grow-0 me-2 me-md-5 mb-2 mb-md-0">
           <div className="input-group">
-            <input className="form-control border-right-0 border" onChange={filterProposals} value={filter.keywords} type="text" placeholder="Search.." style={{maxWidth: 150}} />
+            <input className="form-control border-right-0 border" onChange={filterProposals} value={filter.keywords} type="text" placeholder="Search.." />
             <span className="input-group-append">
               <button className="btn btn-light text-dark border-left-0 border" type="button" onClick={() => setFilter({...filter, keywords: ''})}>
                 <XCircle />
@@ -126,7 +126,7 @@ function Proposals(props) {
             </span>
           </div>
         </div>
-        <div className="d-md-flex d-none d-flex position-absolute mx-auto justify-content-center align-self-center">
+        <div className="d-lg-flex d-none position-absolute mx-auto justify-content-center align-self-center">
           <Nav fill variant="pills" activeKey={filter.group} className={`${props.modal ? ' small' : ''}`} onSelect={(e) => setFilter({...filter, group: e})}>
             <Nav.Item>
               <Nav.Link eventKey="voting" disabled={filteredProposals(proposals, {...filter, group: 'voting'}).length < 1}>Voting Period</Nav.Link>
@@ -136,14 +136,14 @@ function Proposals(props) {
             </Nav.Item>
           </Nav>
         </div>
-        <div className="d-flex d-md-none justify-content-center">
-          <select className="form-select w-auto h-auto d-md-none" aria-label="Proposal group" value={filter.group} onChange={(e) => setFilter({...filter, group: e.target.value})}>
+        <div className="d-flex d-lg-none justify-content-center">
+          <select className="form-select w-auto h-auto" aria-label="Proposal group" value={filter.group} onChange={(e) => setFilter({...filter, group: e.target.value})}>
             <option value="voting">Voting Period</option>
             <option value="all">All</option>
           </select>
         </div>
         <div className="flex-fill d-flex justify-content-end">
-          <select className="form-select form-select-sm w-auto h-auto" aria-label="Proposal status" value={filter.status} onChange={(e) => setFilter({...filter, status: e.target.value})}>
+          <select className="form-select w-auto h-auto" aria-label="Proposal status" value={filter.status} onChange={(e) => setFilter({...filter, status: e.target.value})}>
             {Object.entries(PROPOSAL_STATUSES).map(([key, value]) => {
               return (
                 <option key={key} value={key}>{value}</option>
@@ -157,11 +157,11 @@ function Proposals(props) {
         <Table className="align-middle table-striped">
           <thead>
             <tr>
-              <th>#</th>
+              <th className="d-none d-md-table-cell">#</th>
               <th>Proposal</th>
               <th className="d-none d-lg-table-cell text-center">Status</th>
-              <th className="text-center">End Time</th>
-              <th className="text-center">Voted</th>
+              <th className="d-none d-md-table-cell text-center">End Time</th>
+              <th className="d-none d-lg-table-cell text-center">Voted</th>
               <th className="d-none d-md-table-cell text-center">Progress</th>
               <th></th>
             </tr>

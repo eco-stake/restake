@@ -366,10 +366,10 @@ function Validators(props) {
 
   return (
     <>
-      <div className="d-flex flex-wrap justify-content-center align-items-center mb-3">
-        <div className="flex-fill">
+      <div className="d-flex flex-wrap justify-content-center align-items-start mb-3">
+        <div className="flex-fill flex-md-grow-0 me-2 me-md-5 mb-2 mb-md-0">
           <div className="input-group">
-            <input className="form-control border-right-0 border" onChange={filterValidators} value={filter.keywords} type="text" placeholder="Search.." style={{maxWidth: 150}} />
+            <input className="form-control border-right-0 border" onChange={filterValidators} value={filter.keywords} type="text" placeholder="Search.." />
             <span className="input-group-append">
               <button className="btn btn-light text-dark border-left-0 border" type="button" onClick={() => setFilter({...filter, keywords: ''})}>
                 <XCircle />
@@ -392,8 +392,8 @@ function Validators(props) {
         </div>
         <div className={`d-flex ${!props.modal && 'd-lg-none'} justify-content-center`}>
           <select className="form-select w-auto h-auto" aria-label="Delegation group" value={filter.group} onChange={(e) => setFilter({...filter, group: e.target.value})}>
-            <option value="delegated">My Delegations</option>
-            <option value="operators">REStake Operators</option>
+            <option value="delegated" disabled={filteredValidators(validators, {...filter, group: 'delegated'}).length < 1}>My Delegations</option>
+            <option value="operators" disabled={filteredValidators(validators, {...filter, group: 'operators'}).length < 1}>REStake Operators</option>
             <option value="all">All</option>
           </select>
         </div>

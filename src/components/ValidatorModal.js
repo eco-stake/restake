@@ -140,7 +140,7 @@ function ValidatorModal(props) {
               showValidator={selectValidator}
               manageButton={redelegate ? 'Redelegate' : 'Delegate'} />}
           {selectedValidator && (
-            <Tabs activeKey={activeTab} onSelect={(k) => setActiveTab(k)} id="validator-tabs" className="mb-3">
+            <Tabs activeKey={activeTab} onSelect={(k) => setActiveTab(k)} id="validator-tabs" className="mb-3 flex-sm-row flex-column">
               <Tab eventKey="profile" title="Profile">
                 <ValidatorProfile
                   network={network}

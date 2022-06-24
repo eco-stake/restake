@@ -72,6 +72,7 @@ class Network {
     this.image = this.chain.image
     this.coinGeckoId = this.chain.coinGeckoId
     this.estimatedApr = this.chain.estimatedApr
+    this.apyEnabled = this.apyEnabled && !!this.estimatedApr
     this.authzSupport = this.chain.authzSupport
     this.defaultGasPrice = format(bignumber(multiply(0.000000025, pow(10, this.decimals))), { notation: 'fixed' }) + this.denom
     this.gasPrice = this.data.gasPrice || this.defaultGasPrice

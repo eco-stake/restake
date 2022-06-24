@@ -199,7 +199,7 @@ function ValidatorGrants(props) {
                 : grantsExist
                   ? state.maxTokens && smaller(state.maxTokens, props.rewards)
                     ? <span className="text-danger">Not enough grant remaining</span>
-                    : <span className="text-danger">Invalid / total delegation reached</span> 
+                    : <span className="text-danger">Invalid / total delegation reached</span>
                   : <em>Inactive</em>}
             </td>
           </tr>

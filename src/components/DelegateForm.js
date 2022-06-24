@@ -131,32 +131,34 @@ class DelegateForm extends React.Component {
         </Alert>
         }
         <Form onSubmit={this.handleSubmit}>
-          <Form.Group className="mb-3">
-            <Form.Label>Amount</Form.Label>
-            <div className="mb-3">
-              <div className="input-group">
-                <Form.Control name="amount" type="number" min={0} step={this.step()} placeholder="10" required={true} value={this.state.amount} onChange={this.handleInputChange} />
-                <span className="input-group-text">{this.denom()}</span>
+          <fieldset disabled={!this.props.address}>
+            <Form.Group className="mb-3">
+              <Form.Label>Amount</Form.Label>
+              <div className="mb-3">
+                <div className="input-group">
+                  <Form.Control name="amount" type="number" min={0} step={this.step()} placeholder="10" required={true} value={this.state.amount} onChange={this.handleInputChange} />
+                  <span className="input-group-text">{this.denom()}</span>
+                </div>
+                {this.props.availableBalance &&
+                  <div className="form-text text-end"><span role="button" onClick={() => this.setAvailableAmount()}>
+                    Available: <Coins coins={this.props.availableBalance} decimals={this.props.network.decimals} />
+                  </span></div>
+                }
               </div>
-              {this.props.availableBalance &&
-              <div className="form-text text-end"><span role="button" onClick={() => this.setAvailableAmount()}>
-                Available: <Coins coins={this.props.availableBalance} decimals={this.props.network.decimals} />
-              </span></div>
+            </Form.Group>
+            <Form.Group className="mb-3">
+              <Form.Label>Memo</Form.Label>
+              <Form.Control name="memo" as="textarea" rows={3} value={this.state.memo} onChange={this.handleInputChange} />
+            </Form.Group>
+            <p className="text-end">
+              {!this.state.loading
+                ? <Button type="submit" className="btn btn-primary">{this.actionText()}</Button>
+                : <Button className="btn btn-primary" type="button" disabled>
+                  <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>&nbsp;
+                </Button>
               }
-            </div>
-          </Form.Group>
-          <Form.Group className="mb-3">
-            <Form.Label>Memo</Form.Label>
-            <Form.Control name="memo" as="textarea" rows={3} value={this.state.memo} onChange={this.handleInputChange} />
-          </Form.Group>
-          <p className="text-end">
-            {!this.state.loading
-              ? <Button type="submit" className="btn btn-primary">{this.actionText()}</Button>
-              : <Button className="btn btn-primary" type="button" disabled>
-                <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>&nbsp;
-              </Button>
-            }
-          </p>
+            </p>
+          </fieldset>
         </Form>
       </>
     )

@@ -50,12 +50,9 @@ function Governance(props) {
   const params = useParams();
 
   useEffect(() => {
-    setProposals()
-    setTallies({})
-    setVotes({})
-
+    setProposals(false)
     getProposals()
-  }, [props.queryClient]);
+  }, [address]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -82,9 +79,15 @@ function Governance(props) {
   }, [proposals]);
 
   useEffect(() => {
-    if(!proposals || !address) return
+    if(!proposals) return
 
-    getVotes(proposals)
+    if(address){
+      getVotes(proposals)
+    }else{
+      proposals.forEach(proposal => {
+        setVotes({ [proposal.proposal_id]: undefined })
+      })
+    }
   }, [proposals, address]);
 
   async function getProposals(hideError) {

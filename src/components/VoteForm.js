@@ -85,13 +85,13 @@ function VoteForm(props) {
   const voteChanged = vote && vote.option !== choice
   
   function canVote(){
-    if(!proposal.isVoting) return false
+    if(!address || !proposal.isVoting) return false
 
     return choice && (!vote || (vote && voteChanged))
   }
 
   function buttonText(){
-    if(!proposal.isVoting) return 'Voting ended'
+    if(!proposal.isVoting) return proposal.isDeposit ? 'Voting not started' : 'Voting ended'
 
     return vote ? voteChanged ? 'Change vote' : 'Voted' : 'Vote'
   }
@@ -104,7 +104,7 @@ function VoteForm(props) {
           <div className="row pe-lg-5">
             {_.chunk(Object.entries(choices), 2).map((group, index) => {
               return (
-                <div key={index} className="col">
+                <div key={index} className="col-12 col-md-6">
                   {group.map(([key, value]) => {
                     const voteChoice = vote && key === vote.option
                     return (
