@@ -370,7 +370,7 @@ function Validators(props) {
 
   return (
     <>
-      <div className="d-flex flex-wrap justify-content-center align-items-start mb-3">
+      <div className="d-flex flex-wrap justify-content-center align-items-start mb-3 position-relative">
         <div className="d-none d-md-flex me-5">
           <div className="input-group">
             <input className="form-control border-right-0 border" onChange={filterValidators} value={filter.keywords} type="text" placeholder="Search.." />

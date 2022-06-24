@@ -394,7 +394,7 @@ class App extends React.Component {
           )}
           <AlertMessage message={this.state.error} variant="danger" dismissible={false} />
           {!this.state.keplr && this.state.keplrError && (
-            <AlertMessage variant="warning" dismissible={true}>
+            <AlertMessage variant="warning" dismissible={true} onClose={() => this.setState({keplrError: false})}>
               Please install the <a href="https://chrome.google.com/webstore/detail/keplr/dmkamcknogkgcdfhhbddcghachkejeap?hl=en" target="_blank" rel="noreferrer">Keplr browser extension</a> using desktop Google Chrome.<br />WalletConnect and mobile support is coming soon.
             </AlertMessage>
           )}
