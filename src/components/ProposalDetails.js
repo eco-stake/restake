@@ -84,17 +84,19 @@ function ProposalDetails(props) {
             </tbody>
           </Table>
         </div>
-        <div className="col">
-          <p className="mb-2"><strong>Your Vote</strong></p>
-          <VoteForm
-            network={network}
-            proposal={proposal}
-            vote={vote}
-            address={props.address}
-            stargateClient={props.stargateClient}
-            onVote={props.onVote}
-            setError={setError} />
-        </div>
+        {props.address && (
+          <div className="col">
+            <p className="mb-2"><strong>Your Vote</strong></p>
+            <VoteForm
+              network={network}
+              proposal={proposal}
+              vote={vote}
+              address={props.address}
+              stargateClient={props.stargateClient}
+              onVote={props.onVote}
+              setError={setError} />
+          </div>
+        )}
       </div>
       <div className="mb-4 mt-2">
         <ProposalProgress
@@ -105,7 +107,7 @@ function ProposalDetails(props) {
       <div className="row mt-3">
         <div className="col">
           <h5 className="mb-3">{title}</h5>
-          <p style={{whiteSpace: 'pre-wrap'}}>
+          <p style={{ whiteSpace: 'pre-wrap' }}>
             {fixDescription}
           </p>
         </div>

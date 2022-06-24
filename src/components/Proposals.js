@@ -138,7 +138,7 @@ function Proposals(props) {
         </div>
         <div className="d-flex d-lg-none justify-content-center">
           <select className="form-select w-auto h-auto" aria-label="Proposal group" value={filter.group} onChange={(e) => setFilter({...filter, group: e.target.value})}>
-            <option value="voting">Voting Period</option>
+            <option value="voting" disabled={filteredProposals(proposals, {...filter, group: 'voting'}).length < 1}>Voting Period</option>
             <option value="all">All</option>
           </select>
         </div>

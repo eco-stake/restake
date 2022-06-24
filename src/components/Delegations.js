@@ -499,9 +499,11 @@ class Delegations extends React.Component {
         </div>
         <div className="row">
           <div className="col">
-            <Button variant="secondary" onClick={() => this.showValidatorModal()}>
-              Add Validator
-            </Button>
+            {this.props.address && (
+              <Button variant="secondary" onClick={() => this.showValidatorModal()}>
+                Add Validator
+              </Button>
+            )}
           </div>
           <div className="col">
             <div className="d-grid gap-2 d-md-flex justify-content-end">

@@ -33,14 +33,14 @@ function VoteForm(props) {
     setChoice(vote.option)
   }
 
-  function handleVoteChange(event){
+  function handleVoteChange(event) {
     setChoice(event.target.name)
   }
 
   function handleSubmit(event) {
     event.preventDefault();
 
-    if(!choice){
+    if (!choice) {
       return setError('Please choose an option')
     }
 
@@ -83,15 +83,15 @@ function VoteForm(props) {
   }
 
   const voteChanged = vote && vote.option !== choice
-  
-  function canVote(){
-    if(!address || !proposal.isVoting) return false
+
+  function canVote() {
+    if (!address || !proposal.isVoting) return false
 
     return choice && (!vote || (vote && voteChanged))
   }
 
-  function buttonText(){
-    if(!proposal.isVoting) return proposal.isDeposit ? 'Voting not started' : 'Voting ended'
+  function buttonText() {
+    if (!proposal.isVoting) return proposal.isDeposit ? 'Voting not started' : 'Voting ended'
 
     return vote ? voteChanged ? 'Change vote' : 'Voted' : 'Vote'
   }
@@ -115,8 +115,8 @@ function VoteForm(props) {
                             checked={key === choice}
                             disabled={!proposal.isVoting}
                             onChange={handleVoteChange}
-                           />
-                          <Form.Check.Label className="d-block">
+                          />
+                          <Form.Check.Label className="d-block text-nowrap">
                             {voteChoice ? <strong>{value}</strong> : value}
                           </Form.Check.Label>
                         </Form.Check>

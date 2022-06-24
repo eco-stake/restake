@@ -130,7 +130,7 @@ function Networks(props) {
         </div>
         <div className="d-flex d-lg-none justify-content-end">
           <select className="form-select w-auto h-auto d-lg-none" aria-label="Network group" value={filter.group} onChange={(e) => setFilter({...filter, group: e.target.value})}>
-            <option value="favourites">Favourites</option>
+            <option value="favourites" disabled={filteredNetworks(networks, {...filter, group: 'favourites'}).length < 1}>Favourites</option>
             <option value="all">All</option>
           </select>
         </div>
