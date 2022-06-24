@@ -32,6 +32,12 @@ function Validators(props) {
   const [results, setResults] = useState([])
 
   useEffect(() => {
+    if(delegations && filter.group !== 'delegated'){
+      return setFilter({ ...filter, group: 'delegated' })
+    }
+  }, [Object.keys(delegations).length]);
+
+  useEffect(() => {
     let filtered = filteredValidators(validators, filter)
     let group = filter.group
     while(filtered.length < 1 && group !== 'all'){
