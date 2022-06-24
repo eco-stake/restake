@@ -16,7 +16,7 @@ function ProposalDetails(props) {
 
   const { title, description } = proposal.content
 
-  const fixDescription = description.split(/\\n/).join('\n')
+  const fixDescription = description.replace(/\/n/g, '\n').split(/\\n/).join('\n')
 
   return (
     <>
