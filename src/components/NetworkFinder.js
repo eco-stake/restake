@@ -35,10 +35,10 @@ function NetworkFinder() {
   )
 
   const getNetworks = async () => {
-    let registryNetworks, operatorCounts
+    let registryNetworks, operatorAddresses
     try {
       registryNetworks = await state.directory.getChains()
-      operatorCounts = await state.directory.getOperatorCounts()
+      operatorAddresses = await state.directory.getOperatorAddresses()
     } catch (error) {
       setState({error: error.message, loading: false})
       return {}
@@ -52,7 +52,7 @@ function NetworkFinder() {
 
       if(!networkData) data.experimental = true
 
-      return new Network({...data, ...networkData}, operatorCounts[data.path])
+      return new Network({...data, ...networkData}, operatorAddresses[data.path])
     })
     return _.compact(networks).reduce((a, v) => ({ ...a, [v.path]: v}), {})
   }
