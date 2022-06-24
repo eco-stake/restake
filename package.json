@@ -7,7 +7,6 @@
     "@bugsnag/plugin-react": "^7.16.1",
     "@cosmjs/proto-signing": "^0.28.1",
     "@cosmjs/stargate": "^0.28.1",
-    "@desmoslabs/desmjs": "^2.0.0-beta.4",
     "@ethersproject/wallet": "^5.6.2",
     "@testing-library/jest-dom": "^5.16.2",
     "@testing-library/react": "^12.1.3",
