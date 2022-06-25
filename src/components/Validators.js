@@ -210,7 +210,7 @@ function Validators(props) {
           )}
         </td>
         {network.apyEnabled && (
-          <td className="d-none d-lg-table-cell text-center">
+          <td className="text-center">
             {Object.keys(props.validatorApy).length > 0
               ? props.validatorApy[validatorAddress] !== undefined
                 ? <small>{Math.round(props.validatorApy[validatorAddress] * 100).toLocaleString() + "%"}</small>
@@ -437,7 +437,7 @@ function Validators(props) {
                 Frequency
               </th>
               {network.apyEnabled && (
-                <th className="d-none d-lg-table-cell text-center">
+                <th className="text-center">
                   <TooltipIcon
                     icon={<span className="text-decoration-underline">APY</span>}
                     identifier="delegations-apy"
@@ -467,7 +467,7 @@ function Validators(props) {
               <td className="d-none d-sm-table-cell text-center"></td>
               <td className="d-none d-lg-table-cell text-center"></td>
               {network.apyEnabled && (
-                <td className="d-none d-lg-table-cell text-center"></td>
+                <td className="text-center"></td>
               )}
               <td className="d-none d-lg-table-cell"></td>
               <td className="d-none d-sm-table-cell">

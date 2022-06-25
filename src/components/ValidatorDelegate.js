@@ -23,7 +23,7 @@ function ValidatorDelegate(props) {
     <>
       <Table>
         <tbody className="table-sm small">
-          {network.data.apyEnabled && (
+          {network.apyEnabled && (
             <tr>
               <td scope="row">
                 <TooltipIcon
@@ -39,7 +39,7 @@ function ValidatorDelegate(props) {
               <td>
                 {Object.keys(props.validatorApy).length > 0
                   ? props.validatorApy[selectedValidator.operator_address]
-                    ? <span>{Math.round(props.validatorApy[selectedValidator.operator_address] * 100)}%</span>
+                    ? <span>{Math.round(props.validatorApy[selectedValidator.operator_address] * 100).toLocaleString()}%</span>
                     : "-"
                   : (
                     <Spinner animation="border" role="status" className="spinner-border-sm text-secondary">
