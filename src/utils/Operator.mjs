@@ -7,16 +7,19 @@ const Operator = (data) => {
   const runTime = data.restake.run_time
   const minimumReward = data.restake.minimum_reward
 
-  function runsPerDay() {
+  function runsPerDay(max) {
+    let runs = 0
     if(Array.isArray(runTime)){
-      return runTime.length
+      runs = runTime.length
     }else{
       if(runTime.startsWith('every')){
         const interval = parse(runTime.replace('every ', ''))
-        return (1000 * 60 * 60 * 24) / interval
+        runs = (1000 * 60 * 60 * 24) / interval
+      }else{
+        runs = 1
       }
-      return 1
     }
+    return max && runs > max ? max : runs
   }
 
   function runTimes() {

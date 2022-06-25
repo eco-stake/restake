@@ -209,11 +209,11 @@ function Validators(props) {
             </span>
           )}
         </td>
-        {network.apyEnabled !== false && (
+        {network.apyEnabled && (
           <td className="d-none d-lg-table-cell text-center">
             {Object.keys(props.validatorApy).length > 0
-              ? props.validatorApy[validatorAddress]
-                ? <small>{Math.round(props.validatorApy[validatorAddress] * 100) + "%"}</small>
+              ? props.validatorApy[validatorAddress] !== undefined
+                ? <small>{Math.round(props.validatorApy[validatorAddress] * 100).toLocaleString() + "%"}</small>
                 : "-"
               : (
                 <Spinner animation="border" role="status" className="spinner-border-sm text-secondary">
@@ -436,7 +436,7 @@ function Validators(props) {
               <th className="d-none d-lg-table-cell text-center">
                 Frequency
               </th>
-              {network.apyEnabled !== false && (
+              {network.apyEnabled && (
                 <th className="d-none d-lg-table-cell text-center">
                   <TooltipIcon
                     icon={<span className="text-decoration-underline">APY</span>}
@@ -466,7 +466,7 @@ function Validators(props) {
               <td colSpan={2}></td>
               <td className="d-none d-sm-table-cell text-center"></td>
               <td className="d-none d-lg-table-cell text-center"></td>
-              {network.apyEnabled !== false && (
+              {network.apyEnabled && (
                 <td className="d-none d-lg-table-cell text-center"></td>
               )}
               <td className="d-none d-lg-table-cell"></td>

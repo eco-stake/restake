@@ -96,7 +96,7 @@ function ValidatorProfile(props) {
             <td scope="row">Commission</td>
             <td><span>{validator.commission.commission_rates.rate * 100}%</span></td>
           </tr>
-          {network.data.apyEnabled !== false && (
+          {network.data.apyEnabled && (
             <tr>
               <td scope="row">
                 <TooltipIcon

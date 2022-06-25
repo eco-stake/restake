@@ -56,6 +56,12 @@ function NetworkChecks(props) {
     <ul className={className} style={props.style}>
       {([
         renderCheck({
+          title: <strong>{`${Math.round(network.estimatedApr * 100).toLocaleString()}% APR`}</strong>,
+          failTitle: 'APR Unknown',
+          state: network.estimatedApr,
+          identifier: 'apr'
+        }),
+        renderCheck({
           title: 'API connected',
           failTitle: 'API offline',
           failDescription: error,
@@ -79,7 +85,7 @@ function NetworkChecks(props) {
           ...testedCheck,
           state: network.authzSupport && !network.experimental,
           identifier: 'experimental'
-        })
+        }),
       ])}
     </ul>
   )
