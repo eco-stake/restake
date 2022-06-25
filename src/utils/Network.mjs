@@ -12,13 +12,14 @@ class Network {
     this.enabled = data.enabled
     this.experimental = data.experimental
     this.authzSupport = data.params?.authz
+    this.estimatedApr = data.params?.calculated_apr
     this.operatorAddresses = operatorAddresses || {}
     this.operatorCount = data.operators?.length || this.estimateOperatorCount()
-    this.apyEnabled = data.apyEnabled
+    this.apyEnabled = data.apyEnabled !== false && (!this.estimatedApr || this.estimatedApr > 0)
     this.name = data.path || data.name
     this.path = data.path || data.name
     this.image = data.image
-    this.prettyName = data.pretty_name
+    this.prettyName = data.prettyName || data.pretty_name
     this.default = data.default
     this.testnet = data.testnet || data.network_type === 'testnet'
     this.directory = CosmosDirectory(this.testnet)
@@ -72,7 +73,7 @@ class Network {
     this.image = this.chain.image
     this.coinGeckoId = this.chain.coinGeckoId
     this.estimatedApr = this.chain.estimatedApr
-    this.apyEnabled = this.apyEnabled && !!this.estimatedApr
+    this.apyEnabled = this.apyEnabled && !!this.estimatedApr && this.estimatedApr > 0
     this.authzSupport = this.chain.authzSupport
     this.defaultGasPrice = format(bignumber(multiply(0.000000025, pow(10, this.decimals))), { notation: 'fixed' }) + this.denom
     this.gasPrice = this.data.gasPrice || this.defaultGasPrice
@@ -102,7 +103,7 @@ class Network {
       }else{
         const commission = validator.commission.commission_rates.rate
         const operator = operators.find((el) => el.address === address)
-        const periodPerYear = operator && this.chain.authzSupport ? operator.runsPerDay() * 365 : 1;
+        const periodPerYear = operator && this.chain.authzSupport ? operator.runsPerDay(this.data.maxPerDay) * 365 : 1;
         const realApr = chainApr * (1 - commission);
         const apy = (1 + realApr / periodPerYear) ** periodPerYear - 1;
         validatorApy[address] = apy;

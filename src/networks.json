@@ -3,7 +3,8 @@
     "name": "osmosis",
     "gasPrice": "0.0025uosmo",
     "ownerAddress": "osmovaloper1u5v0m74mql5nzfx2yh43s2tke4mvzghr6m2n5t",
-    "default": true
+    "default": true,
+    "maxPerDay": 1
   },
   {
     "name": "juno",
@@ -36,7 +37,6 @@
   },
   {
     "name": "terra",
-    "apyEnabled": false,
     "gasPrice": "0.015uluna"
   },
   {
@@ -54,12 +54,10 @@
   },
   {
     "name": "emoney",
-    "apyEnabled": false,
     "gasPrice": "0.08ungm"
   },
   {
     "name": "kava",
-    "apyEnabled": false,
     "gasPrice": "0.00008ukava"
   },
   {
@@ -73,9 +71,9 @@
   },
   {
     "name": "evmos",
-    "apyEnabled": false,
     "txTimeout": 120000,
-    "ownerAddress": "evmosvaloper1umk407eed7af6anvut6llg2zevnf0dn0feqqny"
+    "ownerAddress": "evmosvaloper1umk407eed7af6anvut6llg2zevnf0dn0feqqny",
+    "maxPerDay": 1
   },
   {
     "name": "sifchain",
@@ -86,8 +84,7 @@
     "name": "lumnetwork"
   },
   {
-    "name": "stargaze",
-    "apyEnabled": false
+    "name": "stargaze"
   },
   {
     "name": "comdex",
@@ -107,8 +104,7 @@
     "name": "persistence"
   },
   {
-    "name": "agoric",
-    "apyEnabled": false
+    "name": "agoric"
   },
   {
     "name": "impacthub",
@@ -176,8 +172,7 @@
       "low": 0,
       "average": 0.025,
       "high": 0.04
-    },
-    "apyEnabled": false
+    }
   },
   {
     "name": "meme",
@@ -190,7 +185,6 @@
   {
     "name": "harpoon",
     "ownerAddress": "kujiravaloper1vue5lawr3s0au9zj0aqeft5aknx6cjq6w5ghca",
-    "apyEnabled": false,
     "testnet": true
   }
 ]

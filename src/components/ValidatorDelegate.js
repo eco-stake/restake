@@ -23,7 +23,7 @@ function ValidatorDelegate(props) {
     <>
       <Table>
         <tbody className="table-sm small">
-          {network.data.apyEnabled !== false && (
+          {network.data.apyEnabled && (
             <tr>
               <td scope="row">
                 <TooltipIcon
