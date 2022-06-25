@@ -40,7 +40,7 @@ function Governance(props) {
       getProposals()
     }, 120_000);
     return () => clearInterval(interval);
-  }, []);
+  }, [network]);
 
   useEffect(() => {
     if(!proposals || !params.proposalId) return
