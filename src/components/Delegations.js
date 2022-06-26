@@ -47,22 +47,20 @@ class Delegations extends React.Component {
   }
 
   async componentDidUpdate(prevProps, prevState) {
-    if (this.props.network !== prevProps.network) {
-      this.clearRefreshInterval()
-      this.setState({ delegations: undefined, validatorApy: {} })
-    }
-
     if (prevProps.validator !== this.props.validator && this.props.validator && !this.state.validatorModal.show) {
       this.showValidatorModal(this.props.validator)
     }
 
-    if (this.props.address !== prevProps.address) {
+    if ((this.props.network !== prevProps.network && !this.props.address)
+      || (this.props.address !== prevProps.address)) {
       this.clearRefreshInterval()
       const isNanoLedger = this.props.stargateClient?.getIsNanoLedger();
       this.setState({
         isNanoLedger: isNanoLedger,
+        delegations: undefined, 
+        validatorApy: {},
+        operatorGrants: {},
         error: null,
-        operatorGrants: {}
       });
       await this.getDelegations()
       this.refresh();
