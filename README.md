@@ -25,7 +25,7 @@ A script is also provided which allows a validator to automatically search their
 
 ## Become an operator
 
-Becoming an operator is extremely easy. You need to do three things:
+Becoming an operator is extremely easy. You need to do four things:
 
 ### Setup a bot wallet
 
@@ -53,6 +53,40 @@ The correct path can be set in one of two ways using a [config override](#overri
 ```
 
 In the future, `correctSlip44` will become the default and you will need to set `slip44` explicitely if you want to use the 118 path.
+
+### Setup your REStake operator
+
+You now need to update the [Validator Registry](https://github.com/eco-stake/validator-registry) to add your operator information to any networks you want to auto-compound for. Check the README and existing validators for examples, but the config for a network looks like this:
+
+```json
+{
+  "name": "akash",
+  "address": "akashvaloper1xgnd8aach3vawsl38snpydkng2nv8a4kqgs8hf",
+  "restake": {
+    "address": "akash1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczud2r2v",
+    "run_time": [
+      "09:00",
+      "21:00"
+    ],
+    "minimum_reward": 1000
+  }
+},
+```
+
+`address` is your validator's address, and `restake.address` is the address from your new hot wallet you generated earlier.
+
+`restake.run_time` is the time *in UTC* that you intend to run your bot, and there are a few options. Pass a single time, e.g. `09:00` to specify a single run at 9am UTC. Use an array for multiple specified times, e.g. `["09:00", "21:00"]`. Use an interval string for multiple times per hour/day, e.g. `"every 15 minutes"`.
+
+`restake.minimum_reward` is the minimum reward to trigger autostaking, otherwise the address be skipped. This could be set higher for more frequent restaking. Note this is in the base denomination, e.g. `uosmo`.
+
+Repeat this config for all networks you want to REStake for.
+
+Note that the `restake.address` is the address which will be granted by the delegator in the UI to carry out their restaking transactions.
+
+#### Submit your operator
+
+You can now submit your [Validator Registry](https://github.com/eco-stake/validator-registry) update to that repository in a pull request which will be merged as soon as possible. REStake automatically updates within 15 minutes of changes being merged.
+
 
 ### Setup the autostaking script and run daily
 
@@ -268,41 +302,6 @@ Add your Check UUID to the relevant network in your `networks.local.json` config
   }
 }
 ```
-
-## Submitting your operator
-
-### Setup your REStake operator
-
-You now need to update the [Validator Registry](https://github.com/eco-stake/validator-registry) to add your operator information to any networks you want to auto-compound for. Check the README and existing validators for examples, but the config for a network looks like this:
-
-```json
-{
-  "name": "akash",
-  "address": "akashvaloper1xgnd8aach3vawsl38snpydkng2nv8a4kqgs8hf",
-  "restake": {
-    "address": "akash1yxsmtnxdt6gxnaqrg0j0nudg7et2gqczud2r2v",
-    "run_time": [
-      "09:00",
-      "21:00"
-    ],
-    "minimum_reward": 1000
-  }
-},
-```
-
-`address` is your validator's address, and `restake.address` is the address from your new hot wallet you generated earlier.
-
-`restake.run_time` is the time *in UTC* that you intend to run your bot, and there are a few options. Pass a single time, e.g. `09:00` to specify a single run at 9am UTC. Use an array for multiple specified times, e.g. `["09:00", "21:00"]`. Use an interval string for multiple times per hour/day, e.g. `"every 15 minutes"`.
-
-`restake.minimum_reward` is the minimum reward to trigger autostaking, otherwise the address be skipped. This could be set higher for more frequent restaking. Note this is in the base denomination, e.g. `uosmo`.
-
-Repeat this config for all networks you want to REStake for.
-
-Note that the `restake.address` is the address which will be granted by the delegator in the UI to carry out their restaking transactions.
-
-#### Submit your operator
-
-You can now submit your [Validator Registry](https://github.com/eco-stake/validator-registry) update to that repository in a pull request which will be merged as soon as possible. REStake automatically updates within 15 minutes of changes being merged.
 
 ## Adding/updating a network
 
