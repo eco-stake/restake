@@ -186,5 +186,9 @@
     "name": "harpoon",
     "ownerAddress": "kujiravaloper1vue5lawr3s0au9zj0aqeft5aknx6cjq6w5ghca",
     "testnet": true
+  },
+  {
+    "name": "kujira",
+    "ownerAddress": "kujiravaloper1vue5lawr3s0au9zj0aqeft5aknx6cjq6w5ghca"
   }
 ]
