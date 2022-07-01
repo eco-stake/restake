@@ -40,6 +40,10 @@
     "gasPrice": "0.015uluna"
   },
   {
+    "name": "terra2",
+    "gasPrice": "0.015uluna"
+  },
+  {
     "name": "sentinel",
     "gasPrice": "0.02udvpn"
   },
