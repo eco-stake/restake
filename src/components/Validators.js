@@ -7,7 +7,7 @@ import { format, add } from 'mathjs'
 
 import Coins from "./Coins";
 import ClaimRewards from "./ClaimRewards";
-import RevokeRestake from "./RevokeRestake";
+import RevokeGrant from "./RevokeGrant";
 import ValidatorImage from './ValidatorImage'
 import TooltipIcon from './TooltipIcon'
 
@@ -270,10 +270,11 @@ function Validators(props) {
                             {grants.grantsValid ? 'Manage REStake' : 'Enable REStake'}
                           </Dropdown.Item>
                           {grants.grantsExist && (
-                            <RevokeRestake
+                            <RevokeGrant
                               address={props.address}
-                              operator={operator}
-                              grants={grants}
+                              grantAddress={operator.botAddress}
+                              grants={[grants.stakeGrant, grants.claimGrant]}
+                              buttonText="Disable REStake"
                               stargateClient={props.stargateClient}
                               onRevoke={props.onRevoke}
                               setLoading={(loading) =>

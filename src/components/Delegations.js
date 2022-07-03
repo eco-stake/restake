@@ -38,7 +38,7 @@ class Delegations extends React.Component {
     const isNanoLedger = this.props.stargateClient?.getIsNanoLedger();
     this.setState({ isNanoLedger: isNanoLedger });
     await this.getDelegations()
-    this.getGrants(true)
+    this.getGrants()
     this.refresh();
 
     if (this.props.validator) {
@@ -64,16 +64,10 @@ class Delegations extends React.Component {
       });
       await this.getDelegations()
       this.refresh();
-      if(this.state.delegations){
-        return this.getGrants(true)
-      }
     }
 
-    if (this.state.delegations && prevState.delegations){
-      const delegationsChanged = _.difference(Object.keys(this.state.delegations), Object.keys(prevState.delegations || {})).length > 0
-      if (delegationsChanged) {
-        this.getGrants(true)
-      }
+    if (this.props.grants !== prevProps.grants){
+      this.getGrants()
     }
   }
 
@@ -96,16 +90,12 @@ class Delegations extends React.Component {
     const delegateInterval = setInterval(() => {
       this.getDelegations(true)
     }, 30_000)
-    const grantInterval = setInterval(() => {
-      this.getGrants(true);
-    }, 60_000);
-    this.setState({ refreshInterval, delegateInterval, grantInterval });
+    this.setState({ refreshInterval, delegateInterval });
   }
 
   clearRefreshInterval(){
     clearInterval(this.state.refreshInterval);
     clearInterval(this.state.delegateInterval);
-    clearInterval(this.state.grantInterval);
   }
 
   async getDelegations(hideError) {
@@ -182,39 +172,15 @@ class Delegations extends React.Component {
     })
   }
 
-  async getGrants(hideError) {
-    if (!this.props.address || !this.authzSupport() || !this.props.operators.length) return
+  async getGrants() {
+    if (!this.props.grants) return
 
-    let allGrants
-    try {
-      allGrants = await this.props.queryClient.getGranterGrants(this.props.address)
-      this.setAllGrants(allGrants, this.props.operators, this.props.address)
-      return
-    } catch (e) { console.log('Failed to get all grants in batch') }
-
-    const calls = this.orderedOperators().map((operator) => {
-      return () => {
-        const { botAddress } = operator;
-        if (!this.props.address || !this.props.operators.includes(operator)) return;
-
-        return this.props.queryClient.getGrants(botAddress, this.props.address).then(
-          (result) => {
-            this.setGrants(result, botAddress, this.props.address)
-          },
-          (error) => {
-            if (!hideError) {
-              this.setState({ error: "Failed to get grants. Please refresh" });
-            }
-          }
-        );
-      }
-    });
-
-    const batchCalls = _.chunk(calls, 5);
-
-    for (const batchCall of batchCalls) {
-      await Promise.allSettled(batchCall.map(call => call()))
-    }
+    const operatorGrants = this.props.operators.reduce((sum, operator) => {
+      const grantee = operator.botAddress
+      sum[grantee] = this.buildGrants(this.props.grants.granter, grantee, this.props.address)
+      return sum
+    }, {})
+    this.setState({operatorGrants: operatorGrants})
   }
 
   buildGrants(grants, grantee, granter){
@@ -233,57 +199,22 @@ class Delegations extends React.Component {
     };
   }
 
-  setAllGrants(grants, operators, granter){
-    const operatorGrants = operators.reduce((sum, operator) => {
-      const grantee = operator.botAddress
-      sum[grantee] = this.buildGrants(grants, grantee, granter)
-      return sum
-    }, {})
-    this.setState({operatorGrants: operatorGrants})
-  }
-
-  setGrants(grants, grantee, granter){
-    const operatorGrant = this.buildGrants(grants, grantee, granter)
+  onGrant(grantAddress, grant) {
+    const operator = this.props.operators.find(el => el.botAddress === grantAddress)
     this.setState((state, props) => ({
-      operatorGrants: _.set(
-        state.operatorGrants,
-        grantee,
-        operatorGrant
-      ),
-    }));
-  }
-
-  onGrant(operator, expired, maxTokens) {
-    this.clearRefreshInterval()
-    const operatorGrant = expired ? this.defaultGrant : {
-      stakeGrant: {},
-      validators: [operator.address],
-      maxTokens: maxTokens ? bignumber(maxTokens.amount) : null
-    };
-    this.setState((state, props) => ({
-      operatorGrants: _.set(
-        state.operatorGrants,
-        operator.botAddress,
-        operatorGrant
-      ),
       error: null,
       validatorLoading: _.set(state.validatorLoading, operator.address, false),
     }));
-    this.refreshInterval()
+    this.props.onGrant(grantAddress, grant)
   }
 
-  onRevoke(operator) {
-    this.clearRefreshInterval()
+  onRevoke(grantAddress, msgTypes) {
+    const operator = this.props.operators.find(el => el.botAddress === grantAddress)
     this.setState((state, props) => ({
-      operatorGrants: _.set(
-        state.operatorGrants,
-        operator.botAddress,
-        this.defaultGrant
-      ),
       error: null,
       validatorLoading: _.set(state.validatorLoading, operator.address, false),
     }));
-    this.refreshInterval()
+    this.props.onRevoke(grantAddress, msgTypes)
   }
 
   onClaimRewards() {
@@ -313,12 +244,6 @@ class Delegations extends React.Component {
 
   authzSupport() {
     return this.props.network.authzSupport
-  }
-
-  orderedOperators() {
-    const { delegations, operators } = this.props
-    if(!delegations) return operators
-    return _.sortBy(operators, ({ address }) => delegations[address] ? -1 : 0)
   }
 
   operatorGrants() {

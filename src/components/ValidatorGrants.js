@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import moment from 'moment'
 import { pow, multiply, divide, larger, smaller, bignumber } from 'mathjs'
 
-import { GenericAuthorization } from "cosmjs-types/cosmos/authz/v1beta1/authz";
 import { StakeAuthorization } from "cosmjs-types/cosmos/staking/v1beta1/authz";
 import { Timestamp } from "cosmjs-types/google/protobuf/timestamp";
 
@@ -14,7 +13,7 @@ import {
 
 import Coins from './Coins';
 import { coin } from '../utils/Helpers.mjs';
-import RevokeRestake from './RevokeRestake';
+import RevokeGrant from './RevokeGrant';
 import AlertMessage from './AlertMessage';
 
 function ValidatorGrants(props) {
@@ -91,7 +90,16 @@ function ValidatorGrants(props) {
     props.stargateClient.signAndBroadcast(address, messages).then((result) => {
       console.log("Successfully broadcasted:", result);
       showLoading(false)
-      props.onGrant(operator, moment().diff(expiry, "seconds") >= 0, maxTokens);
+      props.onGrant(operator.botAddress, {
+        grantee: operator.botAddress,
+        granter: address,
+        expiration: expiry,
+        authorization: {
+          '@type': "/cosmos.staking.v1beta1.StakeAuthorization",
+          max_tokens: maxTokens,
+          allow_list: { address: [operator.address] }
+        }
+      });
     }, (error) => {
       console.log('Failed to broadcast:', error)
       showLoading(false)
@@ -238,7 +246,7 @@ function ValidatorGrants(props) {
                   ? (
                     <>
                       {grants.grantsExist && (
-                        <RevokeRestake
+                        <RevokeGrant
                           button={true}
                           address={address}
                           operator={operator}
