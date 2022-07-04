@@ -195,7 +195,6 @@
     "name": "genesisl1",
     "gasPrice": "200000el1",
     "txTimeout": 120000,
-    "ownerAddress": "genesisvaloper1tzqmp8ed3e6rgqrfscekg87pe5hd90n0ax4ghd",
     "maxPerDay": 1
   }
 ]
