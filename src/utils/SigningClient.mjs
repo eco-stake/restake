@@ -204,9 +204,13 @@ async function SigningClient(network, defaultGasPrice, signer, key) {
 
   async function simulate(address, messages, memo, modifier) {
     const account = await getAccount(address)
+    const fee = getFee()
     const txBody = {
       bodyBytes: makeBodyBytes(messages, memo),
-      authInfoBytes: await makeAuthInfoBytes(account, {}, SignMode.SIGN_MODE_UNSPECIFIED),
+      authInfoBytes: await makeAuthInfoBytes(account, {
+        amount: fee.amount,
+        gasLimit: fee.gas,
+      }, SignMode.SIGN_MODE_UNSPECIFIED),
       signatures: [new Uint8Array()],
     }
 
