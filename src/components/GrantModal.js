@@ -27,6 +27,7 @@ const messageTypes = [
   '/cosmos.staking.v1beta1.MsgDelegate',
   '/cosmos.staking.v1beta1.MsgUndelegate',
   '/cosmos.staking.v1beta1.MsgBeginRedelegate',
+  'Custom'
 ]
 
 function GrantModal(props) {
@@ -43,10 +44,11 @@ function GrantModal(props) {
   useEffect(() => {
     setState({
       ...state,
-      grantTypeValue: '/cosmos.authz.v1beta1.GenericAuthorization',
-      messageTypeValue: messageTypes[0],
       granteeValue: '',
       expiryDateValue: defaultExpiry.format('YYYY-MM-DD'),
+      grantTypeValue: '/cosmos.authz.v1beta1.GenericAuthorization',
+      messageTypeValue: messageTypes[0],
+      customMessageTypeValue: '',
     })
   }, [address])
 
@@ -59,6 +61,10 @@ function GrantModal(props) {
     props.setLoading && props.setLoading(isLoading)
   }
 
+  function messageType(){
+    return state.messageTypeValue === 'Custom' ? state.customMessageTypeValue : state.messageTypeValue
+  }
+
   function handleSubmit(event) {
     event.preventDefault()
     if(!address || isNanoLedger || !valid()) return
@@ -69,7 +75,7 @@ function GrantModal(props) {
     const messages = [
       buildGrantMsg(state.grantTypeValue,
         GenericAuthorization.encode(GenericAuthorization.fromPartial({
-          msg: state.messageTypeValue
+          msg: messageType()
         })).finish(),
         expiry
       )
@@ -85,7 +91,7 @@ function GrantModal(props) {
         expiration: expiry,
         authorization: {
           '@type': state.grantTypeValue,
-          msg: state.messageTypeValue
+          msg: messageType()
         }
       });
     }, (error) => {
@@ -165,6 +171,7 @@ function GrantModal(props) {
               </select>
             </Form.Group>
             {state.grantTypeValue === '/cosmos.authz.v1beta1.GenericAuthorization' && (
+              <>
               <Form.Group className="mb-3">
                 <Form.Label>Message type</Form.Label>
                 <select className="form-select" name="messageTypeValue" aria-label="Message type" value={state.messageTypeValue} onChange={handleInputChange}>
@@ -175,6 +182,13 @@ function GrantModal(props) {
                   })}
                 </select>
               </Form.Group>
+              {state.messageTypeValue === 'Custom' && (
+                <Form.Group className="mb-3">
+                  <Form.Label>Type URL</Form.Label>
+                  <Form.Control type="text" name='customMessageTypeValue' required={true} value={state.customMessageTypeValue} onChange={handleInputChange} />
+                </Form.Group>
+              )}
+              </>
             )}
             {address && !isNanoLedger && (
               <p className="text-end">
@@ -198,7 +212,7 @@ function GrantModal(props) {
             <pre className="text-wrap"><code>
               <p>{daemon_name ? daemon_name : <kbd>chaind</kbd>} tx authz grant \<br />
                 <kbd>{state.granteeValue || '<grantee>'}</kbd> generic \<br />
-                --msg-type <kbd>{state.messageTypeValue}</kbd> \<br />
+                --msg-type <kbd>{messageType()}</kbd> \<br />
                 --expiration <kbd>{moment(state.expiryDateValue).unix()}</kbd> \<br />
                 --from <kbd>my-key</kbd> --ledger \<br />
                 --chain-id {chain_id} \<br />
