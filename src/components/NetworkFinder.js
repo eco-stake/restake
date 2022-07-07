@@ -91,7 +91,7 @@ function NetworkFinder() {
     });
     if (govMatch) {
       setActive('governance', network);
-    } else if(grantMatch) {
+    } else if(grantMatch && network.authzSupport) {
       setActive('grants', network);
     } else {
       setActive('delegations', network);

@@ -258,9 +258,10 @@ class App extends React.Component {
         })
       })
       return
-    } catch (e) { 
-      console.log('Failed to get all grants in batch', e.message) 
-      this.setState({ grantQuerySupport: false })
+    } catch (error) { 
+      console.log('Failed to get all grants in batch', error.message) 
+      console.log(error.response.status !== 501)
+      this.setState({ grantQuerySupport: error.response?.status !== 501 })
     }
 
     const calls = this.props.operators.map((operator) => {
@@ -430,7 +431,7 @@ class App extends React.Component {
                           <Inboxes className="mb-1 me-1" /><span className="d-none d-sm-inline"> Govern</span>
                         </Nav.Link>
                       </div>
-                      {this.state.address && (
+                      {this.state.address && this.props.network.authzSupport && (
                         <div className="nav-item ps-2">
                           <Nav.Link eventKey="grants">
                             <Magic className="mb-1 me-1" /><span className="d-none d-sm-inline"> Grant</span>
@@ -533,7 +534,7 @@ class App extends React.Component {
             queryClient={this.props.queryClient}
             stargateClient={this.state.stargateClient} />
           )}
-          {this.props.active === 'grants' && this.state.address && (
+          {this.props.active === 'grants' && this.state.address && this.props.network.authzSupport && (
           <Grants
             network={this.props.network}
             address={this.state.address}

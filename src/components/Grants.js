@@ -196,7 +196,10 @@ function Grants(props) {
 
   const alerts = (
     <>
-      {isNanoLedger && (
+      {!props.grantQuerySupport && (
+        <AlertMessage message="This network doesn't fully support this feature just yet..." />
+      )}
+      {props.grantQuerySupport && isNanoLedger && (
         <AlertMessage
           variant="warning"
           dismissible={false}
@@ -205,9 +208,6 @@ function Grants(props) {
           <p className="mb-0"><span onClick={() => setShowModal(true)} role="button" className="text-reset text-decoration-underline">A manual workaround is possible using the CLI.</span></p>
         </AlertMessage>
         )}
-      {!props.grantQuerySupport && (
-        <AlertMessage message="This network doesn't fully support this feature just yet..." />
-      )}
       <AlertMessage message={error} />
     </>
   );

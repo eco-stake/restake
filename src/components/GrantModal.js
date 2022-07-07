@@ -50,6 +50,8 @@ function GrantModal(props) {
       messageTypeValue: messageTypes[0],
       customMessageTypeValue: '',
     })
+    setShowLedger(isNanoLedger)
+    setError(null)
   }, [address])
 
   function handleInputChange(e) {
@@ -210,7 +212,7 @@ function GrantModal(props) {
             )}
             <Collapse in={showLedger}>
             <pre className="text-wrap"><code>
-              <p>{daemon_name ? daemon_name : <kbd>chaind</kbd>} tx authz grant \<br />
+              <p>{daemon_name ? daemon_name : <kbd>{'<chaind>'}</kbd>} tx authz grant \<br />
                 <kbd>{state.granteeValue || '<grantee>'}</kbd> generic \<br />
                 --msg-type <kbd>{messageType()}</kbd> \<br />
                 --expiration <kbd>{moment(state.expiryDateValue).unix()}</kbd> \<br />
