@@ -296,13 +296,13 @@ class App extends React.Component {
 
   onGrant(grantee, grant){
     this.setState((state, props) => {
-      const granterGrants = state.grants.granter.filter(el => {
+      const granterGrants = state.grants ? state.grants.granter.filter(el => {
         if(el.grantee !== grantee) return true 
         if(el.authorization['@type'] === grant.authorization['@type'] && el.authorization.msg === grant.authorization.msg){
           return false
         }
         return true
-      })
+      }) : []
       granterGrants.push(grant)
       return { grants: { ...state.grants, granter: granterGrants } }
     })
