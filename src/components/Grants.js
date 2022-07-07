@@ -28,6 +28,8 @@ function Grants(props) {
   const [filter, setFilter] = useState({keywords: '', group: 'granter'})
   const [results, setResults] = useState([])
 
+  const isNanoLedger = props.stargateClient?.getIsNanoLedger()
+
   // TODO
   // Vote exec
 
@@ -194,8 +196,17 @@ function Grants(props) {
 
   const alerts = (
     <>
+      {isNanoLedger && (
+        <AlertMessage
+          variant="warning"
+          dismissible={false}
+        >
+          <p>Ledger devices can't send Authz transactions just yet. Full support will be enabled as soon as it is possible.</p>
+          <p className="mb-0"><span onClick={() => setShowModal(true)} role="button" className="text-reset text-decoration-underline">A manual workaround is possible using the CLI.</span></p>
+        </AlertMessage>
+        )}
       {!props.grantQuerySupport && (
-        <AlertMessage message="This network doesn't fully support this feature just yet..."  />
+        <AlertMessage message="This network doesn't fully support this feature just yet..." />
       )}
       <AlertMessage message={error} />
     </>
@@ -244,7 +255,7 @@ function Grants(props) {
           </div>
           <div className="flex-fill d-flex justify-content-end">
             <Button variant="primary" disabled={!props.grantQuerySupport} onClick={() => setShowModal(true)}>
-              New Grant
+              {address && !isNanoLedger ? 'New Grant' : 'CLI/Ledger Instructions'}
             </Button>
           </div>
         </div>

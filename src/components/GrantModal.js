@@ -9,6 +9,7 @@ import {
   Modal,
   Button,
   Form,
+  Collapse
 } from 'react-bootstrap'
 
 import AlertMessage from './AlertMessage';
@@ -17,12 +18,12 @@ const messageTypes = [
   // '/cosmos.authz.v1beta1.MsgGrant',
   // '/cosmos.authz.v1beta1.MsgRevoke',
   // '/cosmos.authz.v1beta1.MsgExec',
-  '/cosmos.bank.v1beta1.MsgSend',
-  '/cosmos.distribution.v1beta1.MsgWithdrawDelegatorRewards',
-  '/cosmos.distribution.v1beta1.MsgWithdrawValidatorCommission',
   '/cosmos.gov.v1beta1.MsgVote',
   '/cosmos.gov.v1beta1.MsgDeposit',
   '/cosmos.gov.v1beta1.MsgSubmitProposal',
+  '/cosmos.bank.v1beta1.MsgSend',
+  '/cosmos.distribution.v1beta1.MsgWithdrawDelegatorRewards',
+  '/cosmos.distribution.v1beta1.MsgWithdrawValidatorCommission',
   '/cosmos.staking.v1beta1.MsgDelegate',
   '/cosmos.staking.v1beta1.MsgUndelegate',
   '/cosmos.staking.v1beta1.MsgBeginRedelegate',
@@ -30,15 +31,20 @@ const messageTypes = [
 
 function GrantModal(props) {
   const { show, network, address } = props
+  const isNanoLedger = props.stargateClient?.getIsNanoLedger()
   const defaultExpiry = moment().add(1, 'year')
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState()
   const [state, setState] = useState({ maxTokensValue: '', expiryDateValue: defaultExpiry.format('YYYY-MM-DD') });
+  const [showLedger, setShowLedger] = useState(isNanoLedger)
+
+  const { daemon_name, chain_id } = network.chain.chainData
 
   useEffect(() => {
     setState({
       ...state,
       grantTypeValue: '/cosmos.authz.v1beta1.GenericAuthorization',
+      messageTypeValue: messageTypes[0],
       granteeValue: '',
       expiryDateValue: defaultExpiry.format('YYYY-MM-DD'),
     })
@@ -55,7 +61,7 @@ function GrantModal(props) {
 
   function handleSubmit(event) {
     event.preventDefault()
-    if(!validGrantee()) return
+    if(!address || isNanoLedger || !valid()) return
 
     showLoading(true)
     const expiry = moment(state.expiryDateValue)
@@ -90,6 +96,7 @@ function GrantModal(props) {
   }
 
   function handleClose() {
+    setError(null)
     props.closeModal();
   }
 
@@ -113,6 +120,10 @@ function GrantModal(props) {
     }
   }
 
+  function valid(){
+    return validGrantee()
+  }
+
   function validGrantee(){
     if(!state.granteeValue) return true;
 
@@ -124,7 +135,7 @@ function GrantModal(props) {
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title className="text-truncate pe-4">
-            New Grant
+          {address && !isNanoLedger ? 'New Grant' : 'CLI/Ledger instructions'}
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -133,6 +144,11 @@ function GrantModal(props) {
               {error}
             </AlertMessage>
           }
+          {!address || isNanoLedger && (
+            <>
+              <p>Enter your grant details to generate the relevant CLI command.</p>
+            </>
+          )}
           <Form onSubmit={handleSubmit}>
             <Form.Group className="mb-3">
               <Form.Label>Grantee</Form.Label>
@@ -160,16 +176,36 @@ function GrantModal(props) {
                 </select>
               </Form.Group>
             )}
-            <p className="text-end">
-              {!loading
-                ? (
-                  <Button type="submit" className="btn btn-primary ms-2">Create grant</Button>
-                )
-                : <Button className="btn btn-primary" type="button" disabled>
-                  <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>&nbsp;
-                </Button>
-              }
-            </p>
+            {address && !isNanoLedger && (
+              <p className="text-end">
+                <Button
+                  variant="link"
+                  onClick={() => setShowLedger(!showLedger)}
+                  aria-controls="example-collapse-text"
+                  aria-expanded={showLedger}
+                >CLI command</Button>
+                {!loading
+                  ? (
+                    <Button type="submit" className="btn btn-primary ms-2">Create grant</Button>
+                  )
+                  : <Button className="btn btn-primary" type="button" disabled>
+                    <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>&nbsp;
+                  </Button>
+                }
+              </p>
+            )}
+            <Collapse in={showLedger}>
+            <pre className="text-wrap"><code>
+              <p>{daemon_name ? daemon_name : <kbd>chaind</kbd>} tx authz grant \<br />
+                <kbd>{state.granteeValue || '<grantee>'}</kbd> generic \<br />
+                --msg-type <kbd>{state.messageTypeValue}</kbd> \<br />
+                --expiration <kbd>{moment(state.expiryDateValue).unix()}</kbd> \<br />
+                --from <kbd>my-key</kbd> --ledger \<br />
+                --chain-id {chain_id} \<br />
+                --node https://rpc.cosmos.directory:443/{network.name} \<br />
+                --gas auto --gas-prices {network.gasPrice} --gas-adjustment 1.5</p>
+            </code></pre>
+            </Collapse>
           </Form>
         </Modal.Body>
       </Modal>

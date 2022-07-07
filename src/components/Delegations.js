@@ -383,8 +383,8 @@ class Delegations extends React.Component {
                 variant="warning"
                 dismissible={false}
               >
-                <p>Ledger devices are not supported in the REStake UI currently. Support will be added as soon as it is possible.</p>
-                <p className="mb-0"><span onClick={() => this.setState({ showAboutLedger: true })} role="button" className="text-reset text-decoration-underline">A manual workaround is possible using the CLI</span></p>
+                <p>Ledger devices can't send Authz transactions just yet. Full support will be enabled as soon as it is possible.</p>
+                <p className="mb-0"><span onClick={() => this.setState({ showAboutLedger: true })} role="button" className="text-reset text-decoration-underline">A manual workaround is possible using the CLI.</span></p>
               </AlertMessage>
             </>
           )}
