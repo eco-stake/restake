@@ -31,7 +31,8 @@ function Governance(props) {
   const params = useParams();
 
   const voteGrants = grants ? Object.values(grants).flat().filter(grant => {
-    return grant.authorization['@type'] === '/cosmos.authz.v1beta1.GenericAuthorization' && 
+    return grant.grantee === address && 
+      grant.authorization['@type'] === '/cosmos.authz.v1beta1.GenericAuthorization' && 
       grant.authorization.msg === '/cosmos.gov.v1beta1.MsgVote'
   }) : []
 
