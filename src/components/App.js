@@ -415,25 +415,25 @@ class App extends React.Component {
                 <Nav activeKey={this.props.active} onSelect={(e) => this.props.setActive(e)}>
                       <div className="nav-item pe-2 border-end">
                         <Nav.Link eventKey="networks">
-                          <Stars className="mb-1 me-1" /> Explore
+                          <Stars className="mb-1 me-1" /><span className="d-none d-sm-inline"> Explore</span>
                         </Nav.Link>
                       </div>
                   {this.props.network && (
                     <>
                       <div className="nav-item px-2 border-end">
                         <Nav.Link eventKey="delegations">
-                          <Coin className="mb-1 me-1" /> Stake
+                          <Coin className="mb-1 me-1" /><span className="d-none d-sm-inline"> Stake</span>
                         </Nav.Link>
                       </div>
                       <div className="nav-item px-2 border-end">
                         <Nav.Link eventKey="governance">
-                          <Inboxes className="mb-1 me-1" /> Govern
+                          <Inboxes className="mb-1 me-1" /><span className="d-none d-sm-inline"> Govern</span>
                         </Nav.Link>
                       </div>
                       {this.state.address && (
                         <div className="nav-item ps-2">
                           <Nav.Link eventKey="grants">
-                            <Magic className="mb-1 me-1" /> Grant
+                            <Magic className="mb-1 me-1" /><span className="d-none d-sm-inline"> Grant</span>
                           </Nav.Link>
                         </div>
                       )}
@@ -459,9 +459,9 @@ class App extends React.Component {
                             <Coins
                               coins={this.state.balance}
                               decimals={this.props.network.decimals}
-                              className="me-1 d-none d-sm-inline"
+                              className="me-1 d-none d-md-inline"
                             />
-                            <CashCoin className="d-inline d-sm-none" />
+                            <CashCoin className="d-inline d-md-none" />
                           </Dropdown.Toggle>
                           <Dropdown.Menu>
                             <Dropdown.Header>{this.state.accountName || 'Wallet'}</Dropdown.Header>

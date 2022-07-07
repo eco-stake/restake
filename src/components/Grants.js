@@ -134,7 +134,7 @@ function Grants(props) {
     const grantId = `${granter}-${grantee}-${authorization['@type']}-${authorization.msg}`
     return (
       <tr key={grantId}>
-        <td>
+        <td className="text-break">
           {filter.group === 'grantee' ? granter : (
             validator ? validator.moniker : grantee
           )}
@@ -142,7 +142,7 @@ function Grants(props) {
         <td>
           {authorization['@type'].split('.').slice(-1)[0]}
         </td>
-        <td>
+        <td className="d-none d-lg-table-cell">
           {renderGrantData(grant)}
         </td>
         <td>
@@ -265,7 +265,7 @@ function Grants(props) {
               <tr>
                 <th>{filter.group === 'grantee' ? 'Granter' : 'Grantee'}</th>
                 <th>Type</th>
-                <th>Data</th>
+                <th className="d-none d-lg-table-cell">Data</th>
                 <th>Expiration</th>
                 {filter.group === 'granter' && (
                   <th></th>
