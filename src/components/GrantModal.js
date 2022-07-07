@@ -216,7 +216,7 @@ function GrantModal(props) {
                 <kbd>{state.granteeValue || '<grantee>'}</kbd> generic \<br />
                 --msg-type <kbd>{messageType()}</kbd> \<br />
                 --expiration <kbd>{moment(state.expiryDateValue).unix()}</kbd> \<br />
-                --from <kbd>my-key</kbd> --ledger \<br />
+                --from <kbd>my-key</kbd> \<br />
                 --chain-id {chain_id} \<br />
                 --node https://rpc.cosmos.directory:443/{network.name} \<br />
                 --gas auto --gas-prices {network.gasPrice} --gas-adjustment 1.5</p>
