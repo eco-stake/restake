@@ -529,6 +529,7 @@ class App extends React.Component {
           <Governance
             network={this.props.network}
             address={this.state.address}
+            grants={this.state.grants}
             queryClient={this.props.queryClient}
             stargateClient={this.state.stargateClient} />
           )}

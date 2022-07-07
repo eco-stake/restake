@@ -14,7 +14,7 @@ import Proposal from '../utils/Proposal.mjs';
 import Vote from '../utils/Vote.mjs';
 
 function Governance(props) {
-  const { address, network } = props
+  const { address, network, grants } = props
   const [showModal, setShowModal] = useState()
   const [proposal, setProposal] = useState()
   const [proposals, setProposals] = useState()
@@ -29,6 +29,11 @@ function Governance(props) {
   const [error, setError] = useState()
   const navigate = useNavigate();
   const params = useParams();
+
+  const voteGrants = grants ? Object.values(grants).flat().filter(grant => {
+    return grant.authorization['@type'] === '/cosmos.authz.v1beta1.GenericAuthorization' && 
+      grant.authorization.msg === '/cosmos.gov.v1beta1.MsgVote'
+  }) : []
 
   useEffect(() => {
     setProposals(false)
@@ -193,6 +198,8 @@ function Governance(props) {
         address={props.address}
         tally={proposal && tallies[proposal.proposal_id]}
         vote={proposal && votes[proposal.proposal_id]}
+        granters={voteGrants.map(el => el.granter)}
+        queryClient={props.queryClient}
         stargateClient={props.stargateClient}
         closeProposal={closeProposal}
         onVote={onVote}
