@@ -132,11 +132,15 @@ class Delegations extends React.Component {
 
   async getWithdrawAddress() {
     if(!this.props.address) return
+    const address = this.props.address
 
-    const withdraw = await this.props.queryClient.getWithdrawAddress(this.props.address)
-    if (withdraw !== this.props.address) {
-      this.setState({ error: 'You have a different withdraw address set. REStake WILL NOT WORK!' })
-    }
+    return this.props.queryClient.getWithdrawAddress(address).then(withdraw => {
+      if (withdraw !== address) {
+        this.setState({ error: 'You have a different withdraw address set. REStake WILL NOT WORK!' })
+      }
+    }, error => {
+      console.log('Failed to get withdraw address', error)
+    })
   }
 
   getRewards(hideError) {
