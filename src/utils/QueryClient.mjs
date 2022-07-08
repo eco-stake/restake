@@ -169,10 +169,10 @@ const QueryClient = async (chainId, restUrls) => {
     });
   };
 
-  const getGrants = (botAddress, address, opts) => {
+  const getGrants = (grantee, granter, opts) => {
     const searchParams = new URLSearchParams();
-    if(botAddress) searchParams.append("grantee", botAddress);
-    if(address) searchParams.append("granter", address);
+    if(grantee) searchParams.append("grantee", grantee);
+    if(granter) searchParams.append("granter", granter);
     return axios
       .get(restUrl + "/cosmos/authz/v1beta1/grants?" + searchParams.toString(), opts)
       .then((res) => res.data)

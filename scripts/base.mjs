@@ -6,14 +6,13 @@ import { add, bignumber, floor, smaller, smallerEq } from 'mathjs'
 import { DirectSecp256k1HdWallet } from "@cosmjs/proto-signing";
 import { Slip10RawIndex, pathToString } from "@cosmjs/crypto";
 
-import { Wallet } from "@ethersproject/wallet";
-import { ETH } from "@tharsis/address-converter";
-import Bech32 from "bech32";
+import { Wallet as EthWallet } from "@ethersproject/wallet";
 
 import { MsgDelegate } from "cosmjs-types/cosmos/staking/v1beta1/tx.js";
 import { MsgExec } from "cosmjs-types/cosmos/authz/v1beta1/tx.js";
 
 import Network from '../src/utils/Network.mjs'
+import Wallet from '../src/utils/Wallet.mjs';
 import AutostakeHealth from "../src/utils/AutostakeHealth.mjs";
 import {coin, timeStamp, mapSync, executeSync, overrideNetworks, parseGrants} from '../src/utils/Helpers.mjs'
 import EthSigner from '../src/utils/EthSigner.mjs';
@@ -106,7 +105,9 @@ export class Autostake {
 
     timeStamp('Starting', network.prettyName)
 
-    const { wallet, botAddress, slip44 } = await this.getWallet(network)
+    const { signer, slip44 } = await this.getSigner(network)
+    const wallet = new Wallet(network, signer)
+    const botAddress = await wallet.getAddress()
 
     timeStamp('Bot address is', botAddress)
 
@@ -123,7 +124,7 @@ export class Autostake {
     await network.connect()
     if (!network.restUrl) throw new Error('Could not connect to REST API')
 
-    const client = await network.signingClient(wallet)
+    const client = wallet.signingClient
     client.registry.register("/cosmos.authz.v1beta1.MsgExec", MsgExec)
 
     return {
@@ -135,7 +136,7 @@ export class Autostake {
     }
   }
 
-  async getWallet(network){
+  async getSigner(network){
     let slip44
     if(network.data.autostake?.correctSlip44 || network.slip44 === 60){
       if(network.slip44 === 60) timeStamp('Found ETH coin type')
@@ -152,28 +153,17 @@ export class Autostake {
     ];
     slip44 != 118 && timeStamp('Using HD Path', pathToString(hdPath))
 
-    const wallet = await DirectSecp256k1HdWallet.fromMnemonic(this.mnemonic, {
+    let signer = await DirectSecp256k1HdWallet.fromMnemonic(this.mnemonic, {
       prefix: network.prefix,
       hdPaths: [hdPath]
     });
 
     if(network.slip44 === 60){
-      return await this.getEthWallet(network, wallet)
+      const ethSigner = EthWallet.fromMnemonic(this.mnemonic);
+      signer = EthSigner(signer, ethSigner, network.prefix)
     }
 
-    const accounts = await wallet.getAccounts()
-    const botAddress = accounts[0].address
-
-    return { wallet, botAddress, slip44 }
-  }
-
-  async getEthWallet(network, signer){
-    const wallet = Wallet.fromMnemonic(this.mnemonic);
-    const ethereumAddress = await wallet.getAddress();
-    const data = ETH.decoder(ethereumAddress);
-    const botAddress = Bech32.encode(network.prefix, Bech32.toWords(data))
-
-    return { wallet: EthSigner(signer, wallet), botAddress, slip44: 60 }
+    return { signer, slip44 }
   }
 
   checkBalance(client) {

@@ -4,7 +4,6 @@ import {
   GasPrice,
 } from "@cosmjs/stargate";
 import QueryClient from './QueryClient.mjs'
-import SigningClient from './SigningClient.mjs'
 import Validator from './Validator.mjs'
 import Operator from './Operator.mjs'
 import Chain from './Chain.mjs'
@@ -121,13 +120,6 @@ class Network {
       }
     }
     return validatorApy;
-  }
-
-  signingClient(wallet, key, gasPrice) {
-    if (!this.queryClient)
-      return
-
-    return SigningClient(this, gasPrice || this.gasPrice, wallet, key)
   }
 
   getOperator(operatorAddress) {

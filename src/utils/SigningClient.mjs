@@ -26,8 +26,9 @@ import { AuthInfo, Fee, TxBody, TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx.
 
 import { coin } from './Helpers.mjs'
 
-async function SigningClient(network, defaultGasPrice, signer, key) {
+function SigningClient(network, signer) {
 
+  const defaultGasPrice = network.gasPricePrefer || network.gasPrice
   const { restUrl, gasModifier: defaultGasModifier, slip44: coinType, chainId } = network
 
   const registry = new Registry(defaultStargateTypes);
@@ -74,12 +75,14 @@ async function SigningClient(network, defaultGasPrice, signer, key) {
         }
         return value 
       })
+      .catch((error) => {
+        if(error.response?.status === 404){
+          throw new Error('Account does not exist on chain')
+        }else{
+          throw error
+        }
+      })
   };
-
-  function getIsNanoLedger() {
-    if(!key) return false
-    return key.isNanoLedger;
-  }
 
   // vendored to handle large integers
   // https://github.com/cosmos/cosmjs/blob/0f0c9d8a754cbf01e17acf51d3f2dbdeaae60757/packages/stargate/src/fee.ts
@@ -273,9 +276,9 @@ async function SigningClient(network, defaultGasPrice, signer, key) {
   }
 
   return {
+    signer,
     registry,
     getFee,
-    getIsNanoLedger,
     simulate,
     signAndBroadcast,
     signAndBroadcastWithoutBalanceCheck

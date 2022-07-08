@@ -1,9 +1,12 @@
+import { ETH } from "@tharsis/address-converter";
+import Bech32 from "bech32";
+
 import * as BytesUtils from "@ethersproject/bytes";
 import { keccak256 } from "@ethersproject/keccak256";
 import { encodeSecp256k1Signature } from '@cosmjs/amino';
 import { makeSignBytes } from "@cosmjs/proto-signing";
 
-function EthSigner(signer, ethSigner){
+function EthSigner(signer, ethSigner, prefix){
   async function signDirect(_address, signDoc){
     const signature = await ethSigner
       ._signingKey()
@@ -19,6 +22,12 @@ function EthSigner(signer, ethSigner){
     }
   }
 
+  async function getAddress(){
+    const ethereumAddress = await ethSigner.getAddress();
+    const data = ETH.decoder(ethereumAddress);
+    return Bech32.encode(prefix, Bech32.toWords(data))
+  }
+
   function getAccounts(){
     return signer.getAccounts()
   }
@@ -27,6 +36,7 @@ function EthSigner(signer, ethSigner){
     signer,
     ethSigner,
     signDirect,
+    getAddress,
     getAccounts
   }
 }

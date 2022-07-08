@@ -1,6 +1,7 @@
 import React from 'react'
 import Coins from './Coins'
-import { coin } from '../utils/Helpers.mjs'
+import { buildExecMessage, coin } from '../utils/Helpers.mjs'
+import { MsgDelegate, MsgUndelegate, MsgBeginRedelegate } from "cosmjs-types/cosmos/staking/v1beta1/tx";
 
 import {
   Button,
@@ -34,7 +35,7 @@ class DelegateForm extends React.Component {
 
     this.setState({loading: true})
 
-    const address = this.props.address
+    const wallet = this.props.wallet
     const amount = this.state.amount
     const memo = this.state.memo
     const client = this.props.stargateClient
@@ -45,13 +46,13 @@ class DelegateForm extends React.Component {
     let messages = this.buildMessages(denomAmount)
     let gas
     try {
-       gas = await client.simulate(this.props.address, messages)
+       gas = await client.simulate(wallet.address, messages)
     } catch (error) {
       this.setState({ loading: false, error: error.message })
       return
     }
 
-    client.signAndBroadcast(address, messages, gas, memo).then((result) => {
+    client.signAndBroadcast(wallet.address, messages, gas, memo).then((result) => {
       console.log("Successfully broadcasted:", result);
       this.setState({loading: false, error: null})
       this.props.onDelegate()
@@ -62,31 +63,44 @@ class DelegateForm extends React.Component {
   }
 
   buildMessages(amount){
-    const address = this.props.address
+    const { wallet, address } = this.props
     const validatorAddress = this.props.selectedValidator.operator_address
-    let messages = []
+    let message, type, typeUrl, value
     if(this.props.redelegate){
-      messages.push({
-        typeUrl: "/cosmos.staking.v1beta1.MsgBeginRedelegate",
-        value: {
-          delegatorAddress: address,
-          validatorSrcAddress: this.props.validator.operator_address,
-          validatorDstAddress: validatorAddress,
-          amount: coin(amount, this.props.network.denom)
-        }
-      })
+      type = MsgBeginRedelegate
+      typeUrl = "/cosmos.staking.v1beta1.MsgBeginRedelegate"
+      value = {
+        delegatorAddress: address,
+        validatorSrcAddress: this.props.validator.operator_address,
+        validatorDstAddress: validatorAddress,
+        amount: coin(amount, this.props.network.denom)
+      }
     }else{
-      const msgType = this.props.undelegate ? 'MsgUndelegate' : 'MsgDelegate'
-      messages.push({
-        typeUrl: "/cosmos.staking.v1beta1." + msgType,
-        value: {
-          delegatorAddress: address,
-          validatorAddress: validatorAddress,
-          amount: coin(amount, this.props.network.denom)
-        }
-      })
+      type = this.props.undelegate ? MsgUndelegate : MsgDelegate
+      typeUrl = "/cosmos.staking.v1beta1.Msg" + (this.props.undelegate ? 'Undelegate' : 'Delegate')
+      value = {
+        delegatorAddress: address,
+        validatorAddress: validatorAddress,
+        amount: coin(amount, this.props.network.denom)
+      }
     }
-    return messages
+    if (wallet?.address !== address) {
+      message = buildExecMessage(wallet.address, [{
+        typeUrl: typeUrl,
+        value: type.encode(type.fromPartial(value)).finish()
+      }])
+    } else {
+      message = {
+        typeUrl: typeUrl,
+        value: value
+      }
+    }
+    return [message]
+  }
+
+  hasPermission(){
+    const permission = this.props.redelegate ? 'BeginRedelegate' : this.props.undelegate ? 'Undelegate' : 'Delegate'
+    return this.props.wallet?.hasPermission(this.props.address, permission)
   }
 
   async setAvailableAmount(){
@@ -148,7 +162,7 @@ class DelegateForm extends React.Component {
             </Form.Group>
             <p className="text-end">
               {!this.state.loading
-                ? <Button type="submit" className="btn btn-primary">{this.actionText()}</Button>
+                ? <Button type="submit" disabled={!this.hasPermission()} className="btn btn-primary">{this.actionText()}</Button>
                 : <Button className="btn btn-primary" type="button" disabled>
                   <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>&nbsp;
                 </Button>

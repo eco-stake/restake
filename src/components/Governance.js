@@ -14,29 +14,31 @@ import Proposal from '../utils/Proposal.mjs';
 import Vote from '../utils/Vote.mjs';
 
 function Governance(props) {
-  const { address, network, grants } = props
+  const { address, wallet, network, grants } = props
   const [showModal, setShowModal] = useState()
   const [proposal, setProposal] = useState()
   const [proposals, setProposals] = useState()
   const [tallies, setTallies] = useReducer(
-    (tallies, newTallies) => ({...tallies, ...newTallies}),
+    (tallies, newTallies) => (!newTallies ? {} : {...tallies, ...newTallies}),
     {}
   )
   const [votes, setVotes] = useReducer(
-    (votes, newVotes) => ({...votes, ...newVotes}),
+    (votes, newVotes) => (!newVotes ? {} : {...votes, ...newVotes}),
     {}
   )
   const [error, setError] = useState()
   const navigate = useNavigate();
   const params = useParams();
 
-  const voteGrants = (grants?.grantee || []).filter(grant => {
+  const voteGrants = (wallet?.grants || []).filter(grant => {
     return grant.authorization['@type'] === '/cosmos.authz.v1beta1.GenericAuthorization' && 
       grant.authorization.msg === '/cosmos.gov.v1beta1.MsgVote'
   })
 
   useEffect(() => {
     setProposals(false)
+    setTallies(false)
+    setVotes(false)
     setError(false)
     getProposals({clearExisting: true})
   }, [network]);
@@ -63,19 +65,18 @@ function Governance(props) {
     if(!proposals) return
 
     getTallies(proposals)
-  }, [proposals]);
-
-  useEffect(() => {
-    if(!proposals) return
 
     if(address){
       getVotes(proposals)
-    }else{
-      proposals.forEach(proposal => {
-        setVotes({ [proposal.proposal_id]: undefined })
-      })
     }
-  }, [proposals, address]);
+  }, [proposals]);
+
+  useEffect(() => {
+    setVotes(false)
+    if(proposals && address){
+      getVotes(proposals, {clearExisting: true})
+    }
+  }, [address]);
 
   async function getProposals(opts) {
     if(!props.queryClient) return
@@ -118,11 +119,12 @@ function Governance(props) {
     await executeSync(calls, 2)
   };
 
-  async function getVotes(proposals) {
+  async function getVotes(proposals, opts) {
+    const { clearExisting } = opts || {}
     const calls = proposals.filter(el => el.status === 'PROPOSAL_STATUS_VOTING_PERIOD').map((proposal) => {
       return () => {
         const { proposal_id } = proposal
-        if (votes[proposal_id]) return
+        if (votes[proposal_id] && !clearExisting) return
 
         return props.queryClient.getProposalVote(proposal_id, address).then(result => {
           return setVotes({ [proposal_id]: Vote(result.vote) })
@@ -194,11 +196,13 @@ function Governance(props) {
       <ProposalModal
         show={showModal}
         proposal={proposal}
-        network={props.network}
-        address={props.address}
+        network={network}
+        wallet={wallet}
+        address={address}
         tally={proposal && tallies[proposal.proposal_id]}
         vote={proposal && votes[proposal.proposal_id]}
         granters={voteGrants.map(el => el.granter)}
+        favouriteAddresses={props.favouriteAddresses}
         queryClient={props.queryClient}
         stargateClient={props.stargateClient}
         closeProposal={closeProposal}

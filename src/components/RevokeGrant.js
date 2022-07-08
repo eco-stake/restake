@@ -3,32 +3,38 @@ import {
   Dropdown,
   Button
 } from 'react-bootstrap'
+import { MsgRevoke } from "cosmjs-types/cosmos/authz/v1beta1/tx";
+import { buildExecableMessage, buildExecMessage } from '../utils/Helpers.mjs'
 
 function RevokeGrant(props) {
-  const { address, grantAddress, grants, stargateClient } = props
+  const { address, wallet, grantAddress, grants, stargateClient } = props
 
   const buttonText = props.buttonText || 'Revoke'
 
   async function revoke(){
     if(props.setLoading) props.setLoading(true)
 
-    const messages = _.compact(grants).map(grant => {
+    let msgTypes = _.compact(grants).map(grant => {
       switch (grant.authorization['@type']) {
         case "/cosmos.staking.v1beta1.StakeAuthorization":
-          return buildRevokeMsg("/cosmos.staking.v1beta1.MsgDelegate")
+          return "/cosmos.staking.v1beta1.MsgDelegate"
         case "/cosmos.authz.v1beta1.GenericAuthorization":
-          return buildRevokeMsg(grant.authorization.msg)
+          return grant.authorization.msg
       }
     })
+    let messages = msgTypes.map(type => buildRevokeMsg(type))
+    if(wallet?.address !== address){
+      messages = [buildExecMessage(wallet.address, messages)]
+    }
       
     console.log(messages)
 
     try {
-      const gas = await stargateClient.simulate(address, messages)
-      const result = await stargateClient.signAndBroadcast(address, messages, gas)
+      const gas = await stargateClient.simulate(wallet.address, messages)
+      const result = await stargateClient.signAndBroadcast(wallet.address, messages, gas)
       console.log("Successfully broadcasted:", result);
       if(props.setLoading) props.setLoading(false)
-      props.onRevoke(grantAddress, messages.map(el => el.value.msgTypeUrl))
+      props.onRevoke(grantAddress, msgTypes)
     } catch (error) {
       console.log('Failed to broadcast:', error)
       if(props.setLoading) props.setLoading(false)
@@ -37,26 +43,27 @@ function RevokeGrant(props) {
   }
 
   function buildRevokeMsg(type){
-    return {
-      typeUrl: "/cosmos.authz.v1beta1.MsgRevoke",
-      value: {
-        granter: address,
-        grantee: grantAddress,
-        msgTypeUrl: type
-      },
-    }
+    return buildExecableMessage(MsgRevoke, "/cosmos.authz.v1beta1.MsgRevoke", {
+      granter: address,
+      grantee: grantAddress,
+      msgTypeUrl: type
+    }, wallet?.address !== address)
+  }
+
+  function disabled(){
+    return props.disabled || !wallet?.hasPermission(address, 'Revoke') || wallet?.getIsNanoLedger()
   }
 
   if(props.button){
     return (
-      <Button variant="danger" size={props.size} onClick={() => revoke()}>
+      <Button variant="danger" size={props.size} disabled={disabled()} onClick={() => revoke()}>
         {buttonText}
       </Button>
     )
   }
 
   return (
-    <Dropdown.Item onClick={() => revoke()} >
+    <Dropdown.Item disabled={disabled()} onClick={() => revoke()} >
       {buttonText}
     </Dropdown.Item>
   )
