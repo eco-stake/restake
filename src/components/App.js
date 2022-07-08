@@ -28,7 +28,9 @@ import {
   Stars,
   WrenchAdjustableCircle,
   WrenchAdjustableCircleFill,
-  Magic
+  Magic,
+  Clipboard,
+  ClipboardCheck
 } from 'react-bootstrap-icons'
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import GitHubButton from 'react-github-btn'
@@ -446,15 +448,15 @@ class App extends React.Component {
                 </Nav>
               </div>
             </Navbar>
-            <nav className={`navbar navbar-expand-lg ${this.props.theme === 'dark' ? 'navbar-dark' : 'navbar-light'}`}>
+            <nav className={`navbar navbar-expand ${this.props.theme === 'dark' ? 'navbar-dark' : 'navbar-light'}`}>
               <div className="justify-content-center">
                 <ul className="navbar-nav">
                   {this.props.network && this.state.address ? (
                     <>
-                      <li className="nav-item pe-3 pt-2 border-end d-none d-lg-block">
+                      <li className="nav-item pe-3 border-end d-flex align-items-center">
                         <CopyToClipboard text={this.state.address}
                           onCopy={() => this.setCopied()}>
-                          <span role="button"><span className={'small d-block clipboard' + (this.state.copied ? ' copied' : '')}>{this.state.address}</span></span>
+                          <span role="button" className="d-flex align-items-center">{this.state.copied ? <ClipboardCheck /> : <Clipboard />}<span className="small ps-2 d-none d-lg-inline">{this.state.address}</span></span>
                         </CopyToClipboard>
                       </li>
                       <li className="nav-item ps-3 pt-1">
