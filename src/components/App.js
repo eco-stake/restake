@@ -260,7 +260,6 @@ class App extends React.Component {
       return
     } catch (error) { 
       console.log('Failed to get all grants in batch', error.message) 
-      console.log(error.response.status !== 501)
       this.setState({ grantQuerySupport: error.response?.status !== 501 })
     }
 

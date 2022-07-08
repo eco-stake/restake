@@ -129,7 +129,7 @@ function GrantModal(props) {
   }
 
   function valid(){
-    return validGrantee()
+    return state.granteeValue && validGrantee() && !!messageType()
   }
 
   function validGrantee(){
@@ -203,7 +203,7 @@ function GrantModal(props) {
                 >CLI command</Button>
                 {!loading
                   ? (
-                    <Button type="submit" className="btn btn-primary ms-2">Create grant</Button>
+                    <Button type="submit" className="btn btn-primary ms-2" disabled={!valid()}>Create grant</Button>
                   )
                   : <Button className="btn btn-primary" type="button" disabled>
                     <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>&nbsp;
