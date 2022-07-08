@@ -192,6 +192,7 @@ function GrantModal(props) {
               )}
               </>
             )}
+            <p><strong>Incorrect use of Authz grants can be as dangerous as giving away your mnemonic.</strong> Make sure you trust the Grantee address and understand the permissions you are granting.</p>
             {address && !isNanoLedger && (
               <p className="text-end">
                 <Button
