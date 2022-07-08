@@ -14,7 +14,7 @@ import Validators from "./Validators";
 class Delegations extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { operatorGrants: {}, validatorLoading: {}, validatorApy: {}, validatorModal: {} };
+    this.state = { operatorGrants: {}, validatorLoading: {}, validatorApy: {}, validatorModal: {}, commission: {} };
 
     this.setError = this.setError.bind(this);
     this.setClaimLoading = this.setClaimLoading.bind(this);
@@ -161,6 +161,20 @@ class Delegations extends React.Component {
           }
         }
       );
+
+    Object.values(this.props.validators).forEach(validator => {
+      if(validator.isValidatorOperator(this.props.address)){
+        this.props.queryClient.getCommission(validator.address).then((commission) => {
+          this.setState((state, props) => ({
+            commission: _.set(
+              state.commission,
+              validator.address,
+              commission
+            ),
+          }));
+        })
+      }
+    })
   }
 
   async calculateApy() {
@@ -412,6 +426,7 @@ class Delegations extends React.Component {
             validatorApy={this.state.validatorApy}
             delegations={this.state.delegations || {}}
             rewards={this.state.rewards}
+            commission={this.state.commission}
             stargateClient={this.props.stargateClient}
             validatorLoading={this.state.validatorLoading}
             operatorGrants={this.operatorGrants()}

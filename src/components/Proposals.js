@@ -160,7 +160,6 @@ function Proposals(props) {
               )
             })}
           </select>
-          {/* <FilterSquare size={30} className="ms-3" /> */}
         </div>
       </div>
       {results.length > 0 &&

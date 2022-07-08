@@ -1,7 +1,7 @@
 import moment from 'moment'
 import parse from 'parse-duration'
 
-const Operator = (data) => {
+const Operator = (network, data) => {
   const { address } = data
   const botAddress = data.restake.address
   const runTime = data.restake.run_time
