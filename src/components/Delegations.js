@@ -101,8 +101,9 @@ class Delegations extends React.Component {
 
   async getDelegations(hideError) {
     if(!this.props.address) return
+    const address = this.props.address
 
-    return this.props.queryClient.getDelegations(this.props.address)
+    return this.props.queryClient.getDelegations(address)
       .then(
         (delegations) => {
           const orderedAddresses = Object.keys(this.props.validators)
@@ -112,11 +113,15 @@ class Delegations extends React.Component {
             }
             return sum
           }, {})
-          this.setState({
-            delegations: delegations,
-          });
+          if(address === this.props.address){
+            this.setState({
+              delegations: delegations,
+            });
+          }
         },
         (error) => {
+          if(address !== this.props.address) return
+
           if([404, 500].includes(error.response && error.response.status)){
             this.setState({
               delegations: {},
