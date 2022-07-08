@@ -251,11 +251,10 @@ class App extends React.Component {
     try {
       const granterGrants = await this.props.queryClient.getGranterGrants(address)
       if(address !== this.state.address) return
-      this.props.queryClient.getGranteeGrants(address).then(granteeGrants => {
-        this.setState((state) => {
-          if (address !== state.address) return {}
-          return { grantQuerySupport: true, grants: { granter: granterGrants, grantee: granteeGrants } }
-        })
+      const granteeGrants = await this.props.queryClient.getGranteeGrants(address)
+      this.setState((state) => {
+        if (address !== state.address) return {}
+        return { grantQuerySupport: true, grants: { granter: granterGrants, grantee: granteeGrants } }
       })
       return
     } catch (error) { 

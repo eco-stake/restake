@@ -30,14 +30,15 @@ function Governance(props) {
   const navigate = useNavigate();
   const params = useParams();
 
-  const voteGrants = grants ? grants.grantee.filter(grant => {
+  const voteGrants = (grants?.grantee || []).filter(grant => {
     return grant.authorization['@type'] === '/cosmos.authz.v1beta1.GenericAuthorization' && 
       grant.authorization.msg === '/cosmos.gov.v1beta1.MsgVote'
-  }) : []
+  })
 
   useEffect(() => {
     setProposals(false)
-    getProposals()
+    setError(false)
+    getProposals({clearExisting: true})
   }, [network]);
 
   useEffect(() => {
@@ -76,7 +77,7 @@ function Governance(props) {
     }
   }, [proposals, address]);
 
-  async function getProposals(hideError) {
+  async function getProposals({ clearExisting }) {
     if(!props.queryClient) return
 
     props.queryClient.getProposals().then(async (proposals) => {
@@ -90,10 +91,8 @@ function Governance(props) {
       }, {}))
     },
       (error) => {
-        if(!proposals) setProposals([])
-        if (!hideError) {
-          setError(`Failed to load proposals: ${error.message}`);
-        }
+        if(!proposals || clearExisting) setProposals([])
+        setError(`Failed to load proposals: ${error.message}`);
       }
     )
   }
