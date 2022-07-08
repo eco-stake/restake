@@ -77,8 +77,9 @@ function Governance(props) {
     }
   }, [proposals, address]);
 
-  async function getProposals({ clearExisting }) {
+  async function getProposals(opts) {
     if(!props.queryClient) return
+    const { clearExisting } = opts || {}
 
     props.queryClient.getProposals().then(async (proposals) => {
       proposals = proposals.map(el => Proposal(el))

@@ -37,9 +37,7 @@ class Delegations extends React.Component {
   async componentDidMount() {
     const isNanoLedger = this.props.stargateClient?.getIsNanoLedger();
     this.setState({ isNanoLedger: isNanoLedger });
-    await this.getDelegations()
-    this.getGrants()
-    this.refresh();
+    this.refresh(true);
 
     if (this.props.validator) {
       this.showValidatorModal(this.props.validator)
@@ -62,8 +60,7 @@ class Delegations extends React.Component {
         operatorGrants: {},
         error: null,
       });
-      await this.getDelegations()
-      this.refresh();
+      this.refresh(false);
     }
 
     if (this.props.grants !== prevProps.grants){
@@ -75,8 +72,12 @@ class Delegations extends React.Component {
     this.clearRefreshInterval()
   }
 
-  async refresh() {
+  async refresh(getGrants) {
     this.calculateApy();
+    await this.getDelegations()
+    if (getGrants){
+      this.getGrants()
+    }
     this.getWithdrawAddress();
     this.getRewards();
     this.refreshInterval();

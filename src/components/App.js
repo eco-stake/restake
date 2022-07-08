@@ -247,19 +247,24 @@ class App extends React.Component {
   async getGrants() {
     if (!this.state.address || !this.props.network.authzSupport) return
     const address = this.state.address
+    let granterGrants, granteeGrants, grantQuerySupport
 
     try {
-      const granterGrants = await this.props.queryClient.getGranterGrants(address)
+      granterGrants = await this.props.queryClient.getGranterGrants(address)
       if(address !== this.state.address) return
-      const granteeGrants = await this.props.queryClient.getGranteeGrants(address)
-      this.setState((state) => {
-        if (address !== state.address) return {}
-        return { grantQuerySupport: true, grants: { granter: granterGrants, grantee: granteeGrants } }
-      })
-      return
+      granteeGrants = await this.props.queryClient.getGranteeGrants(address)
+      grantQuerySupport = true
     } catch (error) { 
       console.log('Failed to get all grants in batch', error.message) 
-      this.setState({ grantQuerySupport: error.response?.status !== 501 })
+      grantQuerySupport = error.response?.status !== 501
+    }
+
+    if(granterGrants){
+      this.setState((state) => {
+        if (address !== state.address) return {}
+        return { grantQuerySupport, grants: { granter: granterGrants, grantee: (granteeGrants || state.grants?.grantee) } }
+      })
+      return
     }
 
     const calls = this.props.operators.map((operator) => {
@@ -282,13 +287,13 @@ class App extends React.Component {
 
     const batchCalls = _.chunk(calls, 5);
 
-    let granterGrants = []
+    granterGrants = []
     for (const batchCall of batchCalls) {
       const grants = (await Promise.allSettled(batchCall.map(call => call()))).map(el => el.status === 'fulfilled' && el.value)
       granterGrants = granterGrants.concat(_.compact(grants.flat()))
     }
     this.setState((state, props) => {
-      return { grants: { ...state.grants, granter: granterGrants } }
+      return { grantQuerySupport, grants: { ...state.grants, granter: granterGrants } }
     })
   }
 
