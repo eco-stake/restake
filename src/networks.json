@@ -197,7 +197,6 @@
   },
   {
     "name": "genesisl1",
-    "gasPrice": "200000el1",
     "txTimeout": 120000
   }
 ]

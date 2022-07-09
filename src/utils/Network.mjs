@@ -1,5 +1,8 @@
 import _ from 'lodash'
 import { multiply, pow, format, bignumber } from 'mathjs'
+import {
+  GasPrice,
+} from "@cosmjs/stargate";
 import QueryClient from './QueryClient.mjs'
 import SigningClient from './SigningClient.mjs'
 import Validator from './Validator.mjs'
@@ -80,7 +83,12 @@ class Network {
     this.authzSupport = this.chain.authzSupport
     this.defaultGasPrice = format(bignumber(multiply(0.000000025, pow(10, this.decimals))), { notation: 'fixed', precision: 4}) + this.denom
     this.gasPrice = this.data.gasPrice || this.defaultGasPrice
-    this.gasPriceStep = this.data.gasPriceStep
+    this.gasPriceAmount = GasPrice.fromString(this.gasPrice).amount.toString()
+    this.gasPriceStep = this.data.gasPriceStep || {
+      "low": multiply(this.gasPriceAmount, 0.5),
+      "average": multiply(this.gasPriceAmount, 1),
+      "high": multiply(this.gasPriceAmount, 2)
+    }
     this.gasPricePrefer = this.data.gasPricePrefer
     this.gasModifier = this.data.gasModifier || 1.5
     this.txTimeout = this.data.txTimeout || 60_000
