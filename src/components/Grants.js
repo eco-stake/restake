@@ -30,9 +30,6 @@ function Grants(props) {
 
   const isNanoLedger = props.stargateClient?.getIsNanoLedger()
 
-  // TODO
-  // Vote exec
-
   useEffect(() => {
     if(!grants) return
 

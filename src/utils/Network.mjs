@@ -144,7 +144,7 @@ class Network {
 
   getValidators(opts) {
     opts = opts || {}
-    return this.validators.filter(validator => {
+    return (this.validators || []).filter(validator => {
       if (opts.status)
         return validator.status === opts.status
       return true
