@@ -194,5 +194,10 @@
   {
     "name": "kujira",
     "ownerAddress": "kujiravaloper1vue5lawr3s0au9zj0aqeft5aknx6cjq6w5ghca"
+  },
+  {
+    "name": "genesisl1",
+    "gasPrice": "200000el1",
+    "txTimeout": 120000
   }
 ]
