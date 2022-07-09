@@ -1,15 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import _ from 'lodash'
 
 import {
   Form,
   Button
 } from 'react-bootstrap'
+import { MsgVote } from "cosmjs-types/cosmos/gov/v1beta1/tx.js";
+
 import Vote from '../utils/Vote.mjs';
 
 
 function VoteForm(props) {
-  const { proposal, vote, address, setError } = props
+  const { proposal, vote, address, granter, setError } = props
   const { proposal_id } = proposal
 
   const choices = {
@@ -26,12 +28,12 @@ function VoteForm(props) {
     'VOTE_OPTION_ABSTAIN': 2
   }
 
-  const [choice, setChoice] = useState()
+  const [choice, setChoice] = useState(vote?.option)
   const [loading, setLoading] = useState()
 
-  if (vote && !choice) {
-    setChoice(vote.option)
-  }
+  useEffect(() => {
+    setChoice(vote?.option)
+  }, [vote])
 
   function handleVoteChange(event) {
     setChoice(event.target.name)
@@ -59,12 +61,24 @@ function VoteForm(props) {
       ]
     })
 
-    const message = {
-      typeUrl: "/cosmos.gov.v1beta1.MsgVote",
-      value: {
-        proposalId: proposal.proposal_id,
-        voter: address,
-        option: newVote.optionValue
+    let message
+    if(granter){
+      message = buildExecMessage(address, [{
+        typeUrl: "/cosmos.gov.v1beta1.MsgVote",
+        value: MsgVote.encode(MsgVote.fromPartial({
+          proposalId: proposal.proposal_id,
+          voter: granter || address,
+          option: newVote.optionValue
+        })).finish()
+      }])
+    }else{
+      message = {
+        typeUrl: "/cosmos.gov.v1beta1.MsgVote",
+        value: {
+          proposalId: proposal.proposal_id,
+          voter: granter || address,
+          option: newVote.optionValue
+        }
       }
     }
 
@@ -80,6 +94,16 @@ function VoteForm(props) {
       setLoading(false)
       setError(error.message)
     })
+  }
+
+  function buildExecMessage(grantee, messages) {
+    return {
+      typeUrl: "/cosmos.authz.v1beta1.MsgExec",
+      value: {
+        grantee: grantee,
+        msgs: messages
+      }
+    }
   }
 
   const voteChanged = vote && vote.option !== choice

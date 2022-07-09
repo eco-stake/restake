@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Moment from 'react-moment';
 
 import {
@@ -9,14 +9,38 @@ import Coins from './Coins';
 import ProposalProgress from './ProposalProgress';
 import VoteForm from './VoteForm';
 import AlertMessage from './AlertMessage';
+import Vote from '../utils/Vote.mjs';
 
 function ProposalDetails(props) {
   const { proposal, tally, vote, network } = props
+  const [granter, setGranter] = useState()
+  const [granterVote, setGranterVote] = useState()
   const [error, setError] = useState()
 
-  const { title, description } = proposal.content
+  const { proposal_id, content } = proposal
+  const { title, description } = content
 
   const fixDescription = description.replace(/\/n/g, '\n').split(/\\n/).join('\n')
+
+  useEffect(() => {
+    if(granter){
+      props.queryClient.getProposalVote(proposal_id, granter).then(result => {
+        return setGranterVote(Vote(result.vote))
+      }).catch(error => {
+        setGranterVote(null)
+      })
+    }else{
+      setGranterVote(null)
+    }
+  }, [granter]);
+
+  function onVote(proposal, vote){
+    if(granter){
+      setGranterVote(vote)
+    }else{
+      props.onVote(proposal, vote)
+    }
+  }
 
   return (
     <>
@@ -31,7 +55,7 @@ function ProposalDetails(props) {
             <tbody className="table-sm small">
               <tr>
                 <td scope="row">ID</td>
-                <td className="text-break">#{proposal.proposal_id}</td>
+                <td className="text-break">#{proposal_id}</td>
               </tr>
               <tr>
                 <td scope="row">Status</td>
@@ -86,14 +110,28 @@ function ProposalDetails(props) {
         </div>
         {props.address && (
           <div className="col">
-            <p className="mb-2"><strong>Your Vote</strong></p>
+            <p className="mb-2">
+              {props.granters.length > 0 ? (
+                <select className="form-select form-select-sm" aria-label="Granter" value={granter} onChange={(e) => setGranter(e.target.value)}>
+                  <option value="">Your vote</option>
+                  <optgroup label="Authz Grants">
+                    {props.granters.map(granterAddress => {
+                      return <option key={granterAddress} value={granterAddress}>{granterAddress}</option>
+                    })}
+                  </optgroup>
+                </select>
+              ) : (
+                <strong>Your Vote</strong>
+              )}
+            </p>
             <VoteForm
               network={network}
               proposal={proposal}
-              vote={vote}
+              vote={granter ? granterVote : vote}
               address={props.address}
+              granter={granter}
               stargateClient={props.stargateClient}
-              onVote={props.onVote}
+              onVote={onVote}
               setError={setError} />
           </div>
         )}

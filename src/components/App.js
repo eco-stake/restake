@@ -27,7 +27,10 @@ import {
   Inboxes,
   Stars,
   WrenchAdjustableCircle,
-  WrenchAdjustableCircleFill
+  WrenchAdjustableCircleFill,
+  Magic,
+  Clipboard,
+  ClipboardCheck
 } from 'react-bootstrap-icons'
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import GitHubButton from 'react-github-btn'
@@ -43,6 +46,7 @@ import PoweredByAkashWhite from '../assets/powered-by-akash-white.svg'
 import TooltipIcon from './TooltipIcon';
 import Governance from './Governance';
 import Networks from './Networks';
+import Grants from './Grants';
 
 class App extends React.Component {
   constructor(props) {
@@ -54,6 +58,8 @@ class App extends React.Component {
     this.connectKeplr = this.connectKeplr.bind(this);
     this.showNetworkSelect = this.showNetworkSelect.bind(this);
     this.getBalance = this.getBalance.bind(this);
+    this.onGrant = this.onGrant.bind(this);
+    this.onRevoke = this.onRevoke.bind(this);
     this.toggleFavourite = this.toggleFavourite.bind(this);
   }
 
@@ -69,12 +75,13 @@ class App extends React.Component {
     if (this.state.keplr != prevState.keplr) {
       this.connect()
     } else if (this.props.network !== prevProps.network) {
-      this.setState({ balance: undefined, address: undefined })
+      this.setState({ balance: undefined, address: undefined, grants: undefined })
       this.connect()
     }
   }
 
   componentWillUnmount() {
+    this.clearRefreshInterval()
     window.removeEventListener("load", this.connectKeplr)
     window.removeEventListener("keplr_keystorechange", this.connect)
   }
@@ -105,6 +112,7 @@ class App extends React.Component {
   }
 
   async connect(manual) {
+    this.clearRefreshInterval()
     if (this.props.network && !this.connected()) {
       return this.setState({
         error: 'Could not connect to any available API servers'
@@ -161,6 +169,8 @@ class App extends React.Component {
           error: false
         })
         this.getBalance()
+        this.getGrants()
+        this.refreshInterval();
       } catch (e) {
         console.log(e)
         return this.setState({
@@ -200,6 +210,17 @@ class App extends React.Component {
     })
   }
 
+  refreshInterval() {
+    const grantInterval = setInterval(() => {
+      this.getGrants();
+    }, 60_000);
+    this.setState({ grantInterval });
+  }
+
+  clearRefreshInterval(){
+    clearInterval(this.state.grantInterval);
+  }
+
   toggleFavourite(network){
     const { favourites } = this.state
     let newFavourites
@@ -223,6 +244,87 @@ class App extends React.Component {
           })
         }
       )
+  }
+
+  async getGrants() {
+    if (!this.state.address || !this.props.network.authzSupport) return
+    const address = this.state.address
+    let granterGrants, granteeGrants, grantQuerySupport
+
+    try {
+      granterGrants = await this.props.queryClient.getGranterGrants(address)
+      if(address !== this.state.address) return
+      granteeGrants = await this.props.queryClient.getGranteeGrants(address)
+      grantQuerySupport = true
+    } catch (error) { 
+      console.log('Failed to get all grants in batch', error.message) 
+      grantQuerySupport = error.response?.status !== 501
+    }
+
+    if(granterGrants){
+      this.setState((state) => {
+        if (address !== state.address) return {}
+        return { grantQuerySupport, grants: { granter: granterGrants, grantee: (granteeGrants || state.grants?.grantee) } }
+      })
+      return
+    }
+
+    const calls = this.props.operators.map((operator) => {
+      return () => {
+        const { botAddress } = operator;
+        if (!this.state.address || !this.props.operators.includes(operator)) return;
+
+        return this.props.queryClient.getGrants(botAddress, this.state.address).then(
+          (result) => {
+            return result.map(grant => {
+              return {
+                ...grant,
+                grantee: botAddress,
+                granter: this.state.address
+              }
+            })
+          });
+      }
+    });
+
+    const batchCalls = _.chunk(calls, 5);
+
+    granterGrants = []
+    for (const batchCall of batchCalls) {
+      const grants = (await Promise.allSettled(batchCall.map(call => call()))).map(el => el.status === 'fulfilled' && el.value)
+      granterGrants = granterGrants.concat(_.compact(grants.flat()))
+    }
+    this.setState((state, props) => {
+      return { grantQuerySupport, grants: { ...state.grants, granter: granterGrants } }
+    })
+  }
+
+  onGrant(grantee, grant){
+    this.setState((state, props) => {
+      const granterGrants = state.grants ? state.grants.granter.filter(el => {
+        if(el.grantee !== grantee) return true 
+        if(el.authorization['@type'] === grant.authorization['@type'] && el.authorization.msg === grant.authorization.msg){
+          return false
+        }
+        return true
+      }) : []
+      granterGrants.push(grant)
+      return { grants: { ...state.grants, granter: granterGrants } }
+    })
+  }
+
+  onRevoke(grantee, msgTypes){
+    this.setState((state, props) => {
+      const granterGrants = state.grants.granter.filter(el => {
+        if(el.grantee !== grantee) return true 
+        if(msgTypes.includes('/cosmos.staking.v1beta1.MsgDelegate')){
+          if(el.authorization['@type'] === '/cosmos.staking.v1beta1.StakeAuthorization') return false
+        }
+        if (el.authorization['@type'] === '/cosmos.authz.v1beta1.GenericAuthorization' && msgTypes.includes(el.authorization.msg)) return false
+        return true;
+      })
+      return { grants: { ...state.grants, granter: granterGrants } }
+    })
   }
 
   setCopied() {
@@ -319,35 +421,42 @@ class App extends React.Component {
                 <Nav activeKey={this.props.active} onSelect={(e) => this.props.setActive(e)}>
                       <div className="nav-item pe-2 border-end">
                         <Nav.Link eventKey="networks">
-                          <Stars className="mb-1 me-1" /> Explore
+                          <Stars className="mb-1 me-1" /><span className="d-none d-sm-inline"> Explore</span>
                         </Nav.Link>
                       </div>
                   {this.props.network && (
                     <>
                       <div className="nav-item px-2 border-end">
                         <Nav.Link eventKey="delegations">
-                          <Coin className="mb-1 me-1" /> Delegate
+                          <Coin className="mb-1 me-1" /><span className="d-none d-sm-inline"> Stake</span>
                         </Nav.Link>
                       </div>
-                      <div className="nav-item ps-2">
+                      <div className="nav-item px-2 border-end">
                         <Nav.Link eventKey="governance">
-                          <Inboxes className="mb-1 me-1" /> Govern
+                          <Inboxes className="mb-1 me-1" /><span className="d-none d-sm-inline"> Govern</span>
                         </Nav.Link>
                       </div>
+                      {this.state.address && this.props.network.authzSupport && (
+                        <div className="nav-item ps-2">
+                          <Nav.Link eventKey="grants">
+                            <Magic className="mb-1 me-1" /><span className="d-none d-sm-inline"> Grant</span>
+                          </Nav.Link>
+                        </div>
+                      )}
                     </>
                   )}
                 </Nav>
               </div>
             </Navbar>
-            <nav className={`navbar navbar-expand-lg ${this.props.theme === 'dark' ? 'navbar-dark' : 'navbar-light'}`}>
+            <nav className={`navbar navbar-expand ${this.props.theme === 'dark' ? 'navbar-dark' : 'navbar-light'}`}>
               <div className="justify-content-center">
                 <ul className="navbar-nav">
                   {this.props.network && this.state.address ? (
                     <>
-                      <li className="nav-item pe-3 pt-2 border-end d-none d-lg-block">
+                      <li className="nav-item pe-3 border-end d-flex align-items-center">
                         <CopyToClipboard text={this.state.address}
                           onCopy={() => this.setCopied()}>
-                          <span role="button"><span className={'small d-block clipboard' + (this.state.copied ? ' copied' : '')}>{this.state.address}</span></span>
+                          <span role="button" className="d-flex align-items-center">{this.state.copied ? <ClipboardCheck /> : <Clipboard />}<span className="small ps-2 d-none d-lg-inline">{this.state.address}</span></span>
                         </CopyToClipboard>
                       </li>
                       <li className="nav-item ps-3 pt-1">
@@ -356,9 +465,9 @@ class App extends React.Component {
                             <Coins
                               coins={this.state.balance}
                               decimals={this.props.network.decimals}
-                              className="me-1 d-none d-sm-inline"
+                              className="me-1 d-none d-md-inline"
                             />
-                            <CashCoin className="d-inline d-sm-none" />
+                            <CashCoin className="d-inline d-md-none" />
                           </Dropdown.Toggle>
                           <Dropdown.Menu>
                             <Dropdown.Header>{this.state.accountName || 'Wallet'}</Dropdown.Header>
@@ -405,13 +514,6 @@ class App extends React.Component {
               favourites={this.state.favourites} 
               toggleFavourite={this.toggleFavourite} />
           )}
-          {this.props.active === 'governance' && (
-          <Governance
-            network={this.props.network}
-            address={this.state.address}
-            queryClient={this.props.queryClient}
-            stargateClient={this.state.stargateClient} />
-          )}
           {this.props.active === 'delegations' &&
             <>
               <Delegations
@@ -421,11 +523,35 @@ class App extends React.Component {
                 operators={this.props.operators}
                 validators={this.props.validators}
                 validator={this.props.validator}
+                grants={this.state.grants}
                 getBalance={this.getBalance}
+                onGrant={this.onGrant}
+                onRevoke={this.onRevoke}
                 queryClient={this.props.queryClient}
                 stargateClient={this.state.stargateClient} />
             </>
           }
+          {this.props.active === 'governance' && (
+          <Governance
+            network={this.props.network}
+            address={this.state.address}
+            grants={this.state.grants}
+            queryClient={this.props.queryClient}
+            stargateClient={this.state.stargateClient} />
+          )}
+          {this.props.active === 'grants' && this.state.address && this.props.network.authzSupport && (
+          <Grants
+            network={this.props.network}
+            address={this.state.address}
+            grants={this.state.grants}
+            operators={this.props.operators}
+            validators={this.props.validators}
+            onGrant={this.onGrant}
+            onRevoke={this.onRevoke}
+            queryClient={this.props.queryClient}
+            grantQuerySupport={this.state.grantQuerySupport}
+            stargateClient={this.state.stargateClient} />
+          )}
           <hr />
           <p className="mt-5 text-center">
             Enabling REStake will authorize the validator to send <em>Delegate</em> transactions on your behalf for 1 year <a href="https://docs.cosmos.network/master/modules/authz/" target="_blank" rel="noreferrer" className="text-reset">using Authz</a>.<br />

@@ -89,12 +89,7 @@ const QueryClient = async (chainId, restUrls) => {
 
   const getRewards = (address, opts) => {
     return axios
-      .get(
-        restUrl +
-          "/cosmos/distribution/v1beta1/delegators/" +
-          address +
-          "/rewards", opts
-      )
+      .get(`${restUrl}/cosmos/distribution/v1beta1/delegators/${address}/rewards`, opts)
       .then((res) => res.data)
       .then((result) => {
         const rewards = result.rewards.reduce(
@@ -102,6 +97,15 @@ const QueryClient = async (chainId, restUrls) => {
           {}
         );
         return rewards;
+      });
+  };
+
+  const getCommission = (validatorAddress, opts) => {
+    return axios
+      .get(`${restUrl}/cosmos/distribution/v1beta1/validators/${validatorAddress}/commission`, opts)
+      .then((res) => res.data)
+      .then((result) => {
+        return result.commission
       });
   };
 
@@ -235,6 +239,7 @@ const QueryClient = async (chainId, restUrls) => {
     getBalance,
     getDelegations,
     getRewards,
+    getCommission,
     getProposals,
     getProposalTally,
     getProposalVote,

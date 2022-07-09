@@ -2,6 +2,7 @@ import _ from 'lodash'
 import { multiply, pow, format, bignumber } from 'mathjs'
 import QueryClient from './QueryClient.mjs'
 import SigningClient from './SigningClient.mjs'
+import Validator from './Validator.mjs'
 import Operator from './Operator.mjs'
 import Chain from './Chain.mjs'
 import CosmosDirectory from './CosmosDirectory.mjs'
@@ -58,9 +59,11 @@ class Network {
 
   async load() {
     this.chain = await Chain(this.data, this.directory)
-    this.validators = await this.directory.getValidators(this.name)
-    this.operators = (this.data.operators || this.validators.filter(el => el.restake && this.allowOperator(el.operator_address))).map(el => {
-      return Operator(el)
+    this.validators = (await this.directory.getValidators(this.name)).map(data => {
+      return Validator(this, data)
+    })
+    this.operators = (this.data.operators || this.validators.filter(el => el.restake && this.allowOperator(el.operator_address))).map(data => {
+      return Operator(this, data)
     })
     this.operatorCount = this.operators.length
     this.prettyName = this.chain.prettyName
@@ -75,7 +78,7 @@ class Network {
     this.estimatedApr = this.chain.estimatedApr
     this.apyEnabled = this.apyEnabled && !!this.estimatedApr && this.estimatedApr > 0
     this.authzSupport = this.chain.authzSupport
-    this.defaultGasPrice = format(bignumber(multiply(0.000000025, pow(10, this.decimals))), { notation: 'fixed' }) + this.denom
+    this.defaultGasPrice = format(bignumber(multiply(0.000000025, pow(10, this.decimals))), { notation: 'fixed', precision: 4}) + this.denom
     this.gasPrice = this.data.gasPrice || this.defaultGasPrice
     this.gasPriceStep = this.data.gasPriceStep
     this.gasPricePrefer = this.data.gasPricePrefer
@@ -141,7 +144,7 @@ class Network {
 
   getValidators(opts) {
     opts = opts || {}
-    return this.validators.filter(validator => {
+    return (this.validators || []).filter(validator => {
       if (opts.status)
         return validator.status === opts.status
       return true

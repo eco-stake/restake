@@ -14,7 +14,7 @@ import Proposal from '../utils/Proposal.mjs';
 import Vote from '../utils/Vote.mjs';
 
 function Governance(props) {
-  const { address, network } = props
+  const { address, network, grants } = props
   const [showModal, setShowModal] = useState()
   const [proposal, setProposal] = useState()
   const [proposals, setProposals] = useState()
@@ -30,9 +30,15 @@ function Governance(props) {
   const navigate = useNavigate();
   const params = useParams();
 
+  const voteGrants = (grants?.grantee || []).filter(grant => {
+    return grant.authorization['@type'] === '/cosmos.authz.v1beta1.GenericAuthorization' && 
+      grant.authorization.msg === '/cosmos.gov.v1beta1.MsgVote'
+  })
+
   useEffect(() => {
     setProposals(false)
-    getProposals()
+    setError(false)
+    getProposals({clearExisting: true})
   }, [network]);
 
   useEffect(() => {
@@ -71,8 +77,9 @@ function Governance(props) {
     }
   }, [proposals, address]);
 
-  async function getProposals(hideError) {
+  async function getProposals(opts) {
     if(!props.queryClient) return
+    const { clearExisting } = opts || {}
 
     props.queryClient.getProposals().then(async (proposals) => {
       proposals = proposals.map(el => Proposal(el))
@@ -85,10 +92,8 @@ function Governance(props) {
       }, {}))
     },
       (error) => {
-        if(!proposals) setProposals([])
-        if (!hideError) {
-          setError(`Failed to load proposals: ${error.message}`);
-        }
+        if(!proposals || clearExisting) setProposals([])
+        setError(`Failed to load proposals: ${error.message}`);
       }
     )
   }
@@ -193,6 +198,8 @@ function Governance(props) {
         address={props.address}
         tally={proposal && tallies[proposal.proposal_id]}
         vote={proposal && votes[proposal.proposal_id]}
+        granters={voteGrants.map(el => el.granter)}
+        queryClient={props.queryClient}
         stargateClient={props.stargateClient}
         closeProposal={closeProposal}
         onVote={onVote}
