@@ -4,20 +4,20 @@ import {
 } from 'react-bootstrap'
 
 function TooltipIcon(props) {
+  if(!props.tooltip && !props.children) return props.icon
+  if(!props.icon && !props.children) return null
   return (
     <>
-      {(props.children || props.tooltip) ? (
       <OverlayTrigger
         key={props.identifier}
         placement={props.placement || 'top'}
         rootClose={true}
         overlay={
           <Tooltip id={`tooltip-${props.key}`}>
-            {props.children || props.tooltip}
+            {props.tooltip || props.children}
           </Tooltip>
         }
-      >{props.icon}</OverlayTrigger>
-      ) : props.icon}
+      >{props.icon || props.children}</OverlayTrigger>
     </>
   )
 }

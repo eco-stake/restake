@@ -8,7 +8,9 @@ import {
 } from 'react-bootstrap'
 
 import {
-  XCircle
+  XCircle,
+  Eye,
+  Key
 } from 'react-bootstrap-icons'
 import CopyToClipboard from 'react-copy-to-clipboard';
 
@@ -77,21 +79,29 @@ function AddressModal(props) {
               <tbody>
                 {networkAddresses.map(({ label, address }) => {
                   return (
-                    <tr key={address} className={address === props.wallet?.address ? 'table-info' : address === props.address ? 'table-primary' : ''}>
+                    <tr key={address}>
                       <td>
                         <CopyToClipboard text={address}>
                           <span role="button">{address}</span>
                         </CopyToClipboard>
                       </td>
                       <td><Form.Control value={label || ''} onChange={(e) => updateAddress(address, e.target.value)} /></td>
-                      <td><XCircle role="button" onClick={() => removeAddress(address)} /></td>
+                      <td>
+                        <XCircle role="button" onClick={() => removeAddress(address)} />
+                        {props.wallet?.address === address && (
+                          <span className="ps-2"><Key /></span>
+                        )}
+                        {props.address === address && (
+                          <span className="ps-2"><Eye /></span>
+                        )}
+                      </td>
                     </tr>
                   )
                 })}
                 <tr>
                   <td><Form.Control placeholder={`${selectedNetwork.prefix}1...`} value={newAddress} isInvalid={newAddress !== '' && !validNewAddress()} onChange={(e) => setNewAddress(e.target.value)} /></td>
                   <td><Form.Control value={newLabel} onChange={(e) => setNewLabel(e.target.value)} /></td>
-                  <td><Button variant="secondary" size="sm" onClick={addAddress}>Add</Button></td>
+                  <td><Button variant="secondary" size="sm" onClick={addAddress}>Save</Button></td>
                 </tr>
               </tbody>
             </Table>

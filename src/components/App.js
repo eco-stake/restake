@@ -31,6 +31,8 @@ import {
   Magic,
   Clipboard,
   ClipboardCheck,
+  Eye,
+  Key
 } from 'react-bootstrap-icons'
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import GitHubButton from 'react-github-btn'
@@ -84,7 +86,7 @@ class App extends React.Component {
     if (this.state.keplr != prevState.keplr) {
       this.connect()
     } else if (this.props.network !== prevProps.network) {
-      this.setState({ balance: undefined, address: undefined, grants: undefined })
+      this.setState({ balance: undefined, address: undefined, wallet: undefined, grants: undefined })
       this.connect()
     }else if(this.state.address !== prevState.address){
       this.setState({ balance: undefined, grants: undefined })
@@ -539,15 +541,37 @@ class App extends React.Component {
                   {this.props.network && this.state.wallet ? (
                     <>
                       <li className="nav-item pe-3 border-end d-flex align-items-center">
-                        <CopyToClipboard text={this.state.address}
-                          onCopy={() => this.setCopied()}>
-                          <span role="button" className="d-flex align-items-center pe-2">{this.state.copied ? <ClipboardCheck /> : <Clipboard />}</span>
-                        </CopyToClipboard>
-                        <Favourite favourites={this.state.favouriteAddresses[this.props.network.path] || []} value={this.state.address} label={this.state.address === this.state.wallet.address && this.state.wallet.name} toggle={this.toggleFavouriteAddress} />
-                        {this.otherFavouriteAddresses().length < 1 ? (
-                          <span className="small ps-2 d-none d-lg-inline">{this.state.wallet.name || this.state.wallet.address}</span>
+                        <Favourite
+                          favourites={this.state.favouriteAddresses[this.props.network.path] || []}
+                          value={this.state.address}
+                          className="pe-2"
+                          label={this.state.address === this.state.wallet.address && this.state.wallet.name}
+                          toggle={this.toggleFavouriteAddress} />
+                        <span className="pe-2">
+                        <TooltipIcon tooltip="Copy address">
+                          <span>
+                            <CopyToClipboard text={this.state.address}
+                              onCopy={() => this.setCopied()}>
+                              <span role="button" className="d-flex align-items-center">{this.state.copied ? <ClipboardCheck /> : <Clipboard />}</span>
+                            </CopyToClipboard>
+                          </span>
+                        </TooltipIcon>
+                        </span>
+                        <span className="pe-2">
+                        {this.state.wallet.address !== this.state.address ? (
+                          <TooltipIcon tooltip="Viewing saved address">
+                            <span><Eye /></span>
+                          </TooltipIcon>
                         ) : (
-                          <select className="form-select form-select-sm ms-2 d-none d-lg-block" aria-label="Address" value={this.state.address} onChange={(e) => this.setState({ address: e.target.value })}>
+                          <TooltipIcon tooltip="Viewing your wallet">
+                            <span><Key /></span>
+                          </TooltipIcon>
+                        )}
+                        </span>
+                        {this.otherFavouriteAddresses().length < 1 ? (
+                          <span className="small d-none d-lg-inline">{this.state.wallet.name || this.state.wallet.address}</span>
+                        ) : (
+                          <select className="form-select form-select-sm d-none d-lg-block" aria-label="Address" value={this.state.address} onChange={(e) => this.setState({ address: e.target.value })}>
                             <optgroup label="Wallet">
                               <option value={this.state.wallet.address}>{this.state.wallet.name || this.state.wallet.address}</option>
                             </optgroup>
