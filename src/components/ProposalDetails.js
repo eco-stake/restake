@@ -123,7 +123,7 @@ function ProposalDetails(props) {
                   <optgroup label="Authz Grants">
                     {props.granters.map(granterAddress => {
                       const favourite = props.favouriteAddresses.find(el => el.address === granterAddress)
-                      return <option key={granterAddress} value={granterAddress}>{favourite.label || granterAddress}</option>
+                      return <option key={granterAddress} value={granterAddress}>{favourite?.label || granterAddress}</option>
                     })}
                   </optgroup>
                 </select>
