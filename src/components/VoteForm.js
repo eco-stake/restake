@@ -8,10 +8,11 @@ import {
 import { MsgVote } from "cosmjs-types/cosmos/gov/v1beta1/tx.js";
 
 import Vote from '../utils/Vote.mjs';
+import { buildExecMessage } from '../utils/Helpers.mjs';
 
 
 function VoteForm(props) {
-  const { proposal, vote, address, granter, setError } = props
+  const { proposal, vote, address, wallet, granter, setError } = props
   const { proposal_id } = proposal
 
   const choices = {
@@ -51,7 +52,7 @@ function VoteForm(props) {
 
     const newVote = Vote({
       proposal_id: proposal_id,
-      voter: address,
+      voter: granter || wallet.address,
       option: choice,
       options: [
         {
@@ -62,29 +63,26 @@ function VoteForm(props) {
     })
 
     let message
+    const value = {
+      proposalId: proposal.proposal_id,
+      voter: newVote.voter,
+      option: newVote.optionValue
+    }
     if(granter){
-      message = buildExecMessage(address, [{
+      message = buildExecMessage(wallet.address, [{
         typeUrl: "/cosmos.gov.v1beta1.MsgVote",
-        value: MsgVote.encode(MsgVote.fromPartial({
-          proposalId: proposal.proposal_id,
-          voter: granter || address,
-          option: newVote.optionValue
-        })).finish()
+        value: MsgVote.encode(MsgVote.fromPartial(value)).finish()
       }])
     }else{
       message = {
         typeUrl: "/cosmos.gov.v1beta1.MsgVote",
-        value: {
-          proposalId: proposal.proposal_id,
-          voter: granter || address,
-          option: newVote.optionValue
-        }
+        value: value
       }
     }
 
     console.log(message)
 
-    props.stargateClient.signAndBroadcast(address, [message]).then((result) => {
+    props.stargateClient.signAndBroadcast(wallet.address, [message]).then((result) => {
       console.log("Successfully broadcasted:", result);
       setLoading(false)
       setError(null)
@@ -96,20 +94,11 @@ function VoteForm(props) {
     })
   }
 
-  function buildExecMessage(grantee, messages) {
-    return {
-      typeUrl: "/cosmos.authz.v1beta1.MsgExec",
-      value: {
-        grantee: grantee,
-        msgs: messages
-      }
-    }
-  }
-
   const voteChanged = vote && vote.option !== choice
 
   function canVote() {
-    if (!address || !proposal.isVoting) return false
+    if (!wallet.address || !proposal.isVoting) return false
+    if (!wallet.hasPermission(granter || wallet.address, 'Vote')) return false
 
     return choice && (!vote || (vote && voteChanged))
   }
@@ -137,7 +126,7 @@ function VoteForm(props) {
                           <Form.Check.Input type='radio'
                             name={key}
                             checked={key === choice}
-                            disabled={!proposal.isVoting}
+                            disabled={!proposal.isVoting || !wallet?.hasPermission(granter || wallet.address, 'Vote')}
                             onChange={handleVoteChange}
                           />
                           <Form.Check.Label className="d-block text-nowrap">

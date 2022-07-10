@@ -15,9 +15,10 @@ import AlertMessage from './AlertMessage';
 import RevokeGrant from './RevokeGrant';
 import Coins from './Coins';
 import GrantModal from './GrantModal';
+import Favourite from './Favourite';
 
 function Grants(props) {
-  const { address, network, operators, validators, grants } = props
+  const { address, wallet, network, operators, validators, grants } = props
   const [error, setError] = useState()
   const [showModal, setShowModal] = useState()
   const [grantsLoading, setGrantLoading] = useReducer(
@@ -28,7 +29,7 @@ function Grants(props) {
   const [filter, setFilter] = useState({keywords: '', group: 'granter'})
   const [results, setResults] = useState([])
 
-  const isNanoLedger = props.stargateClient?.getIsNanoLedger()
+  const isNanoLedger = props.wallet?.getIsNanoLedger()
 
   useEffect(() => {
     if(!grants) return
@@ -128,12 +129,18 @@ function Grants(props) {
     const { granter, grantee, authorization, expiration } = grant
 
     const validator = filter.group === 'granter' && validatorForGrantAddress(grant.grantee)
+    const favourite = props.favouriteAddresses && props.favouriteAddresses.find(el => el.address === (filter.group === 'granter' ? grantee : granter))
     const grantId = `${granter}-${grantee}-${authorization['@type']}-${authorization.msg}`
     return (
       <tr key={grantId}>
         <td className="text-break">
-          {filter.group === 'grantee' ? granter : (
-            validator ? validator.moniker : grantee
+          {filter.group === 'grantee' ? (
+            <div className="d-flex">
+              <Favourite favourites={props.favouriteAddresses} value={granter} toggle={props.toggleFavouriteAddress} />
+              <span className="ps-2">{favourite?.label || granter}</span>
+            </div>
+          ) : (
+            validator ? validator.moniker : favourite?.label || grantee
           )}
         </td>
         <td>
@@ -153,6 +160,7 @@ function Grants(props) {
               {!grantsLoading[grantId] ? (
                 <RevokeGrant
                   address={address}
+                  wallet={wallet}
                   grantAddress={grantee}
                   button={true}
                   size="sm"
@@ -194,7 +202,7 @@ function Grants(props) {
   const alerts = (
     <>
       {!props.grantQuerySupport && (
-        <AlertMessage message="This network doesn't fully support this feature just yet..." />
+        <AlertMessage variant="warning">This network doesn't fully support this feature just yet. <span role="button" className="text-decoration-underline" onClick={props.showFavouriteAddresses}>Save addresses</span> to see them here.</AlertMessage>
       )}
       {props.grantQuerySupport && isNanoLedger && (
         <AlertMessage
@@ -251,7 +259,7 @@ function Grants(props) {
             </select>
           </div>
           <div className="flex-fill d-flex justify-content-end">
-            <Button variant="primary" disabled={!props.grantQuerySupport} onClick={() => setShowModal(true)}>
+            <Button variant="primary" disabled={!wallet?.hasPermission(address, 'Grant')} onClick={() => setShowModal(true)}>
               {address && !isNanoLedger ? 'New Grant' : 'CLI/Ledger Instructions'}
             </Button>
           </div>
@@ -282,6 +290,8 @@ function Grants(props) {
         show={showModal}
         network={props.network}
         address={props.address}
+        wallet={props.wallet}
+        favouriteAddresses={props.favouriteAddresses}
         stargateClient={props.stargateClient}
         closeModal={closeModal}
         onGrant={onGrant}

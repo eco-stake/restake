@@ -53,7 +53,7 @@ code p{
   
 .favourite-on .on,
 .favourite-off .off {
-  display: inline;
+  display: block;
 }
 
 .favourite-on .off,
@@ -64,7 +64,7 @@ code p{
 @media (hover: hover) {
   .favourite-on:hover .off,
   .favourite-off:hover .on {
-    display: inline;
+    display: block;
   }
 
   .favourite-on:hover .on,

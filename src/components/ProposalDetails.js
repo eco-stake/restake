@@ -23,6 +23,12 @@ function ProposalDetails(props) {
   const fixDescription = description.replace(/\/n/g, '\n').split(/\\n/).join('\n')
 
   useEffect(() => {
+    if(props.address !== props.wallet?.address && props.granters.includes(props.address)){
+      setGranter(props.address)
+    }
+  }, [props.address]);
+
+  useEffect(() => {
     if(granter){
       props.queryClient.getProposalVote(proposal_id, granter).then(result => {
         return setGranterVote(Vote(result.vote))
@@ -35,7 +41,7 @@ function ProposalDetails(props) {
   }, [granter]);
 
   function onVote(proposal, vote){
-    if(granter){
+    if(granter && props.address !== granter){
       setGranterVote(vote)
     }else{
       props.onVote(proposal, vote)
@@ -116,7 +122,8 @@ function ProposalDetails(props) {
                   <option value="">Your vote</option>
                   <optgroup label="Authz Grants">
                     {props.granters.map(granterAddress => {
-                      return <option key={granterAddress} value={granterAddress}>{granterAddress}</option>
+                      const favourite = props.favouriteAddresses.find(el => el.address === granterAddress)
+                      return <option key={granterAddress} value={granterAddress}>{favourite?.label || granterAddress}</option>
                     })}
                   </optgroup>
                 </select>
@@ -129,6 +136,7 @@ function ProposalDetails(props) {
               proposal={proposal}
               vote={granter ? granterVote : vote}
               address={props.address}
+              wallet={props.wallet}
               granter={granter}
               stargateClient={props.stargateClient}
               onVote={onVote}

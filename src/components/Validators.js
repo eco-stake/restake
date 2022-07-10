@@ -25,7 +25,7 @@ import ValidatorName from "./ValidatorName";
 import ManageRestake from "./ManageRestake";
 
 function Validators(props) {
-  const { address, network, validators, operators, delegations, operatorGrants } = props
+  const { address, wallet, network, validators, operators, delegations, operatorGrants } = props
 
   const [filter, setFilter] = useState({keywords: '', status: 'active', group: 'delegated'})
   const [results, setResults] = useState([])
@@ -174,6 +174,7 @@ function Validators(props) {
         <td className="d-none d-sm-table-cell text-center">
           <ManageRestake
             size="sm"
+            disabled={!wallet?.hasPermission(address, 'Grant')}
             network={network}
             validator={validator}
             operator={operator}
@@ -276,12 +277,13 @@ function Validators(props) {
                     {operator &&
                       props.restakePossible && (
                         <>
-                          <Dropdown.Item onClick={() => props.showValidator(validator, { activeTab: 'restake' })}>
+                          <Dropdown.Item disabled={!wallet?.hasPermission(address, 'Grant') || !wallet?.hasPermission(address, 'Revoke')} onClick={() => props.showValidator(validator, { activeTab: 'restake' })}>
                             {grants.grantsValid ? 'Manage REStake' : 'Enable REStake'}
                           </Dropdown.Item>
                           {grants.grantsExist && (
                             <RevokeGrant
                               address={props.address}
+                              wallet={props.wallet}
                               grantAddress={operator.botAddress}
                               grants={[grants.stakeGrant, grants.claimGrant]}
                               buttonText="Disable REStake"
@@ -302,6 +304,7 @@ function Validators(props) {
                     <ClaimRewards
                       network={network}
                       address={address}
+                      wallet={wallet}
                       validatorRewards={props.validatorRewards([validatorAddress])}
                       stargateClient={props.stargateClient}
                       onClaimRewards={props.onClaimRewards}
@@ -314,6 +317,7 @@ function Validators(props) {
                       restake={true}
                       network={network}
                       address={address}
+                      wallet={wallet}
                       validatorRewards={props.validatorRewards([validatorAddress])}
                       stargateClient={props.stargateClient}
                       onClaimRewards={props.onClaimRewards}
@@ -329,6 +333,7 @@ function Validators(props) {
                           commission={true}
                           network={network}
                           address={address}
+                          wallet={wallet}
                           validatorRewards={props.validatorRewards([validatorAddress])}
                           stargateClient={props.stargateClient}
                           onClaimRewards={props.onClaimRewards}
@@ -340,13 +345,13 @@ function Validators(props) {
                       </>
                     )}
                     <hr />
-                    <Dropdown.Item onClick={() => props.showValidator(validator, { activeTab: 'delegate' })}>
+                    <Dropdown.Item disabled={!wallet?.hasPermission(address, 'Delegate')} onClick={() => props.showValidator(validator, { activeTab: 'delegate' })}>
                       Delegate
                     </Dropdown.Item>
-                    <Dropdown.Item onClick={() => props.showValidator(validator, { redelegate: true })}>
+                    <Dropdown.Item disabled={!wallet?.hasPermission(address, 'BeginRedelegate')} onClick={() => props.showValidator(validator, { redelegate: true })}>
                       Redelegate
                     </Dropdown.Item>
-                    <Dropdown.Item onClick={() => props.showValidator(validator, { undelegate: true })}>
+                    <Dropdown.Item disabled={!wallet?.hasPermission(address, 'Undelegate')} onClick={() => props.showValidator(validator, { undelegate: true })}>
                       Undelegate
                     </Dropdown.Item>
                   </Dropdown.Menu>
@@ -360,7 +365,7 @@ function Validators(props) {
                     </Tooltip>
                   }
                 >
-                  <Button variant="primary" size="sm" onClick={() => props.showValidator(validator, { activeTab: 'delegate' })}>
+                  <Button variant="primary" size="sm" disabled={!wallet?.hasPermission(address, 'Delegate')} onClick={() => props.showValidator(validator, { activeTab: 'delegate' })}>
                     Delegate
                   </Button>
                 </OverlayTrigger>

@@ -25,6 +25,30 @@ export function overrideNetworks(networks, overrides){
   })
 }
 
+export function buildExecMessage(grantee, messages) {
+  return {
+    typeUrl: "/cosmos.authz.v1beta1.MsgExec",
+    value: {
+      grantee: grantee,
+      msgs: messages
+    }
+  }
+}
+
+export function buildExecableMessage(type, typeUrl, value, shouldExec){
+  if (shouldExec) {
+    return {
+      typeUrl: typeUrl,
+      value: type.encode(type.fromPartial(value)).finish()
+    }
+  } else {
+    return {
+      typeUrl: typeUrl,
+      value: value
+    }
+  }
+}
+
 export function parseGrants(grants, grantee, granter) {
   // claimGrant is removed but we track for now to allow revoke
   const claimGrant = grants.find((el) => {

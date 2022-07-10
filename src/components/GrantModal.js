@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import _ from 'lodash'
 import moment from 'moment'
 
+import { MsgGrant } from "cosmjs-types/cosmos/authz/v1beta1/tx";
 import { GenericAuthorization } from "cosmjs-types/cosmos/authz/v1beta1/authz";
 import { Timestamp } from "cosmjs-types/google/protobuf/timestamp";
 
@@ -13,26 +14,12 @@ import {
 } from 'react-bootstrap'
 
 import AlertMessage from './AlertMessage';
-
-const messageTypes = [
-  // '/cosmos.authz.v1beta1.MsgGrant',
-  // '/cosmos.authz.v1beta1.MsgRevoke',
-  // '/cosmos.authz.v1beta1.MsgExec',
-  '/cosmos.gov.v1beta1.MsgVote',
-  '/cosmos.gov.v1beta1.MsgDeposit',
-  '/cosmos.gov.v1beta1.MsgSubmitProposal',
-  '/cosmos.bank.v1beta1.MsgSend',
-  '/cosmos.distribution.v1beta1.MsgWithdrawDelegatorRewards',
-  '/cosmos.distribution.v1beta1.MsgWithdrawValidatorCommission',
-  '/cosmos.staking.v1beta1.MsgDelegate',
-  '/cosmos.staking.v1beta1.MsgUndelegate',
-  '/cosmos.staking.v1beta1.MsgBeginRedelegate',
-  'Custom'
-]
+import { messageTypes } from '../utils/Wallet.mjs';
+import { buildExecMessage } from '../utils/Helpers.mjs';
 
 function GrantModal(props) {
-  const { show, network, address } = props
-  const isNanoLedger = props.stargateClient?.getIsNanoLedger()
+  const { show, network, address, wallet } = props
+  const isNanoLedger = props.wallet?.getIsNanoLedger()
   const defaultExpiry = moment().add(1, 'year')
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState()
@@ -84,7 +71,7 @@ function GrantModal(props) {
     ]
     console.log(messages)
 
-    props.stargateClient.signAndBroadcast(address, messages).then((result) => {
+    props.stargateClient.signAndBroadcast(wallet.address, messages).then((result) => {
       console.log("Successfully broadcasted:", result);
       showLoading(false)
       props.onGrant(state.granteeValue, {
@@ -108,34 +95,47 @@ function GrantModal(props) {
     props.closeModal();
   }
 
-  function buildGrantMsg(type, value, expiryDate) {
-    return {
-      typeUrl: "/cosmos.authz.v1beta1.MsgGrant",
-      value: {
-        granter: address,
-        grantee: state.granteeValue,
-        grant: {
-          authorization: {
-            typeUrl: type,
-            value: value
-          },
-          expiration: Timestamp.fromPartial({
-            seconds: expiryDate.unix(),
-            nanos: 0
-          })
-        }
-      },
+  function buildGrantMsg(type, authValue, expiryDate) {
+    const value = {
+      granter: address,
+      grantee: state.granteeValue,
+      grant: {
+        authorization: {
+          typeUrl: type,
+          value: authValue
+        },
+        expiration: Timestamp.fromPartial({
+          seconds: expiryDate.unix(),
+          nanos: 0
+        })
+      }
+    }
+    if(wallet?.address !== address){
+      return buildExecMessage(wallet.address, [{
+        typeUrl: "/cosmos.authz.v1beta1.MsgGrant",
+        value: MsgGrant.encode(MsgGrant.fromPartial(value)).finish()
+      }])
+    }else{
+      return {
+        typeUrl: "/cosmos.authz.v1beta1.MsgGrant",
+        value: value
+      }
     }
   }
 
   function valid(){
-    return state.granteeValue && validGrantee() && !!messageType()
+    return state.granteeValue && validGrantee() && !!messageType() && wallet?.hasPermission(address, 'Grant')
   }
 
   function validGrantee(){
-    if(!state.granteeValue) return true;
+    const value = state.granteeValue === 'custom' ? state.customGranteeValue : state.granteeValue
+    if(!value) return true;
 
-    return !network.prefix || state.granteeValue.startsWith(network.prefix)
+    return !network.prefix || value.startsWith(network.prefix)
+  }
+
+  function favourites(){
+    return props.favouriteAddresses.filter(el => el.address !== props.address)
   }
 
   return (
@@ -160,7 +160,24 @@ function GrantModal(props) {
           <Form onSubmit={handleSubmit}>
             <Form.Group className="mb-3">
               <Form.Label>Grantee</Form.Label>
-              <Form.Control type="text" name='granteeValue' required={true} value={state.granteeValue} isInvalid={!validGrantee()} onChange={handleInputChange} />
+              <select className="form-select" name="granteeValue" aria-label="Grantee" value={state.granteeValue} onChange={handleInputChange}>
+                <option value='' disabled>Choose address</option>
+                {favourites().length > 0 && (
+                  <optgroup label="Favourites">
+                    {favourites().map(({ label, address }) => {
+                      if (props.address === address) return null
+
+                      return (
+                        <option key={address} value={address}>{label || address}</option>
+                      )
+                    })}
+                  </optgroup>
+                )}
+                <option value='custom'>Custom</option>
+              </select>
+              {state.granteeValue === 'custom' && (
+                <Form.Control placeholder={`${network.prefix}1...`} className="mt-1" type="text" name='customGranteeValue' required={true} value={state.customGranteeValue} isInvalid={!validGrantee()} onChange={handleInputChange} />
+              )}
             </Form.Group>
             <Form.Group className="mb-3">
               <Form.Label>Expiry date</Form.Label>
@@ -174,22 +191,22 @@ function GrantModal(props) {
             </Form.Group>
             {state.grantTypeValue === '/cosmos.authz.v1beta1.GenericAuthorization' && (
               <>
-              <Form.Group className="mb-3">
-                <Form.Label>Message type</Form.Label>
-                <select className="form-select" name="messageTypeValue" aria-label="Message type" value={state.messageTypeValue} onChange={handleInputChange}>
-                  {messageTypes.map(type => {
-                  return (
-                    <option key={type} value={type}>{_.startCase(type.split('.').slice(-1)[0].replace('Msg', ''))}</option>
-                  )
-                  })}
-                </select>
-              </Form.Group>
-              {state.messageTypeValue === 'Custom' && (
                 <Form.Group className="mb-3">
-                  <Form.Label>Type URL</Form.Label>
-                  <Form.Control type="text" name='customMessageTypeValue' required={true} value={state.customMessageTypeValue} onChange={handleInputChange} />
+                  <Form.Label>Message type</Form.Label>
+                  <select className="form-select" name="messageTypeValue" aria-label="Message type" value={state.messageTypeValue} onChange={handleInputChange}>
+                    {messageTypes.map(type => {
+                      return (
+                        <option key={type} value={type}>{_.startCase(type.split('.').slice(-1)[0].replace('Msg', ''))}</option>
+                      )
+                    })}
+                  </select>
                 </Form.Group>
-              )}
+                {state.messageTypeValue === 'Custom' && (
+                  <Form.Group className="mb-3">
+                    <Form.Label>Type URL</Form.Label>
+                    <Form.Control type="text" name='customMessageTypeValue' required={true} value={state.customMessageTypeValue} onChange={handleInputChange} />
+                  </Form.Group>
+                )}
               </>
             )}
             <p><strong>Incorrect use of Authz grants can be as dangerous as giving away your mnemonic.</strong> Make sure you trust the Grantee address and understand the permissions you are granting.</p>
@@ -212,16 +229,16 @@ function GrantModal(props) {
               </p>
             )}
             <Collapse in={showLedger}>
-            <pre className="text-wrap"><code>
-              <p>{daemon_name ? daemon_name : <kbd>{'<chaind>'}</kbd>} tx authz grant \<br />
-                <kbd>{state.granteeValue || '<grantee>'}</kbd> generic \<br />
-                --msg-type <kbd>{messageType()}</kbd> \<br />
-                --expiration <kbd>{moment(state.expiryDateValue).unix()}</kbd> \<br />
-                --from <kbd>my-key</kbd> \<br />
-                --chain-id {chain_id} \<br />
-                --node https://rpc.cosmos.directory:443/{network.name} \<br />
-                --gas auto --gas-prices {network.gasPrice} --gas-adjustment 1.5</p>
-            </code></pre>
+              <pre className="text-wrap"><code>
+                <p>{daemon_name ? daemon_name : <kbd>{'<chaind>'}</kbd>} tx authz grant \<br />
+                  <kbd>{state.granteeValue || '<grantee>'}</kbd> generic \<br />
+                  --msg-type <kbd>{messageType()}</kbd> \<br />
+                  --expiration <kbd>{moment(state.expiryDateValue).unix()}</kbd> \<br />
+                  --from <kbd>my-key</kbd> \<br />
+                  --chain-id {chain_id} \<br />
+                  --node https://rpc.cosmos.directory:443/{network.name} \<br />
+                  --gas auto --gas-prices {network.gasPrice} --gas-adjustment 1.5</p>
+              </code></pre>
             </Collapse>
           </Form>
         </Modal.Body>

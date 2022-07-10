@@ -35,7 +35,7 @@ class Delegations extends React.Component {
   }
 
   async componentDidMount() {
-    const isNanoLedger = this.props.stargateClient?.getIsNanoLedger();
+    const isNanoLedger = this.props.wallet?.getIsNanoLedger();
     this.setState({ isNanoLedger: isNanoLedger });
     this.refresh(true);
 
@@ -52,10 +52,12 @@ class Delegations extends React.Component {
     if ((this.props.network !== prevProps.network && !this.props.address)
       || (this.props.address !== prevProps.address)) {
       this.clearRefreshInterval()
-      const isNanoLedger = this.props.stargateClient?.getIsNanoLedger();
+      const isNanoLedger = this.props.wallet?.getIsNanoLedger();
       this.setState({
         isNanoLedger: isNanoLedger,
         delegations: undefined, 
+        rewards: undefined,
+        commission: {},
         validatorApy: {},
         operatorGrants: {},
         error: null,
@@ -128,7 +130,7 @@ class Delegations extends React.Component {
             });
           }else if(!hideError){
             this.setState({
-              error: 'Failed to load delegations. API may be down.',
+              error: 'Failed to load delegations.',
             });
           }
         }
@@ -162,7 +164,7 @@ class Delegations extends React.Component {
             this.setState({ rewards: {} });
           } else {
             if (!hideError)
-              this.setState({ error: "Failed to get rewards. Please refresh" });
+              this.setState({ error: "Failed to get rewards." });
           }
         }
       );
@@ -192,12 +194,12 @@ class Delegations extends React.Component {
       this.setState({ validatorApy });
     }, error => {
       console.log(error)
-      this.setState({ error: "Failed to get APY. Please refresh" });
+      this.setState({ error: "Failed to get APY." });
     })
   }
 
   async getGrants() {
-    if (!this.props.grants) return
+    if (!this.props.grants?.granter) return
 
     const operatorGrants = this.props.operators.reduce((sum, operator) => {
       const grantee = operator.botAddress
@@ -225,10 +227,12 @@ class Delegations extends React.Component {
 
   onGrant(grantAddress, grant) {
     const operator = this.props.operators.find(el => el.botAddress === grantAddress)
-    this.setState((state, props) => ({
-      error: null,
-      validatorLoading: _.set(state.validatorLoading, operator.address, false),
-    }));
+    if(operator){
+      this.setState((state, props) => ({
+        error: null,
+        validatorLoading: _.set(state.validatorLoading, operator.address, false),
+      }));
+    }
     this.props.onGrant(grantAddress, grant)
   }
 
@@ -362,11 +366,13 @@ class Delegations extends React.Component {
         undelegate={validatorModal.undelegate}
         network={this.props.network}
         address={this.props.address}
+        wallet={this.props.wallet}
         validators={this.props.validators}
         validatorApy={this.state.validatorApy}
         operators={this.props.operators}
         balance={this.props.balance}
         rewards={this.state.rewards}
+        commission={this.state.commission}
         delegations={this.state.delegations || {}}
         grants={this.operatorGrants()}
         authzSupport={this.authzSupport()}
@@ -426,6 +432,7 @@ class Delegations extends React.Component {
           <Validators 
             network={this.props.network}
             address={this.props.address}
+            wallet={this.props.wallet}
             validators={this.props.validators}
             operators={this.props.operators}
             validatorApy={this.state.validatorApy}
@@ -469,6 +476,7 @@ class Delegations extends React.Component {
                       <ClaimRewards
                         network={this.props.network}
                         address={this.props.address}
+                        wallet={this.props.wallet}
                         validatorRewards={this.validatorRewards()}
                         stargateClient={this.props.stargateClient}
                         onClaimRewards={this.onClaimRewards}
@@ -479,6 +487,7 @@ class Delegations extends React.Component {
                         restake={true}
                         network={this.props.network}
                         address={this.props.address}
+                        wallet={this.props.wallet}
                         validatorRewards={this.validatorRewards()}
                         stargateClient={this.props.stargateClient}
                         onClaimRewards={this.onClaimRewards}

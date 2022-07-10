@@ -82,6 +82,8 @@ function NetworkFinder() {
   }
 
   function changeNetwork(network) {
+    if(!network) return
+
     setState({
       network: network,
       queryClient: network.queryClient,
