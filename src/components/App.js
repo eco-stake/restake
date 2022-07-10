@@ -373,7 +373,9 @@ class App extends React.Component {
       return true
     }
     this.setState((state, props) => {
-      const granterGrants = state.grants?.granter ? state.grants.granter.filter(filterGrant) : []
+      if(!state.grants) return {}
+
+      const granterGrants = state.grants.granter.filter(filterGrant)
       granterGrants.push(grant)
       return { grants: { ...state.grants, granter: granterGrants } }
     })
@@ -394,6 +396,8 @@ class App extends React.Component {
       return true;
     }
     this.setState((state, props) => {
+      if(!state.grants) return {}
+
       const granterGrants = state.grants.granter.filter(filterGrant)
       return { grants: { ...state.grants, granter: granterGrants } }
     })
