@@ -130,7 +130,7 @@ class Delegations extends React.Component {
             });
           }else if(!hideError){
             this.setState({
-              error: 'Failed to load delegations. API may be down.',
+              error: 'Failed to load delegations.',
             });
           }
         }
@@ -164,7 +164,7 @@ class Delegations extends React.Component {
             this.setState({ rewards: {} });
           } else {
             if (!hideError)
-              this.setState({ error: "Failed to get rewards. Please refresh" });
+              this.setState({ error: "Failed to get rewards." });
           }
         }
       );
@@ -194,7 +194,7 @@ class Delegations extends React.Component {
       this.setState({ validatorApy });
     }, error => {
       console.log(error)
-      this.setState({ error: "Failed to get APY. Please refresh" });
+      this.setState({ error: "Failed to get APY." });
     })
   }
 
