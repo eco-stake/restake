@@ -227,10 +227,12 @@ class Delegations extends React.Component {
 
   onGrant(grantAddress, grant) {
     const operator = this.props.operators.find(el => el.botAddress === grantAddress)
-    this.setState((state, props) => ({
-      error: null,
-      validatorLoading: _.set(state.validatorLoading, operator.address, false),
-    }));
+    if(operator){
+      this.setState((state, props) => ({
+        error: null,
+        validatorLoading: _.set(state.validatorLoading, operator.address, false),
+      }));
+    }
     this.props.onGrant(grantAddress, grant)
   }
 

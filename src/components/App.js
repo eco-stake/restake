@@ -375,7 +375,7 @@ class App extends React.Component {
       granterGrants.push(grant)
       return { grants: { ...state.grants, granter: granterGrants } }
     })
-    if(grantee === this.state.wallet.address){
+    if(this.state.wallet && grantee === this.state.wallet.address){
       const grants = this.state.wallet.grants.filter(filterGrant)
       grants.push(grant)
       this.state.wallet.grants = grants
@@ -395,7 +395,7 @@ class App extends React.Component {
       const granterGrants = state.grants.granter.filter(filterGrant)
       return { grants: { ...state.grants, granter: granterGrants } }
     })
-    if(grantee === this.state.wallet.address){
+    if(this.state.wallet && grantee === this.state.wallet.address){
       this.state.wallet.grants = this.state.wallet.grants.filter(filterGrant)
     }
   }
