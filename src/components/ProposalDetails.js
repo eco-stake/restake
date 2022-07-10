@@ -23,7 +23,7 @@ function ProposalDetails(props) {
   const fixDescription = description.replace(/\/n/g, '\n').split(/\\n/).join('\n')
 
   useEffect(() => {
-    if(props.address !== props.wallet.address && props.granters.includes(props.address)){
+    if(props.address !== props.wallet?.address && props.granters.includes(props.address)){
       setGranter(props.address)
     }
   }, [props.address]);
