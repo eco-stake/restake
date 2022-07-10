@@ -541,32 +541,33 @@ class App extends React.Component {
                   {this.props.network && this.state.wallet ? (
                     <>
                       <li className="nav-item pe-3 border-end d-flex align-items-center">
-                        <Favourite
-                          favourites={this.state.favouriteAddresses[this.props.network.path] || []}
-                          value={this.state.address}
-                          className="pe-2"
-                          label={this.state.address === this.state.wallet.address && this.state.wallet.name}
-                          toggle={this.toggleFavouriteAddress} />
                         <span className="pe-2">
-                        <TooltipIcon tooltip="Copy address">
-                          <span>
-                            <CopyToClipboard text={this.state.address}
-                              onCopy={() => this.setCopied()}>
-                              <span role="button" className="d-flex align-items-center">{this.state.copied ? <ClipboardCheck /> : <Clipboard />}</span>
-                            </CopyToClipboard>
-                          </span>
-                        </TooltipIcon>
+                          <Favourite
+                            favourites={this.state.favouriteAddresses[this.props.network.path] || []}
+                            value={this.state.address}
+                            label={this.state.address === this.state.wallet.address && this.state.wallet.name}
+                            toggle={this.toggleFavouriteAddress} />
                         </span>
                         <span className="pe-2">
-                        {this.state.wallet.address !== this.state.address ? (
-                          <TooltipIcon tooltip="Viewing saved address">
-                            <span><Eye /></span>
+                          <TooltipIcon tooltip="Copy address">
+                            <span>
+                              <CopyToClipboard text={this.state.address}
+                                onCopy={() => this.setCopied()}>
+                                <span role="button" className="d-flex align-items-center">{this.state.copied ? <ClipboardCheck /> : <Clipboard />}</span>
+                              </CopyToClipboard>
+                            </span>
                           </TooltipIcon>
-                        ) : (
-                          <TooltipIcon tooltip="Viewing your wallet">
-                            <span><Key /></span>
-                          </TooltipIcon>
-                        )}
+                        </span>
+                        <span className="pe-2">
+                          {this.state.wallet.address !== this.state.address ? (
+                            <TooltipIcon tooltip="Viewing saved address">
+                              <span><Eye /></span>
+                            </TooltipIcon>
+                          ) : (
+                            <TooltipIcon tooltip="Viewing your wallet">
+                              <span><Key /></span>
+                            </TooltipIcon>
+                          )}
                         </span>
                         {this.otherFavouriteAddresses().length < 1 ? (
                           <span className="small d-none d-lg-inline">{this.state.wallet.name || this.state.wallet.address}</span>
