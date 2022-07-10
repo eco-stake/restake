@@ -559,13 +559,17 @@ class App extends React.Component {
                           </TooltipIcon>
                         </span>
                         <span className="pe-2">
-                          {this.state.wallet.address !== this.state.address ? (
-                            <TooltipIcon tooltip="Viewing saved address">
-                              <span><Eye /></span>
+                          {this.state.wallet.address === this.state.address ? (
+                            <TooltipIcon tooltip="Viewing your wallet">
+                              <span role="button" onClick={() => this.setState({ showAddressModal: true })}>
+                                <Key />
+                              </span>
                             </TooltipIcon>
                           ) : (
-                            <TooltipIcon tooltip="Viewing your wallet">
-                              <span><Key /></span>
+                            <TooltipIcon tooltip="Viewing saved address">
+                              <span role="button" onClick={() => this.setState({ showAddressModal: true })}>
+                                <Eye />
+                              </span>
                             </TooltipIcon>
                           )}
                         </span>
