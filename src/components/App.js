@@ -308,25 +308,34 @@ class App extends React.Component {
     try {
       granterGrants = await this.props.queryClient.getGranterGrants(address)
       if (address !== this.state.address) return
-      granteeGrants = await this.props.queryClient.getGranteeGrants(address)
-      grantQuerySupport = true
-    } catch (error) {
-      console.log('Failed to get all grants in batch', error.message)
-      grantQuerySupport = error.response?.status !== 501
-    }
-
-    if (granterGrants) {
       this.setState((state) => {
-        if (address !== state.address) return {}
         return { 
-          grantQuerySupport, 
           grants: { 
-            granter: granterGrants, 
-            grantee: (granteeGrants || state.grants?.grantee)
+            ...state.grants,
+            granter: granterGrants,
           } 
         }
       })
+      granteeGrants = await this.props.queryClient.getGranteeGrants(address)
+      this.setState((state) => {
+        if (address !== state.address) return {}
+        return { 
+          grantQuerySupport: true, 
+          grants: { 
+            ...state.grants,
+            grantee: granteeGrants
+          } 
+        }
+      })
+      grantQuerySupport = true
       return
+    } catch (error) {
+      console.log('Failed to get all grants in batch', error.message)
+      grantQuerySupport = error.response?.status !== 501
+      this.setState((state) => {
+        if (address !== state.address) return {}
+        return { grantQuerySupport }
+      })
     }
 
     let addresses = this.props.operators.map(el => el.botAddress)
