@@ -761,17 +761,19 @@ class App extends React.Component {
           favouriteAddresses={this.state.favouriteAddresses}
           updateFavouriteAddresses={this.updateFavouriteAddresses}
         />
-        <SendModal
-          show={this.state.showSendModal} 
-          network={this.props.network}
-          address={this.state.address}
-          wallet={this.state.wallet}
-          balance={this.state.balance}
-          favouriteAddresses={this.state.favouriteAddresses[this.props.network.path] || []}
-          stargateClient={this.state.stargateClient}
-          onHide={() => this.setState({ showSendModal: false })}
-          onSend={this.onSend}
-        />
+        {this.props.network && (
+          <SendModal
+            show={this.state.showSendModal}
+            network={this.props.network}
+            address={this.state.address}
+            wallet={this.state.wallet}
+            balance={this.state.balance}
+            favouriteAddresses={this.state.favouriteAddresses[this.props.network.path] || []}
+            stargateClient={this.state.stargateClient}
+            onHide={() => this.setState({ showSendModal: false })}
+            onSend={this.onSend}
+          />
+        )}
       </Container>
     )
   }
