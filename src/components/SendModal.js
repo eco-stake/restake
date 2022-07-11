@@ -116,12 +116,20 @@ function SendModal(props) {
 
     const decimals = pow(10, network.decimals)
     const denomAmount = multiply(state.amountValue, decimals)
-    return coin(denomAmount, network.denom)
+    if(denomAmount > 0){
+      return coin(denomAmount, network.denom)
+    }
   }
 
   function valid(){
     if(!state.recipientValue) return true
     return validRecipient() && coinAmount() && wallet?.hasPermission(address, 'Send')
+  }
+
+  function validAmount(){
+    if(!state.amountValue) return true
+
+    return !!coinAmount()
   }
 
   function validRecipient(){
@@ -175,7 +183,7 @@ function SendModal(props) {
                   <Form.Label>Amount</Form.Label>
                   <div className="mb-3">
                     <div className="input-group">
-                      <Form.Control name="amountValue" type="number" min={0} step={step} placeholder="10" required={true} value={state.amountValue} onChange={handleInputChange} />
+                      <Form.Control name="amountValue" type="number" min={0} step={step} placeholder="10" required={true} isInvalid={!validAmount()} value={state.amountValue} onChange={handleInputChange} />
                       <span className="input-group-text">{denom}</span>
                     </div>
                     {props.balance &&
