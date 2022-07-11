@@ -17,7 +17,7 @@ const Chain = async (data, directory) => {
     authzSupport: data.authzSupport ?? chainData.params?.authz,
     denom: data.denom || base.denom,
     symbol: data.symbol || token.denom,
-    decimals: data.decimals || token.exponent || 6,
+    decimals: data.decimals || (token.exponent ?? 6),
     image: data.image || (asset.logo_URIs && (asset.logo_URIs.png || asset.logo_URIs.svg)),
     coinGeckoId: asset.coingecko_id,
     chainData,
