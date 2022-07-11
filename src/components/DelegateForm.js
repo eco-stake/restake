@@ -109,7 +109,7 @@ class DelegateForm extends React.Component {
     this.props.stargateClient.simulate(this.props.address, messages).then(gas => {
       const saveTxFeeNum = (this.props.redelegate || this.props.undelegate) ? 0 : 10
       const gasPrice = this.props.stargateClient.getFee(gas).amount[0].amount
-      const decimals = pow(10, this.props.network.decimals || 6)
+      const decimals = pow(10, this.props.network.decimals)
       const amount = divide(subtract(this.props.availableBalance.amount, multiply(gasPrice, saveTxFeeNum)), decimals)
 
       this.setState({amount: amount > 0 ? amount : 0})

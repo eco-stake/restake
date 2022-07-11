@@ -4,7 +4,7 @@ function Coins(props) {
   function amount(coins, decimals){
     if(props.inBaseDenom) return coins.amount
 
-    if (!decimals) {
+    if (decimals == null) {
       decimals = 6
     }
     const prec = precision(coins, decimals)

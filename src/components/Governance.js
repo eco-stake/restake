@@ -14,7 +14,7 @@ import Proposal from '../utils/Proposal.mjs';
 import Vote from '../utils/Vote.mjs';
 
 function Governance(props) {
-  const { address, wallet, network, grants } = props
+  const { address, wallet, network } = props
   const [showModal, setShowModal] = useState()
   const [proposal, setProposal] = useState()
   const [proposals, setProposals] = useState()
@@ -82,21 +82,20 @@ function Governance(props) {
     if(!props.queryClient) return
     const { clearExisting } = opts || {}
 
-    props.queryClient.getProposals().then(async (proposals) => {
-      proposals = proposals.map(el => Proposal(el))
-      setProposals(sortProposals(proposals))
-      setTallies(proposals.reduce((sum, proposal) => {
+    try {
+      let newProposals = await props.queryClient.getProposals()
+      newProposals = newProposals.map(el => Proposal(el))
+      setProposals(sortProposals(newProposals))
+      setTallies(newProposals.reduce((sum, proposal) => {
         if (!_.every(Object.values(proposal.final_tally_result), el => el === '0')) {
           sum[proposal.proposal_id] = proposal.final_tally_result
         }
         return sum
       }, {}))
-    },
-      (error) => {
-        if(!proposals || clearExisting) setProposals([])
-        setError(`Failed to load proposals: ${error.message}`);
-      }
-    )
+    } catch (error) {
+      if (!proposals || clearExisting) setProposals([])
+      setError(`Failed to load proposals: ${error.message}`);
+    }
   }
 
   async function getTallies(proposals) {
@@ -109,9 +108,7 @@ function Governance(props) {
         if (proposal.isVoting && talliesInvalid) {
           return props.queryClient.getProposalTally(proposal_id).then(result => {
             return setTallies({ [proposal_id]: result.tally })
-          }).catch(error => { })
-        } else {
-          return setTallies({ [proposal_id]: result })
+          })
         }
       }
     });

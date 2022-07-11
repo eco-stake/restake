@@ -88,7 +88,7 @@ class App extends React.Component {
     } else if (this.props.network !== prevProps.network) {
       this.setState({ balance: undefined, address: undefined, wallet: undefined, grants: undefined })
       this.connect()
-    }else if(this.state.address !== prevState.address){
+    }else if(this.state.address !== prevState.address && prevState.address){
       this.setState({ balance: undefined, grants: undefined })
       this.getBalance()
       this.getGrants()
@@ -190,8 +190,9 @@ class App extends React.Component {
           error: false
         })
         this.getBalance()
-        this.getGrants()
-        this.refreshInterval();
+        this.getGrants().then(() => {
+          this.refreshInterval();
+        })
       } catch (e) {
         console.log(e)
         return this.setState({
@@ -373,7 +374,9 @@ class App extends React.Component {
       return true
     }
     this.setState((state, props) => {
-      const granterGrants = state.grants?.granter ? state.grants.granter.filter(filterGrant) : []
+      if(!state.grants) return {}
+
+      const granterGrants = state.grants.granter.filter(filterGrant)
       granterGrants.push(grant)
       return { grants: { ...state.grants, granter: granterGrants } }
     })
@@ -394,6 +397,8 @@ class App extends React.Component {
       return true;
     }
     this.setState((state, props) => {
+      if(!state.grants) return {}
+
       const granterGrants = state.grants.granter.filter(filterGrant)
       return { grants: { ...state.grants, granter: granterGrants } }
     })
@@ -659,7 +664,6 @@ class App extends React.Component {
               network={this.props.network}
               address={this.state.address}
               wallet={this.state.wallet}
-              grants={this.state.grants}
               favouriteAddresses={this.state.favouriteAddresses[this.props.network.path] || []}
               queryClient={this.props.queryClient}
               stargateClient={this.state.stargateClient} />
