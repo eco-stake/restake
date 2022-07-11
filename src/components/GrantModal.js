@@ -74,8 +74,8 @@ function GrantModal(props) {
     props.stargateClient.signAndBroadcast(wallet.address, messages).then((result) => {
       console.log("Successfully broadcasted:", result);
       showLoading(false)
-      props.onGrant(state.granteeValue, {
-        grantee: state.granteeValue,
+      props.onGrant(grantee(), {
+        grantee: grantee(),
         granter: address,
         expiration: expiry,
         authorization: {
@@ -98,7 +98,7 @@ function GrantModal(props) {
   function buildGrantMsg(type, authValue, expiryDate) {
     const value = {
       granter: address,
-      grantee: state.granteeValue,
+      grantee: grantee(),
       grant: {
         authorization: {
           typeUrl: type,
@@ -127,8 +127,12 @@ function GrantModal(props) {
     return state.granteeValue && validGrantee() && !!messageType() && wallet?.hasPermission(address, 'Grant')
   }
 
+  function grantee(){
+    return state.granteeValue === 'custom' ? state.customGranteeValue : state.granteeValue
+  }
+
   function validGrantee(){
-    const value = state.granteeValue === 'custom' ? state.customGranteeValue : state.granteeValue
+    const value = grantee()
     if(!value) return true;
 
     return !network.prefix || value.startsWith(network.prefix)
@@ -231,7 +235,7 @@ function GrantModal(props) {
             <Collapse in={showLedger}>
               <pre className="text-wrap"><code>
                 <p>{daemon_name ? daemon_name : <kbd>{'<chaind>'}</kbd>} tx authz grant \<br />
-                  <kbd>{state.granteeValue || '<grantee>'}</kbd> generic \<br />
+                  <kbd>{grantee() || '<grantee>'}</kbd> generic \<br />
                   --msg-type <kbd>{messageType()}</kbd> \<br />
                   --expiration <kbd>{moment(state.expiryDateValue).unix()}</kbd> \<br />
                   --from <kbd>my-key</kbd> \<br />
