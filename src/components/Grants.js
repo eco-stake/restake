@@ -293,9 +293,8 @@ function Grants(props) {
         wallet={props.wallet}
         favouriteAddresses={props.favouriteAddresses}
         stargateClient={props.stargateClient}
-        closeModal={closeModal}
+        onHide={closeModal}
         onGrant={onGrant}
-        setError={setError}
       />
     </>
   );

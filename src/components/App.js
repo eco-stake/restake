@@ -52,6 +52,7 @@ import Grants from './Grants';
 import Favourite from './Favourite';
 import AddressModal from './AddressModal';
 import Wallet from '../utils/Wallet.mjs';
+import SendModal from './SendModal';
 
 class App extends React.Component {
   constructor(props) {
@@ -67,6 +68,7 @@ class App extends React.Component {
     this.connectKeplr = this.connectKeplr.bind(this);
     this.showNetworkSelect = this.showNetworkSelect.bind(this);
     this.getBalance = this.getBalance.bind(this);
+    this.onSend = this.onSend.bind(this);
     this.onGrant = this.onGrant.bind(this);
     this.onRevoke = this.onRevoke.bind(this);
     this.toggleFavourite = this.toggleFavourite.bind(this);
@@ -233,14 +235,24 @@ class App extends React.Component {
   }
 
   refreshInterval() {
-    const grantInterval = setInterval(() => {
-      this.getGrants();
+    this.setState({ refresh: true })
+    this.refreshTimeout()
+  }
+
+  refreshTimeout() {
+    if(!this.state.refresh) return
+
+    const grantTimeout = setTimeout(() => {
+      this.getGrants().then(() => {
+        this.refreshTimeout()
+      });
     }, 60_000);
-    this.setState({ grantInterval });
+    this.setState({ grantTimeout });
   }
 
   clearRefreshInterval() {
-    clearInterval(this.state.grantInterval);
+    clearTimeout(this.state.grantTimeout);
+    this.setState({ refresh: false })
   }
 
   toggleFavourite(network) {
@@ -363,6 +375,13 @@ class App extends React.Component {
       allGrants = allGrants.concat(_.compact(grants.flat()))
     }
     return allGrants
+  }
+
+  onSend(recipient, amount){
+    this.setState({showSendModal: false})
+    setTimeout(() => {
+      this.getBalance()
+    }, 2_000);
   }
 
   onGrant(grantee, grant) {
@@ -604,7 +623,14 @@ class App extends React.Component {
                             <CashCoin className="d-inline d-md-none" />
                           </Dropdown.Toggle>
                           <Dropdown.Menu>
+                            <Dropdown.Item
+                              disabled={!this.state.wallet?.hasPermission(this.state.address, 'Send')} 
+                              onClick={() => this.setState({ showSendModal: true })}
+                            >
+                              Send {this.props.network.symbol?.toUpperCase()}
+                            </Dropdown.Item>
                             <Dropdown.Item onClick={() => this.setState({ showAddressModal: true })}>Saved Addresses</Dropdown.Item>
+                            <Dropdown.Divider />
                             <Dropdown.Item onClick={this.disconnect}>Disconnect</Dropdown.Item>
                           </Dropdown.Menu>
                         </Dropdown>
@@ -734,6 +760,17 @@ class App extends React.Component {
           wallet={this.state.wallet}
           favouriteAddresses={this.state.favouriteAddresses}
           updateFavouriteAddresses={this.updateFavouriteAddresses}
+        />
+        <SendModal
+          show={this.state.showSendModal} 
+          network={this.props.network}
+          address={this.state.address}
+          wallet={this.state.wallet}
+          balance={this.state.balance}
+          favouriteAddresses={this.state.favouriteAddresses[this.props.network.path] || []}
+          stargateClient={this.state.stargateClient}
+          onHide={() => this.setState({ showSendModal: false })}
+          onSend={this.onSend}
         />
       </Container>
     )
