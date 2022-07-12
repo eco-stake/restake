@@ -441,6 +441,7 @@ class Delegations extends React.Component {
             commission={this.state.commission}
             stargateClient={this.props.stargateClient}
             validatorLoading={this.state.validatorLoading}
+            isLoading={!this.state.delegations || !this.props.grants?.granter}
             operatorGrants={this.operatorGrants()}
             authzSupport={this.authzSupport()}
             restakePossible={this.restakePossible()}

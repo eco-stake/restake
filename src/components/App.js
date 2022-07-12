@@ -310,6 +310,7 @@ class App extends React.Component {
       if (address !== this.state.address) return
       this.setState((state) => {
         return { 
+          grantQuerySupport: true, 
           grants: { 
             ...state.grants,
             granter: granterGrants,
@@ -320,14 +321,12 @@ class App extends React.Component {
       this.setState((state) => {
         if (address !== state.address) return {}
         return { 
-          grantQuerySupport: true, 
           grants: { 
             ...state.grants,
             grantee: granteeGrants
           } 
         }
       })
-      grantQuerySupport = true
       return
     } catch (error) {
       console.log('Failed to get all grants in batch', error.message)
