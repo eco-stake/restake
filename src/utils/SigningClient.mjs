@@ -73,6 +73,13 @@ function SigningClient(network, signer) {
             value = baseAccount;
           }
         }
+
+        // Handle nested account like Desmos
+        const nestedAccount = value.account
+        if(nestedAccount){
+          value = nestedAccount
+        }
+
         return value 
       })
       .catch((error) => {
