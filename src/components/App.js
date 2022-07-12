@@ -493,7 +493,7 @@ class App extends React.Component {
   introText(){
     switch (this.props.active) {
       case 'networks':
-        return <span>REStake automatically imports <a href="https://cosmos.network/" target="_blank" className="text-reset">Cosmos</a> chains from the <a href="https://github.com/cosmos/chain-registry" target="_blank" className="text-reset">Chain Registry</a></span>
+        return <span>REStake automatically imports <a href="https://cosmos.network/" target="_blank" className="text-reset"><strong>Cosmos</strong></a> chains from the <a href="https://github.com/cosmos/chain-registry" target="_blank" className="text-reset"><strong>Chain Registry</strong></a></span>
       case 'governance':
         return <span>REStake let's you vote on behalf of your other {this.props.network && <strong onClick={this.showNetworkSelect} className="text-decoration-underline" role="button">{this.props.network.prettyName}</strong>} wallets using Authz</span>
       case 'grants':
