@@ -214,7 +214,7 @@ function SigningClient(network, signer) {
 
   async function simulate(address, messages, memo, modifier) {
     const account = await getAccount(address)
-    const fee = getFee()
+    const fee = getFee(1)
     const txBody = {
       bodyBytes: makeBodyBytes(messages, memo),
       authInfoBytes: await makeAuthInfoBytes(account, {
