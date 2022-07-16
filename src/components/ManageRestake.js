@@ -13,8 +13,8 @@ function ManageRestake(props) {
   return (
     <>
       {operator ? (
-        authzSupport && delegation ? (
-          grants.grantsValid ? (
+        authzSupport ? (
+          delegation && grants.grantsValid ? (
             <span role="button" onClick={props.openGrants}>
               <CountdownRestake
                 network={network}
@@ -22,13 +22,13 @@ function ManageRestake(props) {
                 maxAmount={grants.maxTokens}
               />
             </span>
-          ) : restakePossible ? (
+          ) : restakePossible && (delegation || grants.grantsExist) ? (
             <OverlayTrigger
               key={operator.address}
               placement="top"
               overlay={
                 <Tooltip id={`tooltip-${operator.address}`}>
-                  {grants.grantsExist ? 'Update grants to re-enable REStake' : 'Authorize validator to REStake for you'}
+                  {grants.grantsExist ? delegation ? 'Update grants to re-enable REStake' : 'Delegate to this validator to enable REStake' : 'Authorize validator to REStake for you'}
                 </Tooltip>
               }
             >

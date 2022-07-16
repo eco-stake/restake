@@ -52,6 +52,7 @@ import Grants from './Grants';
 import Favourite from './Favourite';
 import AddressModal from './AddressModal';
 import Wallet from '../utils/Wallet.mjs';
+import SendModal from './SendModal';
 
 class App extends React.Component {
   constructor(props) {
@@ -67,6 +68,7 @@ class App extends React.Component {
     this.connectKeplr = this.connectKeplr.bind(this);
     this.showNetworkSelect = this.showNetworkSelect.bind(this);
     this.getBalance = this.getBalance.bind(this);
+    this.onSend = this.onSend.bind(this);
     this.onGrant = this.onGrant.bind(this);
     this.onRevoke = this.onRevoke.bind(this);
     this.toggleFavourite = this.toggleFavourite.bind(this);
@@ -233,14 +235,24 @@ class App extends React.Component {
   }
 
   refreshInterval() {
-    const grantInterval = setInterval(() => {
-      this.getGrants();
+    this.setState({ refresh: true })
+    this.refreshTimeout()
+  }
+
+  refreshTimeout() {
+    if(!this.state.refresh) return
+
+    const grantTimeout = setTimeout(() => {
+      this.getGrants().then(() => {
+        this.refreshTimeout()
+      });
     }, 60_000);
-    this.setState({ grantInterval });
+    this.setState({ grantTimeout });
   }
 
   clearRefreshInterval() {
-    clearInterval(this.state.grantInterval);
+    clearTimeout(this.state.grantTimeout);
+    this.setState({ refresh: false })
   }
 
   toggleFavourite(network) {
@@ -296,25 +308,33 @@ class App extends React.Component {
     try {
       granterGrants = await this.props.queryClient.getGranterGrants(address)
       if (address !== this.state.address) return
+      this.setState((state) => {
+        return { 
+          grantQuerySupport: true, 
+          grants: { 
+            ...state.grants,
+            granter: granterGrants,
+          } 
+        }
+      })
       granteeGrants = await this.props.queryClient.getGranteeGrants(address)
-      grantQuerySupport = true
-    } catch (error) {
-      console.log('Failed to get all grants in batch', error.message)
-      grantQuerySupport = error.response?.status !== 501
-    }
-
-    if (granterGrants) {
       this.setState((state) => {
         if (address !== state.address) return {}
         return { 
-          grantQuerySupport, 
           grants: { 
-            granter: granterGrants, 
-            grantee: (granteeGrants || state.grants?.grantee)
+            ...state.grants,
+            grantee: granteeGrants
           } 
         }
       })
       return
+    } catch (error) {
+      console.log('Failed to get all grants in batch', error.message)
+      grantQuerySupport = error.response?.status !== 501
+      this.setState((state) => {
+        if (address !== state.address) return {}
+        return { grantQuerySupport }
+      })
     }
 
     let addresses = this.props.operators.map(el => el.botAddress)
@@ -363,6 +383,13 @@ class App extends React.Component {
       allGrants = allGrants.concat(_.compact(grants.flat()))
     }
     return allGrants
+  }
+
+  onSend(recipient, amount){
+    this.setState({showSendModal: false})
+    setTimeout(() => {
+      this.getBalance()
+    }, 2_000);
   }
 
   onGrant(grantee, grant) {
@@ -466,7 +493,7 @@ class App extends React.Component {
   introText(){
     switch (this.props.active) {
       case 'networks':
-        return <span>REStake automatically imports <a href="https://cosmos.network/" target="_blank" className="text-reset">Cosmos</a> chains from the <a href="https://github.com/cosmos/chain-registry" target="_blank" className="text-reset">Chain Registry</a></span>
+        return <span>REStake automatically imports <a href="https://cosmos.network/" target="_blank" className="text-reset"><strong>Cosmos</strong></a> chains from the <a href="https://github.com/cosmos/chain-registry" target="_blank" className="text-reset"><strong>Chain Registry</strong></a></span>
       case 'governance':
         return <span>REStake let's you vote on behalf of your other {this.props.network && <strong onClick={this.showNetworkSelect} className="text-decoration-underline" role="button">{this.props.network.prettyName}</strong>} wallets using Authz</span>
       case 'grants':
@@ -604,7 +631,14 @@ class App extends React.Component {
                             <CashCoin className="d-inline d-md-none" />
                           </Dropdown.Toggle>
                           <Dropdown.Menu>
+                            <Dropdown.Item
+                              disabled={!this.state.wallet?.hasPermission(this.state.address, 'Send')} 
+                              onClick={() => this.setState({ showSendModal: true })}
+                            >
+                              Send {this.props.network.symbol?.toUpperCase()}
+                            </Dropdown.Item>
                             <Dropdown.Item onClick={() => this.setState({ showAddressModal: true })}>Saved Addresses</Dropdown.Item>
+                            <Dropdown.Divider />
                             <Dropdown.Item onClick={this.disconnect}>Disconnect</Dropdown.Item>
                           </Dropdown.Menu>
                         </Dropdown>
@@ -735,6 +769,19 @@ class App extends React.Component {
           favouriteAddresses={this.state.favouriteAddresses}
           updateFavouriteAddresses={this.updateFavouriteAddresses}
         />
+        {this.props.network && (
+          <SendModal
+            show={this.state.showSendModal}
+            network={this.props.network}
+            address={this.state.address}
+            wallet={this.state.wallet}
+            balance={this.state.balance}
+            favouriteAddresses={this.state.favouriteAddresses[this.props.network.path] || []}
+            stargateClient={this.state.stargateClient}
+            onHide={() => this.setState({ showSendModal: false })}
+            onSend={this.onSend}
+          />
+        )}
       </Container>
     )
   }

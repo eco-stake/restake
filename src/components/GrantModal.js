@@ -92,7 +92,7 @@ function GrantModal(props) {
 
   function handleClose() {
     setError(null)
-    props.closeModal();
+    props.onHide();
   }
 
   function buildGrantMsg(type, authValue, expiryDate) {
@@ -123,12 +123,12 @@ function GrantModal(props) {
     }
   }
 
-  function valid(){
-    return state.granteeValue && validGrantee() && !!messageType() && wallet?.hasPermission(address, 'Grant')
-  }
-
   function grantee(){
     return state.granteeValue === 'custom' ? state.customGranteeValue : state.granteeValue
+  }
+
+  function valid(){
+    return state.granteeValue && validGrantee() && !!messageType() && wallet?.hasPermission(address, 'Grant')
   }
 
   function validGrantee(){

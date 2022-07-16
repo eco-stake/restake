@@ -17,7 +17,8 @@ import {
   Dropdown, 
   OverlayTrigger, 
   Tooltip,
-  Nav
+  Nav,
+  Spinner
 } from 'react-bootstrap'
 import { XCircle } from "react-bootstrap-icons";
 
@@ -172,18 +173,25 @@ function Validators(props) {
           </span>
         </td>
         <td className="d-none d-sm-table-cell text-center">
-          <ManageRestake
-            size="sm"
-            disabled={!wallet?.hasPermission(address, 'Grant')}
-            network={network}
-            validator={validator}
-            operator={operator}
-            grants={grants}
-            delegation={delegation}
-            authzSupport={props.authzSupport}
-            restakePossible={props.restakePossible}
-            openGrants={() => props.showValidator(validator, { activeTab: 'restake' })}
-          />
+          {!props.isLoading ? (
+            <ManageRestake
+              size="sm"
+              disabled={!wallet?.hasPermission(address, 'Grant')}
+              network={network}
+              validator={validator}
+              operator={operator}
+              grants={grants}
+              delegation={delegation}
+              isLoading={props.isLoading}
+              authzSupport={props.authzSupport}
+              restakePossible={props.restakePossible}
+              openGrants={() => props.showValidator(validator, { activeTab: 'restake' })}
+            />
+          ) : (
+            <Spinner animation="border" role="status" className="spinner-border-sm text-secondary">
+              <span className="visually-hidden">Loading...</span>
+            </Spinner>
+          )}
         </td>
         <td className="d-none d-lg-table-cell text-center">
           {operator && (
