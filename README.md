@@ -129,10 +129,12 @@ Don't forget to [update often](#updating-your-local-version)!
 
 Note: A helpful calculator for determining your REStake timer for `crontab` can be found here: https://crontab.guru/.
 
+Updated versions utilize `docker compose` instead of `docker-compose`. If you run into issues, try substituting `docker compose`.
+
 ```bash
 crontab -e
 
-0 21 * * * /bin/bash -c "cd restake && docker-compose run --rm app npm run autostake" > ./restake.log 2>&1
+0 21 * * * /bin/bash -c "cd restake && docker compose run --rm app npm run autostake" > ./restake.log 2>&1
 ```
 
 #### Using `systemd-timer`
