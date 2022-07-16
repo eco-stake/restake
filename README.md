@@ -129,6 +129,8 @@ Don't forget to [update often](#updating-your-local-version)!
 
 Note: A helpful calculator for determining your REStake timer for `crontab` can be found here: https://crontab.guru/.
 
+Updated versions utilize `docker compose` instead of `docker-compose`. If you run into issues, try substituting `docker compose`.
+
 ```bash
 crontab -e
 
