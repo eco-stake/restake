@@ -43,7 +43,7 @@ function NetworkSelect(props) {
   }
 
   function selectNetwork(newValue) {
-    const network = props.networks[newValue.value];
+    const network = props.networks[newValue.value.replace(/^(favourite-)/,'')];
     if (network) {
       setLoading(true);
       setError(false);
@@ -67,10 +67,13 @@ function NetworkSelect(props) {
     }
   }
 
-  useEffect(() => {
-
-  }, [selectedNetwork]);
-
+  function selectedOption(){
+    let networks = options.networks
+    if(options.grouped){
+      networks = options.grouped.map(el => el.options).flat()
+    }
+    return networks.find(el => el.value === options.network)
+  }
 
   useEffect(() => {
     if (props.show && !show) {
@@ -82,19 +85,33 @@ function NetworkSelect(props) {
 
   useEffect(() => {
     const networks = Object.values(props.networks).sort((a, b) => a.name > b.name ? 1 : -1)
+    const networkOptions = networks.map(network => {
+      return {
+        value: network.path,
+        label: network.prettyName,
+        image: network.image,
+        operatorCount: network.operatorCount,
+        authz: network.authzSupport,
+        online: network.online,
+        experimental: network.experimental
+      }
+    })
+    const isFavourite = selectedNetwork && props.favourites && props.favourites.includes(selectedNetwork.path)
     setOptions({
-      networks: networks.map(network => {
-        return {
-          value: network.path,
-          label: network.prettyName,
-          image: network.image,
-          operatorCount: network.operatorCount,
-          authz: network.authzSupport,
-          online: network.online,
-          experimental: network.experimental
+      networks: networkOptions,
+      network: isFavourite ? `favourite-${selectedNetwork.path}` : selectedNetwork && selectedNetwork.path,
+      grouped: props.favourites && props.favourites.length > 0 && [
+        {
+          label: 'Favourites',
+          options: networkOptions.filter(el => props.favourites.includes(el.value)).map(el => {
+            return {...el, value: `favourite-${el.value}`}
+          })
+        },
+        {
+          label: 'All Networks',
+          options: networkOptions
         }
-      }),
-      network: selectedNetwork && selectedNetwork.name
+      ]
     })
   }, [props.networks, selectedNetwork])
 
@@ -137,10 +154,10 @@ function NetworkSelect(props) {
               <div className="row mb-3">
                 <div className="col">
                   <Select
-                    value={options.networks.find(el => el.value === options.network)}
+                    value={selectedOption()}
                     isClearable={false}
                     name="network"
-                    options={options.networks}
+                    options={options.grouped || options.networks}
                     onChange={selectNetwork}
                     formatOptionLabel={network => (
                       <div className={'d-flex' + (!network.online ? ' text-muted' : '')}>

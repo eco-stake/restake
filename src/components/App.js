@@ -532,6 +532,7 @@ class App extends React.Component {
               {this.themeIcon()}
               <NetworkSelect show={this.state.showNetworkSelect} onHide={() => { this.setState({ showNetworkSelect: false }) }} networks={this.props.networks}
                 network={this.props.network}
+                favourites={this.state.favourites || []}
                 validators={this.props.validators}
                 changeNetwork={this.props.changeNetwork} />
             </div>
