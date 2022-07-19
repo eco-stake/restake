@@ -149,7 +149,7 @@ function Grants(props) {
         <td className="d-none d-lg-table-cell">
           {renderGrantData(grant)}
         </td>
-        <td>
+        <td className="d-none d-md-table-cell">
           <Moment format="LLL">
             {expiration}
           </Moment>
@@ -271,7 +271,7 @@ function Grants(props) {
                 <th>{filter.group === 'grantee' ? 'Granter' : 'Grantee'}</th>
                 <th>Type</th>
                 <th className="d-none d-lg-table-cell">Data</th>
-                <th>Expiration</th>
+                <th className="d-none d-md-table-cell">Expiration</th>
                 {filter.group === 'granter' && (
                   <th></th>
                 )}

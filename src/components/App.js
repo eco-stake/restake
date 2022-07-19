@@ -285,8 +285,23 @@ class App extends React.Component {
     return this.state.favouriteAddresses[this.props.network.path] || []
   }
 
+  currentFavouriteAddress(){
+    return this.favouriteAddresses().find(el => el.address === this.state.address)
+  }
+
   otherFavouriteAddresses() {
     return this.favouriteAddresses().filter(el => el.address !== this.state.wallet?.address)
+  }
+
+  viewingWallet() {
+    return this.state.address && this.state.address === this.state.wallet?.address
+  }
+
+  addressName() {
+    if(!this.state.address) return null
+    
+    if(this.viewingWallet()) return this.state.wallet.name
+    return this.currentFavouriteAddress()?.label || this.state.address
   }
 
   async getBalance() {
@@ -579,14 +594,14 @@ class App extends React.Component {
                         <li className="nav-item pe-3 border-end d-flex align-items-center">
                           {this.state.address && (
                             <>
-                              <span className="pe-2">
+                              <span className="d-none d-md-inline pe-2">
                                 <Favourite
                                   favourites={this.favouriteAddresses()}
                                   value={this.state.address}
-                                  label={this.state.address === this.state.wallet?.address && this.state.wallet?.name}
+                                  label={this.viewingWallet() && this.state.wallet?.name}
                                   toggle={this.toggleFavouriteAddress} />
                               </span>
-                              <span className="pe-2">
+                              <span className="d-none d-md-inline pe-2">
                                 <TooltipIcon tooltip="Copy address">
                                   <span>
                                     <CopyToClipboard text={this.state.address}
@@ -596,8 +611,8 @@ class App extends React.Component {
                                   </span>
                                 </TooltipIcon>
                               </span>
-                              <span className="pe-2">
-                                {this.state.wallet?.address === this.state.address ? (
+                              <span>
+                                {this.viewingWallet() ? (
                                   <TooltipIcon tooltip="Viewing your wallet">
                                     <span role="button" onClick={() => this.setState({ showAddressModal: true })}>
                                       <Key />
@@ -614,9 +629,9 @@ class App extends React.Component {
                             </>
                           )}
                           {this.otherFavouriteAddresses().length < 1 && this.state.wallet ? (
-                            <span className="small d-none d-lg-inline">{this.state.wallet.name || this.state.wallet.address}</span>
+                            <span className="small d-none d-lg-inline ms-2">{this.state.wallet.name || this.state.wallet.address}</span>
                           ) : (
-                            <select className="form-select form-select-sm d-none d-lg-block" aria-label="Address" value={this.state.address || ''} onChange={(e) => this.setState({ address: e.target.value })}>
+                            <select className="form-select form-select-sm d-none d-lg-block ms-2" aria-label="Address" value={this.state.address || ''} onChange={(e) => this.setState({ address: e.target.value })}>
                               {this.state.wallet ? (
                                 <optgroup label="Wallet">
                                   <option value={this.state.wallet.address}>{this.state.wallet.name || this.state.wallet.address}</option>
@@ -648,6 +663,22 @@ class App extends React.Component {
                             ) : 'Connect'}
                           </Dropdown.Toggle>
                           <Dropdown.Menu>
+                            {this.state.address && (
+                              <div className="d-block d-md-none">
+                                <Dropdown.Header className="text-truncate">{this.addressName()}</Dropdown.Header>
+                                <Dropdown.Item>
+                                  <CopyToClipboard text={this.state.address}
+                                    onCopy={() => this.setCopied()}>
+                                    <Coins
+                                      coins={this.state.balance}
+                                      decimals={this.props.network.decimals}
+                                      className="small"
+                                    />
+                                  </CopyToClipboard>
+                                </Dropdown.Item>
+                                <Dropdown.Divider />
+                              </div>
+                            )}
                             {this.state.wallet ? (
                               <>
                                 <Dropdown.Item
@@ -656,18 +687,20 @@ class App extends React.Component {
                                 >
                                   Send {this.props.network.symbol?.toUpperCase()}
                                 </Dropdown.Item>
-                                <Dropdown.Item onClick={() => this.setState({ showAddressModal: true })}>Saved Addresses</Dropdown.Item>
-                                <Dropdown.Divider />
-                                <Dropdown.Item onClick={this.disconnect}>Disconnect</Dropdown.Item>
                               </>
                             ) : (
                               <>
                                 <Dropdown.Item onClick={() => this.connect(true)} disabled={!window.keplr}>Connect Keplr Extension</Dropdown.Item>
                                 {/* <Dropdown.Item onClick={() => this.connect(true)} disabled={!window.falcon}>Connect Falcon Wallet</Dropdown.Item> */}
-                                <Dropdown.Divider />
-                                <Dropdown.Item onClick={() => this.setState({ showAddressModal: true })}>Saved Addresses</Dropdown.Item>
                               </>
 
+                            )}
+                            <Dropdown.Item onClick={() => this.setState({ showAddressModal: true })}>Saved Addresses</Dropdown.Item>
+                            {this.state.address && (
+                              <>
+                                <Dropdown.Divider />
+                                <Dropdown.Item onClick={this.disconnect}>Disconnect</Dropdown.Item>
+                              </>
                             )}
                           </Dropdown.Menu>
                         </Dropdown>
@@ -791,6 +824,7 @@ class App extends React.Component {
           wallet={this.state.wallet}
           favouriteAddresses={this.state.favouriteAddresses}
           updateFavouriteAddresses={this.updateFavouriteAddresses}
+          setAddress={(value) => this.setState({address: value, showAddressModal: false})}
         />
         {this.props.network && (
           <SendModal

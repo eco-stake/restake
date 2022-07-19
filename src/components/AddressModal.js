@@ -43,7 +43,8 @@ function AddressModal(props) {
     updateFavouriteAddresses({...favouriteAddresses, [network.path]: networkAddresses.filter(data => data.address !== address)})
   }
 
-  function addAddress(){
+  function addAddress(event){
+    event.preventDefault()
     if(!validNewAddress()) return
 
     updateFavouriteAddresses({...favouriteAddresses, [network.path]: [...networkAddresses, {address: newAddress, label: newLabel}]})
@@ -68,43 +69,47 @@ function AddressModal(props) {
             })}
           </select>
           {selectedNetwork && (
-            <Table className="align-middle table-striped">
-              <thead>
-                <tr>
-                  <th>Address</th>
-                  <th>Label</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>
-                {networkAddresses.map(({ label, address }) => {
-                  return (
-                    <tr key={address}>
-                      <td>
-                        <CopyToClipboard text={address}>
-                          <span role="button">{address}</span>
-                        </CopyToClipboard>
-                      </td>
-                      <td><Form.Control value={label || ''} onChange={(e) => updateAddress(address, e.target.value)} /></td>
-                      <td>
-                        <XCircle role="button" onClick={() => removeAddress(address)} />
-                        {props.wallet?.address === address && (
-                          <span className="ps-2"><Key /></span>
-                        )}
-                        {props.address === address && (
-                          <span className="ps-2"><Eye /></span>
-                        )}
-                      </td>
-                    </tr>
-                  )
-                })}
-                <tr>
-                  <td><Form.Control placeholder={`${selectedNetwork.prefix}1...`} value={newAddress} isInvalid={newAddress !== '' && !validNewAddress()} onChange={(e) => setNewAddress(e.target.value)} /></td>
-                  <td><Form.Control value={newLabel} onChange={(e) => setNewLabel(e.target.value)} /></td>
-                  <td><Button variant="secondary" size="sm" onClick={addAddress}>Save</Button></td>
-                </tr>
-              </tbody>
-            </Table>
+            <>
+              <Form onSubmit={addAddress}>
+              <Table className="align-middle table-striped">
+                <thead>
+                  <tr>
+                    <th>Address</th>
+                    <th>Label</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {networkAddresses.map(({ label, address }) => {
+                    return (
+                      <tr key={address}>
+                        <td className="text-break">
+                          <span role="button" onClick={() => props.setAddress(address)}>{props.address === address ? <strong>{address}</strong> : address}</span>
+                          {props.wallet?.address === address && (
+                            <span className="ms-2"><Key /></span>
+                          )}
+                          {props.address === address && (
+                            <span className="ms-2"><Eye /></span>
+                          )}
+                        </td>
+                        <td><Form.Control size="sm" value={label || ''} onChange={(e) => updateAddress(address, e.target.value)} /></td>
+                        <td>
+                          <div className="d-flex justify-content-between">
+                            <XCircle role="button" onClick={() => removeAddress(address)} />
+                          </div>
+                        </td>
+                      </tr>
+                    )
+                  })}
+                  <tr>
+                    <td><Form.Control size="sm" placeholder={`${selectedNetwork.prefix}1...`} value={newAddress} required={true} isInvalid={newAddress !== '' && !validNewAddress()} onChange={(e) => setNewAddress(e.target.value)} /></td>
+                    <td colSpan="2"><Form.Control size="sm" placeholder="Label" value={newLabel} onChange={(e) => setNewLabel(e.target.value)} /></td>
+                  </tr>
+                </tbody>
+              </Table>
+              <div className="text-end"><Button type="submit" variant="secondary">Save new address</Button></div>
+              </Form>
+            </>
           )}
         </Modal.Body>
       </Modal>
