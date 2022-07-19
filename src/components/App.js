@@ -116,7 +116,7 @@ class App extends React.Component {
   }
 
   connected() {
-    return this.props.network?.connected && Object.values(this.props.validators).length > 0
+    return this.props.network?.connected
   }
 
   connectKeplr() {
