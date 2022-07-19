@@ -266,7 +266,7 @@ class App extends React.Component {
   }
 
   toggleFavouriteAddress(address, label) {
-    const favourites = this.state.favouriteAddresses[this.props.network.path] || []
+    const favourites = this.favouriteAddresses()
     let newFavourites
     if (favourites.some(el => el.address === address)) {
       newFavourites = favourites.filter(el => el.address !== address)
@@ -340,7 +340,7 @@ class App extends React.Component {
     }
 
     let addresses = this.props.operators.map(el => el.botAddress)
-    const favourites = this.state.favouriteAddresses[this.props.network.path] || []
+    const favourites = this.favouriteAddresses()
     addresses = addresses.concat(favourites.filter(el => !addresses.includes(el.address)).map(el => el.address))
 
     granterGrants = await this.getGrantsIndividually(addresses.map(el => {
@@ -581,7 +581,7 @@ class App extends React.Component {
                             <>
                               <span className="pe-2">
                                 <Favourite
-                                  favourites={this.state.favouriteAddresses[this.props.network.path] || []}
+                                  favourites={this.favouriteAddresses()}
                                   value={this.state.address}
                                   label={this.state.address === this.state.wallet?.address && this.state.wallet?.name}
                                   toggle={this.toggleFavouriteAddress} />
@@ -721,7 +721,7 @@ class App extends React.Component {
               network={this.props.network}
               address={this.state.address}
               wallet={this.state.wallet}
-              favouriteAddresses={this.state.favouriteAddresses[this.props.network.path] || []}
+              favouriteAddresses={this.favouriteAddresses()}
               queryClient={this.props.queryClient}
               stargateClient={this.state.stargateClient} />
           )}
@@ -733,7 +733,7 @@ class App extends React.Component {
               grants={this.state.grants}
               operators={this.props.operators}
               validators={this.props.validators}
-              favouriteAddresses={this.state.favouriteAddresses[this.props.network.path] || []}
+              favouriteAddresses={this.favouriteAddresses()}
               showFavouriteAddresses={() => this.setState({ showAddressModal: true })}
               toggleFavouriteAddress={this.toggleFavouriteAddress}
               onGrant={this.onGrant}
@@ -799,7 +799,7 @@ class App extends React.Component {
             address={this.state.address}
             wallet={this.state.wallet}
             balance={this.state.balance}
-            favouriteAddresses={this.state.favouriteAddresses[this.props.network.path] || []}
+            favouriteAddresses={this.favouriteAddresses()}
             stargateClient={this.state.stargateClient}
             onHide={() => this.setState({ showSendModal: false })}
             onSend={this.onSend}
