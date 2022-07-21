@@ -198,5 +198,13 @@
   {
     "name": "genesisl1",
     "txTimeout": 120000
+  },
+  {
+    "name": "tgrade",
+    "enabled": false
+  },
+  {
+    "name": "aioz",
+    "enabled": false
   }
 ]
