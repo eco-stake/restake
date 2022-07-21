@@ -1,12 +1,14 @@
 import axios from 'axios'
 
-function CosmosDirectory(){
-  const directoryProtocol = process.env.DIRECTORY_PROTOCOL || 'https'
-  const directoryDomain = process.env.DIRECTORY_DOMAIN || 'cosmos.directory'
-  const rpcBase = `${directoryProtocol}://rpc.${directoryDomain}`
-  const restBase = `${directoryProtocol}://rest.${directoryDomain}`
-  const chainsUrl = `${directoryProtocol}://chains.${directoryDomain}`
-  const validatorsUrl = `${directoryProtocol}://validators.${directoryDomain}`
+function CosmosDirectory(testnet){
+  const protocol = process.env.DIRECTORY_PROTOCOL || 'https'
+  const mainnetDomain = process.env.DIRECTORY_DOMAIN || 'cosmos.directory'
+  const testnetDomain = process.env.DIRECTORY_DOMAIN_TESTNET || 'testcosmos.directory'
+  const domain = testnet ? testnetDomain : mainnetDomain
+  const rpcBase = `${protocol}://rpc.${domain}`
+  const restBase = `${protocol}://rest.${domain}`
+  const chainsUrl = `${protocol}://chains.${domain}`
+  const validatorsUrl = `${protocol}://validators.${domain}`
 
   function rpcUrl(name){
     return rpcBase + '/' + name
@@ -24,8 +26,8 @@ function CosmosDirectory(){
   }
 
   function getChainData(name) {
-    return axios.get([chainsUrl, name, 'chain'].join('/'))
-      .then(res => res.data)
+    return axios.get([chainsUrl, name].join('/'))
+      .then(res => res.data.chain)
   }
 
   async function getTokenData(name) {
@@ -38,28 +40,31 @@ function CosmosDirectory(){
       .then(res => res.data.validators)
   }
 
-  function getOperatorCounts(){
+  function getOperatorAddresses(){
     return axios.get(validatorsUrl)
       .then(res => res.data)
       .then(data => Array.isArray(data) ? data : data.validators) // deprecate
       .then(data => data.reduce((sum, validator) => {
         validator.chains.forEach(chain => {
-          sum[chain.name] = sum[chain.name] || 0
-          if(!!chain.restake) sum[chain.name]++
-        })
+          sum[chain.name] = sum[chain.name] || {}
+          if(chain.restake){
+            sum[chain.name][chain.address] = chain.restake
+          }
+        }, {})
         return sum
       }, {}))
   }
 
   return {
+    testnet,
+    domain,
     rpcUrl,
     restUrl,
-    chainsUrl,
     getChains,
     getChainData,
     getTokenData,
     getValidators,
-    getOperatorCounts
+    getOperatorAddresses
   }
 }
 

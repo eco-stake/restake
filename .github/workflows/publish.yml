@@ -13,7 +13,14 @@ jobs:
       - name: build
         run: |
           echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u "${{ secrets.GHCR_USER }}" --password-stdin
-          docker build -f Dockerfile.production . --tag ghcr.io/${{ github.repository }}:${GITHUB_REF#refs/tags/} --build-arg BUGSNAG_KEY="${{ secrets.BUGSNAG_KEY }}"
+          docker build -f Dockerfile.production . --tag ghcr.io/${{ github.repository }}:${GITHUB_REF#refs/tags/} \
+            --build-arg BUGSNAG_KEY="${{ secrets.BUGSNAG_KEY }}" --build-arg MAINNET_DOMAIN="restake.app" --build-arg TESTNET_DOMAIN="testnet.restake.app"
           docker tag ghcr.io/${{ github.repository }}:${GITHUB_REF#refs/tags/} ghcr.io/${{ github.repository }}:latest
           docker push ghcr.io/${{ github.repository }}:${GITHUB_REF#refs/tags/}
           docker push ghcr.io/${{ github.repository }}:latest
+
+          docker build -f Dockerfile.production . --tag ghcr.io/${{ github.repository }}:${GITHUB_REF#refs/tags/}-testnet \
+            --build-arg BUGSNAG_KEY="${{ secrets.BUGSNAG_KEY }}" --build-arg MAINNET_DOMAIN="restake.app" --build-arg TESTNET_DOMAIN="testnet.restake.app" --build-arg TESTNET_MODE="1"
+          docker tag ghcr.io/${{ github.repository }}:${GITHUB_REF#refs/tags/}-testnet ghcr.io/${{ github.repository }}:latest-testnet
+          docker push ghcr.io/${{ github.repository }}:${GITHUB_REF#refs/tags/}-testnet
+          docker push ghcr.io/${{ github.repository }}:latest-testnet

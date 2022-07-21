@@ -96,7 +96,7 @@ function ValidatorProfile(props) {
             <td scope="row">Commission</td>
             <td><span>{validator.commission.commission_rates.rate * 100}%</span></td>
           </tr>
-          {network.data.apyEnabled !== false && (
+          {network.apyEnabled && (
             <tr>
               <td scope="row">
                 <TooltipIcon
@@ -112,7 +112,7 @@ function ValidatorProfile(props) {
               <td>
                 {Object.keys(props.validatorApy).length > 0
                   ? props.validatorApy[validator.operator_address]
-                    ? <span>{Math.round(props.validatorApy[validator.operator_address] * 100)}%</span>
+                    ? <span>{Math.round(props.validatorApy[validator.operator_address] * 100).toLocaleString()}%</span>
                     : "-"
                   : (
                     <Spinner animation="border" role="status" className="spinner-border-sm text-secondary">

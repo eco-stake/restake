@@ -3,157 +3,132 @@
     "name": "osmosis",
     "gasPrice": "0.0025uosmo",
     "ownerAddress": "osmovaloper1u5v0m74mql5nzfx2yh43s2tke4mvzghr6m2n5t",
-    "authzSupport": true
+    "default": true,
+    "maxPerDay": 1
   },
   {
     "name": "juno",
-    "apyEnabled": false,
-    "gasPrice": "0.0025ujuno",
-    "authzSupport": true
+    "gasPrice": "0.0025ujuno"
   },
   {
     "name": "cosmoshub",
-    "gasPrice": "0.0025uatom",
-    "authzSupport": true
+    "gasPrice": "0.0025uatom"
   },
   {
     "name": "akash",
-    "ownerAddress": "akashvaloper1xgnd8aach3vawsl38snpydkng2nv8a4kqgs8hf",
-    "authzSupport": false
+    "ownerAddress": "akashvaloper1xgnd8aach3vawsl38snpydkng2nv8a4kqgs8hf"
   },
   {
     "name": "chihuahua",
     "gasPrice": "0.025uhuahua",
-    "ownerAddress": "chihuahuavaloper19vwcee000fhazmpt4ultvnnkhfh23ppwxll8zz",
-    "authzSupport": false
+    "ownerAddress": "chihuahuavaloper19vwcee000fhazmpt4ultvnnkhfh23ppwxll8zz"
   },
   {
     "name": "gravitybridge",
-    "gasPrice": "0.025ugraviton",
-    "authzSupport": true
+    "gasPrice": "0.025ugraviton"
   },
   {
     "name": "regen",
     "gasPrice": "0.03uregen",
     "ownerAddress": "regenvaloper1c4y3j05qx652rnxm5mg4yesqdkmhz2f6dl7hhk",
-    "authzSupport": true
+    "autostake": {
+      "batchTxs": 5
+    }
   },
   {
     "name": "terra",
-    "apyEnabled": false,
-    "gasPrice": "0.015uluna",
-    "authzSupport": true
+    "gasPrice": "0.015uluna"
+  },
+  {
+    "name": "terra2",
+    "gasPrice": "0.015uluna"
   },
   {
     "name": "sentinel",
-    "gasPrice": "0.02udvpn",
-    "authzSupport": true
+    "gasPrice": "0.02udvpn"
   },
   {
     "name": "dig",
     "gasPrice": "0.01udig",
-    "ownerAddress": "digvaloper136avwnuvvy94dqmtnaue2nfvjes8xr37h9rzay",
-    "authzSupport": true
+    "ownerAddress": "digvaloper136avwnuvvy94dqmtnaue2nfvjes8xr37h9rzay"
   },
   {
     "name": "bitcanna",
-    "gasPrice": "0.001ubcna",
-    "authzSupport": false
+    "gasPrice": "0.001ubcna"
   },
   {
     "name": "emoney",
-    "apyEnabled": false,
-    "gasPrice": "0.08ungm",
-    "authzSupport": false
+    "gasPrice": "0.08ungm"
   },
   {
     "name": "kava",
-    "apyEnabled": false,
-    "gasPrice": "0.00008ukava",
-    "authzSupport": false
+    "gasPrice": "0.00008ukava"
   },
   {
     "name": "desmos",
-    "apyEnabled": false,
-    "gasPrice": "0.001udsm",
-    "authzSupport": true
+    "gasPrice": "0.001udsm"
   },
   {
     "name": "cryptoorgchain",
     "gasPrice": "0.025basecro",
-    "authzSupport": true
+    "ownerAddress": "crocncl10mfs428fyntu296dgh5fmhvdzrr2stlaekcrp9"
   },
   {
     "name": "evmos",
-    "enabled": false,
-    "apyEnabled": false,
-    "authzSupport": true
+    "txTimeout": 120000,
+    "ownerAddress": "evmosvaloper1umk407eed7af6anvut6llg2zevnf0dn0feqqny",
+    "maxPerDay": 1
   },
   {
     "name": "sifchain",
-    "authzSupport": false,
-    "gasPrice": "1500000000000rowan"
+    "gasPrice": "1500000000000rowan",
+    "ownerAddress": "sifvaloper19t5nk5ceq5ga75epwdqhnupwg0v9339p096ydz"
   },
   {
-    "name": "lumnetwork",
-    "authzSupport": true
+    "name": "lumnetwork"
   },
   {
-    "name": "stargaze",
-    "apyEnabled": false,
-    "authzSupport": true
+    "name": "stargaze"
   },
   {
     "name": "comdex",
-    "apyEnabled": false,
-    "ownerAddress": "comdexvaloper17f70yjkvmvld379904jaddx9h0f74n32pjtmp6",
-    "authzSupport": false
+    "ownerAddress": "comdexvaloper17f70yjkvmvld379904jaddx9h0f74n32pjtmp6"
   },
   {
     "name": "cheqd",
-    "gasPrice": "25ncheq",
-    "authzSupport": true
+    "gasPrice": "25ncheq"
   },
   {
-    "name": "umee",
-    "authzSupport": true
+    "name": "umee"
   },
   {
-    "name": "bitsong",
-    "authzSupport": true
+    "name": "bitsong"
   },
   {
-    "name": "persistence",
-    "authzSupport": true
+    "name": "persistence"
   },
   {
-    "name": "agoric",
-    "apyEnabled": false,
-    "authzSupport": true
+    "name": "agoric"
   },
   {
     "name": "impacthub",
     "gasPrice": "0.025uixo",
-    "authzSupport": false
+    "gasPricePrefer": "0.1uixo"
   },
   {
     "name": "kichain",
-    "gasPrice": "0.025uxki",
-    "authzSupport": false
+    "gasPrice": "0.025uxki"
   },
   {
-    "name": "sommelier",
-    "authzSupport": true
+    "name": "sommelier"
   },
   {
     "name": "konstellation",
-    "image": "https://raw.githubusercontent.com/Konstellation/DARC_token/main/darctoken.svg",
-    "authzSupport": false
+    "image": "https://raw.githubusercontent.com/Konstellation/DARC_token/main/darctoken.svg"
   },
   {
     "name": "fetchhub",
-    "gasPrice": "5000afet",
-    "authzSupport": true
+    "gasPrice": "5000afet"
   },
   {
     "name": "cerberus",
@@ -161,39 +136,67 @@
     "autostake": {
       "batchTxs": 100
     },
-    "ownerAddress": "cerberusvaloper1tat2cy3f9djtq9z7ly262sqngcarvaktr0w78f",
-    "authzSupport": true
+    "ownerAddress": "cerberusvaloper1tat2cy3f9djtq9z7ly262sqngcarvaktr0w78f"
   },
   {
     "name": "secretnetwork",
     "gasPrice": "0.025uscrt",
-    "authzSupport": true
+    "gasPricePrefer": "0.05uscrt"
   },
   {
     "name": "bostrom",
-    "gasPrice": "0boot",
-    "authzSupport": true
+    "gasPrice": "0boot"
   },
   {
     "name": "starname",
-    "gasPrice": "10uvoi",
-    "authzSupport": false
+    "gasPrice": "10uvoi"
   },
   {
     "name": "rizon",
-    "gasPrice": "0.0001uatolo",
-    "authzSupport": true
+    "gasPrice": "0.0001uatolo"
   },
   {
     "name": "decentr",
-    "gasPrice": "0.025udec",
-    "authzSupport": false
+    "gasPrice": "0.025udec"
   },
   {
     "name": "assetmantle",
     "gasPrice": "0.025umntl",
-    "ownerAddress": "mantlevaloper1fqs7gakxdmujtk0qufdzth5pfyspus3yx394zd",
-    "authzSupport": true,
-    "apyEnabled": true
+    "gasPriceStep": {
+      "low": 0,
+      "average": 0.025,
+      "high": 0.04
+    },
+    "ownerAddress": "mantlevaloper1fqs7gakxdmujtk0qufdzth5pfyspus3yx394zd"
+  },
+  {
+    "name": "crescent",
+    "gasPrice": "0.025ucre",
+    "gasPriceStep": {
+      "low": 0,
+      "average": 0.025,
+      "high": 0.04
+    }
+  },
+  {
+    "name": "meme",
+    "gasPrice": "0.025umeme"
+  },
+  {
+    "name": "cronos",
+    "enabled": false
+  },
+  {
+    "name": "harpoon",
+    "ownerAddress": "kujiravaloper1vue5lawr3s0au9zj0aqeft5aknx6cjq6w5ghca",
+    "testnet": true
+  },
+  {
+    "name": "kujira",
+    "ownerAddress": "kujiravaloper1vue5lawr3s0au9zj0aqeft5aknx6cjq6w5ghca"
+  },
+  {
+    "name": "genesisl1",
+    "txTimeout": 120000
   }
 ]

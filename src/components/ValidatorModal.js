@@ -9,8 +9,8 @@ import AboutLedger from './AboutLedger';
 
 import {
   Modal,
-  Tabs,
-  Tab
+  Tab,
+  Nav
 } from 'react-bootstrap'
 
 import ValidatorDelegate from './ValidatorDelegate';
@@ -27,7 +27,7 @@ function ValidatorModal(props) {
   useEffect(() => {
     if (props.show && selectedValidator && validator?.operator_address === selectedValidator.operator_address && params.validator !== selectedValidator.operator_address) {
       navigate(`/${network.name}/${selectedValidator.operator_address}`)
-    } else if (params.validator && !props.show) {
+    } else if (params.validator && props.show === false) {
       navigate(`/${network.name}`)
     }
   }, [props.show, params.validator, selectedValidator])
@@ -56,9 +56,9 @@ function ValidatorModal(props) {
     }
   }
 
-  const selectValidator = (selectedValidator) => {
+  const selectValidator = (selectedValidator, opts) => {
     setSelectedValidator(selectedValidator)
-    setActiveTab('profile')
+    setActiveTab(opts.activeTab || 'profile')
   }
 
   const onDelegate = () => {
@@ -70,7 +70,7 @@ function ValidatorModal(props) {
     if (redelegate) {
       return [validator.operator_address]
     } else if (delegations) {
-      return [...Object.keys(delegations), ...operators.map(el => el.address)]
+      return [...Object.keys(delegations)]
     }
   }
 
@@ -96,8 +96,16 @@ function ValidatorModal(props) {
     return reward ? bignumber(reward.amount) : 0
   }
 
+  const commission = () => {
+    if (!props.commission) return 0;
+    const denom = network.denom;
+    const validatorCommission = props.commission[selectedValidator.address];
+    const commission = validatorCommission && validatorCommission.commission.find((el) => el.denom === denom)
+    return commission ? bignumber(commission.amount) : 0
+  }
+
   const actionText = () => {
-    if (redelegate) return 'Redelegate'
+    if (redelegate) return <span>Redelegate from <ValidatorLink validator={validator} /></span>
     if (undelegate) return 'Undelegate'
     if (validator) {
       return 'Delegate'
@@ -124,62 +132,103 @@ function ValidatorModal(props) {
         <Modal.Body>
           {!selectedValidator &&
             <Validators
+              modal={true}
               redelegate={redelegate}
               network={network}
+              address={props.address}
+              wallet={props.wallet}
+              validators={validators}
               operators={operators}
               exclude={excludeValidators()}
-              validators={validators}
               validatorApy={props.validatorApy}
+              rewards={props.rewards}
               delegations={delegations}
-              selectValidator={(selectedValidator) => selectValidator(selectedValidator)} />}
+              operatorGrants={props.grants}
+              authzSupport={props.authzSupport}
+              restakePossible={props.restakePossible}
+              showValidator={selectValidator}
+              manageButton={redelegate ? 'Redelegate' : 'Delegate'} />}
           {selectedValidator && (
-            <Tabs activeKey={activeTab} onSelect={(k) => setActiveTab(k)} id="validator-tabs" className="mb-3">
-              <Tab eventKey="profile" title="Profile">
-                <ValidatorProfile
-                  network={network}
-                  validator={selectedValidator}
-                  operator={operator()}
-                  validatorApy={props.validatorApy} />
-              </Tab>
-              <Tab eventKey="delegate" title="Delegate">
-                <ValidatorDelegate
-                  redelegate={redelegate}
-                  undelegate={undelegate}
-                  network={network}
-                  validator={validator}
-                  selectedValidator={selectedValidator}
-                  address={props.address}
-                  availableBalance={availableBalance()}
-                  delegation={delegations[selectedValidator.operator_address]}
-                  rewards={rewards()}
-                  validatorApy={props.validatorApy}
-                  stargateClient={props.stargateClient}
-                  onDelegate={onDelegate} />
-              </Tab>
-              {operator() && (
-                <Tab eventKey="restake" title="REStake">
-                  <ValidatorGrants
-                    address={props.address}
+            <Tab.Container activeKey={activeTab} onSelect={(k) => setActiveTab(k)} id="validator-tabs">
+              <Nav variant="tabs" className="mb-3 d-none d-sm-flex">
+                <Nav.Item>
+                  <Nav.Link role="button" eventKey="profile">Profile</Nav.Link>
+                </Nav.Item>
+                <Nav.Item>
+                  <Nav.Link role="button" eventKey="delegate">Delegate</Nav.Link>
+                </Nav.Item>
+                {operator() && (
+                  <Nav.Item>
+                    <Nav.Link role="button" eventKey="restake">REStake</Nav.Link>
+                  </Nav.Item>
+                )}
+                {network.authzSupport && operator() && (
+                  <Nav.Item>
+                    <Nav.Link role="button" eventKey="ledger">Ledger Instructions</Nav.Link>
+                  </Nav.Item>
+                )}
+              </Nav>
+              <select className="form-select w-100 mb-3 d-block d-sm-none" aria-label="Section" value={activeTab} onChange={(e) => setActiveTab(e.target.value)}>
+                <option value="profile">Profile</option>
+                <option value="delegate">Delegate</option>
+                {operator() && (
+                  <option value="restake">REStake</option>
+                )}
+                {network.authzSupport && operator() && (
+                  <option value="ledger">Ledger Instructions</option>
+                )}
+              </select>
+              <Tab.Content>
+                <Tab.Pane eventKey="profile">
+                  <ValidatorProfile
                     network={network}
+                    validator={selectedValidator}
                     operator={operator()}
-                    grants={grants[operator()?.botAddress]}
+                    validatorApy={props.validatorApy} />
+                </Tab.Pane>
+                <Tab.Pane eventKey="delegate">
+                  <ValidatorDelegate
+                    redelegate={redelegate}
+                    undelegate={undelegate}
+                    network={network}
+                    validator={validator}
+                    selectedValidator={selectedValidator}
+                    address={props.address}
+                    wallet={props.wallet}
+                    availableBalance={availableBalance()}
                     delegation={delegations[selectedValidator.operator_address]}
                     rewards={rewards()}
-                    authzSupport={props.authzSupport}
-                    restakePossible={props.restakePossible}
+                    commission={commission()}
+                    validatorApy={props.validatorApy}
                     stargateClient={props.stargateClient}
-                    onGrant={props.onGrant}
-                    onRevoke={props.onRevoke}
-                    setError={props.setError}
-                  />
-                </Tab>
-              )}
-              {network.authzSupport && operator() && (
-                <Tab eventKey="ledger" title="Ledger Instructions">
-                  <AboutLedger network={network} validator={selectedValidator} modal={false} />
-                </Tab>
-              )}
-            </Tabs>
+                    onDelegate={onDelegate} />
+                </Tab.Pane>
+                {operator() && (
+                  <Tab.Pane eventKey="restake">
+                    <ValidatorGrants
+                      address={props.address}
+                      wallet={props.wallet}
+                      network={network}
+                      operator={operator()}
+                      grants={grants[operator()?.botAddress]}
+                      delegation={delegations[selectedValidator.operator_address]}
+                      rewards={rewards()}
+                      authzSupport={props.authzSupport}
+                      restakePossible={props.restakePossible}
+                      stargateClient={props.stargateClient}
+                      onGrant={props.onGrant}
+                      onRevoke={props.onRevoke}
+                      setError={props.setError}
+                    />
+                  </Tab.Pane>
+                )}
+                {network.authzSupport && operator() && (
+                  <Tab.Pane eventKey="ledger">
+                    <AboutLedger network={network} validator={selectedValidator} modal={false} />
+                  </Tab.Pane>
+                )}
+              </Tab.Content>
+            </Tab.Container>
           )}
         </Modal.Body>
       </Modal>

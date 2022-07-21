@@ -3,6 +3,7 @@ scripts/*
 !scripts/autostake.mjs
 !scripts/base.mjs
 !scripts/checkAuthz.mjs
+!scripts/dryrun.mjs
 
 # dependencies
 /node_modules

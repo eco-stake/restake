@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import moment from 'moment'
 import { pow, multiply, divide, larger, smaller, bignumber } from 'mathjs'
 
-import { GenericAuthorization } from "cosmjs-types/cosmos/authz/v1beta1/authz";
+import { MsgGrant } from "cosmjs-types/cosmos/authz/v1beta1/tx";
 import { StakeAuthorization } from "cosmjs-types/cosmos/staking/v1beta1/authz";
 import { Timestamp } from "cosmjs-types/google/protobuf/timestamp";
 
@@ -13,15 +13,16 @@ import {
 } from 'react-bootstrap'
 
 import Coins from './Coins';
-import { coin } from '../utils/Helpers.mjs';
-import RevokeRestake from './RevokeRestake';
+import { buildExecMessage, coin } from '../utils/Helpers.mjs';
+import RevokeGrant from './RevokeGrant';
 import AlertMessage from './AlertMessage';
 
 function ValidatorGrants(props) {
-  const { grants, operator, address, network } = props
-  const { claimGrant, stakeGrant, maxTokens, validators, grantsValid, grantsExist } = grants || {}
+  const { grants, wallet, operator, address, network } = props
+  const { stakeGrant, maxTokens, validators, grantsValid, grantsExist } = grants || {}
   const defaultExpiry = moment().add(1, 'year')
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState()
   const [state, setState] = useState({ maxTokensValue: '', expiryDateValue: defaultExpiry.format('YYYY-MM-DD') });
 
   useEffect(() => {
@@ -46,10 +47,8 @@ function ValidatorGrants(props) {
   }
 
   function expiryDate() {
-    const claimExpiry = claimGrant && claimGrant.expiration && moment(claimGrant.expiration)
     const stakeExpiry = stakeGrant && stakeGrant.expiration && moment(stakeGrant.expiration)
-    const expiryDate = claimExpiry && stakeExpiry && claimExpiry > stakeExpiry ? stakeExpiry : claimExpiry || stakeExpiry
-    return expiryDate
+    return stakeExpiry
   }
 
   function maxTokensDenom() {
@@ -85,44 +84,55 @@ function ValidatorGrants(props) {
           authorizationType: 1
         })).finish(),
         expiry
-      ),
-      buildGrantMsg("/cosmos.authz.v1beta1.GenericAuthorization",
-        GenericAuthorization.encode(GenericAuthorization.fromPartial({
-          msg: '/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward'
-        })).finish(),
-        expiry
       )
     ]
     console.log(messages)
 
-    props.stargateClient.signAndBroadcast(address, messages).then((result) => {
+    props.stargateClient.signAndBroadcast(wallet.address, messages).then((result) => {
       console.log("Successfully broadcasted:", result);
       showLoading(false)
-      props.onGrant(operator, moment().diff(expiry, "seconds") >= 0, maxTokens);
+      props.onGrant(operator.botAddress, {
+        grantee: operator.botAddress,
+        granter: address,
+        expiration: expiry,
+        authorization: {
+          '@type': "/cosmos.staking.v1beta1.StakeAuthorization",
+          max_tokens: maxTokens,
+          allow_list: { address: [operator.address] }
+        }
+      });
     }, (error) => {
       console.log('Failed to broadcast:', error)
       showLoading(false)
-      props.setError('Failed to broadcast: ' + error.message)
+      setError('Failed to broadcast: ' + error.message)
     })
   }
 
-  function buildGrantMsg(type, value, expiryDate) {
-    return {
-      typeUrl: "/cosmos.authz.v1beta1.MsgGrant",
-      value: {
-        granter: address,
-        grantee: operator.botAddress,
-        grant: {
-          authorization: {
-            typeUrl: type,
-            value: value
-          },
-          expiration: Timestamp.fromPartial({
-            seconds: expiryDate.unix(),
-            nanos: 0
-          })
-        }
-      },
+  function buildGrantMsg(type, authValue, expiryDate) {
+    const value = {
+      granter: address,
+      grantee: operator.botAddress,
+      grant: {
+        authorization: {
+          typeUrl: type,
+          value: authValue
+        },
+        expiration: Timestamp.fromPartial({
+          seconds: expiryDate.unix(),
+          nanos: 0
+        })
+      }
+    }
+    if(wallet?.address !== address){
+      return buildExecMessage(wallet.address, [{
+        typeUrl: "/cosmos.authz.v1beta1.MsgGrant",
+        value: MsgGrant.encode(MsgGrant.fromPartial(value)).finish()
+      }])
+    }else{
+      return {
+        typeUrl: "/cosmos.authz.v1beta1.MsgGrant",
+        value: value
+      }
     }
   }
 
@@ -130,10 +140,10 @@ function ValidatorGrants(props) {
     return (
       <>
         <p className="small">{operator.moniker} will be able to carry out the following transactions on your behalf.</p>
-        <p className="small"><strong>WidthdrawDelegatorRewards</strong> - allowed to withdraw/claim rewards <em>for any validator</em>, however REStake only withdraws from {operator.moniker}'s reward balance.</p>
-        <p className="small"><strong>Delegate</strong> - allowed to delegate <em>{maxTokensDenom() ? <Coins coins={{ amount: maxTokensDenom(), denom: network.denom }} decimals={network.decimals} /> : 'any amount'}</em> to <em>{!state.validators ? 'any validator' : state.validators.length === 1 && state.validators.includes(operator.address) ? 'only their own validator' : 'validators ' + state.validators.join(', ')}</em>.</p>
+        <p className="small"><strong>Delegate</strong> - allowed to delegate <em>{maxTokensDenom() ? <Coins coins={{ amount: maxTokensDenom(), denom: network.denom }} decimals={network.decimals} /> : 'any amount'}</em> to <em>{!state.validators ? 'any validator' : !state.validators.length || (state.validators.length === 1 && state.validators.includes(operator.address)) ? 'only their own validator' : 'validators ' + state.validators.join(', ')}</em>.</p>
+        <p className="small">This grant will expire automatically on <em>{state.expiryDateValue}</em>.</p>
         <p className="small">REStake only re-delegates {operator.moniker}'s accrued rewards and tries not to touch your balance.</p>
-        <p className="small">Both of these grants will expire automatically on <em>{state.expiryDateValue}</em>.</p>
+        <p className="small"><em>REStake previously required a Withdraw grant but this is no longer necessary.</em></p>
       </>
     )
   }
@@ -143,6 +153,10 @@ function ValidatorGrants(props) {
       amount: operator.minimumReward,
       denom: network.denom
     }
+  }
+
+  const step = () => {
+    return 1 / pow(10, network.decimals)
   }
 
   return (
@@ -157,6 +171,11 @@ function ValidatorGrants(props) {
           You must delegate to {operator.moniker} before they can REStake for you.
         </AlertMessage>
       )}
+      {error &&
+        <AlertMessage variant="danger" className="text-break small">
+          {error}
+        </AlertMessage>
+      }
       <Table>
         <tbody className="table-sm small">
           <tr>
@@ -197,7 +216,7 @@ function ValidatorGrants(props) {
                 : grantsExist
                   ? state.maxTokens && smaller(state.maxTokens, props.rewards)
                     ? <span className="text-danger">Not enough grant remaining</span>
-                    : <span className="text-danger">Invalid / total delegation reached</span> 
+                    : <span className="text-danger">Invalid / total delegation reached</span>
                   : <em>Inactive</em>}
             </td>
           </tr>
@@ -207,49 +226,59 @@ function ValidatorGrants(props) {
         <>{grantInformation()}</>
       )}
       {props.restakePossible && (
-        <Form onSubmit={handleSubmit}>
-          <Form.Group className="mb-3">
-            <Form.Label>Total delegation</Form.Label>
-            <div className="mb-3">
-              <div className="input-group">
-                <Form.Control type="number" name="maxTokensValue" min={0} className={!maxTokensValid() ? 'is-invalid' : 'is-valid'} step={0.000001} placeholder={maxTokens ? divide(maxTokens, pow(10, network.decimals)) : '10'} required={false} value={state.maxTokensValue} onChange={handleInputChange} />
-                <span className="input-group-text">{network.symbol.toUpperCase()}</span>
-              </div>
-              <div className="form-text text-end">
-                Reduces with every delegation made by the validator<br />Leave empty for unlimited
-              </div>
-            </div>
-          </Form.Group>
-          <Form.Group className="mb-3">
-            <Form.Label>Expiry date</Form.Label>
-            <Form.Control type="date" name='expiryDateValue' min={moment().format('YYYY-MM-DD')} required={true} value={state.expiryDateValue} onChange={handleInputChange} />
-            <div className="form-text text-end">Date the grant will expire. After this date you will need to re-grant</div>
-          </Form.Group>
-          {grantInformation()}
-          <p className="text-end">
-            {!loading
-              ? (
-                <>
-                  {grants.grantsExist && (
-                    <RevokeRestake
-                      button={true}
-                      address={address}
-                      operator={operator}
-                      stargateClient={props.stargateClient}
-                      onRevoke={props.onRevoke}
-                      setLoading={(loading) => showLoading(loading)}
-                      setError={props.setError}
-                    />
-                  )}
-                  <Button type="submit" className="btn btn-primary ms-2">{grants.grantsExist ? 'Update REStake' : 'Enable REStake'}</Button>
-                </>
-              )
-              : <Button className="btn btn-primary" type="button" disabled>
-                <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>&nbsp;
-              </Button>
-            }
-          </p>
-        </Form>
+        <div className="row">
+          <div className="col">
+            <p><strong>Grant details</strong></p>
+            {grantInformation()}
+          </div>
+          <div className="col">
+            <Form onSubmit={handleSubmit}>
+              <Form.Group className="mb-3">
+                <Form.Label>Max amount</Form.Label>
+                <div className="mb-3">
+                  <div className="input-group">
+                    <Form.Control type="number" name="maxTokensValue" min={divide(1, pow(10, network.decimals))} className={!maxTokensValid() ? 'is-invalid' : 'is-valid'} step={step()} placeholder={maxTokens ? divide(maxTokens, pow(10, network.decimals)) : 'Unlimited'} required={false} value={state.maxTokensValue} onChange={handleInputChange} />
+                    <span className="input-group-text">{network.symbol.toUpperCase()}</span>
+                  </div>
+                  <div className="form-text text-end">
+                    Reduces with every delegation made by the validator<br />Leave empty for unlimited
+                  </div>
+                </div>
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>Expiry date</Form.Label>
+                <Form.Control type="date" name='expiryDateValue' min={moment().format('YYYY-MM-DD')} required={true} value={state.expiryDateValue} onChange={handleInputChange} />
+                <div className="form-text text-end">Date the grant will expire. After this date you will need to re-grant</div>
+              </Form.Group>
+              <p className="text-end">
+                {!loading
+                  ? (
+                    <>
+                      {grants.grantsExist && (
+                        <RevokeGrant
+                          button={true}
+                          address={address}
+                          wallet={wallet}
+                          operator={operator}
+                          grants={[grants.stakeGrant, grants.claimGrant]}
+                          grantAddress={operator.botAddress}
+                          stargateClient={props.stargateClient}
+                          onRevoke={props.onRevoke}
+                          setLoading={(loading) => showLoading(loading)}
+                          setError={setError}
+                        />
+                      )}
+                      <Button type="submit" disabled={!wallet?.hasPermission(address, 'Grant')} className="btn btn-primary ms-2">{grants.grantsExist ? 'Update REStake' : 'Enable REStake'}</Button>
+                    </>
+                  )
+                  : <Button className="btn btn-primary" type="button" disabled>
+                    <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>&nbsp;
+                  </Button>
+                }
+              </p>
+            </Form>
+          </div>
+        </div>
       )}
     </>
   )

@@ -23,7 +23,7 @@ function ValidatorDelegate(props) {
     <>
       <Table>
         <tbody className="table-sm small">
-          {network.data.apyEnabled !== false && (
+          {network.apyEnabled && (
             <tr>
               <td scope="row">
                 <TooltipIcon
@@ -39,7 +39,7 @@ function ValidatorDelegate(props) {
               <td>
                 {Object.keys(props.validatorApy).length > 0
                   ? props.validatorApy[selectedValidator.operator_address]
-                    ? <span>{Math.round(props.validatorApy[selectedValidator.operator_address] * 100)}%</span>
+                    ? <span>{Math.round(props.validatorApy[selectedValidator.operator_address] * 100).toLocaleString()}%</span>
                     : "-"
                   : (
                     <Spinner animation="border" role="status" className="spinner-border-sm text-secondary">
@@ -59,6 +59,14 @@ function ValidatorDelegate(props) {
               <Coins coins={{ amount: props.rewards, denom: network.denom }} decimals={network.decimals} fullPrecision={true} />
             </td>
           </tr>
+          {!!props.commission && (
+            <tr>
+              <td scope="row">Current Commission</td>
+              <td>
+                <Coins coins={{ amount: props.commission, denom: network.denom }} decimals={network.decimals} fullPrecision={true} />
+              </td>
+            </tr>
+          )}
         </tbody>
       </Table>
       <h5 className="mb-3">
@@ -74,6 +82,7 @@ function ValidatorDelegate(props) {
         validator={validator}
         selectedValidator={selectedValidator}
         address={props.address}
+        wallet={props.wallet}
         availableBalance={availableBalance}
         stargateClient={props.stargateClient}
         onDelegate={onDelegate} />

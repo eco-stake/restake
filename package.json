@@ -7,10 +7,11 @@
     "@bugsnag/plugin-react": "^7.16.1",
     "@cosmjs/proto-signing": "^0.28.1",
     "@cosmjs/stargate": "^0.28.1",
-    "@desmoslabs/desmjs": "^2.0.0-beta.4",
+    "@ethersproject/wallet": "^5.6.2",
     "@testing-library/jest-dom": "^5.16.2",
     "@testing-library/react": "^12.1.3",
     "@testing-library/user-event": "^13.5.0",
+    "@tharsis/address-converter": "^0.1.8",
     "axios": "^0.26.0",
     "bootstrap": "^5.1.3",
     "buffer": "^6.0.3",
@@ -23,11 +24,12 @@
     "path": "^0.12.7",
     "react": "^17.0.2",
     "react-bootstrap": "^2.1.2",
-    "react-bootstrap-icons": "^1.7.2",
+    "react-bootstrap-icons": "^1.8.3",
     "react-copy-to-clipboard": "^5.0.4",
     "react-countdown": "^2.3.2",
     "react-dom": "^17.0.2",
     "react-github-btn": "^1.2.1",
+    "react-moment": "^1.1.2",
     "react-router-dom": "^6.2.1",
     "react-select": "^5.2.2",
     "stream": "^0.0.2",
@@ -37,8 +39,8 @@
     "start": "npx parcel src/index.html",
     "prebuild": "rm -rf dist/",
     "build": "npx parcel build src/index.html",
-    "autostake": "node scripts/autostake.mjs",
-    "checkAuthz": "node scripts/checkAuthz.mjs"
+    "dryrun": "NODE_OPTIONS=--openssl-legacy-provider node scripts/dryrun.mjs",
+    "autostake": "NODE_OPTIONS=--openssl-legacy-provider node scripts/autostake.mjs"
   },
   "eslintConfig": {
     "extends": [

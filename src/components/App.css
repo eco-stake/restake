@@ -1,3 +1,18 @@
+body{
+  --bs-font-sans-serif: Lato,
+  -apple-system,
+  BlinkMacSystemFont,
+  "Segoe UI",
+  Roboto,
+  "Helvetica Neue",
+  Arial,
+  sans-serif,
+  "Apple Color Emoji",
+  "Segoe UI Emoji",
+  "Segoe UI Symbol";
+  --bs-body-font-family: var(--bs-font-sans-serif);
+}
+
 header a.moniker{
   margin-left: 15px;
 }
@@ -34,4 +49,26 @@ code {
 
 code p{
   margin-bottom: 0.5rem;
+}
+  
+.favourite-on .on,
+.favourite-off .off {
+  display: block;
+}
+
+.favourite-on .off,
+.favourite-off .on{
+  display: none;
+}
+
+@media (hover: hover) {
+  .favourite-on:hover .off,
+  .favourite-off:hover .on {
+    display: block;
+  }
+
+  .favourite-on:hover .on,
+  .favourite-off:hover .off {
+    display: none;
+  }
 }

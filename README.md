@@ -12,7 +12,7 @@ Try it out at [restake.app](https://restake.app).
 
 Authz is a new feature for Tendermint chains which lets you grant permission to another wallet to carry out certain transactions for you. These transactions are sent by the grantee on behalf of the granter, meaning the validator will send and pay for the TX, but actions will affect your wallet (such as claiming rewards).
 
-REStake specifically lets you grant a validator permission to send `WithdrawDelegatorReward` and `Delegate` transactions for their validator only (note `WithdrawDelegatorReward` is technically not restricted to a single validator). The validator cannot send any other transaction types, and has no other access to your wallet. You authorize this using Keplr as normal.
+REStake specifically lets you grant a validator permission to send `Delegate` transactions for their validator only. The validator cannot send any other transaction types, and has no other access to your wallet. You authorize this using Keplr as normal. REStake no longer requires a `Withdraw` permission to autostake.
 
 A script is also provided which allows a validator to automatically search their delegators, check each for the required grants, and if applicable carry out the claim and delegate transactions on their behalf in a single transaction. This script should be run daily, and the time you will run it can be specified when you [add your operator](#become-an-operator).
 
@@ -21,6 +21,7 @@ A script is also provided which allows a validator to automatically search their
 - As of writing, Ledger is unable to send the necessary transactions to enable Authz. This is purely due to the way transactions are sent to a Ledger device and a workaround should be possible soon.
 - Authz is also not fully supported yet. Many chains are yet to update. The REStake UI will fall back to being a manual staking app with useful manual compounding features.
 - Currently REStake needs the browser extension version of Keplr, but WalletConnect and Keplr iOS functionality will be added ASAP.
+- RESTake requires Nodejs version 17.x or later, it will not work with earlier versions.
 
 ## Become an operator
 
@@ -38,15 +39,14 @@ Right now, the REStake autostaking script uses the standard 118 derivation path 
 
 As there are existing operators using the 118 path, operators will need to opt in to the correct path when they want to upgrade. **New operators should use the correct path before they get grants**.
 
-The correct path can be set in one of two ways using a [config override](#overriding-networks-config-locallyuse-your-own-node) file. You should use `"correctSlip44": true` if possible.
+The correct path can be set in one of two ways using a [config override](#overriding-networks-config-locallyuse-your-own-node) file. `"correctSlip44": true` will use the slip44 defined in the Chain Registry. Alternatively set a specific path using `"slip44": 69`. You should use `"correctSlip44": true` if possible.
 
 ```jsonc
 {
   "desmos": {
     "prettyName": "Desmos 852",
     "autostake": {
-      "correctSlip44": true, // Use the correct slip44 path from chain-registry
-      "slip44": 852 // Alternatively set a specific slip44 path
+      "correctSlip44": true
     }
   }
 }
@@ -62,7 +62,7 @@ Instructions are provided for Docker Compose and will be expanded later.
 
 ### Install Docker and Docker Compose
 
-Best bet is to follow the Docker official guides. Install Docker first, then Docker Compose.
+Best bet is to follow the Docker official guides. Install Docker first, then Docker Compose. In recent versions, Docker and Docker Compose may combined into a single installation.
 
 Docker: [docs.docker.com/get-docker](https://docs.docker.com/get-docker/)
 
@@ -84,16 +84,24 @@ cp .env.sample .env
 
 Running the autostake script manually is then simple.
 
-Note you might need `sudo` depending on your docker install.
+Note you might need `sudo` depending on your docker install. 
+
+Some docker versions utilize `docker compose` instead of `docker-compose`. If you run into issues, try substituting `docker compose`.
 
 ```bash
 docker-compose run --rm app npm run autostake
 ```
 
-Pass a network name to run the script for a single network at a time.
+Pass network names to restrict the script to certain networks.
 
 ```bash
-docker-compose run --rm app npm run autostake osmosis
+docker-compose run --rm app npm run autostake osmosis akash regen
+```
+
+A _Dry Run_ script is also included, which runs the normal autostake script but skips sending the final TXs, and skips any health check pings.
+
+```bash
+docker-compose run --rm app npm run dryrun osmosis
 ```
 
 ### Updating your local version
@@ -119,15 +127,19 @@ Don't forget to [update often](#updating-your-local-version)!
 
 #### Using `crontab`
 
+Note: A helpful calculator for determining your REStake timer for `crontab` can be found here: https://crontab.guru/.
+
+Updated versions utilize `docker compose` instead of `docker-compose`. If you run into issues, try substituting `docker compose`.
+
 ```bash
 crontab -e
 
-0 21 * * * /bin/bash -c "cd restake && docker-compose run --rm app npm run autostake" > ./restake.log 2>&1
+0 21 * * * /bin/bash -c "cd restake && docker compose run --rm app npm run autostake" > ./restake.log 2>&1
 ```
 
 #### Using `systemd-timer`
 
-Systemd-timer allow to run a one-off service with specified rules.
+Systemd-timer allow to run a one-off service with specified rules. This can be used instead, if you run into issues with implementing `crontab`.
 
 ##### Create a systemd unit file
 
@@ -155,7 +167,9 @@ WantedBy=multi-user.target
 
 ##### Create a systemd timer file
 
-The timer file defines the rules for running the restake service every day. All rules are described in the [systemd documentation](https://www.freedesktop.org/software/systemd/man/systemd.timer.html).
+The timer file defines the rules for running the restake service every day. All rules are described in the [systemd documentation](https://www.freedesktop.org/software/systemd/man/systemd.timer.html). 
+
+Note: Helpful calculator for determining restake times for `OnCalendar` can also be found at https://crontab.guru/.
 
 ```bash
 sudo vim /etc/systemd/system/restake.timer
@@ -212,9 +226,6 @@ Create a `src/networks.local.json` file and specify the networks you want to ove
     "restUrl": [
       "https://rest.validator.com/osmosis"
     ],
-    "rpcUrl": [
-      "https://rpc.validator.com/osmosis"
-    ],
     "gasPrice": "0.001uosmo",
     "autostake": {
       "batchTxs": 69,
@@ -240,7 +251,27 @@ Arrays will be replaced and not merged. The file is `.gitignore`'d so it won't a
 
 Note that REStake requires a node with indexing enabled and minimum gas prices matching the `networks.json` gas price (or your local override).
 
-## Submiting your operator
+### Monitoring 
+
+The REStake autostaking script can integrate with [healthchecks.io](https://healthchecks.io/) to report the script status for each network. [healthchecks.io](https://healthchecks.io/) can then integrate with many notification platforms like email, Discord and Slack to make sure you know about any failures.
+
+Once configured, REStake will ping [healthchecks.io](https://healthchecks.io/) when the script starts, succeeds, or fails. It will include relevant error information in the check log and is simple to configure.
+
+Setup a Check for each network you run the script for, and configure the expected schedule. E.g. add a check for Osmosis every 12 hours, Akash every 1 hour etc. Set a timeout in the region of 5 minutes, or slightly longer than you expect the script to run.
+
+Add your Check UUID to the relevant network in your `networks.local.json` config as below. You can also optionally set the `address` attribute if you want to [self-host the healthchecks.io platform](https://healthchecks.io/docs/self_hosted/).
+
+```JSON
+{
+  "osmosis": {
+    "healthCheck": {
+      "uuid": "77f02efd-c521-46cb-70g8-fa5v275au873"
+    }
+  }
+}
+```
+
+## Submitting your operator
 
 ### Setup your REStake operator
 

@@ -1,31 +1,29 @@
 import React from "react";
 import _ from "lodash";
 import { larger, bignumber } from 'mathjs'
-import { Bech32 } from '@cosmjs/encoding'
 import AlertMessage from "./AlertMessage";
-import Coins from "./Coins";
 import ClaimRewards from "./ClaimRewards";
-import RevokeRestake from "./RevokeRestake";
 import ValidatorModal from "./ValidatorModal";
-import ValidatorImage from "./ValidatorImage";
-import TooltipIcon from "./TooltipIcon";
 import AboutLedger from "./AboutLedger";
 
-import { Table, Button, Dropdown, Spinner, OverlayTrigger, Tooltip } from "react-bootstrap";
+import { Button, Dropdown, Spinner } from "react-bootstrap";
 
-import ValidatorName from "./ValidatorName";
-import ManageRestake from "./ManageRestake";
+import { parseGrants } from "../utils/Helpers.mjs";
+import Validators from "./Validators";
 
 class Delegations extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { operatorGrants: {}, validatorLoading: {}, validatorApy: {}, validatorModal: {} };
+    this.state = { operatorGrants: {}, validatorLoading: {}, validatorApy: {}, validatorModal: {}, commission: {} };
 
     this.setError = this.setError.bind(this);
     this.setClaimLoading = this.setClaimLoading.bind(this);
     this.onClaimRewards = this.onClaimRewards.bind(this);
     this.onGrant = this.onGrant.bind(this);
     this.onRevoke = this.onRevoke.bind(this);
+    this.validatorRewards = this.validatorRewards.bind(this);
+    this.showValidatorModal = this.showValidatorModal.bind(this);
+    this.setValidatorLoading = this.setValidatorLoading.bind(this);
     this.hideValidatorModal = this.hideValidatorModal.bind(this);
     this.defaultGrant = {
       claimGrant: null,
@@ -37,61 +35,53 @@ class Delegations extends React.Component {
   }
 
   async componentDidMount() {
-    const isNanoLedger = this.props.stargateClient.getIsNanoLedger();
+    const isNanoLedger = this.props.wallet?.getIsNanoLedger();
     this.setState({ isNanoLedger: isNanoLedger });
-    this.getGrants()
-    this.refresh();
+    this.refresh(true);
 
     if (this.props.validator) {
-      this.showValidatorModal(this.props.validator.operator_address)
+      this.showValidatorModal(this.props.validator)
     }
   }
 
-  async componentDidUpdate(prevProps) {
-    if (this.props.network !== prevProps.network) {
-      clearInterval(this.state.refreshInterval);
-      clearInterval(this.state.grantInterval);
+  async componentDidUpdate(prevProps, prevState) {
+    if (prevProps.validator !== this.props.validator && this.props.validator && !this.state.validatorModal.show) {
+      this.showValidatorModal(this.props.validator)
     }
 
-    if (!this.props.address) return;
-
-    if (this.props.address !== prevProps.address) {
-      clearInterval(this.state.refreshInterval);
-      clearInterval(this.state.grantInterval);
-      const isNanoLedger = this.props.stargateClient.getIsNanoLedger();
+    if ((this.props.network !== prevProps.network && !this.props.address)
+      || (this.props.address !== prevProps.address)) {
+      this.clearRefreshInterval()
+      const isNanoLedger = this.props.wallet?.getIsNanoLedger();
       this.setState({
         isNanoLedger: isNanoLedger,
-        error: null,
+        delegations: undefined, 
+        rewards: undefined,
+        commission: {},
         validatorApy: {},
-        operatorGrants: {}
+        operatorGrants: {},
+        error: null,
       });
-      this.refresh();
-      if(this.props.delegations){
-        return this.getGrants()
-      }
+      this.refresh(false);
     }
 
-    if (!this.props.delegations) return
-
-    const delegationsChanged = _.difference(Object.keys(this.props.delegations), Object.keys(prevProps.delegations || {})).length > 0
-    if (delegationsChanged) {
+    if (this.props.grants !== prevProps.grants){
       this.getGrants()
-    }
-
-    if (prevProps.validator !== this.props.validator && this.props.validator && !this.state.validatorModal.show) {
-      this.showValidatorModal(this.props.validator.operator_address)
     }
   }
 
   componentWillUnmount() {
-    clearInterval(this.state.refreshInterval);
-    clearInterval(this.state.grantInterval);
+    this.clearRefreshInterval()
   }
 
-  async refresh() {
+  async refresh(getGrants) {
+    this.calculateApy();
+    await this.getDelegations()
+    if (getGrants){
+      this.getGrants()
+    }
     this.getWithdrawAddress();
     this.getRewards();
-    this.calculateApy();
     this.refreshInterval();
   }
 
@@ -100,20 +90,69 @@ class Delegations extends React.Component {
       this.props.getBalance();
       this.getRewards(true);
     }, 15_000);
-    const grantInterval = setInterval(() => {
-      this.getGrants(true);
-    }, 60_000);
-    this.setState({ refreshInterval, grantInterval });
+    const delegateInterval = setInterval(() => {
+      this.getDelegations(true)
+    }, 30_000)
+    this.setState({ refreshInterval, delegateInterval });
+  }
+
+  clearRefreshInterval(){
+    clearInterval(this.state.refreshInterval);
+    clearInterval(this.state.delegateInterval);
+  }
+
+  async getDelegations(hideError) {
+    if(!this.props.address) return
+    const address = this.props.address
+
+    return this.props.queryClient.getDelegations(address)
+      .then(
+        (delegations) => {
+          const orderedAddresses = Object.keys(this.props.validators)
+          delegations = orderedAddresses.reduce((sum, address) => {
+            if(delegations[address] && delegations[address].balance.amount !== '0'){
+              sum[address] = delegations[address]
+            }
+            return sum
+          }, {})
+          if(address === this.props.address){
+            this.setState({
+              delegations: delegations,
+            });
+          }
+        },
+        (error) => {
+          if(address !== this.props.address) return
+
+          if([404, 500].includes(error.response && error.response.status)){
+            this.setState({
+              delegations: {},
+            });
+          }else if(!hideError){
+            this.setState({
+              error: 'Failed to load delegations.',
+            });
+          }
+        }
+      )
   }
 
   async getWithdrawAddress() {
-    const withdraw = await this.props.queryClient.getWithdrawAddress(this.props.address)
-    if (withdraw !== this.props.address) {
-      this.setState({ error: 'You have a different withdraw address set. REStake WILL NOT WORK!' })
-    }
+    if(!this.props.address) return
+    const address = this.props.address
+
+    return this.props.queryClient.getWithdrawAddress(address).then(withdraw => {
+      if (withdraw !== address) {
+        this.setState({ error: 'You have a different withdraw address set. REStake WILL NOT WORK!' })
+      }
+    }, error => {
+      console.log('Failed to get withdraw address', error)
+    })
   }
 
   getRewards(hideError) {
+    if(!this.props.address) return
+
     this.props.queryClient
       .getRewards(this.props.address, this.props.network.denom)
       .then(
@@ -125,14 +164,28 @@ class Delegations extends React.Component {
             this.setState({ rewards: {} });
           } else {
             if (!hideError)
-              this.setState({ error: "Failed to get rewards. Please refresh" });
+              this.setState({ error: "Failed to get rewards." });
           }
         }
       );
+
+    Object.values(this.props.validators).forEach(validator => {
+      if(validator.isValidatorOperator(this.props.address)){
+        this.props.queryClient.getCommission(validator.address).then((commission) => {
+          this.setState((state, props) => ({
+            commission: _.set(
+              state.commission,
+              validator.address,
+              commission
+            ),
+          }));
+        })
+      }
+    })
   }
 
   async calculateApy() {
-    if (this.props.network.apyEnabled === false || !this.props.network.getApy) return
+    if (!this.props.network.apyEnabled || !this.props.network.getApy) return
 
     this.props.network.getApy(
       this.props.validators,
@@ -141,98 +194,62 @@ class Delegations extends React.Component {
       this.setState({ validatorApy });
     }, error => {
       console.log(error)
-      this.setState({ error: "Failed to get APY. Please refresh" });
+      this.setState({ error: "Failed to get APY." });
     })
   }
 
-  async getGrants(hideError) {
-    if (!this.authzSupport() || !this.props.operators.length) return
+  async getGrants() {
+    if (!this.props.grants?.granter) return
 
-    const calls = this.orderedOperators().map((operator) => {
-      return () => {
-        const { botAddress, address } = operator;
-        if (!this.props.operators.includes(operator)) return;
-
-        return this.props.queryClient.getGrants(botAddress, this.props.address).then(
-          (result) => {
-            const { claimGrant, stakeGrant } = result
-            let grantValidators, maxTokens;
-            if (stakeGrant) {
-              grantValidators =
-                stakeGrant.authorization.allow_list?.address;
-              maxTokens = stakeGrant.authorization.max_tokens
-            }
-            const operatorGrant = {
-              claimGrant: claimGrant,
-              stakeGrant: stakeGrant,
-              validators: grantValidators,
-              maxTokens: maxTokens ? bignumber(maxTokens.amount) : null
-            };
-            this.setState((state, props) => ({
-              operatorGrants: _.set(
-                state.operatorGrants,
-                botAddress,
-                operatorGrant
-              ),
-            }));
-          },
-          (error) => {
-            if (!hideError) {
-              this.setState({ error: "Failed to get grants. Please refresh" });
-            }
-          }
-        );
-      }
-    });
-
-    const batchCalls = _.chunk(calls, 5);
-
-    for (const batchCall of batchCalls) {
-      await Promise.allSettled(batchCall.map(call => call()))
-    }
+    const operatorGrants = this.props.operators.reduce((sum, operator) => {
+      const grantee = operator.botAddress
+      sum[grantee] = this.buildGrants(this.props.grants.granter, grantee, this.props.address)
+      return sum
+    }, {})
+    this.setState({operatorGrants: operatorGrants})
   }
 
-  onGrant(operator, expired, maxTokens) {
-    clearInterval(this.state.refreshInterval);
-    clearInterval(this.state.grantInterval);
-    const operatorGrant = expired ? this.defaultGrant : {
-      claimGrant: {},
-      stakeGrant: {},
-      validators: [operator.address],
+  buildGrants(grants, grantee, granter){
+    const { claimGrant, stakeGrant } = parseGrants(grants, grantee, granter)
+    let grantValidators, maxTokens;
+    if (stakeGrant) {
+      grantValidators =
+        stakeGrant.authorization.allow_list?.address;
+      maxTokens = stakeGrant.authorization.max_tokens
+    }
+    return {
+      claimGrant: claimGrant,
+      stakeGrant: stakeGrant,
+      validators: grantValidators,
       maxTokens: maxTokens ? bignumber(maxTokens.amount) : null
     };
-    this.setState((state, props) => ({
-      operatorGrants: _.set(
-        state.operatorGrants,
-        operator.botAddress,
-        operatorGrant
-      ),
-      error: null,
-      validatorLoading: _.set(state.validatorLoading, operator.address, false),
-    }));
-    this.refreshInterval()
   }
 
-  onRevoke(operator) {
-    clearInterval(this.state.refreshInterval);
-    clearInterval(this.state.grantInterval);
+  onGrant(grantAddress, grant) {
+    const operator = this.props.operators.find(el => el.botAddress === grantAddress)
+    if(operator){
+      this.setState((state, props) => ({
+        error: null,
+        validatorLoading: _.set(state.validatorLoading, operator.address, false),
+      }));
+    }
+    this.props.onGrant(grantAddress, grant)
+  }
+
+  onRevoke(grantAddress, msgTypes) {
+    const operator = this.props.operators.find(el => el.botAddress === grantAddress)
     this.setState((state, props) => ({
-      operatorGrants: _.set(
-        state.operatorGrants,
-        operator.botAddress,
-        this.defaultGrant
-      ),
       error: null,
       validatorLoading: _.set(state.validatorLoading, operator.address, false),
     }));
-    this.refreshInterval()
+    this.props.onRevoke(grantAddress, msgTypes)
   }
 
   onClaimRewards() {
     this.setState({ claimLoading: false, validatorLoading: {}, error: null });
     setTimeout(() => {
       this.props.getBalance();
-      this.props.getDelegations();
+      this.getDelegations();
       this.getRewards();
     }, 3_000);
   }
@@ -265,7 +282,6 @@ class Delegations extends React.Component {
       sum[operator.botAddress] = {
         ...grant,
         grantsValid: !!(
-          grant.claimGrant &&
           grant.stakeGrant &&
           (!grant.validators || grant.validators.includes(operator.address)) &&
           (grant.maxTokens === null || larger(grant.maxTokens, this.validatorReward(operator.address)))
@@ -277,48 +293,7 @@ class Delegations extends React.Component {
   }
 
   restakePossible() {
-    return !this.state.isNanoLedger && this.authzSupport();
-  }
-
-  operatorForValidator(validatorAddress) {
-    return this.props.operators.find((el) => el.address === validatorAddress);
-  }
-
-  operatorAddresses() {
-    return this.props.operators.map((operator) => operator.address);
-  }
-
-  operatorBotAddresses() {
-    return this.props.operators.map((operator) => operator.botAddress);
-  }
-
-  orderedOperators() {
-    return _.sortBy(this.props.operators, ({ address }) => {
-      if (!this.props.delegations) return 0
-
-      return this.props.delegations[address] ? 0 : 1
-    });
-  }
-
-  regularDelegations() {
-    return Object.values(
-      _.omit(this.props.delegations, this.operatorAddresses())
-    );
-  }
-
-  noDelegations() {
-    return (
-      Object.values(this.props.operators).length < 1 &&
-      Object.values(this.props.delegations).length < 1
-    );
-  }
-
-  isValidatorOperator(validator) {
-    if (!this.props.address || !validator || !window.atob) return false;
-
-    const prefix = this.props.network.prefix
-    const validatorOperator = Bech32.encode(prefix, Bech32.decode(validator.operator_address).data)
-    return validatorOperator === this.props.address
+    return this.props.address && !this.state.isNanoLedger && this.authzSupport();
   }
 
   totalRewards(validators) {
@@ -367,15 +342,8 @@ class Delegations extends React.Component {
     return validatorRewards;
   }
 
-  denomRewards(rewards) {
-    return rewards.reward.find(
-      (reward) => reward.denom === this.props.network.denom
-    );
-  }
-
-  showValidatorModal(address, opts) {
+  showValidatorModal(validator, opts) {
     opts = opts || {}
-    const validator = address && this.props.validators[address]
     this.setState({ validatorModal: { show: true, validator: validator, ...opts } })
   }
 
@@ -398,12 +366,14 @@ class Delegations extends React.Component {
         undelegate={validatorModal.undelegate}
         network={this.props.network}
         address={this.props.address}
+        wallet={this.props.wallet}
         validators={this.props.validators}
         validatorApy={this.state.validatorApy}
         operators={this.props.operators}
         balance={this.props.balance}
         rewards={this.state.rewards}
-        delegations={this.props.delegations}
+        commission={this.state.commission}
+        delegations={this.state.delegations || {}}
         grants={this.operatorGrants()}
         authzSupport={this.authzSupport()}
         restakePossible={this.restakePossible()}
@@ -417,240 +387,8 @@ class Delegations extends React.Component {
     )
   }
 
-  renderValidator(validatorAddress, delegation) {
-    const validator = this.props.validators[validatorAddress];
-    const isValidatorOperator = this.isValidatorOperator(validator)
-    if (validator) {
-      const rewards =
-        this.state.rewards && this.state.rewards[validatorAddress];
-      const denomRewards = rewards && this.denomRewards(rewards);
-      const operator = this.operatorForValidator(validatorAddress);
-      const grants = operator && this.operatorGrants()[operator.botAddress]
-      let rowVariant =
-        operator && delegation
-          ? grants.grantsValid
-            ? "table-success"
-            : grants.grantsExist ? "table-danger" : "table-warning"
-          : undefined;
-
-      if (isValidatorOperator) rowVariant = 'table-info'
-
-      const delegationBalance = (delegation && delegation.balance) || {
-        amount: 0,
-        denom: this.props.network.denom,
-      };
-
-      const minimumReward = operator && {
-        amount: operator.minimumReward,
-        denom: this.props.network.denom,
-      };
-
-      return (
-        <tr key={validatorAddress} className={rowVariant}>
-          <td>{validator.rank || '-'}</td>
-          <td width={30}>
-            <ValidatorImage
-              validator={validator}
-              width={30}
-              height={30}
-            />
-          </td>
-          <td>
-            <span role="button" onClick={() => this.showValidatorModal(validatorAddress, { activeTab: 'profile' })}>
-              <ValidatorName validator={validator} />
-            </span>
-          </td>
-          <td className="text-center">
-            <ManageRestake
-              size="sm"
-              network={this.props.network}
-              validator={validator}
-              operator={operator}
-              grants={operator && this.operatorGrants()[operator.botAddress]}
-              delegation={delegation}
-              authzSupport={this.authzSupport()}
-              restakePossible={this.restakePossible()}
-              openGrants={() => this.showValidatorModal(validatorAddress, { activeTab: 'restake' })}
-            />
-          </td>
-          <td className="d-none d-lg-table-cell text-center">
-            {operator && (
-              <span role="button" onClick={() => this.showValidatorModal(validatorAddress, { activeTab: 'restake' })}>
-                <TooltipIcon
-                  icon={<small className="text-decoration-underline">{operator.frequency()}</small>}
-                  identifier={operator.address}
-                >
-                  <div className="mt-2 text-center">
-                    <p>REStakes {operator.runTimesString()}</p>
-                    <p>
-                      Minimum reward is{" "}
-                      <Coins
-                        coins={minimumReward}
-                        decimals={this.props.network.decimals}
-                        fullPrecision={true}
-                      />
-                    </p>
-                  </div>
-                </TooltipIcon>
-              </span>
-            )}
-          </td>
-          {this.props.network.apyEnabled !== false && (
-            <td className="d-none d-lg-table-cell text-center">
-              {Object.keys(this.state.validatorApy).length > 0
-                ? this.state.validatorApy[validatorAddress]
-                  ? <small>{Math.round(this.state.validatorApy[validatorAddress] * 100) + "%"}</small>
-                  : "-"
-                : (
-                  <Spinner animation="border" role="status" className="spinner-border-sm text-secondary">
-                    <span className="visually-hidden">Loading...</span>
-                  </Spinner>
-                )}
-            </td>
-          )}
-          <td className="d-none d-sm-table-cell">
-            <small>
-              <Coins
-                coins={delegationBalance}
-                decimals={this.props.network.decimals}
-              />
-            </small>
-          </td>
-          <td className="d-none d-md-table-cell">
-            {denomRewards && (
-              <small>
-                <Coins
-                  key={denomRewards.denom}
-                  coins={denomRewards}
-                  decimals={this.props.network.decimals}
-                />
-              </small>
-            )}
-          </td>
-          <td>
-            <div className="d-grid gap-2 d-md-flex justify-content-end">
-              {!this.state.validatorLoading[validatorAddress] ? (
-                delegation ? (
-                  <Dropdown>
-                    <Dropdown.Toggle
-                      variant="secondary"
-                      size="sm"
-                      id="dropdown-basic"
-                    >
-                      Manage
-                    </Dropdown.Toggle>
-                    <Dropdown.Menu>
-                      {operator &&
-                        this.restakePossible() && (
-                          <>
-                            <Dropdown.Item onClick={() => this.showValidatorModal(validatorAddress, { activeTab: 'restake' })}>
-                              {this.operatorGrants()[operator.botAddress].grantsValid ? 'Manage REStake' : 'Enable REStake'}
-                            </Dropdown.Item>
-                            {this.operatorGrants()[operator.botAddress].grantsExist && (
-                              <RevokeRestake
-                                address={this.props.address}
-                                operator={operator}
-                                stargateClient={this.props.stargateClient}
-                                onRevoke={this.onRevoke}
-                                setLoading={(loading) =>
-                                  this.setValidatorLoading(
-                                    validatorAddress,
-                                    loading
-                                  )
-                                }
-                                setError={this.setError}
-                              />
-                            )}
-                            <hr />
-                          </>
-                        )}
-                      <ClaimRewards
-                        network={this.props.network}
-                        address={this.props.address}
-                        validatorRewards={this.validatorRewards([validatorAddress])}
-                        stargateClient={this.props.stargateClient}
-                        onClaimRewards={this.onClaimRewards}
-                        setLoading={(loading) =>
-                          this.setValidatorLoading(validatorAddress, loading)
-                        }
-                        setError={this.setError}
-                      />
-                      <ClaimRewards
-                        restake={true}
-                        network={this.props.network}
-                        address={this.props.address}
-                        validatorRewards={this.validatorRewards([validatorAddress])}
-                        stargateClient={this.props.stargateClient}
-                        onClaimRewards={this.onClaimRewards}
-                        setLoading={(loading) =>
-                          this.setValidatorLoading(validatorAddress, loading)
-                        }
-                        setError={this.setError}
-                      />
-                      {isValidatorOperator && (
-                        <>
-                          <hr />
-                          <ClaimRewards
-                            commission={true}
-                            network={this.props.network}
-                            address={this.props.address}
-                            validatorRewards={this.validatorRewards([validatorAddress])}
-                            stargateClient={this.props.stargateClient}
-                            onClaimRewards={this.onClaimRewards}
-                            setLoading={(loading) =>
-                              this.setValidatorLoading(validatorAddress, loading)
-                            }
-                            setError={this.setError}
-                          />
-                        </>
-                      )}
-                      <hr />
-                      <Dropdown.Item onClick={() => this.showValidatorModal(validatorAddress, { activeTab: 'delegate' })}>
-                        Delegate
-                      </Dropdown.Item>
-                      <Dropdown.Item onClick={() => this.showValidatorModal(validatorAddress, { redelegate: true })}>
-                        Redelegate
-                      </Dropdown.Item>
-                      <Dropdown.Item onClick={() => this.showValidatorModal(validatorAddress, { undelegate: true })}>
-                        Undelegate
-                      </Dropdown.Item>
-                    </Dropdown.Menu>
-                  </Dropdown>
-                ) : (
-                  <OverlayTrigger
-                    placement="top"
-                    overlay={
-                      <Tooltip id={`tooltip-${validatorAddress}`}>
-                        Delegate to enable REStake
-                      </Tooltip>
-                    }
-                  >
-                    <Button variant="primary" size="sm" onClick={() => this.showValidatorModal(validatorAddress, { activeTab: 'delegate' })}>
-                      Delegate
-                    </Button>
-                  </OverlayTrigger>
-                )
-              ) : (
-                <Button className="btn-sm btn-secondary mr-5" disabled>
-                  <span
-                    className="spinner-border spinner-border-sm"
-                    role="status"
-                    aria-hidden="true"
-                  ></span>
-                  &nbsp;
-                </Button>
-              )}
-            </div>
-          </td>
-        </tr>
-      );
-    } else {
-      return null;
-    }
-  }
-
   render() {
-    if (!this.props.delegations || !this.props.validators) {
+    if (!this.props.validators) {
       return (
         <div className="text-center">
           <Spinner animation="border" role="status">
@@ -663,18 +401,9 @@ class Delegations extends React.Component {
     const alerts = (
       <>
         {!this.authzSupport() && (
-          <AlertMessage variant="warning" dismissible={false}>
-            {this.props.network.prettyName} doesn't support Authz just yet. You
-            can manually restake for now and REStake is ready when support is
-            enabled
+          <AlertMessage variant="info" dismissible={false}>
+            {this.props.network.prettyName} doesn't support Authz just yet. You can stake and compound manually, REStake will update automatically when support is added.
           </AlertMessage>
-        )}
-        {this.authzSupport() && !this.props.operators.length && (
-          <AlertMessage
-            variant="warning"
-            message="There are no REStake operators for this network yet. You can compound manually, or check the About section to run one yourself"
-            dismissible={false}
-          />
         )}
         {this.authzSupport() &&
           this.props.operators.length > 0 &&
@@ -684,8 +413,8 @@ class Delegations extends React.Component {
                 variant="warning"
                 dismissible={false}
               >
-                <p>Ledger devices are not supported in the REStake UI currently. Support will be added as soon as it is possible.</p>
-                <p className="mb-0"><span onClick={() => this.setState({ showAboutLedger: true })} role="button" className="text-dark text-decoration-underline">A manual workaround is possible using the CLI</span></p>
+                <p>Ledger devices can't send Authz transactions just yet. Full support will be enabled as soon as it is possible.</p>
+                <p className="mb-0"><span onClick={() => this.setState({ showAboutLedger: true })} role="button" className="text-reset text-decoration-underline">A manual workaround is possible using the CLI.</span></p>
               </AlertMessage>
             </>
           )}
@@ -696,78 +425,40 @@ class Delegations extends React.Component {
       </>
     );
 
-    if (this.noDelegations()) {
-      return (
-        <>
-          {alerts}
-          <div className="text-center">
-            <p>
-              There are no REStake operators for this network yet. You can
-              delegate to other validators in the meantime.
-            </p>
-            <Button variant="primary" onClick={() => this.showValidatorModal()}>
-              Add Validator
-            </Button>
-            {this.renderValidatorModal()}
-          </div>
-        </>
-      );
-    }
-
     return (
       <>
         {alerts}
-        {!this.noDelegations() && (
-          <Table className="align-middle table-striped">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th colSpan={2}>Validator</th>
-                <th className="d-none d-sm-table-cell text-center">REStake</th>
-                <th className="d-none d-lg-table-cell text-center">
-                  Frequency
-                </th>
-                {this.props.network.apyEnabled !== false && (
-                  <th className="d-none d-lg-table-cell text-center">
-                    <TooltipIcon
-                      icon={<span className="text-decoration-underline">APY</span>}
-                      identifier="delegations-apy"
-                    >
-                      <div className="mt-2 text-center">
-                        <p>Based on commission, compounding frequency and estimated block times.</p>
-                        <p>This is a best case scenario and may not be 100% accurate.</p>
-                      </div>
-                    </TooltipIcon>
-                  </th>
-                )}
-                <th className="d-none d-sm-table-cell">Delegation</th>
-                <th className="d-none d-sm-table-cell">Rewards</th>
-                <th width={110}></th>
-              </tr>
-            </thead>
-            <tbody>
-              {this.orderedOperators().length > 0 &&
-                this.orderedOperators().map((operator) => {
-                  const delegation =
-                    this.props.delegations &&
-                    this.props.delegations[operator.address];
-                  return this.renderValidator(operator.address, delegation);
-                })}
-              {this.regularDelegations().length > 0 &&
-                this.regularDelegations().map((delegation) => {
-                  return this.renderValidator(
-                    delegation.delegation.validator_address,
-                    delegation
-                  );
-                })}
-            </tbody>
-          </Table>
-        )}
+        <div className="mb-2">
+          <Validators 
+            network={this.props.network}
+            address={this.props.address}
+            wallet={this.props.wallet}
+            validators={this.props.validators}
+            operators={this.props.operators}
+            validatorApy={this.state.validatorApy}
+            delegations={this.state.delegations || {}}
+            rewards={this.state.rewards}
+            commission={this.state.commission}
+            stargateClient={this.props.stargateClient}
+            validatorLoading={this.state.validatorLoading}
+            isLoading={this.props.wallet && (!this.state.delegations || (this.props.network?.authzSupport && !this.props.grants?.granter))}
+            operatorGrants={this.operatorGrants()}
+            authzSupport={this.authzSupport()}
+            restakePossible={this.restakePossible()}
+            validatorRewards={this.validatorRewards}
+            showValidator={this.showValidatorModal}
+            setValidatorLoading={this.setValidatorLoading}
+            setError={this.setError}
+            onClaimRewards={this.onClaimRewards}
+            onRevoke={this.onRevoke} />
+        </div>
         <div className="row">
           <div className="col">
-            <Button variant="secondary" onClick={() => this.showValidatorModal()}>
-              Add Validator
-            </Button>
+            {this.props.address && (
+              <Button variant="secondary" onClick={() => this.showValidatorModal()}>
+                Add Validator
+              </Button>
+            )}
           </div>
           <div className="col">
             <div className="d-grid gap-2 d-md-flex justify-content-end">
@@ -786,6 +477,7 @@ class Delegations extends React.Component {
                       <ClaimRewards
                         network={this.props.network}
                         address={this.props.address}
+                        wallet={this.props.wallet}
                         validatorRewards={this.validatorRewards()}
                         stargateClient={this.props.stargateClient}
                         onClaimRewards={this.onClaimRewards}
@@ -796,6 +488,7 @@ class Delegations extends React.Component {
                         restake={true}
                         network={this.props.network}
                         address={this.props.address}
+                        wallet={this.props.wallet}
                         validatorRewards={this.validatorRewards()}
                         stargateClient={this.props.stargateClient}
                         onClaimRewards={this.onClaimRewards}

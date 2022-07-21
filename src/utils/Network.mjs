@@ -1,29 +1,36 @@
 import _ from 'lodash'
 import { multiply, pow, format, bignumber } from 'mathjs'
+import {
+  GasPrice,
+} from "@cosmjs/stargate";
 import QueryClient from './QueryClient.mjs'
-import SigningClient from './SigningClient.mjs'
-import ApyClient from '../ApyClient.mjs'
+import Validator from './Validator.mjs'
 import Operator from './Operator.mjs'
 import Chain from './Chain.mjs'
 import CosmosDirectory from './CosmosDirectory.mjs'
-import DesmosSigningClient from './DesmosSigningClient.mjs'
 
 class Network {
-  constructor(data) {
-    this.SIGNERS = {
-      desmos: DesmosSigningClient
-    }
-
+  constructor(data, operatorAddresses) {
     this.data = data
     this.enabled = data.enabled
-    this.apyEnabled = data.apyEnabled
-    this.name = data.name
-    this.directory = CosmosDirectory()
+    this.experimental = data.experimental
+    this.authzSupport = data.params?.authz
+    this.estimatedApr = data.params?.calculated_apr
+    this.operatorAddresses = operatorAddresses || {}
+    this.operatorCount = data.operators?.length || this.estimateOperatorCount()
+    this.apyEnabled = data.apyEnabled !== false && (!this.estimatedApr || this.estimatedApr > 0)
+    this.name = data.path || data.name
+    this.path = data.path || data.name
+    this.image = data.image
+    this.prettyName = data.prettyName || data.pretty_name
+    this.default = data.default
+    this.testnet = data.testnet || data.network_type === 'testnet'
+    this.directory = CosmosDirectory(this.testnet)
 
-    this.rpcUrl = data.rpcUrl || this.directory.rpcUrl(data.name)
-    this.restUrl = data.restUrl || this.directory.restUrl(data.name)
+    this.rpcUrl = this.directory.rpcUrl(this.name) // only used for Keplr suggestChain
+    this.restUrl = data.restUrl || this.directory.restUrl(this.name)
 
-    this.usingDirectory = !![this.restUrl, this.rpcUrl].find(el => {
+    this.usingDirectory = !![this.restUrl].find(el => {
       const match = el => el.match("cosmos.directory")
       if (Array.isArray(el)) {
         return el.find(match)
@@ -31,14 +38,36 @@ class Network {
         return match(el)
       }
     })
+    this.online = !this.usingDirectory || this.connectedDirectory()
+  }
+
+  connectedDirectory() {
+    const apis = this.chain ? this.chain.chainData['best_apis'] : this.data['best_apis']
+    return apis && ['rest'].every(type => apis[type].length > 0)
+  }
+
+  estimateOperatorCount() {
+    if(!this.operatorAddresses) return 0 
+    return Object.keys(this.operatorAddresses).filter(el => this.allowOperator(el)).length
+  }
+
+  allowOperator(address){
+    const allow = this.data.allowOperators
+    const block = this.data.blockOperators
+    if(allow && !allow.includes(address)) return false
+    if(block && block.includes(address)) return false
+    return true
   }
 
   async load() {
-    this.chain = await Chain(this.data)
-    this.validators = await this.directory.getValidators(this.data.name)
-    this.operators = this.data.operators || this.validators.filter(el => el.restake).map(el => {
-      return Operator(el)
+    this.chain = await Chain(this.data, this.directory)
+    this.validators = (await this.directory.getValidators(this.name)).map(data => {
+      return Validator(this, data)
     })
+    this.operators = (this.data.operators || this.validators.filter(el => el.restake && this.allowOperator(el.operator_address))).map(data => {
+      return Operator(this, data)
+    })
+    this.operatorCount = this.operators.length
     this.prettyName = this.chain.prettyName
     this.chainId = this.chain.chainId
     this.prefix = this.chain.prefix
@@ -48,31 +77,49 @@ class Network {
     this.decimals = this.chain.decimals
     this.image = this.chain.image
     this.coinGeckoId = this.chain.coinGeckoId
+    this.estimatedApr = this.chain.estimatedApr
+    this.apyEnabled = this.apyEnabled && !!this.estimatedApr && this.estimatedApr > 0
     this.authzSupport = this.chain.authzSupport
-    const defaultGasPrice = format(bignumber(multiply(0.000000025, pow(10, this.chain.decimals))), { notation: 'fixed' }) + this.chain.denom
-    this.gasPrice = this.data.gasPrice || defaultGasPrice
+    this.defaultGasPrice = format(bignumber(multiply(0.000000025, pow(10, this.decimals))), { notation: 'fixed', precision: 4}) + this.denom
+    this.gasPrice = this.data.gasPrice || this.defaultGasPrice
+    this.gasPriceAmount = GasPrice.fromString(this.gasPrice).amount.toString()
+    this.gasPriceStep = this.data.gasPriceStep || {
+      "low": multiply(this.gasPriceAmount, 0.5),
+      "average": multiply(this.gasPriceAmount, 1),
+      "high": multiply(this.gasPriceAmount, 2)
+    }
+    this.gasPricePrefer = this.data.gasPricePrefer
+    this.gasModifier = this.data.gasModifier || 1.5
+    this.txTimeout = this.data.txTimeout || 60_000
   }
 
   async connect() {
     try {
-      this.queryClient = await QueryClient(this.chain.chainId, this.rpcUrl, this.restUrl)
-      this.apyClient = ApyClient(this.chain, this.queryClient.rpcUrl, this.queryClient.restUrl)
+      this.queryClient = await QueryClient(this.chain.chainId, this.restUrl)
       this.restUrl = this.queryClient.restUrl
-      this.rpcUrl = this.queryClient.rpcUrl
-      this.getApy = this.apyClient.getApy
-      this.connected = this.queryClient.connected
+      this.connected = this.queryClient.connected && (!this.usingDirectory || this.connectedDirectory())
     } catch (error) {
       console.log(error)
       this.connected = false
     }
   }
 
-  signingClient(wallet, key) {
-    if (!this.queryClient)
-      return
-
-    const client = this.SIGNERS[this.data.name] || SigningClient
-    return client(this.queryClient.rpcUrl, this.gasPrice, wallet, key)
+  async getApy(validators, operators){
+    const chainApr = this.chain.estimatedApr
+    let validatorApy = {};
+    for (const [address, validator] of Object.entries(validators)) {
+      if(validator.jailed || validator.status !== 'BOND_STATUS_BONDED'){
+        validatorApy[address] = 0
+      }else{
+        const commission = validator.commission.commission_rates.rate
+        const operator = operators.find((el) => el.address === address)
+        const periodPerYear = operator && this.chain.authzSupport ? operator.runsPerDay(this.data.maxPerDay) * 365 : 1;
+        const realApr = chainApr * (1 - commission);
+        const apy = (1 + realApr / periodPerYear) ** periodPerYear - 1;
+        validatorApy[address] = apy;
+      }
+    }
+    return validatorApy;
   }
 
   getOperator(operatorAddress) {
@@ -97,7 +144,7 @@ class Network {
 
   getValidators(opts) {
     opts = opts || {}
-    return this.validators.filter(validator => {
+    return (this.validators || []).filter(validator => {
       if (opts.status)
         return validator.status === opts.status
       return true

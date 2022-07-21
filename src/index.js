@@ -10,8 +10,9 @@ import {
 } from "react-router-dom";
 
 import NetworkFinder from './components/NetworkFinder'
-import './index.css';
 import reportWebVitals from './utils/reportWebVitals';
+
+import './index.css';
 
 const app = (
   <React.StrictMode>
@@ -19,6 +20,9 @@ const app = (
       <Routes>
         <Route path="/" element={<NetworkFinder />} />
         <Route path="/:network" element={<NetworkFinder />} />
+        <Route path="/:network/govern" element={<NetworkFinder />} />
+        <Route path="/:network/govern/:proposalId" element={<NetworkFinder />} />
+        <Route path="/:network/grant" element={<NetworkFinder />} />
         <Route path="/:network/:validator" element={<NetworkFinder />} />
       </Routes>
     </BrowserRouter>

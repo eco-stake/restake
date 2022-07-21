@@ -1,20 +1,20 @@
 import _ from 'lodash'
-import { format } from 'mathjs'
 
 function Coins(props) {
   function amount(coins, decimals){
     if(props.inBaseDenom) return coins.amount
 
-    if (!decimals) {
+    if (decimals == null) {
       decimals = 6
     }
-    return format(_.round(coins.amount / Math.pow(10, decimals), precision(coins, decimals)), {notation: 'fixed'})
+    const prec = precision(coins, decimals)
+    return _.round(coins.amount / Math.pow(10, decimals), prec).toLocaleString(undefined, {maximumFractionDigits: prec})
   }
 
   function denom(coins){
     if(!coins.denom) return
 
-    if(coins.denom.startsWith('base')){
+    if(coins.denom.startsWith('base') || coins.denom.startsWith('nano')){
       return coins.denom.slice(4).toUpperCase()
     }else if(['u', 'a', 'n'].includes(coins.denom[0])){
       return coins.denom.slice(1).toUpperCase()
@@ -34,7 +34,7 @@ function Coins(props) {
   }
 
   return (
-    <span className="coins">
+    <span className={['coins', props.className].join(' ')}>
       <span className="amount">{amount(props.coins, props.decimals)}</span>&nbsp;
       <span className="denom">{denom(props.coins, props.decimals)}</span>
     </span>

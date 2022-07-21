@@ -7,16 +7,21 @@ import {
 function AlertMessage(props) {
   const [show, setShow] = useState(false);
 
+  const dismissible = props.dismissible === false ? false : true
+
   useEffect(() => {
     setShow(!!props.message || !!props.children)
   }, [props.message, props.children]);
 
-  const dismissible = props.dismissible === false ? false : true
+  function onClose(){
+    setShow(false)
+    props.onClose && props.onClose()
+  }
 
   return (
     <>
       {show &&
-      <Alert className="text-center" variant={props.variant || 'danger'} onClose={() => setShow(false)} dismissible={dismissible}>
+      <Alert className={`text-center ${props.className}`} variant={props.variant || 'danger'} onClose={onClose} dismissible={dismissible}>
         {props.message || props.children}
       </Alert>
       }

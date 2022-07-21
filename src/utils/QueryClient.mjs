@@ -1,8 +1,7 @@
 import axios from "axios";
 import _ from "lodash";
 
-const QueryClient = async (chainId, rpcUrls, restUrls) => {
-  let rpcUrl = await findAvailableUrl(rpcUrls, "rpc")
+const QueryClient = async (chainId, restUrls) => {
   let restUrl = await findAvailableUrl(restUrls, "rest")
 
   const getAllValidators = (pageSize, opts, pageCallback) => {
@@ -90,12 +89,7 @@ const QueryClient = async (chainId, rpcUrls, restUrls) => {
 
   const getRewards = (address, opts) => {
     return axios
-      .get(
-        restUrl +
-          "/cosmos/distribution/v1beta1/delegators/" +
-          address +
-          "/rewards", opts
-      )
+      .get(`${restUrl}/cosmos/distribution/v1beta1/delegators/${address}/rewards`, opts)
       .then((res) => res.data)
       .then((result) => {
         const rewards = result.rewards.reduce(
@@ -106,47 +100,84 @@ const QueryClient = async (chainId, rpcUrls, restUrls) => {
       });
   };
 
-  const getGrants = (botAddress, address, opts) => {
+  const getCommission = (validatorAddress, opts) => {
+    return axios
+      .get(`${restUrl}/cosmos/distribution/v1beta1/validators/${validatorAddress}/commission`, opts)
+      .then((res) => res.data)
+      .then((result) => {
+        return result.commission
+      });
+  };
+
+  const getProposals = (opts) => {
+    const { pageSize } = opts || {}
+    return getAllPages((nextKey) => {
+      const searchParams = new URLSearchParams();
+      searchParams.append("pagination.limit", pageSize || 100);
+      if (nextKey) searchParams.append("pagination.key", nextKey);
+
+      return axios
+        .get(restUrl + "/cosmos/gov/v1beta1/proposals?" +
+          searchParams.toString(), opts)
+        .then((res) => res.data)
+    }).then((pages) => {
+      return pages.map(el => el.proposals).flat();
+    });
+  };
+
+  const getProposalTally = (proposal_id, opts) => {
+    return axios
+      .get(restUrl + "/cosmos/gov/v1beta1/proposals/" + proposal_id + '/tally', opts)
+      .then((res) => res.data)
+  };
+
+  const getProposalVote = (proposal_id, address, opts) => {
+    return axios
+      .get(restUrl + "/cosmos/gov/v1beta1/proposals/" + proposal_id + '/votes/' + address, opts)
+      .then((res) => res.data)
+  };
+
+  const getGranteeGrants = (grantee, opts) => {
+    const { pageSize } = opts || {}
+    return getAllPages((nextKey) => {
+      const searchParams = new URLSearchParams();
+      searchParams.append("pagination.limit", pageSize || 100);
+      if (nextKey) searchParams.append("pagination.key", nextKey);
+
+      return axios
+        .get(restUrl + "/cosmos/authz/v1beta1/grants/grantee/" + grantee + "?" +
+          searchParams.toString(), opts)
+        .then((res) => res.data)
+    }).then((pages) => {
+      return pages.map(el => el.grants).flat();
+    });
+  };
+
+  const getGranterGrants = (granter, opts) => {
+    const { pageSize } = opts || {}
+    return getAllPages((nextKey) => {
+      const searchParams = new URLSearchParams();
+      searchParams.append("pagination.limit", pageSize || 100);
+      if (nextKey) searchParams.append("pagination.key", nextKey);
+
+      return axios
+        .get(restUrl + "/cosmos/authz/v1beta1/grants/granter/" + granter + "?" +
+          searchParams.toString(), opts)
+        .then((res) => res.data)
+    }).then((pages) => {
+      return pages.map(el => el.grants).flat();
+    });
+  };
+
+  const getGrants = (grantee, granter, opts) => {
     const searchParams = new URLSearchParams();
-    if(botAddress) searchParams.append("grantee", botAddress);
-    if(address) searchParams.append("granter", address);
-    // searchParams.append("msg_type_url", "/cosmos.staking.v1beta1.MsgDelegate");
+    if(grantee) searchParams.append("grantee", grantee);
+    if(granter) searchParams.append("granter", granter);
     return axios
       .get(restUrl + "/cosmos/authz/v1beta1/grants?" + searchParams.toString(), opts)
       .then((res) => res.data)
       .then((result) => {
-        const claimGrant = result.grants.find((el) => {
-          if (
-            el.authorization["@type"] ===
-              "/cosmos.authz.v1beta1.GenericAuthorization" &&
-            el.authorization.msg ===
-              "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward"
-          ) {
-            return Date.parse(el.expiration) > new Date();
-          } else {
-            return false;
-          }
-        });
-        const stakeGrant = result.grants.find((el) => {
-          if (
-            el.authorization["@type"] ===
-            "/cosmos.staking.v1beta1.StakeAuthorization" || (
-              // Handle GenericAuthorization for Ledger
-              el.authorization["@type"] ===
-              "/cosmos.authz.v1beta1.GenericAuthorization" &&
-              el.authorization.msg ===
-              "/cosmos.staking.v1beta1.MsgDelegate"
-            )
-          ) {
-            return Date.parse(el.expiration) > new Date();
-          } else {
-            return false;
-          }
-        })
-        return {
-          claimGrant,
-          stakeGrant,
-        };
+        return result.grants
       });
   };
 
@@ -178,14 +209,15 @@ const QueryClient = async (chainId, rpcUrls, restUrls) => {
 
   async function findAvailableUrl(urls, type) {
     if (!Array.isArray(urls)) {
-      if(urls.match('cosmos.directory')){
+      if (urls.match('cosmos.directory')) {
         return urls // cosmos.directory health checks already
-      }else{
+      } else {
         urls = [urls]
       }
     }
     const path = type === "rest" ? "/blocks/latest" : "/block";
     return Promise.any(urls.map(async (url) => {
+      url = url.replace(/\/$/, '')
       try {
         let data = await axios.get(url + path, { timeout: 10000 })
           .then((res) => res.data)
@@ -198,8 +230,7 @@ const QueryClient = async (chainId, rpcUrls, restUrls) => {
   }
 
   return {
-    connected: !!rpcUrl && !!restUrl,
-    rpcUrl,
+    connected: !!restUrl,
     restUrl,
     getAllValidators,
     getValidators,
@@ -208,7 +239,13 @@ const QueryClient = async (chainId, rpcUrls, restUrls) => {
     getBalance,
     getDelegations,
     getRewards,
+    getCommission,
+    getProposals,
+    getProposalTally,
+    getProposalVote,
     getGrants,
+    getGranteeGrants,
+    getGranterGrants,
     getWithdrawAddress
   };
 };
