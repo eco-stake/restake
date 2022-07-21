@@ -1,8 +1,8 @@
 import axios from "axios";
 import _ from "lodash";
 
-const QueryClient = async (chainId, restUrls) => {
-  let restUrl = await findAvailableUrl(restUrls, "rest")
+const QueryClient = async (chainId, restUrls, network) => {
+  let restUrl = await findAvailableUrl(restUrls, "rest", network)
 
   const getAllValidators = (pageSize, opts, pageCallback) => {
     return getAllPages((nextKey) => {
@@ -207,7 +207,10 @@ const QueryClient = async (chainId, restUrls) => {
     return pages;
   };
 
-  async function findAvailableUrl(urls, type) {
+  async function findAvailableUrl(urls, type, network) {
+    if (type === "rest" && network === 'injective') {
+      return urls // ignore injective lcd due to error with /blocks/latest api
+    }
     if (!Array.isArray(urls)) {
       if (urls.match('cosmos.directory')) {
         return urls // cosmos.directory health checks already

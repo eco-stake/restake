@@ -95,7 +95,7 @@ class Network {
 
   async connect() {
     try {
-      this.queryClient = await QueryClient(this.chain.chainId, this.restUrl)
+      this.queryClient = await QueryClient(this.chain.chainId, this.restUrl, this.name);
       this.restUrl = this.queryClient.restUrl
       this.connected = this.queryClient.connected && (!this.usingDirectory || this.connectedDirectory())
     } catch (error) {

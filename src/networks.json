@@ -198,5 +198,12 @@
   {
     "name": "genesisl1",
     "txTimeout": 120000
+  },
+  {
+    "name": "shentu"
+  },
+  {
+    "name": "injective",
+    "authzSupport": true
   }
 ]

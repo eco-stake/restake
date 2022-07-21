@@ -124,3 +124,18 @@ export async function executeSync(calls, count) {
     await mapAsync(batchCall, call => call())
   }
 }
+
+export function getTxUrl(network, txHash) {
+  if (network === 'terra') {
+    return `https://finder.terra.money/mainnet/tx/${txHash}`;
+  }
+  const networkMapping = {
+    cosmoshub: 'cosmos',
+    gravitybridge: 'gravity-bridge',
+    lumnetwork: 'lum',
+    bandchain: 'band',
+    shentu: 'certik'
+  };
+  const mintScanNetwork = networkMapping[network] || network;
+  return `https://www.mintscan.io/${mintScanNetwork}/txs/${txHash}`;
+}

@@ -14,7 +14,8 @@ import { MsgExec } from "cosmjs-types/cosmos/authz/v1beta1/tx.js";
 import Network from '../src/utils/Network.mjs'
 import Wallet from '../src/utils/Wallet.mjs';
 import AutostakeHealth from "../src/utils/AutostakeHealth.mjs";
-import {coin, timeStamp, mapSync, executeSync, overrideNetworks, parseGrants} from '../src/utils/Helpers.mjs'
+import Notification from "../src/utils/Notification.mjs";
+import {coin, timeStamp, mapSync, executeSync, overrideNetworks, parseGrants, getTxUrl } from '../src/utils/Helpers.mjs'
 import EthSigner from '../src/utils/EthSigner.mjs';
 
 import 'dotenv/config'
@@ -63,6 +64,11 @@ export class Autostake {
         try {
           await this.runNetwork(client)
         } catch (error) {
+          Notification.send({
+            network: client.network.prettyName,
+            status: 'Fail',
+            error: error.message,
+          });
           return health.failed('Autostake failed, skipping network', error.message)
         }
       }
@@ -75,6 +81,11 @@ export class Autostake {
     const { network, health } = client 
     const balance = await this.checkBalance(client)
     if (!balance || smaller(balance, 1_000)) {
+      Notification.send({
+        network: client.network.prettyName,
+        status: 'Fail',
+        error: 'Bot balance is too low',
+      });
       return health.failed('Bot balance is too low')
     }
 
@@ -117,12 +128,28 @@ export class Autostake {
     }
 
     const operator = network.getOperatorByBotAddress(botAddress)
-    if (!operator) return timeStamp('Not an operator')
+    if (!operator) {
+      if (network.operators.length === 0) {
+        Notification.send({
+          network: network.prettyName,
+          status: 'Fail',
+          error: 'Operators list is empty',
+        });
+      }
+      return timeStamp('Not an operator')
+    }
 
     if (!network.authzSupport) return timeStamp('No Authz support')
 
     await network.connect()
-    if (!network.restUrl) throw new Error('Could not connect to REST API')
+    if (!network.restUrl) {
+      Notification.send({
+        network: network.prettyName,
+        status: 'Fail',
+        error: 'Could not connect to REST API',
+      });
+      throw new Error('Could not connect to REST API')
+    }
 
     const client = wallet.signingClient
     client.registry.register("/cosmos.authz.v1beta1.MsgExec", MsgExec)
@@ -319,6 +346,13 @@ export class Autostake {
       timeStamp(`TX ${index + 1}:`, result.message);
     }
     health.complete(`${network.prettyName} finished: Sent ${results.length - errors.length}/${results.length} messages`)
+    if (grantedAddresses.length === 0) {
+      Notification.send({
+        network: client.network.prettyName,
+        status: 'Success',
+        message: 'Nothing to do',
+      })
+    }
   }
 
   async sendInBatches(client, messages, batchSize, total){
@@ -356,16 +390,31 @@ export class Autostake {
         return await client.signingClient.signAndBroadcast(client.operator.botAddress, [execMsg], gas, memo).then((response) => {
           const message = `Sent ${messages.length} messages - ${response.transactionHash}`
           timeStamp(message)
+          Notification.send({
+            network: client.network.prettyName,
+            status: 'Success',
+            txUrl: getTxUrl(client.network.name, result.transactionHash),
+          });
           return { message }
         }, (error) => {
           const message = `Failed ${messages.length} messages - ${error.message}`
           client.health.error(message)
+          Notification.send({
+            network: client.network.prettyName,
+            status: 'Fail',
+            error: error.message,
+          });
           return { message, error }
         })
       }
     } catch (error) {
       const message = `Failed ${messages.length} TXs: ${error.message}`
       client.health.error(message)
+      Notification.send({
+        network: client.network.prettyName,
+        status: 'Fail',
+        error: error.message,
+      });
       return { message, error }
     }
   }
