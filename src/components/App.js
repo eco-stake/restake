@@ -420,7 +420,7 @@ class App extends React.Component {
     this.setState((state, props) => {
       if(!state.grants) return {}
 
-      const granterGrants = state.grants.granter.filter(filterGrant)
+      const granterGrants = state.grants.granter?.filter(filterGrant) || []
       granterGrants.push(grant)
       return { grants: { ...state.grants, granter: granterGrants } }
     })
