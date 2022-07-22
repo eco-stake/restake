@@ -90,10 +90,13 @@ class App extends React.Component {
     } else if (this.props.network !== prevProps.network) {
       this.setState({ balance: undefined, address: undefined, wallet: undefined, grants: undefined })
       this.connect()
-    }else if(this.state.address !== prevState.address && prevState.address){
+    }else if(this.state.address !== prevState.address){
+      this.clearRefreshInterval()
       this.setState({ balance: undefined, grants: undefined })
       this.getBalance()
-      this.getGrants()
+      this.getGrants().then(() => {
+        this.refreshInterval();
+      })
     }
     if(this.state.grants?.grantee !== prevState.grants?.grantee){
       if(this.state.wallet && this.state.wallet.address === this.state.address){
@@ -113,7 +116,7 @@ class App extends React.Component {
   }
 
   connected() {
-    return this.props.network?.connected && Object.values(this.props.validators).length > 0
+    return this.props.network?.connected
   }
 
   connectKeplr() {
@@ -135,7 +138,6 @@ class App extends React.Component {
   }
 
   async connect(manual) {
-    this.clearRefreshInterval()
     if (this.props.network && !this.connected()) {
       return this.setState({
         error: 'Could not connect to any available API servers'
@@ -190,10 +192,6 @@ class App extends React.Component {
           wallet: wallet,
           stargateClient: stargateClient,
           error: false
-        })
-        this.getBalance()
-        this.getGrants().then(() => {
-          this.refreshInterval();
         })
       } catch (e) {
         console.log(e)
@@ -268,7 +266,7 @@ class App extends React.Component {
   }
 
   toggleFavouriteAddress(address, label) {
-    const favourites = this.state.favouriteAddresses[this.props.network.path] || []
+    const favourites = this.favouriteAddresses()
     let newFavourites
     if (favourites.some(el => el.address === address)) {
       newFavourites = favourites.filter(el => el.address !== address)
@@ -283,8 +281,27 @@ class App extends React.Component {
     this.setState({ favouriteAddresses: newFavourites })
   }
 
+  favouriteAddresses(){
+    return this.state.favouriteAddresses[this.props.network.path] || []
+  }
+
+  currentFavouriteAddress(){
+    return this.favouriteAddresses().find(el => el.address === this.state.address)
+  }
+
   otherFavouriteAddresses() {
-    return (this.state.favouriteAddresses[this.props.network.path] || []).filter(el => el.address !== this.state.wallet.address)
+    return this.favouriteAddresses().filter(el => el.address !== this.state.wallet?.address)
+  }
+
+  viewingWallet() {
+    return this.state.address && this.state.address === this.state.wallet?.address
+  }
+
+  addressName() {
+    if(!this.state.address) return null
+    
+    if(this.viewingWallet()) return this.state.wallet.name
+    return this.currentFavouriteAddress()?.label || this.state.address
   }
 
   async getBalance() {
@@ -318,6 +335,7 @@ class App extends React.Component {
         }
       })
       granteeGrants = await this.props.queryClient.getGranteeGrants(address)
+      if (address !== this.state.address) return
       this.setState((state) => {
         if (address !== state.address) return {}
         return { 
@@ -338,18 +356,20 @@ class App extends React.Component {
     }
 
     let addresses = this.props.operators.map(el => el.botAddress)
-    const favourites = this.state.favouriteAddresses[this.props.network.path] || []
+    const favourites = this.favouriteAddresses()
     addresses = addresses.concat(favourites.filter(el => !addresses.includes(el.address)).map(el => el.address))
 
     granterGrants = await this.getGrantsIndividually(addresses.map(el => {
       return { grantee: el, granter: address }
     }))
+    if (address !== this.state.address) return
     this.setState((state) => {
       return { grantQuerySupport, grants: { ...state.grants, granter: granterGrants } }
     })
     granteeGrants = await this.getGrantsIndividually(favourites.map(el => {
       return { granter: el.address, grantee: address }
     }))
+    if (address !== this.state.address) return
     this.setState((state) => {
       return { grantQuerySupport, grants: { ...state.grants, grantee: granteeGrants } }
     })
@@ -403,7 +423,7 @@ class App extends React.Component {
     this.setState((state, props) => {
       if(!state.grants) return {}
 
-      const granterGrants = state.grants.granter.filter(filterGrant)
+      const granterGrants = state.grants.granter?.filter(filterGrant) || []
       granterGrants.push(grant)
       return { grants: { ...state.grants, granter: granterGrants } }
     })
@@ -530,6 +550,7 @@ class App extends React.Component {
               {this.themeIcon()}
               <NetworkSelect show={this.state.showNetworkSelect} onHide={() => { this.setState({ showNetworkSelect: false }) }} networks={this.props.networks}
                 network={this.props.network}
+                favourites={this.state.favourites || []}
                 validators={this.props.validators}
                 changeNetwork={this.props.changeNetwork} />
             </div>
@@ -570,84 +591,122 @@ class App extends React.Component {
             <nav className={`navbar navbar-expand ${this.props.theme === 'dark' ? 'navbar-dark' : 'navbar-light'}`}>
               <div className="justify-content-center">
                 <ul className="navbar-nav">
-                  {this.props.network && this.state.wallet ? (
+                  {this.props.network && (
                     <>
-                      <li className="nav-item pe-3 border-end d-flex align-items-center">
-                        <span className="pe-2">
-                          <Favourite
-                            favourites={this.state.favouriteAddresses[this.props.network.path] || []}
-                            value={this.state.address}
-                            label={this.state.address === this.state.wallet.address && this.state.wallet.name}
-                            toggle={this.toggleFavouriteAddress} />
-                        </span>
-                        <span className="pe-2">
-                          <TooltipIcon tooltip="Copy address">
-                            <span>
-                              <CopyToClipboard text={this.state.address}
-                                onCopy={() => this.setCopied()}>
-                                <span role="button" className="d-flex align-items-center">{this.state.copied ? <ClipboardCheck /> : <Clipboard />}</span>
-                              </CopyToClipboard>
-                            </span>
-                          </TooltipIcon>
-                        </span>
-                        <span className="pe-2">
-                          {this.state.wallet.address === this.state.address ? (
-                            <TooltipIcon tooltip="Viewing your wallet">
-                              <span role="button" onClick={() => this.setState({ showAddressModal: true })}>
-                                <Key />
+                      {(this.state.wallet || this.favouriteAddresses().length > 0) && (
+                        <li className="nav-item pe-3 border-end d-flex align-items-center">
+                          {this.state.address && (
+                            <>
+                              <span className="d-none d-md-inline pe-2">
+                                <Favourite
+                                  favourites={this.favouriteAddresses()}
+                                  value={this.state.address}
+                                  label={this.viewingWallet() && this.state.wallet?.name}
+                                  toggle={this.toggleFavouriteAddress} />
                               </span>
-                            </TooltipIcon>
-                          ) : (
-                            <TooltipIcon tooltip="Viewing saved address">
-                              <span role="button" onClick={() => this.setState({ showAddressModal: true })}>
-                                <Eye />
+                              <span className="d-none d-md-inline pe-2">
+                                <TooltipIcon tooltip="Copy address">
+                                  <span>
+                                    <CopyToClipboard text={this.state.address}
+                                      onCopy={() => this.setCopied()}>
+                                      <span role="button" className="d-flex align-items-center">{this.state.copied ? <ClipboardCheck /> : <Clipboard />}</span>
+                                    </CopyToClipboard>
+                                  </span>
+                                </TooltipIcon>
                               </span>
-                            </TooltipIcon>
+                              <span>
+                                {this.viewingWallet() ? (
+                                  <TooltipIcon tooltip="Viewing your wallet">
+                                    <span role="button" onClick={() => this.setState({ showAddressModal: true })}>
+                                      <Key />
+                                    </span>
+                                  </TooltipIcon>
+                                ) : (
+                                  <TooltipIcon tooltip="Viewing saved address">
+                                    <span role="button" onClick={() => this.setState({ showAddressModal: true })}>
+                                      <Eye />
+                                    </span>
+                                  </TooltipIcon>
+                                )}
+                              </span>
+                            </>
                           )}
-                        </span>
-                        {this.otherFavouriteAddresses().length < 1 ? (
-                          <span className="small d-none d-lg-inline">{this.state.wallet.name || this.state.wallet.address}</span>
-                        ) : (
-                          <select className="form-select form-select-sm d-none d-lg-block" aria-label="Address" value={this.state.address} onChange={(e) => this.setState({ address: e.target.value })}>
-                            <optgroup label="Wallet">
-                              <option value={this.state.wallet.address}>{this.state.wallet.name || this.state.wallet.address}</option>
-                            </optgroup>
-                            <optgroup label="Saved">
-                              {this.otherFavouriteAddresses().map(({ address, label }) => {
-                                return <option key={address} value={address}>{label || address}</option>
-                              })}
-                            </optgroup>
-                          </select>
-                        )}
-                      </li>
-                      <li className="nav-item ps-3 pt-1">
+                          {this.otherFavouriteAddresses().length < 1 && this.state.wallet ? (
+                            <span className="small d-none d-lg-inline ms-2">{this.state.wallet.name || this.state.wallet.address}</span>
+                          ) : (
+                            <select className="form-select form-select-sm d-none d-lg-block ms-2" aria-label="Address" value={this.state.address || ''} onChange={(e) => this.setState({ address: e.target.value })}>
+                              {this.state.wallet ? (
+                                <optgroup label="Wallet">
+                                  <option value={this.state.wallet.address}>{this.state.wallet.name || this.state.wallet.address}</option>
+                                </optgroup>
+                              ) : (
+                                <option value="">Choose address</option>
+                              )}
+                              <optgroup label="Saved">
+                                {this.otherFavouriteAddresses().map(({ address, label }) => {
+                                  return <option key={address} value={address}>{label || address}</option>
+                                })}
+                              </optgroup>
+                            </select>
+                          )}
+                        </li>
+                      )}
+                      <li className="nav-item ps-3">
                         <Dropdown as={ButtonGroup}>
                           <Dropdown.Toggle size="sm" className="rounded" id="dropdown-custom-1">
-                            <Coins
-                              coins={this.state.balance}
-                              decimals={this.props.network.decimals}
-                              className="me-1 d-none d-md-inline"
-                            />
-                            <CashCoin className="d-inline d-md-none" />
+                            {this.state.address ? (
+                              <>
+                                <Coins
+                                  coins={this.state.balance}
+                                  decimals={this.props.network.decimals}
+                                  className="me-1 d-none d-md-inline"
+                                />
+                                <CashCoin className="d-inline d-md-none" />
+                              </>
+                            ) : 'Connect'}
                           </Dropdown.Toggle>
                           <Dropdown.Menu>
-                            <Dropdown.Item
-                              disabled={!this.state.wallet?.hasPermission(this.state.address, 'Send')} 
-                              onClick={() => this.setState({ showSendModal: true })}
-                            >
-                              Send {this.props.network.symbol?.toUpperCase()}
-                            </Dropdown.Item>
+                            {this.state.address && (
+                              <div className="d-block d-md-none">
+                                <Dropdown.Header className="text-truncate">{this.addressName()}</Dropdown.Header>
+                                <Dropdown.Item>
+                                  <CopyToClipboard text={this.state.address}
+                                    onCopy={() => this.setCopied()}>
+                                    <Coins
+                                      coins={this.state.balance}
+                                      decimals={this.props.network.decimals}
+                                      className="small"
+                                    />
+                                  </CopyToClipboard>
+                                </Dropdown.Item>
+                                <Dropdown.Divider />
+                              </div>
+                            )}
+                            {this.state.wallet ? (
+                              <>
+                                <Dropdown.Item
+                                  disabled={!this.state.wallet?.hasPermission(this.state.address, 'Send')}
+                                  onClick={() => this.setState({ showSendModal: true })}
+                                >
+                                  Send {this.props.network.symbol?.toUpperCase()}
+                                </Dropdown.Item>
+                              </>
+                            ) : (
+                              <>
+                                <Dropdown.Item onClick={() => this.connect(true)} disabled={!window.keplr}>Connect Keplr Extension</Dropdown.Item>
+                                {/* <Dropdown.Item onClick={() => this.connect(true)} disabled={!window.falcon}>Connect Falcon Wallet</Dropdown.Item> */}
+                              </>
+
+                            )}
                             <Dropdown.Item onClick={() => this.setState({ showAddressModal: true })}>Saved Addresses</Dropdown.Item>
-                            <Dropdown.Divider />
-                            <Dropdown.Item onClick={this.disconnect}>Disconnect</Dropdown.Item>
+                            {this.state.address && (
+                              <>
+                                <Dropdown.Divider />
+                                <Dropdown.Item onClick={this.disconnect}>Disconnect</Dropdown.Item>
+                              </>
+                            )}
                           </Dropdown.Menu>
                         </Dropdown>
-                      </li>
-                    </>
-                  ) : this.props.network && (
-                    <>
-                      <li className="nav-item ps-3">
-                        <Button onClick={() => this.connect(true)} className="btn-sm">Connect</Button>
                       </li>
                     </>
                   )}
@@ -698,7 +757,7 @@ class App extends React.Component {
               network={this.props.network}
               address={this.state.address}
               wallet={this.state.wallet}
-              favouriteAddresses={this.state.favouriteAddresses[this.props.network.path] || []}
+              favouriteAddresses={this.favouriteAddresses()}
               queryClient={this.props.queryClient}
               stargateClient={this.state.stargateClient} />
           )}
@@ -710,7 +769,7 @@ class App extends React.Component {
               grants={this.state.grants}
               operators={this.props.operators}
               validators={this.props.validators}
-              favouriteAddresses={this.state.favouriteAddresses[this.props.network.path] || []}
+              favouriteAddresses={this.favouriteAddresses()}
               showFavouriteAddresses={() => this.setState({ showAddressModal: true })}
               toggleFavouriteAddress={this.toggleFavouriteAddress}
               onGrant={this.onGrant}
@@ -768,6 +827,7 @@ class App extends React.Component {
           wallet={this.state.wallet}
           favouriteAddresses={this.state.favouriteAddresses}
           updateFavouriteAddresses={this.updateFavouriteAddresses}
+          setAddress={(value) => this.setState({address: value, showAddressModal: false})}
         />
         {this.props.network && (
           <SendModal
@@ -776,7 +836,7 @@ class App extends React.Component {
             address={this.state.address}
             wallet={this.state.wallet}
             balance={this.state.balance}
-            favouriteAddresses={this.state.favouriteAddresses[this.props.network.path] || []}
+            favouriteAddresses={this.favouriteAddresses()}
             stargateClient={this.state.stargateClient}
             onHide={() => this.setState({ showSendModal: false })}
             onSend={this.onSend}

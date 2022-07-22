@@ -138,7 +138,7 @@ function ValidatorProfile(props) {
               {!!operator ? (
                 <span>{operator.runTimesString()} (<Coins coins={minimumReward()} decimals={network.decimals} /> min)</span>
               ) :
-                <TooltipIcon icon={<XCircle className="opacity-50" />} identifier={validator.operator_address} tooltip="This validator is not a REStake operator" />
+                <TooltipIcon icon={<XCircle className="opacity-50 p-0" />} identifier={validator.operator_address} tooltip="This validator is not a REStake operator" />
               }
             </td>
           </tr>

@@ -364,7 +364,7 @@ function Validators(props) {
                     </Dropdown.Item>
                   </Dropdown.Menu>
                 </Dropdown>
-              ) : props.address ? (
+              ) : props.address && wallet?.hasPermission(address, 'Delegate') ? (
                 <OverlayTrigger
                   placement="top"
                   overlay={

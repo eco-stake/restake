@@ -97,10 +97,14 @@ function VoteForm(props) {
   const voteChanged = vote && vote.option !== choice
 
   function canVote() {
-    if (!wallet.address || !proposal.isVoting) return false
-    if (!wallet.hasPermission(granter || wallet.address, 'Vote')) return false
+    if (!wallet?.address || !proposal.isVoting) return false
+    if (!hasPermission()) return false
 
     return choice && (!vote || (vote && voteChanged))
+  }
+
+  function hasPermission(){
+    return wallet && wallet.hasPermission(granter || wallet.address, 'Vote')
   }
 
   function buttonText() {
@@ -126,7 +130,7 @@ function VoteForm(props) {
                           <Form.Check.Input type='radio'
                             name={key}
                             checked={key === choice}
-                            disabled={!proposal.isVoting || !wallet?.hasPermission(granter || wallet.address, 'Vote')}
+                            disabled={!proposal.isVoting || !hasPermission()}
                             onChange={handleVoteChange}
                           />
                           <Form.Check.Label className="d-block text-nowrap">
