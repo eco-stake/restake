@@ -56,6 +56,8 @@ function Networks(props) {
   }
 
   async function changeNetwork(network){
+    if(!network.online) return 
+
     await network.load()
     await network.connect()
     props.changeNetwork(network)
@@ -85,7 +87,7 @@ function Networks(props) {
               <span onClick={() => toggleFavourite(network)} role="button" className="text-right position-absolute top-0 end-0 py-1 px-2" style={{ zIndex: 2 }}>
                 {renderFavourite(network)}
               </span>
-              <span role="button" className="stretched-link" onClick={() => changeNetwork(network)}>
+              <span role={ network.online ? "button" : "" } className="stretched-link" onClick={() => changeNetwork(network)}>
                 <Row className="g-0">
                   <Col xs={3} className="text-center">
                     <NetworkImage network={network} width={60} height={60} className="m-2 shadow overflow-hidden rounded-circle" />
