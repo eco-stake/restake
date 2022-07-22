@@ -335,6 +335,7 @@ class App extends React.Component {
         }
       })
       granteeGrants = await this.props.queryClient.getGranteeGrants(address)
+      if (address !== this.state.address) return
       this.setState((state) => {
         if (address !== state.address) return {}
         return { 
@@ -361,12 +362,14 @@ class App extends React.Component {
     granterGrants = await this.getGrantsIndividually(addresses.map(el => {
       return { grantee: el, granter: address }
     }))
+    if (address !== this.state.address) return
     this.setState((state) => {
       return { grantQuerySupport, grants: { ...state.grants, granter: granterGrants } }
     })
     granteeGrants = await this.getGrantsIndividually(favourites.map(el => {
       return { granter: el.address, grantee: address }
     }))
+    if (address !== this.state.address) return
     this.setState((state) => {
       return { grantQuerySupport, grants: { ...state.grants, grantee: granteeGrants } }
     })
