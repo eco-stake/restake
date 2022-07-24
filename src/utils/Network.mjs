@@ -153,6 +153,39 @@ class Network {
       {}
     )
   }
+
+  suggestChain(){
+    const currency = {
+      coinDenom: this.symbol,
+      coinMinimalDenom: this.denom,
+      coinDecimals: this.decimals,
+      coinGeckoId: this.coinGeckoId
+    }
+    const data = {
+      rpc: this.rpcUrl,
+      rest: this.restUrl,
+      chainId: this.chainId,
+      chainName: this.prettyName,
+      stakeCurrency: currency,
+      bip44: { coinType: this.slip44 },
+      walletUrlForStaking: "https://restake.app/" + this.name,
+      bech32Config: {
+        bech32PrefixAccAddr: this.prefix,
+        bech32PrefixAccPub: this.prefix + "pub",
+        bech32PrefixValAddr: this.prefix + "valoper",
+        bech32PrefixValPub: this.prefix + "valoperpub",
+        bech32PrefixConsAddr: this.prefix + "valcons",
+        bech32PrefixConsPub: this.prefix + "valconspub"
+      },
+      currencies: [currency],
+      feeCurrencies: [currency],
+      gasPriceStep: this.gasPriceStep
+    }
+    if(this.data.keplrFeatures){
+      data.features = this.data.keplrFeatures
+    }
+    return data
+  }
 }
 
 export default Network;
