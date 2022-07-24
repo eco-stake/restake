@@ -40,6 +40,11 @@ function CosmosDirectory(testnet){
       .then(res => res.data.validators)
   }
 
+  function getRegistryValidator(validatorName) {
+    return axios.get(validatorsUrl + '/' + validatorName)
+      .then(res => res.data.validator)
+  }
+
   function getOperatorAddresses(){
     return axios.get(validatorsUrl)
       .then(res => res.data)
@@ -64,6 +69,7 @@ function CosmosDirectory(testnet){
     getChainData,
     getTokenData,
     getValidators,
+    getRegistryValidator,
     getOperatorAddresses
   }
 }

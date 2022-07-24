@@ -24,6 +24,7 @@ import { XCircle } from "react-bootstrap-icons";
 
 import ValidatorName from "./ValidatorName";
 import ManageRestake from "./ManageRestake";
+import ValidatorServices from './ValidatorServices';
 
 function Validators(props) {
   const { address, wallet, network, validators, operators, delegations, operatorGrants } = props
@@ -266,7 +267,12 @@ function Validators(props) {
           </td>
         )}
         <td>
-          <div className="d-grid gap-2 d-md-flex justify-content-end">
+          <div className="d-grid gap-3 d-md-flex justify-content-end align-items-center">
+            {!props.modal && (
+              <div className="d-none d-md-block">
+                <ValidatorServices validator={validator} network={network} show={['stakingrewards']} />
+              </div>
+            )}
             {props.manageButton ? (
               <Button size="sm" onClick={() => props.showValidator(validator, {activeTab: 'delegate'})}>
                 {props.manageButton}
@@ -367,6 +373,7 @@ function Validators(props) {
               ) : props.address && wallet?.hasPermission(address, 'Delegate') ? (
                 <OverlayTrigger
                   placement="top"
+                  rootClose={true}
                   overlay={
                     <Tooltip id={`tooltip-${validatorAddress}`}>
                       Delegate to enable REStake
@@ -383,7 +390,7 @@ function Validators(props) {
                 </Button>
               )
             ) : (
-              <Button className="btn-sm btn-secondary mr-5" disabled>
+              <Button className="btn-sm btn-secondary" disabled>
                 <span
                   className="spinner-border spinner-border-sm"
                   role="status"

@@ -1,4 +1,5 @@
-import React from 'react';
+import _ from 'lodash'
+import React, { useState, useEffect } from 'react';
 
 import ValidatorLink from './ValidatorLink'
 import Coins from './Coins'
@@ -12,9 +13,20 @@ import {
 import {
   XCircle
 } from 'react-bootstrap-icons'
+import ValidatorServices from './ValidatorServices';
+import ValidatorNetworks from './ValidatorNetworks';
 
 function ValidatorProfile(props) {
-  const { validator, operator, network } = props
+  const { validator, operator, network, networks } = props
+  const [registryData, setRegistryData] = useState({})
+
+  useEffect(() => {
+    if(validator?.path){
+      network.directory.getRegistryValidator(validator.path).then(data => {
+        setRegistryData(data)
+      })
+    }
+  }, [validator]);
 
   const active = () => {
     if(!validator) return false
@@ -66,16 +78,19 @@ function ValidatorProfile(props) {
       denom: network.denom
     }
   }
+
+  const uptime = () => {
+    if(!validator.uptime_periods?.length) return null
+
+    const period = validator.uptime_periods.slice(-1)[0]
+    const blockPeriod = validator.missed_blocks_periods.slice(-1)[0]
+    return <span>{_.round(period.uptime * 100, 2)}% (missed {blockPeriod.missed.toLocaleString()} of {blockPeriod.blocks.toLocaleString()} blocks)</span>
+  }
+
   return (
     <>
       <Table>
         <tbody className="table-sm small">
-          {active() && (
-            <tr>
-              <td scope="row">Rank</td>
-              <td><span>#{validator.rank}</span></td>
-            </tr>
-          )}
           <tr>
             <td scope="row">Validator Address</td>
             <td className="text-break"><span>{validator.operator_address}</span></td>
@@ -86,6 +101,12 @@ function ValidatorProfile(props) {
               <td>{status()}</td>
             </tr>
           )}
+          {uptime() && (
+            <tr>
+              <td scope="row">Uptime</td>
+              <td>{uptime()}</td>
+            </tr>
+          )}
           {!!website() && (
             <tr>
               <td scope="row">Website</td>
@@ -93,14 +114,34 @@ function ValidatorProfile(props) {
             </tr>
           )}
           <tr>
-            <td scope="row">Commission</td>
-            <td><span>{validator.commission.commission_rates.rate * 100}%</span></td>
+            <td className="align-middle" scope="row">Profiles</td>
+            <td>
+              <ValidatorServices validator={validator} network={network} />
+            </td>
+          </tr>
+          {validator?.path && (
+            <tr>
+              <td className="align-middle" scope="row">Networks</td>
+              <td>
+                <ValidatorNetworks validator={validator} registryData={registryData} network={network} networks={networks} />
+              </td>
+            </tr>
+          )}
+          <tr>
+            <td scope="row">REStake</td>
+            <td>
+              {!!operator ? (
+                <span>{operator.runTimesString()} (<Coins coins={minimumReward()} decimals={network.decimals} /> min)</span>
+              ) :
+                <TooltipIcon icon={<XCircle className="opacity-50 p-0" />} identifier={validator.operator_address} tooltip="This validator is not a REStake operator" />
+              }
+            </td>
           </tr>
           {network.apyEnabled && (
             <tr>
               <td scope="row">
                 <TooltipIcon
-                  icon={<span className="text-decoration-underline">APY</span>}
+                  icon={<span className="p-0 text-decoration-underline">APY</span>}
                   identifier="delegations-apy"
                 >
                   <div className="mt-2 text-center">
@@ -122,26 +163,24 @@ function ValidatorProfile(props) {
               </td>
             </tr>
           )}
+          <tr>
+            <td scope="row">Commission</td>
+            <td><span>{validator.commission.commission_rates.rate * 100}%</span></td>
+          </tr>
+          <tr>
+            <td scope="row">Voting power</td>
+            <td><span>{bondedTokens()}</span></td>
+          </tr>
+          <tr>
+            <td scope="row">Rank</td>
+            <td><span>#{validator.rank}</span></td>
+          </tr>
           {!!securityContact() && (
             <tr>
               <td scope="row">Contact</td>
               <td><a href={`mailto:${securityContact()}`}>{securityContact()}</a></td>
             </tr>
           )}
-          <tr>
-            <td scope="row">Voting power</td>
-            <td><span>{bondedTokens()}</span></td>
-          </tr>
-          <tr>
-            <td scope="row">REStake</td>
-            <td>
-              {!!operator ? (
-                <span>{operator.runTimesString()} (<Coins coins={minimumReward()} decimals={network.decimals} /> min)</span>
-              ) :
-                <TooltipIcon icon={<XCircle className="opacity-50 p-0" />} identifier={validator.operator_address} tooltip="This validator is not a REStake operator" />
-              }
-            </td>
-          </tr>
         </tbody>
       </Table>
       <p>{validator.description.details}</p>

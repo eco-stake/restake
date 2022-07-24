@@ -714,6 +714,7 @@ class App extends React.Component {
             <>
               <Delegations
                 network={this.props.network}
+                networks={this.props.networks}
                 address={this.state.address}
                 wallet={this.state.wallet}
                 balance={this.state.balance}

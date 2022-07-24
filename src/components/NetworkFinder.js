@@ -173,7 +173,7 @@ function NetworkFinder() {
   }, [govMatch, params.network])
 
   useEffect(() => {
-    if (Object.keys(state.networks).length && !state.network) {
+    if (Object.keys(state.networks).length && (!state.network || state.network.path !== params.network)) {
       let networkName = params.network
       const network = state.networks[networkName]
       if (!network) {

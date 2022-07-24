@@ -208,6 +208,8 @@ const QueryClient = async (chainId, restUrls) => {
   };
 
   async function findAvailableUrl(urls, type) {
+    if(!urls) return
+
     if (!Array.isArray(urls)) {
       if (urls.match('cosmos.directory')) {
         return urls // cosmos.directory health checks already

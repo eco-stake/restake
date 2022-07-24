@@ -45,7 +45,7 @@ class Delegations extends React.Component {
   }
 
   async componentDidUpdate(prevProps, prevState) {
-    if (prevProps.validator !== this.props.validator && this.props.validator && !this.state.validatorModal.show) {
+    if (prevProps.validator !== this.props.validator && this.props.validator) {
       this.showValidatorModal(this.props.validator)
     }
 
@@ -365,6 +365,7 @@ class Delegations extends React.Component {
         redelegate={validatorModal.redelegate}
         undelegate={validatorModal.undelegate}
         network={this.props.network}
+        networks={this.props.networks}
         address={this.props.address}
         wallet={this.props.wallet}
         validators={this.props.validators}
