@@ -21,10 +21,12 @@ function ValidatorProfile(props) {
   const [registryData, setRegistryData] = useState({})
 
   useEffect(() => {
-    if(validator?.path){
+    if(validator?.path && network.directory){
       network.directory.getRegistryValidator(validator.path).then(data => {
         setRegistryData(data)
       })
+    }else{
+      setRegistryData({})
     }
   }, [validator]);
 

@@ -55,6 +55,7 @@ function ValidatorModal(props) {
       setSelectedValidator(null)
     } else {
       props.hideModal()
+      setSelectedValidator(null)
     }
   }
 
