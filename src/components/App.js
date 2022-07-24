@@ -207,7 +207,6 @@ class App extends React.Component {
 
     return window.keplr.experimentalSuggestChain(network.suggestChain())
   }
-  
 
   refreshInterval() {
     this.setState({ refresh: true })
