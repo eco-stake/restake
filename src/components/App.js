@@ -204,56 +204,9 @@ class App extends React.Component {
 
   suggestChain(network) {
     if (!window.keplr) return
-    const currency = {
-      coinDenom: network.symbol,
-      coinMinimalDenom: network.denom,
-      coinDecimals: network.decimals,
-      coinGeckoId: network.coinGeckoId
-    }
-    if (network.chainId === 'echelon_3000-3') {
-      return window.keplr.experimentalSuggestChain({
-          rpc: network.rpcUrl,
-          rest: network.restUrl,
-          chainId: network.chainId,
-          chainName: network.prettyName,
-          stakeCurrency: currency,
-          bip44: { coinType: network.slip44 },
-          walletUrlForStaking: "https://restake.app/" + network.name,
-          bech32Config: {
-            bech32PrefixAccAddr: network.prefix,
-            bech32PrefixAccPub: network.prefix + "pub",
-            bech32PrefixValAddr: network.prefix + "valoper",
-            bech32PrefixValPub: network.prefix + "valoperpub",
-            bech32PrefixConsAddr: network.prefix + "valcons",
-            bech32PrefixConsPub: network.prefix + "valconspub"
-          },
-          currencies: [currency],
-          features: ['ibc-transfer', 'ibc-go', 'eth-address-gen', 'eth-key-sign'],
-          feeCurrencies: [currency],
-          gasPriceStep: network.gasPriceStep
-        })           
-    } else {
-      return window.keplr.experimentalSuggestChain({
-        rpc: network.rpcUrl,
-        rest: network.restUrl,
-        chainId: network.chainId,
-        chainName: network.prettyName,
-        stakeCurrency: currency,
-        bip44: { coinType: network.slip44 },
-        walletUrlForStaking: "https://restake.app/" + network.name,
-        bech32Config: {
-          bech32PrefixAccAddr: network.prefix,
-          bech32PrefixAccPub: network.prefix + "pub",
-          bech32PrefixValAddr: network.prefix + "valoper",
-          bech32PrefixValPub: network.prefix + "valoperpub",
-          bech32PrefixConsAddr: network.prefix + "valcons",
-          bech32PrefixConsPub: network.prefix + "valconspub"
-        },
-        currencies: [currency],
-        feeCurrencies: [currency],
-        gasPriceStep: network.gasPriceStep
-      })
-    }
+
+    return window.keplr.experimentalSuggestChain(network.suggestChain())
+  }
   
 
   refreshInterval() {
