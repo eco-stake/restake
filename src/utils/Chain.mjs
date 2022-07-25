@@ -20,6 +20,8 @@ const Chain = async (data, directory) => {
     decimals: data.decimals || (token.exponent ?? 6),
     image: data.image || (asset.logo_URIs && (asset.logo_URIs.png || asset.logo_URIs.svg)),
     coinGeckoId: asset.coingecko_id,
+    services: chainData.services,
+    explorers: chainData.explorers,
     chainData,
     tokenData
   }

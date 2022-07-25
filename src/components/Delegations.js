@@ -45,7 +45,7 @@ class Delegations extends React.Component {
   }
 
   async componentDidUpdate(prevProps, prevState) {
-    if (prevProps.validator !== this.props.validator && this.props.validator && !this.state.validatorModal.show) {
+    if (prevProps.validator !== this.props.validator && this.props.validator) {
       this.showValidatorModal(this.props.validator)
     }
 
@@ -238,10 +238,14 @@ class Delegations extends React.Component {
 
   onRevoke(grantAddress, msgTypes) {
     const operator = this.props.operators.find(el => el.botAddress === grantAddress)
-    this.setState((state, props) => ({
-      error: null,
-      validatorLoading: _.set(state.validatorLoading, operator.address, false),
-    }));
+    if(operator){
+      this.setState((state, props) => ({
+        error: null,
+        validatorLoading: _.set(state.validatorLoading, operator.address, false),
+      }));
+    }else{
+      this.setState({ error: null });
+    }
     this.props.onRevoke(grantAddress, msgTypes)
   }
 
@@ -360,11 +364,13 @@ class Delegations extends React.Component {
     return (
       <ValidatorModal
         show={validatorModal.show}
+        theme={this.props.theme}
         validator={validatorModal.validator}
         activeTab={validatorModal.activeTab}
         redelegate={validatorModal.redelegate}
         undelegate={validatorModal.undelegate}
         network={this.props.network}
+        networks={this.props.networks}
         address={this.props.address}
         wallet={this.props.wallet}
         validators={this.props.validators}
@@ -430,6 +436,7 @@ class Delegations extends React.Component {
         {alerts}
         <div className="mb-2">
           <Validators 
+            theme={this.props.theme}
             network={this.props.network}
             address={this.props.address}
             wallet={this.props.wallet}

@@ -420,7 +420,7 @@ class App extends React.Component {
       return true;
     }
     this.setState((state, props) => {
-      if(!state.grants) return {}
+      if(!state.grants || !state.grants.granter) return {}
 
       const granterGrants = state.grants.granter.filter(filterGrant)
       return { grants: { ...state.grants, granter: granterGrants } }
@@ -713,7 +713,9 @@ class App extends React.Component {
           {this.props.active === 'delegations' &&
             <>
               <Delegations
+                theme={this.props.theme}
                 network={this.props.network}
+                networks={this.props.networks}
                 address={this.state.address}
                 wallet={this.state.wallet}
                 balance={this.state.balance}

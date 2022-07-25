@@ -25,6 +25,8 @@ function ValidatorModal(props) {
   const params = useParams();
 
   useEffect(() => {
+    if(params.network !== network.name) return
+
     if (props.show && selectedValidator && validator?.operator_address === selectedValidator.operator_address && params.validator !== selectedValidator.operator_address) {
       navigate(`/${network.name}/${selectedValidator.operator_address}`)
     } else if (params.validator && props.show === false) {
@@ -53,6 +55,7 @@ function ValidatorModal(props) {
       setSelectedValidator(null)
     } else {
       props.hideModal()
+      setSelectedValidator(null)
     }
   }
 
@@ -181,7 +184,9 @@ function ValidatorModal(props) {
               <Tab.Content>
                 <Tab.Pane eventKey="profile">
                   <ValidatorProfile
+                    theme={props.theme}
                     network={network}
+                    networks={props.networks}
                     validator={selectedValidator}
                     operator={operator()}
                     validatorApy={props.validatorApy} />

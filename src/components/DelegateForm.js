@@ -104,6 +104,8 @@ class DelegateForm extends React.Component {
   }
 
   async setAvailableAmount(){
+    if(!this.props.wallet) return
+
     this.setState({error: undefined})
     const messages = this.buildMessages(multiply(this.props.availableBalance.amount, 0.95))
     this.props.stargateClient.simulate(this.props.wallet.address, messages).then(gas => {
@@ -141,7 +143,7 @@ class DelegateForm extends React.Component {
         </Alert>
         }
         <Form onSubmit={this.handleSubmit}>
-          <fieldset disabled={!this.props.address}>
+          <fieldset disabled={!this.props.address || !this.props.wallet}>
             <Form.Group className="mb-3">
               <Form.Label>Amount</Form.Label>
               <div className="mb-3">
