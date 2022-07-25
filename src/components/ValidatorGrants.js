@@ -140,7 +140,7 @@ function ValidatorGrants(props) {
     return (
       <>
         <p className="small">{operator.moniker} will be able to carry out the following transactions on your behalf.</p>
-        <p className="small"><strong>Delegate</strong> - allowed to delegate <em>{maxTokensDenom() ? <Coins coins={{ amount: maxTokensDenom(), denom: network.denom }} decimals={network.decimals} /> : 'any amount'}</em> to <em>{!state.validators ? 'any validator' : !state.validators.length || (state.validators.length === 1 && state.validators.includes(operator.address)) ? 'only their own validator' : 'validators ' + state.validators.join(', ')}</em>.</p>
+        <p className="small"><strong>Delegate</strong> - allowed to delegate <em>{maxTokensDenom() ? <Coins coins={{ amount: maxTokensDenom(), denom: network.denom }} asset={network.baseAsset} /> : 'any amount'}</em> to <em>{!state.validators ? 'any validator' : !state.validators.length || (state.validators.length === 1 && state.validators.includes(operator.address)) ? 'only their own validator' : 'validators ' + state.validators.join(', ')}</em>.</p>
         <p className="small">This grant will expire automatically on <em>{state.expiryDateValue}</em>.</p>
         <p className="small">REStake only re-delegates {operator.moniker}'s accrued rewards and tries not to touch your balance.</p>
         <p className="small"><em>REStake previously required a Withdraw grant but this is no longer necessary.</em></p>
@@ -191,20 +191,20 @@ function ValidatorGrants(props) {
           <tr>
             <td scope="row">Minimum Reward</td>
             <td>
-              <Coins coins={minimumReward()} decimals={network.decimals} />
+              <Coins coins={minimumReward()} asset={network.baseAsset} />
             </td>
           </tr>
           <tr>
             <td scope="row">Current Rewards</td>
             <td>
-              <Coins coins={{ amount: props.rewards, denom: network.denom }} decimals={network.decimals} />
+              <Coins coins={{ amount: props.rewards, denom: network.denom }} asset={network.baseAsset} />
             </td>
           </tr>
           {state.maxTokens && (
             <tr>
               <td scope="row">Grant Remaining</td>
               <td className={!props.rewards || larger(state.maxTokens, props.rewards) ? 'text-success' : 'text-danger'}>
-                <Coins coins={{ amount: state.maxTokens, denom: network.denom }} decimals={network.decimals} />
+                <Coins coins={{ amount: state.maxTokens, denom: network.denom }} asset={network.baseAsset} />
               </td>
             </tr>
           )}
@@ -239,7 +239,7 @@ function ValidatorGrants(props) {
                 <div className="mb-3">
                   <div className="input-group">
                     <Form.Control type="number" name="maxTokensValue" min={divide(1, pow(10, network.decimals))} className={!maxTokensValid() ? 'is-invalid' : 'is-valid'} step={step()} placeholder={maxTokens ? divide(maxTokens, pow(10, network.decimals)) : 'Unlimited'} required={false} value={state.maxTokensValue} onChange={handleInputChange} />
-                    <span className="input-group-text">{network.symbol.toUpperCase()}</span>
+                    <span className="input-group-text">{network.symbol}</span>
                   </div>
                   <div className="form-text text-end">
                     Reduces with every delegation made by the validator<br />Leave empty for unlimited

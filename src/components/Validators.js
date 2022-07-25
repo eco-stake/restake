@@ -207,7 +207,7 @@ function Validators(props) {
                     Minimum reward is{" "}
                     <Coins
                       coins={minimumReward}
-                      decimals={network.decimals}
+                      asset={network.baseAsset}
                       fullPrecision={true}
                     />
                   </p>
@@ -236,7 +236,7 @@ function Validators(props) {
           <small>
             <Coins
               coins={delegationBalance}
-              decimals={network.decimals}
+              asset={network.baseAsset}
             />
           </small>
         </td>
@@ -247,7 +247,7 @@ function Validators(props) {
                 <Coins
                   key={denomRewards.denom}
                   coins={denomRewards}
-                  decimals={network.decimals}
+                  asset={network.baseAsset}
                 />
               </small>
             )}
@@ -260,7 +260,7 @@ function Validators(props) {
                 <Coins
                   key={denomCommission.denom}
                   coins={denomCommission}
-                  decimals={network.decimals}
+                  asset={network.baseAsset}
                 />
               </small>
             )}
@@ -515,7 +515,7 @@ function Validators(props) {
                       }, 0),
                       denom: network.denom
                     }}
-                    decimals={network.decimals} />
+                    asset={network.baseAsset} />
                 </strong>
               </td>
               {!props.modal && (
@@ -532,7 +532,7 @@ function Validators(props) {
                           }, 0),
                           denom: network.denom
                         }}
-                        decimals={network.decimals} />
+                        asset={network.baseAsset} />
                     </strong>
                   )}
                 </td>
@@ -551,7 +551,7 @@ function Validators(props) {
                           }, 0),
                           denom: network.denom
                         }}
-                        decimals={network.decimals} />
+                        asset={network.baseAsset} />
                     </strong>
                   )}
                 </td>

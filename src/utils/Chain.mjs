@@ -1,12 +1,13 @@
-import CosmosDirectory from './CosmosDirectory.mjs'
+import ChainAsset from "./ChainAsset.mjs";
 
 const Chain = async (data, directory) => {
   const chainData = await directory.getChainData(data.name);
   const tokenData = await directory.getTokenData(data.name);
 
-  const asset = tokenData.assets[0]
-  const base = asset.denom_units.find(el => el.denom === asset.base)
-  const token = asset.denom_units.find(el => el.denom === asset.display)
+  const assets = tokenData.assets.map(el => ChainAsset(el))
+  const baseAsset = assets[0]
+  const base = baseAsset.base
+  const display = baseAsset.display
 
   return {
     prettyName: data.prettyName || chainData.pretty_name,
@@ -15,13 +16,16 @@ const Chain = async (data, directory) => {
     slip44: data.slip44 || chainData.slip44 || 118,
     estimatedApr: chainData.params?.calculated_apr,
     authzSupport: data.authzSupport ?? chainData.params?.authz,
-    denom: data.denom || base.denom,
-    symbol: data.symbol || token.denom,
-    decimals: data.decimals || (token.exponent ?? 6),
-    image: data.image || (asset.logo_URIs && (asset.logo_URIs.png || asset.logo_URIs.svg)),
-    coinGeckoId: asset.coingecko_id,
+    denom: data.denom || baseAsset.base?.denom,
+    display: data.display || baseAsset.display?.denom,
+    symbol: data.symbol || baseAsset.symbol,
+    decimals: data.decimals || baseAsset.decimals,
+    image: data.image || baseAsset.image,
+    coinGeckoId: baseAsset.coingecko_id,
     services: chainData.services,
     explorers: chainData.explorers,
+    assets,
+    baseAsset,
     chainData,
     tokenData
   }
