@@ -238,10 +238,14 @@ class Delegations extends React.Component {
 
   onRevoke(grantAddress, msgTypes) {
     const operator = this.props.operators.find(el => el.botAddress === grantAddress)
-    this.setState((state, props) => ({
-      error: null,
-      validatorLoading: _.set(state.validatorLoading, operator.address, false),
-    }));
+    if(operator){
+      this.setState((state, props) => ({
+        error: null,
+        validatorLoading: _.set(state.validatorLoading, operator.address, false),
+      }));
+    }else{
+      this.setState({ error: null });
+    }
     this.props.onRevoke(grantAddress, msgTypes)
   }
 
