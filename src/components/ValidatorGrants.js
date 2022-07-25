@@ -233,6 +233,7 @@ function ValidatorGrants(props) {
           </div>
           <div className="col">
             <Form onSubmit={handleSubmit}>
+          <fieldset disabled={!props.address || !props.wallet}>
               <Form.Group className="mb-3">
                 <Form.Label>Max amount</Form.Label>
                 <div className="mb-3">
@@ -276,6 +277,7 @@ function ValidatorGrants(props) {
                   </Button>
                 }
               </p>
+            </fieldset>
             </Form>
           </div>
         </div>
