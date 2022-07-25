@@ -713,6 +713,7 @@ class App extends React.Component {
           {this.props.active === 'delegations' &&
             <>
               <Delegations
+                theme={this.props.theme}
                 network={this.props.network}
                 networks={this.props.networks}
                 address={this.state.address}

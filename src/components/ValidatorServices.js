@@ -4,21 +4,25 @@ import {
 } from 'react-bootstrap'
 
 import StakingRewardsIcon from '../assets/staking-rewards.svg'
+import StakingRewardsWhiteIcon from '../assets/staking-rewards-white.svg'
 import StakingRewardsVerifiedIcon from '../assets/staking-rewards-verified.svg'
+import StakingRewardsVerifiedWhiteIcon from '../assets/staking-rewards-verified-white.svg'
 import Cosmostation from '../assets/cosmostation.svg'
 import PingPub from '../assets/ping-pub.svg'
 import NodesGuru from '../assets/nodes-guru.svg'
 
 function ValidatorServices(props) {
-  const { validator, network } = props
+  const { validator, network, theme } = props
 
   const services = []
 
   if(validator.services?.staking_rewards){
+    let icon = validator.services.staking_rewards.verified ? StakingRewardsVerifiedIcon : StakingRewardsIcon
+    if(theme === 'dark') icon = validator.services.staking_rewards.verified ? StakingRewardsVerifiedWhiteIcon : StakingRewardsWhiteIcon
     services.push({
       key: 'stakingrewards',
       tooltip: <span>Staking Rewards <br />{validator.services.staking_rewards.verified ? 'Verified' : ''} Provider</span>,
-      icon: validator.services.staking_rewards.verified ? StakingRewardsVerifiedIcon : StakingRewardsIcon,
+      icon: icon,
       url: `https://www.stakingrewards.com/savings/${validator.services.staking_rewards.slug}`
     })
   }

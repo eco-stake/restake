@@ -270,7 +270,7 @@ function Validators(props) {
           <div className="d-grid gap-3 d-md-flex justify-content-end align-items-center">
             {!props.modal && (
               <div className="d-none d-md-block">
-                <ValidatorServices validator={validator} network={network} show={['stakingrewards']} />
+                <ValidatorServices validator={validator} network={network} show={['stakingrewards']} theme={props.theme} />
               </div>
             )}
             {props.manageButton ? (

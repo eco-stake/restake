@@ -360,6 +360,7 @@ class Delegations extends React.Component {
     return (
       <ValidatorModal
         show={validatorModal.show}
+        theme={this.props.theme}
         validator={validatorModal.validator}
         activeTab={validatorModal.activeTab}
         redelegate={validatorModal.redelegate}
@@ -431,6 +432,7 @@ class Delegations extends React.Component {
         {alerts}
         <div className="mb-2">
           <Validators 
+            theme={this.props.theme}
             network={this.props.network}
             address={this.props.address}
             wallet={this.props.wallet}

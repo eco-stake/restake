@@ -184,6 +184,7 @@ function ValidatorModal(props) {
               <Tab.Content>
                 <Tab.Pane eventKey="profile">
                   <ValidatorProfile
+                    theme={props.theme}
                     network={network}
                     networks={props.networks}
                     validator={selectedValidator}

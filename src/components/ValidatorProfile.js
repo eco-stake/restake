@@ -118,7 +118,7 @@ function ValidatorProfile(props) {
           <tr>
             <td className="align-middle" scope="row">Profiles</td>
             <td>
-              <ValidatorServices validator={validator} network={network} />
+              <ValidatorServices validator={validator} network={network} theme={props.theme} />
             </td>
           </tr>
           {validator?.path && (
