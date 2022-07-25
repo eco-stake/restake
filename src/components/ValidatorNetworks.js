@@ -32,7 +32,7 @@ function ValidatorNetworks(props) {
         active
       }
     }
-  })), 'key')
+  })), 'key').sort((a, b) => a.name > b.name ? 1 : -1)
 
   return (
     <div className="d-flex flex-wrap gap-1 align-items-center">
