@@ -127,7 +127,7 @@ class DelegateForm extends React.Component {
   }
 
   denom(){
-    return this.props.network.symbol.toUpperCase()
+    return this.props.network.symbol
   }
 
   step(){
@@ -153,7 +153,7 @@ class DelegateForm extends React.Component {
                 </div>
                 {this.props.availableBalance &&
                   <div className="form-text text-end"><span role="button" onClick={() => this.setAvailableAmount()}>
-                    Available: <Coins coins={this.props.availableBalance} decimals={this.props.network.decimals} />
+                    Available: <Coins coins={this.props.availableBalance} asset={this.props.network.baseAsset} />
                   </span></div>
                 }
               </div>

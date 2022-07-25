@@ -71,7 +71,7 @@ function ValidatorProfile(props) {
     if (!validator) return
 
     const amount = validator.tokens
-    return <Coins coins={{ amount: amount, denom: network.denom }} decimals={network.decimals} />
+    return <Coins coins={{ amount: amount, denom: network.denom }} asset={network.baseAsset} />
   }
 
   const minimumReward = () => {
@@ -133,7 +133,7 @@ function ValidatorProfile(props) {
             <td scope="row">REStake</td>
             <td>
               {!!operator ? (
-                <span>{operator.runTimesString()} (<Coins coins={minimumReward()} decimals={network.decimals} /> min)</span>
+                <span>{operator.runTimesString()} (<Coins coins={minimumReward()} asset={network.baseAsset} /> min)</span>
               ) :
                 <TooltipIcon icon={<XCircle className="opacity-50 p-0" />} identifier={validator.operator_address} tooltip="This validator is not a REStake operator" />
               }

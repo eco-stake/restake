@@ -72,7 +72,10 @@ class Network {
     this.chainId = this.chain.chainId
     this.prefix = this.chain.prefix
     this.slip44 = this.chain.slip44
+    this.assets = this.chain.assets
+    this.baseAsset = this.chain.baseAsset
     this.denom = this.chain.denom
+    this.display = this.chain.display
     this.symbol = this.chain.symbol
     this.decimals = this.chain.decimals
     this.image = this.chain.image
@@ -156,7 +159,7 @@ class Network {
 
   suggestChain(){
     const currency = {
-      coinDenom: this.symbol,
+      coinDenom: this.display,
       coinMinimalDenom: this.denom,
       coinDecimals: this.decimals,
       coinGeckoId: this.coinGeckoId

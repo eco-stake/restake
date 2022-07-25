@@ -105,7 +105,7 @@ function ProposalDetails(props) {
                     <td scope="row">Total deposit</td>
                     <td>
                       {proposal.total_deposit.map(coins => {
-                        return <Coins key={coins.denom} coins={coins} decimals={network.decimals} />
+                        return <Coins key={coins.denom} coins={coins} asset={network.baseAsset} />
                       })}
                     </td>
                   </tr>

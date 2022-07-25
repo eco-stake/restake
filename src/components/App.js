@@ -634,7 +634,7 @@ class App extends React.Component {
                               <>
                                 <Coins
                                   coins={this.state.balance}
-                                  decimals={this.props.network.decimals}
+                                  asset={this.props.network.baseAsset}
                                   className="me-1 d-none d-md-inline"
                                 />
                                 <CashCoin className="d-inline d-md-none" />
@@ -650,7 +650,7 @@ class App extends React.Component {
                                     onCopy={() => this.setCopied()}>
                                     <Coins
                                       coins={this.state.balance}
-                                      decimals={this.props.network.decimals}
+                                      asset={this.props.network.baseAsset}
                                       className="small"
                                     />
                                   </CopyToClipboard>
@@ -664,7 +664,7 @@ class App extends React.Component {
                                   disabled={!this.state.wallet?.hasPermission(this.state.address, 'Send')}
                                   onClick={() => this.setState({ showSendModal: true })}
                                 >
-                                  Send {this.props.network.symbol?.toUpperCase()}
+                                  Send {this.props.network.symbol}
                                 </Dropdown.Item>
                               </>
                             ) : (
