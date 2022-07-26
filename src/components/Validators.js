@@ -160,7 +160,7 @@ function Validators(props) {
 
     return (
       <tr key={validatorAddress} className={rowVariant}>
-        <td>{validator.rank || '-'}</td>
+        <td className="d-none d-md-table-cell">{validator.rank || '-'}</td>
         <td width={30}>
           <ValidatorImage
             validator={validator}
@@ -267,11 +267,9 @@ function Validators(props) {
           </td>
         )}
         <td>
-          <div className="d-grid gap-3 d-md-flex justify-content-end align-items-center">
+          <div className="d-grid flex-row gap-2 gap-sm-3 d-flex justify-content-end align-items-center">
             {!props.modal && (
-              <div className="d-none d-md-block">
-                <ValidatorServices validator={validator} network={network} show={['stakingrewards']} theme={props.theme} />
-              </div>
+              <ValidatorServices validator={validator} network={network} show={['stakingrewards']} theme={props.theme} />
             )}
             {props.manageButton ? (
               <Button size="sm" onClick={() => props.showValidator(validator, {activeTab: 'delegate'})}>
@@ -370,25 +368,31 @@ function Validators(props) {
                     </Dropdown.Item>
                   </Dropdown.Menu>
                 </Dropdown>
-              ) : props.address && wallet?.hasPermission(address, 'Delegate') ? (
-                <OverlayTrigger
-                  placement="top"
-                  rootClose={true}
-                  overlay={
-                    <Tooltip id={`tooltip-${validatorAddress}`}>
-                      Delegate to enable REStake
-                    </Tooltip>
-                  }
-                >
-                  <Button variant="primary" size="sm" disabled={!wallet?.hasPermission(address, 'Delegate')} onClick={() => props.showValidator(validator, { activeTab: 'delegate' })}>
-                    Delegate
+                ) : props.address && wallet?.hasPermission(address, 'Delegate') ? (
+                  operator ? (
+                    <OverlayTrigger
+                      placement="top"
+                      rootClose={true}
+                      overlay={
+                        <Tooltip id={`tooltip-${validatorAddress}`}>
+                          Delegate to enable REStake
+                        </Tooltip>
+                      }
+                    >
+                      <Button variant="primary" size="sm" disabled={!wallet?.hasPermission(address, 'Delegate')} onClick={() => props.showValidator(validator, { activeTab: 'delegate' })}>
+                        Delegate
+                      </Button>
+                    </OverlayTrigger>
+                  ) : (
+                    <Button variant="primary" size="sm" disabled={!wallet?.hasPermission(address, 'Delegate')} onClick={() => props.showValidator(validator, { activeTab: 'delegate' })}>
+                      Delegate
+                    </Button>
+                  )
+                ) : (
+                  <Button variant="primary" size="sm" onClick={() => props.showValidator(validator)}>
+                    View
                   </Button>
-                </OverlayTrigger>
-              ) : (
-                <Button variant="primary" size="sm" onClick={() => props.showValidator(validator)}>
-                  View
-                </Button>
-              )
+                )
             ) : (
               <Button className="btn-sm btn-secondary" disabled>
                 <span
@@ -460,7 +464,7 @@ function Validators(props) {
         <Table className="align-middle table-striped">
           <thead>
             <tr>
-              <th>#</th>
+              <th className="d-none d-md-table-cell">#</th>
               <th colSpan={2}>Validator</th>
               <th className="d-none d-sm-table-cell text-center">REStake</th>
               <th className="d-none d-lg-table-cell text-center">
@@ -495,7 +499,7 @@ function Validators(props) {
           </tbody>
           <tfoot>
             <tr>
-              <td></td>
+              <td className="d-none d-md-table-cell"></td>
               <td colSpan={2}></td>
               <td className="d-none d-sm-table-cell text-center"></td>
               <td className="d-none d-lg-table-cell text-center"></td>

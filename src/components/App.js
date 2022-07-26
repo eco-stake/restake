@@ -608,7 +608,7 @@ class App extends React.Component {
                             </>
                           )}
                           {this.otherFavouriteAddresses().length < 1 && this.state.wallet ? (
-                            <span className="small d-none d-lg-inline ms-2">{this.state.wallet.name || this.state.wallet.address}</span>
+                            <span role="button" onClick={() => this.setState({ showAddressModal: true })} className="small d-none d-lg-inline ms-2">{this.state.wallet.name || this.state.wallet.address}</span>
                           ) : (
                             <select className="form-select form-select-sm d-none d-lg-block ms-2" aria-label="Address" value={this.state.address || ''} onChange={(e) => this.setState({ address: e.target.value })}>
                               {this.state.wallet ? (

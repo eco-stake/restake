@@ -28,6 +28,13 @@ function AddressModal(props) {
 
   function onHide(){
     props.onHide()
+    setSelectedNetwork(network)
+  }
+
+  function setAddress(address){
+    if(selectedNetwork.path === network.path){
+      props.setAddress(address)
+    }
   }
 
   function updateAddress(address, label){
@@ -84,7 +91,7 @@ function AddressModal(props) {
                     return (
                       <tr key={address}>
                         <td className="text-break">
-                          <span role="button" onClick={() => props.setAddress(address)}>{props.address === address ? <strong>{address}</strong> : address}</span>
+                          <span role="button" onClick={() => setAddress(address)}>{props.address === address ? <strong>{address}</strong> : address}</span>
                           {props.wallet?.address === address && (
                             <span className="ms-2"><Key /></span>
                           )}
