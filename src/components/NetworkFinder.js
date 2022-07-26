@@ -187,14 +187,7 @@ function NetworkFinder() {
       network.load().then(() => {
         return network.connect().then(() => {
           if (network.connected) {
-            setState({
-              active: grantMatch ? 'grants' : govMatch ? 'governance' : 'delegations',
-              network: network,
-              queryClient: network.queryClient,
-              validators: network.getValidators(),
-              operators: network.getOperators(),
-              loading: false
-            })
+            changeNetwork(network)
           } else {
             throw false
           }

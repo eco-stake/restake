@@ -40,16 +40,16 @@ function ValidatorProfile(props) {
     if(!validator) return
 
     let status = ''
-    let className = ''
+    let className = 'p-0'
     if(active()){
       status = 'Active'
     }else{
       status = 'Inactive'
-      className = 'text-danger'
+      className += ' text-danger'
     }
     if(validator.jailed){
       status += ' (JAILED)' 
-      className = 'text-danger'
+      className += ' text-danger'
     }
 
     return <span className={className}>{status}</span>
@@ -86,7 +86,7 @@ function ValidatorProfile(props) {
 
     const period = validator.uptime_periods.slice(-1)[0]
     const blockPeriod = validator.missed_blocks_periods.slice(-1)[0]
-    return <span>{_.round(period.uptime * 100, 2)}% (missed {blockPeriod.missed.toLocaleString()} of {blockPeriod.blocks.toLocaleString()} blocks)</span>
+    return <span className="p-0">{_.round(period.uptime * 100, 2)}% (missed {blockPeriod.missed.toLocaleString()} of {blockPeriod.blocks.toLocaleString()} blocks)</span>
   }
 
   return (
@@ -95,7 +95,7 @@ function ValidatorProfile(props) {
         <tbody className="table-sm small">
           <tr>
             <td scope="row">Validator Address</td>
-            <td className="text-break"><span>{validator.operator_address}</span></td>
+            <td className="text-break"><span className="p-0">{validator.operator_address}</span></td>
           </tr>
           {!active() && (
             <tr>
@@ -112,7 +112,7 @@ function ValidatorProfile(props) {
           {!!website() && (
             <tr>
               <td scope="row">Website</td>
-              <td><ValidatorLink className="text-decoration-underline" validator={validator}>{website()}</ValidatorLink></td>
+              <td className="text-break"><ValidatorLink className="text-decoration-underline p-0" validator={validator}>{website()}</ValidatorLink></td>
             </tr>
           )}
           <tr>
@@ -133,7 +133,7 @@ function ValidatorProfile(props) {
             <td scope="row">REStake</td>
             <td>
               {!!operator ? (
-                <span>{operator.runTimesString()} (<Coins coins={minimumReward()} asset={network.baseAsset} /> min)</span>
+                <span className="p-0">{operator.runTimesString()} (<Coins coins={minimumReward()} asset={network.baseAsset} /> min)</span>
               ) :
                 <TooltipIcon icon={<XCircle className="opacity-50 p-0" />} identifier={validator.operator_address} tooltip="This validator is not a REStake operator" />
               }
@@ -155,7 +155,7 @@ function ValidatorProfile(props) {
               <td>
                 {Object.keys(props.validatorApy).length > 0
                   ? props.validatorApy[validator.operator_address]
-                    ? <span>{Math.round(props.validatorApy[validator.operator_address] * 100).toLocaleString()}%</span>
+                    ? <span className="p-0">{Math.round(props.validatorApy[validator.operator_address] * 100).toLocaleString()}%</span>
                     : "-"
                   : (
                     <Spinner animation="border" role="status" className="spinner-border-sm text-secondary">
@@ -167,20 +167,20 @@ function ValidatorProfile(props) {
           )}
           <tr>
             <td scope="row">Commission</td>
-            <td><span>{validator.commission.commission_rates.rate * 100}%</span></td>
+            <td><span className="p-0">{validator.commission.commission_rates.rate * 100}%</span></td>
           </tr>
           <tr>
             <td scope="row">Voting power</td>
-            <td><span>{bondedTokens()}</span></td>
+            <td><span className="p-0">{bondedTokens()}</span></td>
           </tr>
           <tr>
             <td scope="row">Rank</td>
-            <td><span>#{validator.rank}</span></td>
+            <td><span className="p-0">#{validator.rank}</span></td>
           </tr>
           {!!securityContact() && (
             <tr>
               <td scope="row">Contact</td>
-              <td><a href={`mailto:${securityContact()}`}>{securityContact()}</a></td>
+              <td><a className="p-0" href={`mailto:${securityContact()}`}>{securityContact()}</a></td>
             </tr>
           )}
         </tbody>

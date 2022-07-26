@@ -109,7 +109,7 @@ function Networks(props) {
 
   return (
     <>
-      <div className="d-flex flex-wrap justify-content-center align-items-start mb-3 position-relative">
+      <div className="d-flex flex-nowrap justify-content-center align-items-start mb-3 position-relative">
         <div className="flex-fill flex-md-grow-0 me-2 me-md-5 mb-2 mb-md-0">
           <div className="input-group">
             <input className="form-control border-right-0 border" onChange={filterNetworks} value={filter.keywords} type="text" placeholder="Search.." />
