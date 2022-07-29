@@ -211,5 +211,9 @@
   {
     "name": "echelon",
     "keplrFeatures": ["ibc-transfer", "ibc-go", "eth-address-gen", "eth-key-sign"]
+  },
+  {
+    "name": "kichaintestnet",
+    "testnet": true
   }
 ]
