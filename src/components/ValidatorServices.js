@@ -5,8 +5,8 @@ import {
 
 import StakingRewardsIcon from '../assets/staking-rewards.svg'
 import StakingRewardsWhiteIcon from '../assets/staking-rewards-white.svg'
-import StakingRewardsVerifiedIcon from '../assets/staking-rewards-verified.png'
-import StakingRewardsVerifiedWhiteIcon from '../assets/staking-rewards-verified-white.png'
+import StakingRewardsVerifiedIcon from '../assets/staking-rewards-verified.svg'
+import StakingRewardsVerifiedWhiteIcon from '../assets/staking-rewards-verified-white.svg'
 import Cosmostation from '../assets/cosmostation.svg'
 import PingPub from '../assets/ping-pub.svg'
 import NodesGuru from '../assets/nodes-guru.svg'
