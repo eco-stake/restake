@@ -192,7 +192,7 @@ function SigningClient(network, signer) {
         gasLimit: signed.fee.gas,
       }, SignMode.SIGN_MODE_LEGACY_AMINO_JSON)
       return {
-        bodyBytes: txBodyBytes,
+        bodyBytes: makeBodyBytes(messages, signed.memo),
         authInfoBytes: authInfoBytes,
         signatures: [Buffer.from(signature.signature, "base64")],
       }
