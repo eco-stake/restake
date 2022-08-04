@@ -128,7 +128,7 @@ function NetworkSelect(props) {
             <div className="d-none d-md-block mx-2">
               <span className="h6">{props.network.prettyName}</span>
               {!!price?.usd && (
-                <em className="text-muted small">&nbsp; ${price.usd.toLocaleString(undefined, { maximumFractionDigits: 2 })}</em>
+                <em className="text-muted small">&nbsp; ${price.usd.toLocaleString(undefined, { maximumFractionDigits: 4, minimumFractionDigits: 2 })}</em>
               )}
             </div>
             <div className="d-none d-md-block ms-2">

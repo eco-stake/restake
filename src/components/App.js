@@ -16,7 +16,8 @@ import {
   Dropdown,
   ButtonGroup,
   Navbar,
-  Nav
+  Nav,
+  Spinner
 } from 'react-bootstrap';
 import {
   Droplet,
@@ -627,13 +628,21 @@ class App extends React.Component {
                           )}
                         </li>
                       )}
+                      {this.state.address && (
                       <li className="nav-item px-3 border-end d-flex align-items-center">
-                        <Coins
-                          coins={this.state.balance}
-                          asset={this.props.network.baseAsset}
-                          className="small text-end d-none d-md-inline"
-                        />
+                        {this.state.balance ? (
+                          <Coins
+                            coins={this.state.balance}
+                            asset={this.props.network.baseAsset}
+                            className="small text-end d-none d-md-inline"
+                          />
+                        ) : (
+                          <Spinner animation="border" role="status" className="spinner-border-sm text-secondary">
+                            <span className="visually-hidden">Loading...</span>
+                          </Spinner>
+                        )}
                       </li>
+                      )}
                       <li className="nav-item ps-3 d-flex align-items-center">
                         <Dropdown as={ButtonGroup}>
                           <Dropdown.Toggle size="sm" className="rounded" id="dropdown-custom-1">

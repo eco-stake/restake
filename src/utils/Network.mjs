@@ -14,19 +14,17 @@ class Network {
     this.data = data
     this.enabled = data.enabled
     this.experimental = data.experimental
-    this.authzSupport = data.params?.authz
-    this.estimatedApr = data.params?.calculated_apr
     this.operatorAddresses = operatorAddresses || {}
     this.operatorCount = data.operators?.length || this.estimateOperatorCount()
-    this.apyEnabled = data.apyEnabled !== false && (!this.estimatedApr || this.estimatedApr > 0)
     this.name = data.path || data.name
     this.path = data.path || data.name
     this.image = data.image
     this.prettyName = data.prettyName || data.pretty_name
     this.default = data.default
     this.testnet = data.testnet || data.network_type === 'testnet'
-    this.directory = CosmosDirectory(this.testnet)
+    this.setChain(this.data)
 
+    this.directory = CosmosDirectory(this.testnet)
     this.rpcUrl = this.directory.rpcUrl(this.name) // only used for Keplr suggestChain
     this.restUrl = data.restUrl || this.directory.restUrl(this.name)
 
@@ -42,7 +40,7 @@ class Network {
   }
 
   connectedDirectory() {
-    const apis = this.chain ? this.chain.chainData['best_apis'] : this.data['best_apis']
+    const apis = this.chain ? this.chain.data['best_apis'] : this.data['best_apis']
     return apis && ['rest'].every(type => apis[type].length > 0)
   }
 
@@ -60,7 +58,8 @@ class Network {
   }
 
   async load() {
-    this.chain = await Chain(this.data, this.directory)
+    const chainData = await this.directory.getChainData(this.data.name);
+    this.setChain({...this.data, ...chainData})
     this.validators = (await this.directory.getValidators(this.name)).map(data => {
       return Validator(this, data)
     })
@@ -68,6 +67,10 @@ class Network {
       return Operator(this, data)
     })
     this.operatorCount = this.operators.length
+  }
+
+  async setChain(data){
+    this.chain = Chain(data)
     this.prettyName = this.chain.prettyName
     this.chainId = this.chain.chainId
     this.prefix = this.chain.prefix
@@ -81,7 +84,7 @@ class Network {
     this.image = this.chain.image
     this.coinGeckoId = this.chain.coinGeckoId
     this.estimatedApr = this.chain.estimatedApr
-    this.apyEnabled = this.apyEnabled && !!this.estimatedApr && this.estimatedApr > 0
+    this.apyEnabled = data.apyEnabled !== false && !!this.estimatedApr && this.estimatedApr > 0
     this.authzSupport = this.chain.authzSupport
     this.defaultGasPrice = format(bignumber(multiply(0.000000025, pow(10, this.decimals))), { notation: 'fixed', precision: 4}) + this.denom
     this.gasPrice = this.data.gasPrice || this.defaultGasPrice

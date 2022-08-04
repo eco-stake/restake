@@ -3,7 +3,7 @@ import _ from 'lodash'
 function Coins(props) {
   const { asset, coins, fullPrecision, inBaseDenom, hideValue, className } = props
   const { decimals, symbol, prices } = asset
-  const { coingecko } = prices
+  const { coingecko } = prices || {}
 
   function amount(coins){
     if(inBaseDenom) return coins.amount
@@ -13,7 +13,7 @@ function Coins(props) {
   }
 
   function value(coins){
-    return (coins.amount / Math.pow(10, decimals) * coingecko.usd).toLocaleString(undefined, { maximumFractionDigits: 2 })
+    return (coins.amount / Math.pow(10, decimals) * coingecko.usd).toLocaleString(undefined, { maximumFractionDigits: 2, minimumFractionDigits: 2 })
   }
 
   if(!coins || !coins.denom){

@@ -26,7 +26,7 @@ function GrantModal(props) {
   const [state, setState] = useState({ maxTokensValue: '', expiryDateValue: defaultExpiry.format('YYYY-MM-DD') });
   const [showLedger, setShowLedger] = useState(isNanoLedger)
 
-  const { daemon_name, chain_id } = network.chain.chainData
+  const { daemon_name, chain_id } = network.chain.data
 
   useEffect(() => {
     setState({

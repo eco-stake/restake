@@ -443,7 +443,7 @@ class Delegations extends React.Component {
             validators={this.props.validators}
             operators={this.props.operators}
             validatorApy={this.state.validatorApy}
-            delegations={this.state.delegations || {}}
+            delegations={this.state.delegations}
             rewards={this.state.rewards}
             commission={this.state.commission}
             stargateClient={this.props.stargateClient}
