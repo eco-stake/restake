@@ -209,6 +209,7 @@ function Validators(props) {
                       coins={minimumReward}
                       asset={network.baseAsset}
                       fullPrecision={true}
+                      hideValue={true}
                     />
                   </p>
                 </div>

@@ -133,7 +133,7 @@ function ValidatorProfile(props) {
             <td scope="row">REStake</td>
             <td>
               {!!operator ? (
-                <span className="p-0">{operator.runTimesString()} (<Coins coins={minimumReward()} asset={network.baseAsset} /> min)</span>
+                <span className="p-0">{operator.runTimesString()} (<Coins coins={minimumReward()} asset={network.baseAsset} fullPrecision={true} hideValue={true} /> min)</span>
               ) :
                 <TooltipIcon icon={<XCircle className="opacity-50 p-0" />} identifier={validator.operator_address} tooltip="This validator is not a REStake operator" />
               }

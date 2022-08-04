@@ -115,6 +115,8 @@ function NetworkSelect(props) {
     })
   }, [props.networks, selectedNetwork])
 
+  const price = props.network?.baseAsset?.prices?.coingecko
+
   return (
     <>
       <Button onClick={handleOpen} variant="link" className="d-flex flex-nowrap text-nowrap align-items-center text-reset text-decoration-none border-secondary btn-outline-light" role="button">
@@ -123,8 +125,11 @@ function NetworkSelect(props) {
             <div className="avatar avatar-sm rounded-circle text-white">
               <img alt={props.network.prettyName} src={props.network.image} height={30} width={30} />
             </div>
-            <div className="d-none d-md-block ms-2">
+            <div className="d-none d-md-block mx-2">
               <span className="h6">{props.network.prettyName}</span>
+              {!!price?.usd && (
+                <em className="text-muted small">&nbsp; ${price.usd.toLocaleString(undefined, { maximumFractionDigits: 2 })}</em>
+              )}
             </div>
             <div className="d-none d-md-block ms-2">
               {props.network.authzSupport

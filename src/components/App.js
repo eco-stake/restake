@@ -627,17 +627,19 @@ class App extends React.Component {
                           )}
                         </li>
                       )}
-                      <li className="nav-item ps-3">
+                      <li className="nav-item px-3 border-end d-flex align-items-center">
+                        <Coins
+                          coins={this.state.balance}
+                          asset={this.props.network.baseAsset}
+                          className="small text-end d-none d-md-inline"
+                        />
+                      </li>
+                      <li className="nav-item ps-3 d-flex align-items-center">
                         <Dropdown as={ButtonGroup}>
                           <Dropdown.Toggle size="sm" className="rounded" id="dropdown-custom-1">
                             {this.state.address ? (
                               <>
-                                <Coins
-                                  coins={this.state.balance}
-                                  asset={this.props.network.baseAsset}
-                                  className="me-1 d-none d-md-inline"
-                                />
-                                <CashCoin className="d-inline d-md-none" />
+                                <CashCoin className="me-1" />
                               </>
                             ) : 'Connect'}
                           </Dropdown.Toggle>

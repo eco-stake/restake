@@ -2,12 +2,9 @@ import ChainAsset from "./ChainAsset.mjs";
 
 const Chain = async (data, directory) => {
   const chainData = await directory.getChainData(data.name);
-  const tokenData = await directory.getTokenData(data.name);
 
-  const assets = tokenData.assets.map(el => ChainAsset(el))
+  const assets = chainData.assets.map(el => ChainAsset(el))
   const baseAsset = assets[0]
-  const base = baseAsset.base
-  const display = baseAsset.display
 
   return {
     prettyName: data.prettyName || chainData.pretty_name,
@@ -26,8 +23,7 @@ const Chain = async (data, directory) => {
     explorers: chainData.explorers,
     assets,
     baseAsset,
-    chainData,
-    tokenData
+    chainData
   }
 }
 

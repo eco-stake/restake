@@ -153,7 +153,7 @@ class DelegateForm extends React.Component {
                 </div>
                 {this.props.availableBalance &&
                   <div className="form-text text-end"><span role="button" onClick={() => this.setAvailableAmount()}>
-                    Available: <Coins coins={this.props.availableBalance} asset={this.props.network.baseAsset} />
+                    Available: <Coins coins={this.props.availableBalance} asset={this.props.network.baseAsset} fullPrecision={true} hideValue={true} />
                   </span></div>
                 }
               </div>

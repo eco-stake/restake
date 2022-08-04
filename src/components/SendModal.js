@@ -188,7 +188,7 @@ function SendModal(props) {
                     </div>
                     {props.balance &&
                       <div className="form-text text-end"><span role="button" onClick={() => setAvailableAmount()}>
-                        Available: <Coins coins={props.balance} asset={network.baseAsset} />
+                        Available: <Coins coins={props.balance} asset={network.baseAsset} fullPrecision={true} hideValue={true} />
                       </span></div>
                     }
                   </div>
@@ -200,7 +200,7 @@ function SendModal(props) {
                 <p className="text-end">
                   {!loading
                     ? (
-                      <Button type="submit" className="btn btn-primary ms-2" disabled={!valid()}>Send {coinAmount() && <Coins coins={coinAmount()} asset={network.baseAsset} />}</Button>
+                      <Button type="submit" className="btn btn-primary ms-2" disabled={!valid()}>Send {coinAmount() && <Coins coins={coinAmount()} asset={network.baseAsset} fullPrecision={true} hideValue={true} />}</Button>
                     )
                     : <Button className="btn btn-primary" type="button" disabled>
                       <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>&nbsp;

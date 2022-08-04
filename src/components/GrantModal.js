@@ -19,7 +19,7 @@ import { buildExecMessage } from '../utils/Helpers.mjs';
 
 function GrantModal(props) {
   const { show, network, address, wallet } = props
-  const isNanoLedger = props.wallet?.getIsNanoLedger()
+  const isNanoLedger = wallet?.getIsNanoLedger()
   const defaultExpiry = moment().add(1, 'year')
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState()
@@ -37,7 +37,7 @@ function GrantModal(props) {
       messageTypeValue: messageTypes[0],
       customMessageTypeValue: '',
     })
-    setShowLedger(isNanoLedger)
+    setShowLedger(wallet?.getIsNanoLedger())
     setError(null)
   }, [address])
 

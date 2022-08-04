@@ -41,7 +41,7 @@ function CountdownRestake(props) {
           renderer={countdownRenderer}
         />
         {maxAmount && (
-          <p>Grant remaining: <Coins coins={{amount: maxAmount, denom: props.network.denom}} asset={network.baseAsset} /></p>
+          <p>Grant remaining: <Coins coins={{amount: maxAmount, denom: props.network.denom}} asset={network.baseAsset} fullPrecision={true} hideValue={true} /></p>
         )}
       </div>
     </TooltipIcon>
