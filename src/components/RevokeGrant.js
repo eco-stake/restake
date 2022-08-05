@@ -63,7 +63,7 @@ function RevokeGrant(props) {
   }
 
   return (
-    <Dropdown.Item disabled={disabled()} onClick={() => revoke()} >
+    <Dropdown.Item as="button" disabled={disabled()} onClick={() => revoke()} >
       {buttonText}
     </Dropdown.Item>
   )

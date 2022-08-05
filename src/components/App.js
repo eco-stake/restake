@@ -629,12 +629,12 @@ class App extends React.Component {
                         </li>
                       )}
                       {this.state.address && (
-                      <li className="nav-item px-3 border-end d-flex align-items-center">
+                      <li className="nav-item px-3 border-end align-items-center d-none d-md-flex">
                         {this.state.balance ? (
                           <Coins
                             coins={this.state.balance}
                             asset={this.props.network.baseAsset}
-                            className="small text-end d-none d-md-inline"
+                            className="small text-end"
                           />
                         ) : (
                           <Spinner animation="border" role="status" className="spinner-border-sm text-secondary">
@@ -656,7 +656,7 @@ class App extends React.Component {
                             {this.state.address && (
                               <div className="d-block d-md-none">
                                 <Dropdown.Header className="text-truncate">{this.addressName()}</Dropdown.Header>
-                                <Dropdown.Item>
+                                <Dropdown.Item as="button">
                                   <CopyToClipboard text={this.state.address}
                                     onCopy={() => this.setCopied()}>
                                     <Coins
@@ -672,6 +672,7 @@ class App extends React.Component {
                             {this.state.wallet ? (
                               <>
                                 <Dropdown.Item
+                                  as="button"
                                   disabled={!this.state.wallet?.hasPermission(this.state.address, 'Send')}
                                   onClick={() => this.setState({ showSendModal: true })}
                                 >
@@ -680,16 +681,16 @@ class App extends React.Component {
                               </>
                             ) : (
                               <>
-                                <Dropdown.Item onClick={() => this.connect(true)} disabled={!window.keplr}>Connect Keplr Extension</Dropdown.Item>
+                                <Dropdown.Item as="button" onClick={() => this.connect(true)} disabled={!window.keplr}>Connect Keplr Extension</Dropdown.Item>
                                 {/* <Dropdown.Item onClick={() => this.connect(true)} disabled={!window.falcon}>Connect Falcon Wallet</Dropdown.Item> */}
                               </>
 
                             )}
-                            <Dropdown.Item onClick={() => this.setState({ showAddressModal: true })}>Saved Addresses</Dropdown.Item>
+                            <Dropdown.Item as="button" onClick={() => this.setState({ showAddressModal: true })}>Saved Addresses</Dropdown.Item>
                             {this.state.address && (
                               <>
                                 <Dropdown.Divider />
-                                <Dropdown.Item onClick={this.disconnect}>Disconnect</Dropdown.Item>
+                                <Dropdown.Item as="button" onClick={this.disconnect}>Disconnect</Dropdown.Item>
                               </>
                             )}
                           </Dropdown.Menu>

@@ -60,7 +60,7 @@ function NetworkChecks(props) {
       {([
         renderCheck({
           title: <strong>{`$${price && price.usd.toLocaleString(undefined, { maximumFractionDigits: 8, minimumFractionDigits: 2 })}`}</strong>,
-          failTitle: 'Unknown Price',
+          failTitle: 'Price Unknown',
           state: price?.usd,
           identifier: 'price',
           icon: <img src={Coingecko} style={{width: '1em', height: '1em'}} className="me-2 mb-1" />,
@@ -68,7 +68,7 @@ function NetworkChecks(props) {
         }),
         renderCheck({
           title: <strong>{`${Math.round(network.estimatedApr * 100).toLocaleString()}% APR`}</strong>,
-          failTitle: 'Unknown APR',
+          failTitle: 'APR Unknown',
           state: network.estimatedApr,
           identifier: 'apr',
         }),

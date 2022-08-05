@@ -304,7 +304,7 @@ function Validators(props) {
                     {operator &&
                       props.restakePossible && (
                         <>
-                          <Dropdown.Item disabled={!wallet?.hasPermission(address, 'Grant') || !wallet?.hasPermission(address, 'Revoke')} onClick={() => props.showValidator(validator, { activeTab: 'restake' })}>
+                          <Dropdown.Item as="button" disabled={!wallet?.hasPermission(address, 'Grant') || !wallet?.hasPermission(address, 'Revoke')} onClick={() => props.showValidator(validator, { activeTab: 'restake' })}>
                             {grants.grantsValid ? 'Manage REStake' : 'Enable REStake'}
                           </Dropdown.Item>
                           {grants.grantsExist && (
@@ -372,13 +372,13 @@ function Validators(props) {
                       </>
                     )}
                     <hr />
-                    <Dropdown.Item disabled={!wallet?.hasPermission(address, 'Delegate')} onClick={() => props.showValidator(validator, { activeTab: 'delegate' })}>
+                    <Dropdown.Item as="button" disabled={!wallet?.hasPermission(address, 'Delegate')} onClick={() => props.showValidator(validator, { activeTab: 'delegate' })}>
                       Delegate
                     </Dropdown.Item>
-                    <Dropdown.Item disabled={!wallet?.hasPermission(address, 'BeginRedelegate')} onClick={() => props.showValidator(validator, { redelegate: true })}>
+                    <Dropdown.Item as="button" disabled={!wallet?.hasPermission(address, 'BeginRedelegate')} onClick={() => props.showValidator(validator, { redelegate: true })}>
                       Redelegate
                     </Dropdown.Item>
-                    <Dropdown.Item disabled={!wallet?.hasPermission(address, 'Undelegate')} onClick={() => props.showValidator(validator, { undelegate: true })}>
+                    <Dropdown.Item as="button" disabled={!wallet?.hasPermission(address, 'Undelegate')} onClick={() => props.showValidator(validator, { undelegate: true })}>
                       Undelegate
                     </Dropdown.Item>
                   </Dropdown.Menu>

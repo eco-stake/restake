@@ -117,7 +117,7 @@ function ClaimRewards(props) {
 
   return (
     <>
-      <Dropdown.Item disabled={props.disabled || !hasPermission()} onClick={() => claim()}>
+      <Dropdown.Item as="button" disabled={props.disabled || !hasPermission()} onClick={() => claim()}>
         {buttonText()}
       </Dropdown.Item>
     </>
