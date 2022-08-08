@@ -1,7 +1,7 @@
 import ChainAsset from "./ChainAsset.mjs";
 
 const Chain = (data) => {
-  const assets = data.assets.map(el => ChainAsset(el))
+  const assets = data.assets?.map(el => ChainAsset(el)) || []
   const baseAsset = assets[0]
 
   return {
@@ -11,12 +11,12 @@ const Chain = (data) => {
     slip44: data.slip44 || data.slip44 || 118,
     estimatedApr: data.params?.calculated_apr,
     authzSupport: data.authzSupport ?? data.params?.authz,
-    denom: data.denom || baseAsset.base?.denom,
-    display: data.display || baseAsset.display?.denom,
-    symbol: data.symbol || baseAsset.symbol,
-    decimals: data.decimals || baseAsset.decimals,
-    image: data.image || baseAsset.image,
-    coinGeckoId: baseAsset.coingecko_id,
+    denom: data.denom || baseAsset?.base?.denom,
+    display: data.display || baseAsset?.display?.denom,
+    symbol: data.symbol || baseAsset?.symbol,
+    decimals: data.decimals || baseAsset?.decimals,
+    image: data.image || baseAsset?.image,
+    coinGeckoId: baseAsset?.coingecko_id,
     services: data.services,
     explorers: data.explorers,
     assets,

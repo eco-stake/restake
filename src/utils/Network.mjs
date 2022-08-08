@@ -86,13 +86,15 @@ class Network {
     this.estimatedApr = this.chain.estimatedApr
     this.apyEnabled = data.apyEnabled !== false && !!this.estimatedApr && this.estimatedApr > 0
     this.authzSupport = this.chain.authzSupport
-    this.defaultGasPrice = format(bignumber(multiply(0.000000025, pow(10, this.decimals))), { notation: 'fixed', precision: 4}) + this.denom
+    this.defaultGasPrice = this.decimals && format(bignumber(multiply(0.000000025, pow(10, this.decimals))), { notation: 'fixed', precision: 4}) + this.denom
     this.gasPrice = this.data.gasPrice || this.defaultGasPrice
-    this.gasPriceAmount = GasPrice.fromString(this.gasPrice).amount.toString()
-    this.gasPriceStep = this.data.gasPriceStep || {
-      "low": multiply(this.gasPriceAmount, 0.5),
-      "average": multiply(this.gasPriceAmount, 1),
-      "high": multiply(this.gasPriceAmount, 2)
+    if(this.gasPrice){
+      this.gasPriceAmount = GasPrice.fromString(this.gasPrice).amount.toString()
+      this.gasPriceStep = this.data.gasPriceStep || {
+        "low": multiply(this.gasPriceAmount, 0.5),
+        "average": multiply(this.gasPriceAmount, 1),
+        "high": multiply(this.gasPriceAmount, 2)
+      }
     }
     this.gasPricePrefer = this.data.gasPricePrefer
     this.gasModifier = this.data.gasModifier || 1.5
