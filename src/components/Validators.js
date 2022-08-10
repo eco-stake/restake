@@ -241,7 +241,7 @@ function Validators(props) {
                 asset={network.baseAsset}
               />
             </small>
-          ) : (
+          ) : address &&  (
             <Spinner animation="border" role="status" className="spinner-border-sm text-secondary">
               <span className="visually-hidden">Loading...</span>
             </Spinner>
@@ -257,7 +257,7 @@ function Validators(props) {
                   asset={network.baseAsset}
                 />
               </small>
-            ) : (
+            ) : address && (
               <Spinner animation="border" role="status" className="spinner-border-sm text-secondary">
                 <span className="visually-hidden">Loading...</span>
               </Spinner>
