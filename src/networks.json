@@ -210,7 +210,12 @@
   },
   {
     "name": "echelon",
-    "keplrFeatures": ["ibc-transfer", "ibc-go", "eth-address-gen", "eth-key-sign"]
+    "keplrFeatures": ["ibc-transfer", "ibc-go", "eth-address-gen", "eth-key-sign"],
+    "warning": {
+      "title": "There is a high chance Echelon is a scam.",
+      "description": "REStake will continue to support the network for the time being but please use caution.",
+      "link": "https://medium.com/@bilaltanoli360/who-is-behind-echelon-651954e9e03b"
+    }
   },
   {
     "name": "kichaintestnet",

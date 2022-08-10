@@ -14,6 +14,7 @@ class Network {
     this.data = data
     this.enabled = data.enabled
     this.experimental = data.experimental
+    this.warning = data.warning
     this.operatorAddresses = operatorAddresses || {}
     this.operatorCount = data.operators?.length || this.estimateOperatorCount()
     this.name = data.path || data.name

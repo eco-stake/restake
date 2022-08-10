@@ -704,6 +704,13 @@ class App extends React.Component {
           </div>
         </header>
         <div className="my-4">
+          {this.props.network?.warning && (
+            <AlertMessage variant="danger" dismissible={false}>
+              <strong>{this.props.network.warning.title}</strong><br />
+              {this.props.network.warning.description}&nbsp;
+              {this.props.network.warning.link && (<a href={this.props.network.warning.link} target="_blank">Read more.</a>)} 
+            </AlertMessage>
+          )}
           {this.props.network?.experimental && (
             <AlertMessage variant="info" dismissible={false}>
               This network was added to REStake automatically and has not been thoroughly tested yet. <a href="https://github.com/eco-stake/restake/issues" target="_blank">Raise an issue</a> if you have any problems.
