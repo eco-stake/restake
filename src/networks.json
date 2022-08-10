@@ -215,5 +215,28 @@
   {
     "name": "kichaintestnet",
     "testnet": true
+  },
+  {
+  "bitcanna-1": {
+    "prettyName": "BitCanna 4.20",
+    "restUrl": [
+      "https://lcd.bitcanna.io/"
+    ],
+    "name": "bitcanna-1",
+    "image": "https://github.com/cosmostation/cosmostation_token_resource/blob/master/chains/logo/v2/bitcanna.png",
+    "testnet": false,
+    "gasPrice": "0.001ubcna",
+    "gasPriceStep": {
+      "low": 0.001,
+      "average": 0.01,
+      "high": 0.05
+    },
+    "autostake": {
+      "batchTxs": 50,
+      "batchQueries": 50,
+      "delegatorTimeout": 5000
+    }
+
   }
+}
 ]
