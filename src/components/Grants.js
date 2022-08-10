@@ -97,7 +97,7 @@ function Grants(props) {
       case "/cosmos.staking.v1beta1.StakeAuthorization":
         return (
           <small>
-            Maximum: {maxTokens ? <Coins coins={maxTokens} asset={network.baseAsset} /> : 'unlimited'}<br />
+            Maximum: {maxTokens ? <Coins coins={maxTokens} asset={network.baseAsset} fullPrecision={true} hideValue={true} /> : 'unlimited'}<br />
             Validators: {grant.authorization.allow_list.address.join(', ')}
           </small>
         )

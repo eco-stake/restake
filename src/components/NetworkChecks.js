@@ -2,16 +2,19 @@ import React from 'react';
 import _ from 'lodash'
 import { CheckCircle, XCircle, InfoCircle } from "react-bootstrap-icons";
 import TooltipIcon from './TooltipIcon.js';
+import Coingecko from '../assets/coingecko.png'
 
 function NetworkChecks(props) {
   const { network, error, skipConnected } = props
+  const baseAsset = network?.baseAsset
+  const price = baseAsset?.prices?.coingecko
 
-  function renderCheck({ title, failTitle, description, failDescription, state, successClass, failClass, identifier }) {
+  function renderCheck({ title, failTitle, description, failDescription, state, successClass, failClass, identifier, icon }) {
     const className = state ? (successClass || 'success') : (failClass || 'warning')
 
     const content = (
       <div className="small">
-        {state ? (
+        {icon ? icon : state ? (
           <CheckCircle className="me-2 mb-1" />
         ) : (
           failClass === 'danger' ? <XCircle className="me-2 mb-1" /> : <InfoCircle className="me-2 mb-1" />
@@ -56,16 +59,24 @@ function NetworkChecks(props) {
     <ul className={className} style={props.style}>
       {([
         renderCheck({
+          title: <strong>{`$${price && price.usd.toLocaleString(undefined, { maximumFractionDigits: 8, minimumFractionDigits: 2 })}`}</strong>,
+          failTitle: 'Price Unknown',
+          state: price?.usd,
+          identifier: 'price',
+          icon: <img src={Coingecko} style={{width: '1em', height: '1em'}} className="me-2 mb-1" />,
+          failClass: 'success',
+        }),
+        renderCheck({
           title: <strong>{`${Math.round(network.estimatedApr * 100).toLocaleString()}% APR`}</strong>,
           failTitle: 'APR Unknown',
           state: network.estimatedApr,
-          identifier: 'apr'
+          identifier: 'apr',
         }),
-        renderCheck({
+        !skipConnected && renderCheck({
           title: 'API connected',
           failTitle: 'API offline',
           failDescription: error,
-          state: (skipConnected ? network.online : network.connected) && !error,
+          state: network.connected && !error,
           failClass: 'danger',
           identifier: 'network'
         }),

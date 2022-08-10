@@ -56,7 +56,7 @@ function ValidatorDelegate(props) {
           <tr>
             <td scope="row">Current Rewards</td>
             <td>
-              <Coins coins={{ amount: props.rewards, denom: network.denom }} asset={network.baseAsset} fullPrecision={true} />
+              <Coins coins={props.rewards && { amount: props.rewards, denom: network.denom }} asset={network.baseAsset} fullPrecision={true} />
             </td>
           </tr>
           {!!props.commission && (

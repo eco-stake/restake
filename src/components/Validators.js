@@ -38,7 +38,7 @@ function Validators(props) {
     if(delegations && filter.group !== 'delegated'){
       return setFilter({ ...filter, group: 'delegated' })
     }
-  }, [Object.keys(delegations).length]);
+  }, [Object.keys(delegations || {}).length]);
 
   useEffect(() => {
     let filtered = filteredValidators(validators, filter)
@@ -131,7 +131,7 @@ function Validators(props) {
 
   function renderValidator(validator) {
     const validatorAddress = validator.operator_address
-    const delegation = delegations[validatorAddress];
+    const delegation = delegations && delegations[validatorAddress];
     const validatorOperator = validator.isValidatorOperator(address)
     const rewards =
       props.rewards && props.rewards[validatorAddress];
@@ -209,6 +209,7 @@ function Validators(props) {
                       coins={minimumReward}
                       asset={network.baseAsset}
                       fullPrecision={true}
+                      hideValue={true}
                     />
                   </p>
                 </div>
@@ -233,16 +234,22 @@ function Validators(props) {
           <small>{format(validator.commission.commission_rates.rate * 100, 2)}%</small>
         </td>
         <td className="d-none d-sm-table-cell">
-          <small>
-            <Coins
-              coins={delegationBalance}
-              asset={network.baseAsset}
-            />
-          </small>
+          {delegations ? (
+            <small>
+              <Coins
+                coins={delegationBalance}
+                asset={network.baseAsset}
+              />
+            </small>
+          ) : address &&  (
+            <Spinner animation="border" role="status" className="spinner-border-sm text-secondary">
+              <span className="visually-hidden">Loading...</span>
+            </Spinner>
+          )}
         </td>
         {!props.modal && (
           <td className="d-none d-md-table-cell">
-            {denomRewards && (
+            {props.rewards ? denomRewards && (
               <small>
                 <Coins
                   key={denomRewards.denom}
@@ -250,12 +257,16 @@ function Validators(props) {
                   asset={network.baseAsset}
                 />
               </small>
+            ) : address && (
+              <Spinner animation="border" role="status" className="spinner-border-sm text-secondary">
+                <span className="visually-hidden">Loading...</span>
+              </Spinner>
             )}
           </td>
         )}
         {!props.modal && showCommission && (
           <td className="d-none d-md-table-cell">
-            {denomCommission && (
+            {denomCommission ? (
               <small>
                 <Coins
                   key={denomCommission.denom}
@@ -263,6 +274,10 @@ function Validators(props) {
                   asset={network.baseAsset}
                 />
               </small>
+            ) : validatorOperator && (
+              <Spinner animation="border" role="status" className="spinner-border-sm text-secondary">
+                <span className="visually-hidden">Loading...</span>
+              </Spinner>
             )}
           </td>
         )}
@@ -289,7 +304,7 @@ function Validators(props) {
                     {operator &&
                       props.restakePossible && (
                         <>
-                          <Dropdown.Item disabled={!wallet?.hasPermission(address, 'Grant') || !wallet?.hasPermission(address, 'Revoke')} onClick={() => props.showValidator(validator, { activeTab: 'restake' })}>
+                          <Dropdown.Item as="button" disabled={!wallet?.hasPermission(address, 'Grant') || !wallet?.hasPermission(address, 'Revoke')} onClick={() => props.showValidator(validator, { activeTab: 'restake' })}>
                             {grants.grantsValid ? 'Manage REStake' : 'Enable REStake'}
                           </Dropdown.Item>
                           {grants.grantsExist && (
@@ -357,13 +372,13 @@ function Validators(props) {
                       </>
                     )}
                     <hr />
-                    <Dropdown.Item disabled={!wallet?.hasPermission(address, 'Delegate')} onClick={() => props.showValidator(validator, { activeTab: 'delegate' })}>
+                    <Dropdown.Item as="button" disabled={!wallet?.hasPermission(address, 'Delegate')} onClick={() => props.showValidator(validator, { activeTab: 'delegate' })}>
                       Delegate
                     </Dropdown.Item>
-                    <Dropdown.Item disabled={!wallet?.hasPermission(address, 'BeginRedelegate')} onClick={() => props.showValidator(validator, { redelegate: true })}>
+                    <Dropdown.Item as="button" disabled={!wallet?.hasPermission(address, 'BeginRedelegate')} onClick={() => props.showValidator(validator, { redelegate: true })}>
                       Redelegate
                     </Dropdown.Item>
-                    <Dropdown.Item disabled={!wallet?.hasPermission(address, 'Undelegate')} onClick={() => props.showValidator(validator, { undelegate: true })}>
+                    <Dropdown.Item as="button" disabled={!wallet?.hasPermission(address, 'Undelegate')} onClick={() => props.showValidator(validator, { undelegate: true })}>
                       Undelegate
                     </Dropdown.Item>
                   </Dropdown.Menu>
@@ -512,7 +527,7 @@ function Validators(props) {
                   <Coins
                     coins={{
                       amount: results.reduce((sum, result) => {
-                        const delegation = delegations[result.operator_address]
+                        const delegation = delegations && delegations[result.operator_address]
                         if(!delegation) return sum
 
                         return add(sum, delegation.balance.amount)

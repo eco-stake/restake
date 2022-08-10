@@ -10,7 +10,7 @@ function AboutLedger(props) {
   const aboutParam = searchParams.get('about')
 
   const { network, validator } = props
-  const { daemon_name, chain_id, node_home, codebase } = network.chain.chainData
+  const { daemon_name, chain_id, node_home, codebase } = network.chain.data
   const { git_repo, binaries } = codebase || {}
 
   const address = validator?.restake.address || <kbd>GrantAddress</kbd>
