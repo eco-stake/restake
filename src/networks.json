@@ -54,10 +54,6 @@
     "ownerAddress": "digvaloper136avwnuvvy94dqmtnaue2nfvjes8xr37h9rzay"
   },
   {
-    "name": "bitcanna",
-    "gasPrice": "0.001ubcna"
-  },
-  {
     "name": "emoney",
     "gasPrice": "0.08ungm"
   },
@@ -217,7 +213,7 @@
     "testnet": true
   },
   {
-  "bitcanna-1": {
+  "bitcanna": {
     "prettyName": "BitCanna 4.20",
     "restUrl": [
       "https://lcd.bitcanna.io/"
