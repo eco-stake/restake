@@ -205,7 +205,7 @@ function ValidatorModal(props) {
                     rewards={rewards()}
                     commission={commission()}
                     validatorApy={props.validatorApy}
-                    stargateClient={props.stargateClient}
+                    signingClient={props.signingClient}
                     onDelegate={onDelegate} />
                 </Tab.Pane>
                 {operator() && (
@@ -220,7 +220,7 @@ function ValidatorModal(props) {
                       rewards={rewards()}
                       authzSupport={props.authzSupport}
                       restakePossible={props.restakePossible}
-                      stargateClient={props.stargateClient}
+                      signingClient={props.signingClient}
                       onGrant={props.onGrant}
                       onRevoke={props.onRevoke}
                       setError={props.setError}

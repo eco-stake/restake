@@ -84,7 +84,7 @@ function ValidatorDelegate(props) {
         address={props.address}
         wallet={props.wallet}
         availableBalance={availableBalance}
-        stargateClient={props.stargateClient}
+        signingClient={props.signingClient}
         onDelegate={onDelegate} />
     </>
   )

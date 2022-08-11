@@ -185,7 +185,7 @@ function Governance(props) {
           proposals={proposals}
           tallies={tallies}
           votes={votes}
-          stargateClient={props.stargateClient}
+          signingClient={props.signingClient}
           showProposal={showProposal}
           setError={setError}
           onVote={onVote} />
@@ -201,7 +201,7 @@ function Governance(props) {
         granters={voteGrants.map(el => el.granter)}
         favouriteAddresses={props.favouriteAddresses}
         queryClient={props.queryClient}
-        stargateClient={props.stargateClient}
+        signingClient={props.signingClient}
         closeProposal={closeProposal}
         onVote={onVote}
         setError={setError}

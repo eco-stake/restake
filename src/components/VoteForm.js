@@ -82,7 +82,7 @@ function VoteForm(props) {
 
     console.log(message)
 
-    props.stargateClient.signAndBroadcast(wallet.address, [message]).then((result) => {
+    props.signingClient.signAndBroadcast(wallet.address, [message]).then((result) => {
       console.log("Successfully broadcasted:", result);
       setLoading(false)
       setError(null)

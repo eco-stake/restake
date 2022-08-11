@@ -134,7 +134,7 @@ class App extends React.Component {
       address: null,
       balance: null,
       wallet: null,
-      stargateClient: null
+      signingClient: null
     })
   }
 
@@ -182,16 +182,16 @@ class App extends React.Component {
         const offlineSigner = await window.getOfflineSignerAuto(chainId)
         const key = await window.keplr.getKey(chainId);
         const wallet = new Wallet(network, offlineSigner, key)
-        const stargateClient = wallet.signingClient
-        stargateClient.registry.register("/cosmos.authz.v1beta1.MsgGrant", MsgGrant)
-        stargateClient.registry.register("/cosmos.authz.v1beta1.MsgRevoke", MsgRevoke)
+        const signingClient = wallet.signingClient
+        signingClient.registry.register("/cosmos.authz.v1beta1.MsgGrant", MsgGrant)
+        signingClient.registry.register("/cosmos.authz.v1beta1.MsgRevoke", MsgRevoke)
 
         const address = await wallet.getAddress();
 
         this.setState({
           address: address,
           wallet: wallet,
-          stargateClient: stargateClient,
+          signingClient: signingClient,
           error: false
         })
       } catch (e) {
@@ -739,7 +739,7 @@ class App extends React.Component {
                 onGrant={this.onGrant}
                 onRevoke={this.onRevoke}
                 queryClient={this.props.queryClient}
-                stargateClient={this.state.stargateClient} />
+                signingClient={this.state.signingClient} />
             </>
           }
           {this.props.active === 'governance' && (
@@ -749,7 +749,7 @@ class App extends React.Component {
               wallet={this.state.wallet}
               favouriteAddresses={this.favouriteAddresses()}
               queryClient={this.props.queryClient}
-              stargateClient={this.state.stargateClient} />
+              signingClient={this.state.signingClient} />
           )}
           {this.props.active === 'grants' && this.state.address && this.props.network.authzSupport && (
             <Grants
@@ -766,7 +766,7 @@ class App extends React.Component {
               onRevoke={this.onRevoke}
               queryClient={this.props.queryClient}
               grantQuerySupport={this.state.grantQuerySupport}
-              stargateClient={this.state.stargateClient} />
+              signingClient={this.state.signingClient} />
           )}
           <hr />
           <p className="mt-5 text-center">
@@ -827,7 +827,7 @@ class App extends React.Component {
             wallet={this.state.wallet}
             balance={this.state.balance}
             favouriteAddresses={this.favouriteAddresses()}
-            stargateClient={this.state.stargateClient}
+            signingClient={this.state.signingClient}
             onHide={() => this.setState({ showSendModal: false })}
             onSend={this.onSend}
           />
