@@ -54,6 +54,8 @@ import Favourite from './Favourite';
 import AddressModal from './AddressModal';
 import Wallet from '../utils/Wallet.mjs';
 import SendModal from './SendModal';
+import KeplrSignerProvider from '../utils/KeplrSignerProvider.mjs';
+import FalconSignerProvider from '../utils/FalconSignerProvider.mjs';
 
 class App extends React.Component {
   constructor(props) {
@@ -66,7 +68,6 @@ class App extends React.Component {
     }
     this.connect = this.connect.bind(this);
     this.disconnect = this.disconnect.bind(this);
-    this.connectKeplr = this.connectKeplr.bind(this);
     this.showNetworkSelect = this.showNetworkSelect.bind(this);
     this.getBalance = this.getBalance.bind(this);
     this.onSend = this.onSend.bind(this);
@@ -78,17 +79,15 @@ class App extends React.Component {
   }
 
   async componentDidMount() {
-    this.connectKeplr()
-    window.addEventListener("load", this.connectKeplr)
+    this.connect()
+    window.addEventListener("load", this.connect)
     window.addEventListener("keplr_keystorechange", this.connect)
   }
 
   async componentDidUpdate(prevProps, prevState) {
     if (!this.props.network) return
 
-    if (this.state.keplr != prevState.keplr) {
-      this.connect()
-    } else if (this.props.network !== prevProps.network) {
+    if (this.props.network !== prevProps.network) {
       this.setState({ balance: undefined, address: undefined, wallet: undefined, grants: undefined })
       this.connect()
     }else if(this.state.address !== prevState.address){
@@ -108,7 +107,7 @@ class App extends React.Component {
 
   componentWillUnmount() {
     this.clearRefreshInterval()
-    window.removeEventListener("load", this.connectKeplr)
+    window.removeEventListener("load", this.connect)
     window.removeEventListener("keplr_keystorechange", this.connect)
   }
 
@@ -120,12 +119,22 @@ class App extends React.Component {
     return this.props.network?.connected
   }
 
-  connectKeplr() {
-    if (this.state.keplr && !window.keplr) {
-      this.setState({ keplr: false })
-    } else if (!this.state.keplr && window.keplr) {
-      this.setState({ keplr: true })
-    }
+  signerProviders(){
+    return [{
+      key: 'keplr',
+      label: 'Keplr Extension',
+      provider: window.keplr && new KeplrSignerProvider(window.keplr)
+    }, {
+      key: 'falcon',
+      label: 'Falcon Wallet',
+      provider: window.falcon && new FalconSignerProvider(window.falcon)
+    }]
+  }
+
+  getSignerProvider(providerKey){
+    if(!providerKey) providerKey = localStorage.getItem('connected')
+
+    return providerKey && this.signerProviders().find(el => el.key === providerKey)
   }
 
   disconnect() {
@@ -138,75 +147,66 @@ class App extends React.Component {
     })
   }
 
-  async connect(manual) {
+  async connect(providerKey, manual) {
     if (this.props.network && !this.connected()) {
       return this.setState({
         error: 'Could not connect to any available API servers'
       })
     }
 
-    if (manual && !this.state.keplr) {
+    const signerProvider = this.getSignerProvider(providerKey)
+
+    if(!signerProvider) return
+
+    providerKey = signerProvider.key
+
+    if (manual && !signerProvider.provider) {
       return this.setState({
-        keplrError: true
+        providerError: providerKey
       })
     }
 
-    if (localStorage.getItem('connected') !== '1') {
+    const provider = signerProvider.provider
+
+    if (localStorage.getItem('connected') !== providerKey) {
       if (manual) {
-        localStorage.setItem('connected', '1')
+        localStorage.setItem('connected', providerKey)
       } else {
         return
       }
     }
 
     const { network } = this.props
-    if (!network) return
-
-    const chainId = network.chainId
+    if (!network || !provider) return
 
     try {
-      if (window.keplr) {
-        if (network.gasPricePrefer) {
-          window.keplr.defaultOptions = {
-            sign: { preferNoSetFee: true }
-          }
-        }
-        await window.keplr.enable(chainId);
-      }
+      await provider.enable(network)
     } catch (e) {
       console.log(e.message, e)
-      await this.suggestChain(network)
+      await provider.suggestChain(network)
     }
-    if (window.getOfflineSigner) {
-      try {
-        const offlineSigner = await window.getOfflineSignerAuto(chainId)
-        const key = await window.keplr.getKey(chainId);
-        const wallet = new Wallet(network, offlineSigner, key)
-        const signingClient = wallet.signingClient
-        signingClient.registry.register("/cosmos.authz.v1beta1.MsgGrant", MsgGrant)
-        signingClient.registry.register("/cosmos.authz.v1beta1.MsgRevoke", MsgRevoke)
+    try {
+      const offlineSigner = await provider.getSigner(network)
+      const key = await provider.getKey(network);
+      const wallet = new Wallet(network, offlineSigner, key)
+      const signingClient = wallet.signingClient
+      signingClient.registry.register("/cosmos.authz.v1beta1.MsgGrant", MsgGrant)
+      signingClient.registry.register("/cosmos.authz.v1beta1.MsgRevoke", MsgRevoke)
 
-        const address = await wallet.getAddress();
+      const address = await wallet.getAddress();
 
-        this.setState({
-          address: address,
-          wallet: wallet,
-          signingClient: signingClient,
-          error: false
-        })
-      } catch (e) {
-        console.log(e)
-        return this.setState({
-          error: 'Failed to connect to signer: ' + e.message
-        })
-      }
+      this.setState({
+        address: address,
+        wallet: wallet,
+        signingClient: signingClient,
+        error: false
+      })
+    } catch (e) {
+      console.log(e)
+      return this.setState({
+        error: `Failed to connect to ${signerProvider?.label || 'signer'}: ${e.message}`
+      })
     }
-  }
-
-  suggestChain(network) {
-    if (!window.keplr) return
-
-    return window.keplr.experimentalSuggestChain(network.suggestChain())
   }
 
   refreshInterval() {
@@ -681,8 +681,8 @@ class App extends React.Component {
                               </>
                             ) : (
                               <>
-                                <Dropdown.Item as="button" onClick={() => this.connect(true)} disabled={!window.keplr}>Connect Keplr Extension</Dropdown.Item>
-                                {/* <Dropdown.Item onClick={() => this.connect(true)} disabled={!window.falcon}>Connect Falcon Wallet</Dropdown.Item> */}
+                                <Dropdown.Item as="button" onClick={() => this.connect('keplr', true)} disabled={!window.keplr}>Connect Keplr Extension</Dropdown.Item>
+                                <Dropdown.Item as="button" onClick={() => this.connect('falcon', true)} disabled={!window.falcon}>Connect Falcon Wallet</Dropdown.Item>
                               </>
 
                             )}
@@ -690,7 +690,7 @@ class App extends React.Component {
                             {this.state.address && (
                               <>
                                 <Dropdown.Divider />
-                                <Dropdown.Item as="button" onClick={this.disconnect}>Disconnect</Dropdown.Item>
+                                <Dropdown.Item as="button" onClick={this.disconnect}>Disconnect {this.getSignerProvider()?.label}</Dropdown.Item>
                               </>
                             )}
                           </Dropdown.Menu>
@@ -710,8 +710,8 @@ class App extends React.Component {
             </AlertMessage>
           )}
           <AlertMessage message={this.state.error} variant="danger" dismissible={false} />
-          {!this.state.keplr && this.state.keplrError && (
-            <AlertMessage variant="warning" dismissible={true} onClose={() => this.setState({ keplrError: false })}>
+          {!this.state.providerError === 'keplr' && (
+            <AlertMessage variant="warning" dismissible={true} onClose={() => this.setState({ providerError: false })}>
               Please install the <a href="https://chrome.google.com/webstore/detail/keplr/dmkamcknogkgcdfhhbddcghachkejeap?hl=en" target="_blank" rel="noreferrer">Keplr browser extension</a> using desktop Google Chrome.<br />WalletConnect and mobile support is coming soon.
             </AlertMessage>
           )}

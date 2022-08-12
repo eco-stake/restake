@@ -185,7 +185,7 @@ function Validators(props) {
               delegation={delegation}
               isLoading={props.isLoading}
               authzSupport={props.authzSupport}
-              restakePossible={props.restakePossible}
+              restakePossible={props.restakePossible && !props.modal}
               openGrants={() => props.showValidator(validator, { activeTab: 'restake' })}
             />
           ) : (
