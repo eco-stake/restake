@@ -4,6 +4,8 @@ const autostake = new Autostake();
 const networkNames = process.argv.slice(2, process.argv.length)
 
 const main = async () => {
+  console.log("Restake is booting...!")
+
   const RETRIES = 10
   for (let i = 0; i < networkNames; i++) {
     const networkName = networkNames[i]
