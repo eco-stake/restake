@@ -14,30 +14,30 @@ import { MsgExec } from "cosmjs-types/cosmos/authz/v1beta1/tx.js";
 import Network from '../src/utils/Network.mjs'
 import Wallet from '../src/utils/Wallet.mjs';
 import AutostakeHealth from "../src/utils/AutostakeHealth.mjs";
-import {coin, timeStamp, mapSync, executeSync, overrideNetworks, parseGrants} from '../src/utils/Helpers.mjs'
+import { coin, timeStamp, mapSync, executeSync, overrideNetworks, parseGrants } from '../src/utils/Helpers.mjs'
 import EthSigner from '../src/utils/EthSigner.mjs';
 
 import 'dotenv/config'
 
 export class Autostake {
-  constructor(opts){
+  constructor(opts) {
     this.opts = opts || {}
     this.mnemonic = process.env.MNEMONIC
-    if(!this.mnemonic){
+    if (!this.mnemonic) {
       timeStamp('Please provide a MNEMONIC environment variable')
       process.exit()
     }
   }
 
-  async run(networkNames){
+  async run(networkNames) {
     const networks = this.getNetworksData()
-    for(const name of networkNames){
+    for (const name of networkNames) {
       if (name && !networks.map(el => el.name).includes(name)) return timeStamp('Invalid network name:', name)
     }
     const calls = networks.map(data => {
       return async () => {
-        if(networkNames && networkNames.length && !networkNames.includes(data.name)) return
-        if(data.enabled === false) return
+        if (networkNames && networkNames.length && !networkNames.includes(data.name)) return
+        if (data.enabled === false) return
 
         let client
         let health = new AutostakeHealth(data.healthCheck, { dryRun: this.opts.dryRun })
@@ -48,13 +48,13 @@ export class Autostake {
           return health.failed('Failed to connect', error.message)
         }
 
-        if(!client) return health.success('Skipping')
+        if (!client) return health.success('Skipping')
 
         const { restUrl, usingDirectory } = client.network
 
         timeStamp('Using REST URL', restUrl)
 
-        if(usingDirectory){
+        if (usingDirectory) {
           timeStamp('You are using public nodes, script may fail with many delegations. Check the README to use your own')
           timeStamp('Delaying briefly to reduce load...')
           await new Promise(r => setTimeout(r, (Math.random() * 31) * 1000));
@@ -70,9 +70,9 @@ export class Autostake {
     await executeSync(calls, 1)
   }
 
-  async runNetwork(client){
+  async runNetwork(client) {
     timeStamp('Running autostake')
-    const { network, health } = client 
+    const { network, health } = client
     const balance = await this.checkBalance(client)
     if (!balance || smaller(balance, 1_000)) {
       return health.failed('Bot balance is too low')
@@ -136,12 +136,12 @@ export class Autostake {
     }
   }
 
-  async getSigner(network){
+  async getSigner(network) {
     let slip44
-    if(network.data.autostake?.correctSlip44 || network.slip44 === 60){
-      if(network.slip44 === 60) timeStamp('Found ETH coin type')
+    if (network.data.autostake?.correctSlip44 || network.slip44 === 60) {
+      if (network.slip44 === 60) timeStamp('Found ETH coin type')
       slip44 = network.slip44 || 118
-    }else{
+    } else {
       slip44 = network.data.autostake?.slip44 || 118
     }
     let hdPath = [
@@ -158,7 +158,7 @@ export class Autostake {
       hdPaths: [hdPath]
     });
 
-    if(network.slip44 === 60){
+    if (network.slip44 === 60) {
       const ethSigner = EthWallet.fromMnemonic(this.mnemonic);
       signer = EthSigner(signer, ethSigner, network.prefix)
     }
@@ -181,12 +181,25 @@ export class Autostake {
 
   getDelegations(client) {
     let batchSize = client.network.data.autostake?.batchQueries || 100
-    return client.queryClient.getAllValidatorDelegations(client.operator.address, batchSize, (pages) => {
-      timeStamp("...batch", pages.length)
-    }).catch(error => {
-      client.health.error("Failed to get delegations:", error.message || error)
+
+    const tries = 10
+    for (let i = 0; i < tries; i++) {
+      try {
+        const result = await client.queryClient.getAllValidatorDelegations(client.operator.address, batchSize, async (pages) => {
+          timeStamp("...batch", pages.length)
+
+          // Randomly sleep
+          await new Promise(r => setTimeout(r, (Math.random() * 31) * 1000));
+        })
+      } catch (e) {
+        console.log(`Failed to get delegations on try ${i + 1} of ${tries}`)
+        console.log(`Error: ${e}`)
+        await new Promise(r => setTimeout(r, (Math.random() * 31) * 1000));
+      }
+
+      client.health.error("Failed to get delegations")
       return []
-    })
+    }
   }
 
   async getGrantedAddresses(client, addresses) {
@@ -194,10 +207,10 @@ export class Autostake {
     let allGrants
     try {
       allGrants = await client.queryClient.getGranteeGrants(botAddress)
-    } catch (e) {  }
+    } catch (e) { }
     let grantCalls = addresses.map(item => {
       return async () => {
-        if(allGrants) return this.parseGrantResponse(allGrants, botAddress, item, address)
+        if (allGrants) return this.parseGrantResponse(allGrants, botAddress, item, address)
         try {
           return await this.getGrants(client, item)
         } catch (error) {
@@ -215,25 +228,32 @@ export class Autostake {
   getGrants(client, delegatorAddress) {
     const { botAddress, address } = client.operator
     let timeout = client.network.data.autostake?.delegatorTimeout || 5000
-    return client.queryClient.getGrants(botAddress, delegatorAddress, { timeout })
-      .then(
-        (result) => {
-          return this.parseGrantResponse(result, botAddress, delegatorAddress, address)
-        },
-        (error) => {
-          client.health.error(delegatorAddress, "ERROR skipping this run:", error.message || error)
-        }
-      )
+
+    // Retry up to 10 times.
+    const tries = 10
+    for (let i = 0; i < tries; i++) {
+      try {
+        const result = await client.queryClient.getGrants(botAddress, delegatorAddress, { timeout })
+        return this.parseGrantResponse(result, botAddress, delegatorAddress, address)
+      } catch (e) {
+        console.log(`Caught error on try ${i + 1} of ${tries}... Will retry`)
+        console.log(`Error: ${e}`)
+
+        // Sleep for between 0 and 31 seconds
+        await new Promise(r => setTimeout(r, (Math.random() * 31) * 1000));
+      }
+    }
+    client.health.error(delegatorAddress, "ERROR: Could not get grants. Skipping this run.")
   }
 
-  parseGrantResponse(grants, botAddress, delegatorAddress, validatorAddress){
+  parseGrantResponse(grants, botAddress, delegatorAddress, validatorAddress) {
     const result = parseGrants(grants, botAddress, delegatorAddress)
     let grantValidators, maxTokens
     if (result.stakeGrant) {
       if (result.stakeGrant.authorization['@type'] === "/cosmos.authz.v1beta1.GenericAuthorization") {
         timeStamp(delegatorAddress, "Using GenericAuthorization, allowed")
         grantValidators = [validatorAddress];
-      }else{
+      } else {
         grantValidators = result.stakeGrant.authorization.allow_list.address
         if (!grantValidators.includes(validatorAddress)) {
           timeStamp(delegatorAddress, "Not autostaking for this validator, skipping")
@@ -255,14 +275,14 @@ export class Autostake {
 
     let timeout = client.network.data.autostake?.delegatorTimeout || 5000
     const withdrawAddress = await client.queryClient.getWithdrawAddress(address, { timeout })
-    if(withdrawAddress && withdrawAddress !== address){
+    if (withdrawAddress && withdrawAddress !== address) {
       timeStamp(address, 'has a different withdraw address:', withdrawAddress)
       return
     }
 
     const totalRewards = await this.totalRewards(client, address)
 
-    if(totalRewards === undefined) return
+    if (totalRewards === undefined) return
 
     let autostakeAmount = floor(totalRewards)
 
@@ -271,12 +291,12 @@ export class Autostake {
       return
     }
 
-    if (grant.maxTokens){
-      if(smallerEq(grant.maxTokens, 0)) {
+    if (grant.maxTokens) {
+      if (smallerEq(grant.maxTokens, 0)) {
         timeStamp(address, grant.maxTokens, client.network.denom, 'grant balance is empty, skipping')
         return
       }
-      if(smaller(grant.maxTokens, autostakeAmount)) {
+      if (smaller(grant.maxTokens, autostakeAmount)) {
         autostakeAmount = grant.maxTokens
         timeStamp(address, grant.maxTokens, client.network.denom, 'grant balance is too low, using remaining')
       }
@@ -321,7 +341,7 @@ export class Autostake {
     health.complete(`${network.prettyName} finished: Sent ${results.length - errors.length}/${results.length} messages`)
   }
 
-  async sendInBatches(client, messages, batchSize, total){
+  async sendInBatches(client, messages, batchSize, total) {
     if (messages) {
       this.batch = this.batch.concat(messages)
     }
@@ -342,7 +362,7 @@ export class Autostake {
     }
   }
 
-  async sendMessages(client, messages){
+  async sendMessages(client, messages) {
     try {
       const execMsg = this.buildExecMessage(client.operator.botAddress, messages)
       const memo = 'REStaked by ' + client.operator.moniker
