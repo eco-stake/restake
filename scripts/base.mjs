@@ -185,7 +185,7 @@ export class Autostake {
     const tries = 10
     for (let i = 0; i < tries; i++) {
       try {
-        const result = await client.queryClient.getAllValidatorDelegations(client.operator.address, batchSize, async (pages) => {
+        return await client.queryClient.getAllValidatorDelegations(client.operator.address, batchSize, async (pages) => {
           timeStamp("...batch", pages.length)
 
           // Randomly sleep
