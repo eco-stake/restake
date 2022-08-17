@@ -215,5 +215,9 @@
   {
     "name": "kichaintestnet",
     "testnet": true
+  },
+  {
+    "name": "passage",
+    "ownerAddress": "pasgvaloper196rujtjehu0dfc7y85lkcaps6tel76g3l9knjy"
   }
 ]
