@@ -2,6 +2,9 @@ import _ from 'lodash'
 import axios from 'axios'
 import { multiply, ceil, bignumber } from 'mathjs'
 import Long from "long";
+import moment from 'moment'
+import { GenericAuthorization } from "cosmjs-types/cosmos/authz/v1beta1/authz";
+import { Timestamp } from "cosmjs-types/google/protobuf/timestamp";
 
 import {
   defaultRegistryTypes as defaultStargateTypes,
@@ -178,37 +181,50 @@ function SigningClient(network, signer) {
   async function sign(address, messages, memo, fee){
     const account = await getAccount(address)
     const { account_number: accountNumber, sequence } = account
-    const txBodyBytes = makeBodyBytes(messages, memo)
     let aminoMsgs
     try {
-      aminoMsgs = messages.map(el => aminoTypes.toAmino(el))
+      aminoMsgs = messages.map(message => convertToAmino(message) )
     } catch { }
     if(aminoMsgs){
       // Sign as amino if possible for Ledger and Keplr support
+      console.log(aminoMsgs)
       const signDoc = makeAminoSignDoc(aminoMsgs, fee, chainId, memo, accountNumber, sequence);
       const { signature, signed } = await signer.sign(address, signDoc);
+      
+      const signedTxBody = {
+        messages: signed.msgs.map((msg) => convertFromAmino(msg)),
+        memo: signed.memo,
+      };
+      console.log(signedTxBody)
+      const signedTxBodyEncodeObject = {
+        typeUrl: "/cosmos.tx.v1beta1.TxBody",
+        value: signedTxBody,
+      };
+      const signedTxBodyBytes = registry.encode(signedTxBodyEncodeObject);
+
       const authInfoBytes = await makeAuthInfoBytes(account, {
         amount: signed.fee.amount,
         gasLimit: signed.fee.gas,
       }, SignMode.SIGN_MODE_LEGACY_AMINO_JSON)
-      return {
-        bodyBytes: makeBodyBytes(messages, signed.memo),
+      return TxRaw.fromPartial({
+        bodyBytes: signedTxBodyBytes,
         authInfoBytes: authInfoBytes,
         signatures: [Buffer.from(signature.signature, "base64")],
-      }
+      })
     }else{
       // Sign using standard protobuf messages
       const authInfoBytes = await makeAuthInfoBytes(account, {
         amount: fee.amount,
         gasLimit: fee.gas,
       }, SignMode.SIGN_MODE_DIRECT)
+      const txBodyBytes = makeBodyBytes(messages, memo)
       const signDoc = makeSignDoc(txBodyBytes, authInfoBytes, chainId, accountNumber);
       const { signature, signed } = await signer.signDirect(address, signDoc);
-      return {
+      return TxRaw.fromPartial({
         bodyBytes: signed.bodyBytes,
         authInfoBytes: signed.authInfoBytes,
         signatures: [fromBase64(signature.signature)],
-      }
+      })
     }
   }
 
@@ -231,6 +247,66 @@ function SigningClient(network, signer) {
       return (parseInt(estimate * (modifier || defaultGasModifier)));
     } catch (error) {
       throw new Error(error.response?.data?.message || error.message)
+    }
+  }
+
+  function convertToAmino(message){
+    switch (message.typeUrl) {
+      case '/cosmos.authz.v1beta1.MsgGrant':
+        return {
+          "@type": "cosmos-sdk/MsgGrant",
+          "granter": message.value.granter,
+          "grantee": message.value.grantee,
+          "grant": {
+            "authorization": {
+              "@type": "/cosmos.authz.v1beta1.GenericAuthorization",
+              "msg": "/cosmos.gov.v1beta1.MsgVote"
+            },
+            "expiration": "2023-08-18T23:00:00Z"
+          }
+        }
+      case '/cosmos.authz.v1beta1.MsgRevoke':
+        return {
+          "@type": "cosmos-sdk/MsgRevoke",
+          "granter": message.value.granter,
+          "grantee": message.value.grantee,
+          "msg_type_url": message.value.msgTypeUrl
+        }
+      default:
+        return aminoTypes.toAmino(message)
+    }
+  }
+
+  function convertFromAmino(message){
+    switch (message['@type']) {
+      case 'cosmos-sdk/MsgGrant':
+        return {
+          "typeUrl": "/cosmos.authz.v1beta1.MsgGrant",
+          "value": {
+            granter: message.granter,
+            grantee: message.grantee,
+            grant: {
+              authorization: {
+                typeUrl: message.grant.authorization['@type'],
+                value: {
+                  msg: message.grant.authorization.msg
+                }
+              },
+              expiration: message.grant.expiration
+            }
+          }
+        }
+      case 'cosmos-sdk/MsgRevoke':
+        return {
+          "typeUrl": "/cosmos.authz.v1beta1.MsgRevoke",
+          "value": {
+            granter: message.granter,
+            grantee: message.grantee,
+            msgTypeUrl: message.msg_type_url
+          }
+        }
+      default:
+        return aminoTypes.fromAmino(message)
     }
   }
 
