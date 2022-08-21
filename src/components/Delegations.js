@@ -297,7 +297,7 @@ class Delegations extends React.Component {
   }
 
   restakePossible() {
-    return this.props.address && !this.state.isNanoLedger && this.authzSupport();
+    return this.props.address && this.authzSupport();
   }
 
   totalRewards(validators) {

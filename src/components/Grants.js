@@ -204,15 +204,6 @@ function Grants(props) {
       {!props.grantQuerySupport && (
         <AlertMessage variant="warning">This network doesn't fully support this feature just yet. <span role="button" className="text-decoration-underline" onClick={props.showFavouriteAddresses}>Save addresses</span> to see them here.</AlertMessage>
       )}
-      {props.grantQuerySupport && isNanoLedger && (
-        <AlertMessage
-          variant="warning"
-          dismissible={false}
-        >
-          <p>Ledger devices can't send Authz transactions just yet. Full support will be enabled as soon as it is possible.</p>
-          <p className="mb-0"><span onClick={() => setShowModal(true)} role="button" className="text-reset text-decoration-underline">A manual workaround is possible using the CLI.</span></p>
-        </AlertMessage>
-        )}
       <AlertMessage message={error} />
     </>
   );
@@ -260,7 +251,7 @@ function Grants(props) {
           </div>
           <div className="flex-fill d-flex justify-content-end">
             <Button variant="primary" disabled={!wallet?.hasPermission(address, 'Grant')} onClick={() => setShowModal(true)}>
-              {address && !isNanoLedger ? 'New Grant' : 'CLI/Ledger Instructions'}
+              {address ? 'New Grant' : 'CLI/Ledger Instructions'}
             </Button>
           </div>
         </div>

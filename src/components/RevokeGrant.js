@@ -51,7 +51,7 @@ function RevokeGrant(props) {
   }
 
   function disabled(){
-    return props.disabled || !wallet?.hasPermission(address, 'Revoke') || wallet?.getIsNanoLedger()
+    return props.disabled || !wallet?.hasPermission(address, 'Revoke')
   }
 
   if(props.button){

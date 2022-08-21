@@ -27,7 +27,6 @@ class Wallet {
 
   hasPermission(address, action){
     if(address === this.address) return true
-    if(this.getIsNanoLedger()) return false // Ledger Authz disabled for now
 
     let message = messageTypes.find(el => {
       return el.split('.').slice(-1)[0].replace('Msg', '') === action
