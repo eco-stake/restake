@@ -195,15 +195,17 @@ class App extends React.Component {
     const { network } = this.props
     if (!network || !provider) return
 
+    let key
     try {
       await provider.enable(network)
+      key = await provider.getKey(network);
     } catch (e) {
       console.log(e.message, e)
       await provider.suggestChain(network)
+      key = await provider.getKey(network);
     }
     try {
       const offlineSigner = await provider.getSigner(network)
-      const key = await provider.getKey(network);
       const wallet = new Wallet(network, offlineSigner, key)
       const signingClient = wallet.signingClient
       signingClient.registry.register("/cosmos.authz.v1beta1.MsgGrant", MsgGrant)
