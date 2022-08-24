@@ -165,7 +165,7 @@ function Grants(props) {
                   button={true}
                   size="sm"
                   grants={[grant]}
-                  stargateClient={props.stargateClient}
+                  signingClient={props.signingClient}
                   onRevoke={onRevoke}
                   setLoading={(loading) =>
                     setGrantLoading({ [grantId]: loading })
@@ -283,7 +283,7 @@ function Grants(props) {
         address={props.address}
         wallet={props.wallet}
         favouriteAddresses={props.favouriteAddresses}
-        stargateClient={props.stargateClient}
+        signingClient={props.signingClient}
         onHide={closeModal}
         onGrant={onGrant}
       />

@@ -114,14 +114,17 @@ function SigningClient(network, signer) {
   }
 
   async function signAndBroadcastWithoutBalanceCheck(address, msgs, gas, memo, gasPrice) {
-    const defaultOptions = _.clone(signer.keplr.defaultOptions);
-    _.merge(signer.keplr.defaultOptions, {
-      sign: { disableBalanceCheck: true }
-    });
+    let defaultOptions
+    if(signer.keplr.defaultOptions){
+      defaultOptions = _.clone(signer.keplr.defaultOptions);
+      signer.keplr.defaultOptions = {...defaultOptions, sign: { disableBalanceCheck: true }}
+    }
     try {
       return await signAndBroadcast(address, msgs, gas, memo, gasPrice)
     } finally {
-      signer.keplr.defaultOptions = defaultOptions
+      if(defaultOptions){
+        signer.keplr.defaultOptions = defaultOptions
+      }
     }
   }
 
@@ -185,11 +188,11 @@ function SigningClient(network, signer) {
     try {
       aminoMsgs = messages.map(message => convertToAmino(message) )
     } catch { }
-    if(aminoMsgs){
+    if(aminoMsgs && signer.signAmino){
       // Sign as amino if possible for Ledger and Keplr support
       console.log(aminoMsgs)
       const signDoc = makeAminoSignDoc(aminoMsgs, fee, chainId, memo, accountNumber, sequence);
-      const { signature, signed } = await signer.sign(address, signDoc);
+      const { signature, signed } = await signer.signAmino(address, signDoc);
       
       const signedTxBody = {
         messages: signed.msgs.map((msg) => convertFromAmino(msg)),

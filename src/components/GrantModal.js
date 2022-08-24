@@ -70,7 +70,7 @@ function GrantModal(props) {
     ]
     console.log(messages)
 
-    props.stargateClient.signAndBroadcast(wallet.address, messages).then((result) => {
+    props.signingClient.signAndBroadcast(wallet.address, messages).then((result) => {
       console.log("Successfully broadcasted:", result);
       showLoading(false)
       props.onGrant(grantee(), {

@@ -60,7 +60,7 @@ class Wallet {
 
   getIsNanoLedger() {
     if(!this.key) return false
-    return this.key.isNanoLedger;
+    return this.key.isNanoLedger || this.key.isHardware;
   }
 }
 
