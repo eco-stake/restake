@@ -66,7 +66,9 @@ class App extends React.Component {
       favourites: favouriteJson ? JSON.parse(favouriteJson) : [],
       favouriteAddresses: favouriteAddressJson ? JSON.parse(favouriteAddressJson) : {}
     }
-    this.connect = this.connect.bind(this);
+    this.connectAny = this.connectAny.bind(this);
+    this.connectKeplr = this.connectKeplr.bind(this);
+    this.connectFalcon = this.connectFalcon.bind(this);
     this.disconnect = this.disconnect.bind(this);
     this.showNetworkSelect = this.showNetworkSelect.bind(this);
     this.getBalance = this.getBalance.bind(this);
@@ -80,8 +82,9 @@ class App extends React.Component {
 
   async componentDidMount() {
     this.connect()
-    window.addEventListener("load", this.connect)
-    window.addEventListener("keplr_keystorechange", this.connect)
+    window.addEventListener("load", this.connectAny)
+    window.addEventListener("keplr_keystorechange", this.connectKeplr)
+    window.addEventListener("falcon_keystorechange", this.connectFalcon)
   }
 
   async componentDidUpdate(prevProps, prevState) {
@@ -107,8 +110,9 @@ class App extends React.Component {
 
   componentWillUnmount() {
     this.clearRefreshInterval()
-    window.removeEventListener("load", this.connect)
-    window.removeEventListener("keplr_keystorechange", this.connect)
+    window.removeEventListener("load", this.connectAny)
+    window.removeEventListener("keplr_keystorechange", this.connectKeplr)
+    window.removeEventListener("falcon_keystorechange", this.connectFalcon)
   }
 
   showNetworkSelect() {
@@ -145,6 +149,18 @@ class App extends React.Component {
       wallet: null,
       signingClient: null
     })
+  }
+
+  connectAny(event){
+    return this.connect()
+  }
+
+  connectKeplr(event){
+    return this.connect('keplr')
+  }
+
+  connectFalcon(event){
+    return this.connect('falcon')
   }
 
   async connect(providerKey, manual) {

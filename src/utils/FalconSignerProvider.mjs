@@ -6,14 +6,6 @@ export default class FalconSignerProvider extends SignerProvider {
     return this.provider.connect(chainId)
   }
 
-  getSigner(network){
-    const { chainId } = network
-    return this.provider.getOfflineSigner(chainId)
-  }
-
-  getKey(network){
-  }
-
   suggestChain(network){
     return this.provider.importZone(network.suggestChain())
   }
