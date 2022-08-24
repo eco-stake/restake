@@ -7,7 +7,7 @@ export default class KeplrSignerProvider extends SignerProvider {
         sign: { preferNoSetFee: true }
       })
     }
-    super.enable(network)
+    return super.enable(network)
   }
 
   setOptions(options){
