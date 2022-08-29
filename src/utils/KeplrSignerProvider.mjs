@@ -1,6 +1,9 @@
 import SignerProvider from "./SignerProvider.mjs"
 
 export default class KeplrSignerProvider extends SignerProvider {
+  key = 'keplr'
+  label = 'Keplr Extension'
+
   enable(network){
     if (network.gasPricePrefer) {
       this.setOptions({

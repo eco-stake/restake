@@ -3,6 +3,10 @@ export default class SignerProvider {
     this.provider = provider
   }
 
+  connected(){
+    return !!this.provider
+  }
+
   enable(network){
     const { chainId } = network
     return this.provider.enable(chainId)

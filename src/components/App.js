@@ -124,20 +124,13 @@ class App extends React.Component {
   }
 
   signerProviders(){
-    return [{
-      key: 'keplr',
-      label: 'Keplr Extension',
-      provider: window.keplr && new KeplrSignerProvider(window.keplr)
-    }, {
-      key: 'falcon',
-      label: 'Falcon Wallet',
-      provider: window.falcon && new FalconSignerProvider(window.falcon)
-    }]
+    return [
+      new KeplrSignerProvider(window.keplr),
+      new FalconSignerProvider(window.falcon)
+    ]
   }
 
   getSignerProvider(providerKey){
-    if(!providerKey) providerKey = localStorage.getItem('connected')
-
     return providerKey && this.signerProviders().find(el => el.key === providerKey)
   }
 
@@ -170,21 +163,25 @@ class App extends React.Component {
       })
     }
 
-    const signerProvider = this.getSignerProvider(providerKey)
+    let storedKey = localStorage.getItem('connected')
+    if(storedKey === '1'){
+      storedKey = 'keplr'
+      localStorage.setItem('connected', storedKey)
+    }
+
+    const signerProvider = this.getSignerProvider(providerKey || storedKey)
 
     if(!signerProvider) return
 
     providerKey = signerProvider.key
 
-    if (manual && !signerProvider.provider) {
+    if (manual && !signerProvider.connected()) {
       return this.setState({
         providerError: providerKey
       })
     }
 
-    const provider = signerProvider.provider
-
-    if (localStorage.getItem('connected') !== providerKey) {
+    if (storedKey !== providerKey) {
       if (manual) {
         localStorage.setItem('connected', providerKey)
       } else {
@@ -193,19 +190,19 @@ class App extends React.Component {
     }
 
     const { network } = this.props
-    if (!network || !provider) return
+    if (!network || !signerProvider.connected()) return
 
     let key
     try {
-      await provider.enable(network)
-      key = await provider.getKey(network);
+      await signerProvider.enable(network)
+      key = await signerProvider.getKey(network);
     } catch (e) {
       console.log(e.message, e)
-      await provider.suggestChain(network)
-      key = await provider.getKey(network);
+      await signerProvider.suggestChain(network)
+      key = await signerProvider.getKey(network);
     }
     try {
-      const offlineSigner = await provider.getSigner(network)
+      const offlineSigner = await signerProvider.getSigner(network)
       const wallet = new Wallet(network, offlineSigner, key)
       const signingClient = wallet.signingClient
       signingClient.registry.register("/cosmos.authz.v1beta1.MsgGrant", MsgGrant)
@@ -214,9 +211,10 @@ class App extends React.Component {
       const address = await wallet.getAddress();
 
       this.setState({
-        address: address,
-        wallet: wallet,
-        signingClient: signingClient,
+        address,
+        wallet,
+        signerProvider,
+        signingClient,
         error: false
       })
     } catch (e) {
@@ -698,17 +696,15 @@ class App extends React.Component {
                                 </Dropdown.Item>
                               </>
                             ) : (
-                              <>
-                                <Dropdown.Item as="button" onClick={() => this.connect('keplr', true)} disabled={!window.keplr}>Connect Keplr Extension</Dropdown.Item>
-                                <Dropdown.Item as="button" onClick={() => this.connect('falcon', true)} disabled={!window.falcon}>Connect Falcon Wallet</Dropdown.Item>
-                              </>
-
+                              this.signerProviders().map(provider => {
+                                return <Dropdown.Item as="button" key={provider.key} onClick={() => this.connect(provider.key, true)} disabled={!provider.connected()}>Connect {provider.label}</Dropdown.Item>
+                              })
                             )}
                             <Dropdown.Item as="button" onClick={() => this.setState({ showAddressModal: true })}>Saved Addresses</Dropdown.Item>
                             {this.state.address && (
                               <>
                                 <Dropdown.Divider />
-                                <Dropdown.Item as="button" onClick={this.disconnect}>Disconnect {this.getSignerProvider()?.label}</Dropdown.Item>
+                                <Dropdown.Item as="button" onClick={this.disconnect}>Disconnect {this.state.signerProvider?.label}</Dropdown.Item>
                               </>
                             )}
                           </Dropdown.Menu>
