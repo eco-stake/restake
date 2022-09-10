@@ -25,7 +25,12 @@ A script is also provided which allows a validator to automatically search their
 
 ## Become an operator
 
-Becoming an operator is extremely easy. You need to do three things:
+Becoming an operator is pretty easy, the overall process is as follows:
+
+1. Setup your bot wallet
+2. Setup the autostaking script
+3. Setup a cron or timer to run the script on a schedule
+4. Submit your operator to Validator Registry
 
 ### Setup a hot wallet
 
@@ -54,13 +59,13 @@ The correct path can be set in one of two ways using a [config override](#overri
 
 In the future, `correctSlip44` will become the default and you will need to set `slip44` explicitely if you want to use the 118 path.
 
-### Setup the autostaking script and run daily
+### Setup the autostaking script
 
 You can run the autostaking script using `docker-compose` or using `npm` directly. In both cases you will need to provide your mnemonic in a `MNEMONIC` environment variable.
 
-## Instructions for Docker Compose
+#### Instructions for Docker Compose
 
-### Install Docker and Docker Compose
+##### Install Docker and Docker Compose
 
 Best bet is to follow the Docker official guides. Install Docker first, then Docker Compose. In recent versions, Docker and Docker Compose may combined into a single installation.
 
@@ -68,7 +73,7 @@ Docker: [docs.docker.com/get-docker](https://docs.docker.com/get-docker/)
 
 Docker Compose: [docs.docker.com/compose/install](https://docs.docker.com/compose/install/)
 
-### Clone the repository and setup .env
+##### Clone the repository and setup .env
 
 Clone the repository and copy the sample `.env` file ready for your mnemonic.
 
@@ -80,32 +85,9 @@ cp .env.sample .env
 
 **Populate your new .env file with your mnemonic.**
 
-### Running the script manually
+#### Instructions for NPM
 
-Running the autostake script manually is then simple.
-
-Note you might need `sudo` depending on your docker install. 
-
-Some docker versions utilize `docker compose` instead of `docker-compose`. If you run into issues, try substituting `docker compose`.
-
-```bash
-docker-compose run --rm app npm run autostake
-```
-
-Pass network names to restrict the script to certain networks.
-
-```bash
-docker-compose run --rm app npm run autostake osmosis akash regen
-```
-
-A _Dry Run_ script is also included, which runs the normal autostake script but skips sending the final TXs, and skips any health check pings.
-
-```bash
-docker-compose run --rm app npm run dryrun osmosis
-```
-## Instructions for systemd service
-
-### Install nodejs@v17
+##### Install nodejs@v17
 
 ```bash
 curl -sL https://deb.nodesource.com/setup_17.x -o /tmp/nodesource_setup.sh
@@ -119,38 +101,19 @@ npm --version
 > 8.5.5
 
 ```
-### Clone the repository and build it
+
+##### Clone the repository and build it
 
 ```bash
 git clone https://github.com/eco-stake/restake
 cd restake
 npm install && npm run build
+cp .env.sample .env
 ```
 
-### Create systemd service
+**Populate your new .env file with your mnemonic.**
 
-```
-$ cat /etc/systemd/system/restake.service
-[Unit]
-Description=Restake service with timer
-After=network-online.target
-Wants=restake.timer # keep this line if you setup the restake.timer service below, remove for cron
-
-[Service]
-Type=oneshot
-User=cosmos
-WorkingDirectory=/path/to/cloned/repo
-Environment=MNEMONIC="your hot wallet mnemonic here"
-Environment=NODE_ENV=production
-Environment=DIRECTORY_DOMAIN=cosmos.directory
-Environment=DIRECTORY_PROTOCOL=https
-ExecStart=/usr/bin/npm run autostake
-
-[Install]
-WantedBy=multi-user.target
-```
-
-### Updating your local version
+#### Updating your local version
 
 REStake is MVP. Very MVP. Updates are happening all the time and there are bugs that still need fixing. Make sure you update often.
 
@@ -161,16 +124,89 @@ git pull
 docker-compose run --rm app npm install
 docker-compose build --no-cache
 ```
-or without docker
+
+or with NPM:
+
 ```bash
 git pull
 npm install && npm run build
 ```
 
-### Setting up Cron to make sure the script runs daily
+#### Running the script
 
-You should setup your script to run at the same time each day.
-2 methods are described below; using `crontab` or using `systemd-timer`.
+Running the autostake script manually is then simple.
+
+**If you use Docker then you should prefix the below commands with `docker-compose run --rm app`.**
+
+Note you might need `sudo` depending on your docker install, and some docker versions utilize `docker compose` instead of `docker-compose`. If you run into issues, try substituting `docker compose`.
+
+```bash
+npm run autostake
+```
+
+With docker: 
+
+```bash
+docker-compose run --rm app npm run autostake
+```
+
+Pass network names to restrict the script to certain networks.
+
+```bash
+npm run autostake osmosis akash regen
+```
+
+A _Dry Run_ script is also included, which runs the normal autostake script but skips sending the final TXs, and skips any health check pings.
+
+```bash
+npm run dryrun osmosis
+```
+
+**You should expect to see a warning that you are 'not an operator' until your REStake operator information is submitted in [Submitting your operator](#submitting-your-operator)**
+
+
+### Customise REStake and use your own node
+
+You will likely want to customise your networks config, e.g. to set your own node URLs to ensure your autocompounding script completes successfully.
+
+Create a `src/networks.local.json` file and specify the networks you want to override. The below is just an example, **you should only override a config if you need to**.
+
+```json
+{
+  "osmosis": {
+    "prettyName": "Osmosis with Fees",
+    "restUrl": [
+      "https://rest.validator.com/osmosis"
+    ],
+    "gasPrice": "0.001uosmo",
+    "autostake": {
+      "batchTxs": 50,
+      "batchQueries": 50,
+      "delegatorTimeout": 5000,
+      "gasModifier": 1.1
+    }
+  },
+  "desmos": {
+    "prettyName": "Desmos 118",
+    "autostake": {
+      "correctSlip44": true
+    }
+  },
+  "cosmoshub": {
+    "enabled": false
+  }
+}
+```
+
+Any values you specify will override the `networks.json` file. These are examples, you can override as much or little as you need.
+
+Arrays will be replaced and not merged. The file is `.gitignore`'d so it won't affect upstream updates.
+
+Note that REStake requires a node with indexing enabled and minimum gas prices matching the `networks.json` gas price (or your local override).
+
+### Setting up cron/timers to run the script on a schedule
+
+You should setup your script to run at the same time each day. 2 methods are described below; using `crontab` or using `systemd-timer`.
 
 In both cases, ensure your system time is correct and you know what time the script will run in UTC, as that will be required later. Both examples below are for 21:00.
 
@@ -187,17 +223,18 @@ crontab -e
 
 0 21 * * * /bin/bash -c "cd restake && docker compose run --rm app npm run autostake" > ./restake.log 2>&1
 ```
-or without docker
+
+or with NPM:
+
 ```bash
 crontab -e
 
-0 21 * * * /bin/bash -c "systemctl start restake"
+0 21 * * * /bin/bash -c "cd restake && npm run autostake" > ./restake.log 2>&1
 ```
-
 
 #### Using `systemd-timer`
 
-Systemd-timer allow to run a one-off service with specified rules. This can be used instead, if you run into issues with implementing `crontab`.
+Systemd-timer allow to run a one-off service with specified rules. This method is arguably preferable to Cron.
 
 ##### Create a systemd unit file
 
@@ -209,7 +246,7 @@ sudo vim /etc/systemd/system/restake.service
 
 ```bash
 [Unit]
-Description=stakebot service with docker compose
+Description=restake service with docker compose
 Requires=docker.service
 After=docker.service
 Wants=restake.timer
@@ -223,9 +260,11 @@ ExecStart=/usr/bin/docker-compose run --rm app npm run autostake
 WantedBy=multi-user.target
 ```
 
+For NPM installs, remove `Requires` and `After` directives, and change `ExecStart` to `ExecStart=/usr/bin/npm run autostake`.
+
 ##### Create a systemd timer file
 
-The timer file defines the rules for running the restake service every day. All rules are described in the [systemd documentation](https://www.freedesktop.org/software/systemd/man/systemd.timer.html). 
+The timer file defines the rules for running the restake service every day. All rules are described in the [systemd documentation](https://www.freedesktop.org/software/systemd/man/systemd.timer.html).
 
 Note: Helpful calculator for determining restake times for `OnCalendar` can also be found at https://crontab.guru/.
 
@@ -262,6 +301,7 @@ systemctl start restake.timer
     Trigger: Wed 2022-03-09 21:00:00 UTC; 7h left
    Triggers: ● restake.service
 </pre>
+
 `$ systemctl status restake.service`
 <pre>● restake.service - stakebot service with docker compose
      Loaded: loaded (/etc/systemd/system/restake.service; enabled; vendor preset: enabled)
@@ -271,45 +311,7 @@ TriggeredBy: <font color="#8AE234"><b>●</b></font> restake.timer
    Main PID: 86925 (code=exited, status=0/SUCCESS)
 </pre>
 
-### Overriding networks config locally/use your own node
-
-You will likely want to customise your networks config, e.g. to set your own node URLs to ensure your autocompounding script completes successfully.
-
-Create a `src/networks.local.json` file and specify the networks you want to override. The below is just an example, **you should only override a config if you need to**.
-
-```json
-{
-  "osmosis": {
-    "prettyName": "Osmosis with Fees",
-    "restUrl": [
-      "https://rest.validator.com/osmosis"
-    ],
-    "gasPrice": "0.001uosmo",
-    "autostake": {
-      "batchTxs": 69,
-      "batchQueries": 50,
-      "delegatorTimeout": 5000
-    }
-  },
-  "desmos": {
-    "prettyName": "Desmos 118",
-    "autostake": {
-      "correctSlip44": true
-    }
-  },
-  "cosmoshub": {
-    "enabled": false
-  }
-}
-```
-
-Any values you specify will override the `networks.json` file. These are examples, you can override as much or little as you need.
-
-Arrays will be replaced and not merged. The file is `.gitignore`'d so it won't affect upstream updates.
-
-Note that REStake requires a node with indexing enabled and minimum gas prices matching the `networks.json` gas price (or your local override).
-
-### Monitoring 
+### Monitoring
 
 The REStake autostaking script can integrate with [healthchecks.io](https://healthchecks.io/) to report the script status for each network. [healthchecks.io](https://healthchecks.io/) can then integrate with many notification platforms like email, Discord and Slack to make sure you know about any failures.
 
@@ -329,9 +331,9 @@ Add your Check UUID to the relevant network in your `networks.local.json` config
 }
 ```
 
-## Submitting your operator
+### Submitting your operator
 
-### Setup your REStake operator
+#### Setup your REStake operator
 
 You now need to update the [Validator Registry](https://github.com/eco-stake/validator-registry) to add your operator information to any networks you want to auto-compound for. Check the README and existing validators for examples, but the config for a network looks like this:
 
@@ -360,19 +362,24 @@ Repeat this config for all networks you want to REStake for.
 
 Note that the `restake.address` is the address which will be granted by the delegator in the UI to carry out their restaking transactions.
 
-#### Submit your operator
+#### Submit your operator to the Validator Registry
 
 You can now submit your [Validator Registry](https://github.com/eco-stake/validator-registry) update to that repository in a pull request which will be merged as soon as possible. REStake automatically updates within 15 minutes of changes being merged.
 
-## Adding/updating a network
+## Contributing
 
-Network information is sourced from the [Chain Registry](https://github.com/cosmos/chain-registry) via the [registry.cosmos.directory](https://registry.cosmos.directory) API. The `networks.json` defines which chains appear in REStake; so long as the chain name matches the directory name from the Chain Registry, all chain information will be sourced automatically.
+### Adding/updating a network
 
-To add a network to REStake, add the required information to `networks.json` as follows:
+Network information is sourced from the [Chain Registry](https://github.com/cosmos/chain-registry) via the [registry.cosmos.directory](https://registry.cosmos.directory) API. Chains in the master branch are automatically added to REStake assuming enough basic information is provided.
+
+The `networks.json` file defines which chains appear as 'supported' in REStake; so long as the chain name matches the directory name from the Chain Registry, all chain information will be sourced automatically. Alternatively chains _can_ be supported in `networks.json` alone, but this is not a documented feature.
+
+To add or override a chain in REStake, add the required information to `networks.json` as follows:
 
 ```json
 {
   "name": "osmosis",
+  "prettyName": "Osmosis",
   "gasPrice": "0.025uosmo",
   "authzSupport": true
 }
@@ -380,7 +387,7 @@ To add a network to REStake, add the required information to `networks.json` as 
 
 Note that most attributes from Chain Registry can be overriden by defining the camelCase version in networks.json.
 
-## Running the UI
+### Running the UI
 
 Run the UI using docker with one line:
 
