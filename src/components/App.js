@@ -210,7 +210,7 @@ class App extends React.Component {
     try {
       const offlineSigner = await signerProvider.getSigner(network)
       const wallet = new Wallet(network, offlineSigner, key)
-      const signingClient = wallet.signingClient
+      const signingClient = wallet.signingClient()
       signingClient.registry.register("/cosmos.authz.v1beta1.MsgGrant", MsgGrant)
       signingClient.registry.register("/cosmos.authz.v1beta1.MsgRevoke", MsgRevoke)
 
