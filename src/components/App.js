@@ -126,7 +126,7 @@ class App extends React.Component {
   signerProviders(){
     return [
       new KeplrSignerProvider(window.keplr),
-      new FalconSignerProvider(window.falcon)
+      // new FalconSignerProvider(window.falcon)
     ]
   }
 
