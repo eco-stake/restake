@@ -1,7 +1,7 @@
 # dev env
-FROM node:17-alpine
+FROM node:17-slim
 
-RUN apk add --update python3 make g++ && rm -rf /var/cache/apk/*
+RUN apt-get update && apt-get install -y python3 make g++
 
 ENV NODE_ENV=development
 
