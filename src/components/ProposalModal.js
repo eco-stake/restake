@@ -34,7 +34,7 @@ function ProposalModal(props) {
             granters={props.granters}
             favouriteAddresses={props.favouriteAddresses}
             queryClient={props.queryClient}
-            stargateClient={props.stargateClient}
+            signingClient={props.signingClient}
             onVote={props.onVote} />
         </Modal.Body>
       </Modal>

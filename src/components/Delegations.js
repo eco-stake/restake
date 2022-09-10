@@ -383,7 +383,7 @@ class Delegations extends React.Component {
         grants={this.operatorGrants()}
         authzSupport={this.authzSupport()}
         restakePossible={this.restakePossible()}
-        stargateClient={this.props.stargateClient}
+        signingClient={this.props.signingClient}
         hideModal={this.hideValidatorModal}
         onDelegate={this.onClaimRewards}
         onGrant={this.onGrant}
@@ -446,7 +446,7 @@ class Delegations extends React.Component {
             delegations={this.state.delegations}
             rewards={this.state.rewards}
             commission={this.state.commission}
-            stargateClient={this.props.stargateClient}
+            signingClient={this.props.signingClient}
             validatorLoading={this.state.validatorLoading}
             isLoading={this.props.wallet && (!this.state.delegations || (this.props.network?.authzSupport && !this.props.grants?.granter))}
             operatorGrants={this.operatorGrants()}
@@ -486,7 +486,7 @@ class Delegations extends React.Component {
                         address={this.props.address}
                         wallet={this.props.wallet}
                         validatorRewards={this.validatorRewards()}
-                        stargateClient={this.props.stargateClient}
+                        signingClient={this.props.signingClient}
                         onClaimRewards={this.onClaimRewards}
                         setLoading={this.setClaimLoading}
                         setError={this.setError}
@@ -497,7 +497,7 @@ class Delegations extends React.Component {
                         address={this.props.address}
                         wallet={this.props.wallet}
                         validatorRewards={this.validatorRewards()}
-                        stargateClient={this.props.stargateClient}
+                        signingClient={this.props.signingClient}
                         onClaimRewards={this.onClaimRewards}
                         setLoading={this.setClaimLoading}
                         setError={this.setError}
