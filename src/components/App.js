@@ -126,7 +126,7 @@ class App extends React.Component {
   signerProviders(){
     return [
       new KeplrSignerProvider(window.keplr),
-      new FalconSignerProvider(window.falcon)
+      // new FalconSignerProvider(window.falcon)
     ]
   }
 
@@ -198,13 +198,19 @@ class App extends React.Component {
       key = await signerProvider.getKey(network);
     } catch (e) {
       console.log(e.message, e)
-      await signerProvider.suggestChain(network)
-      key = await signerProvider.getKey(network);
+      try {
+        await signerProvider.suggestChain(network)
+        key = await signerProvider.getKey(network);
+      } catch (e) {
+        return this.setState({
+          error: `Failed to connect to ${signerProvider?.label || 'signer'}: ${e.message}`
+        })
+      }
     }
     try {
       const offlineSigner = await signerProvider.getSigner(network)
       const wallet = new Wallet(network, offlineSigner, key)
-      const signingClient = wallet.signingClient
+      const signingClient = wallet.signingClient()
       signingClient.registry.register("/cosmos.authz.v1beta1.MsgGrant", MsgGrant)
       signingClient.registry.register("/cosmos.authz.v1beta1.MsgRevoke", MsgRevoke)
 
@@ -629,7 +635,7 @@ class App extends React.Component {
                           ) : (
                             <select className="form-select form-select-sm d-none d-lg-block ms-2" aria-label="Address" value={this.state.address || ''} onChange={(e) => this.setState({ address: e.target.value })}>
                               {this.state.wallet ? (
-                                <optgroup label="Wallet">
+                                <optgroup label={this.state.signerProvider.label}>
                                   <option value={this.state.wallet.address}>{this.state.wallet.name || this.state.wallet.address}</option>
                                 </optgroup>
                               ) : (

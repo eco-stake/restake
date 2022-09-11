@@ -18,11 +18,14 @@ export const messageTypes = [
 class Wallet {
   constructor(network, signer, key){
     this.network = network
-    this.signingClient = SigningClient(network, signer)
     this.signer = signer
     this.key = key
     this.name = key?.name
     this.grants = []
+  }
+
+  signingClient(){
+    return SigningClient(this.network, this.signer)
   }
 
   hasPermission(address, action){
