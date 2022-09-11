@@ -1,5 +1,7 @@
-import { Autostake } from "./base.mjs";
+import 'dotenv/config'
+import Autostake from "../src/autostake/index.mjs";
 
-const autostake = new Autostake();
-const networkName = process.argv.slice(2, process.argv.length)
-autostake.run(networkName)
+const mnemonic = process.env.MNEMONIC
+const autostake = new Autostake(mnemonic);
+const networkNames = process.argv.slice(2, process.argv.length)
+autostake.run(networkNames)

@@ -185,7 +185,7 @@ function Validators(props) {
               delegation={delegation}
               isLoading={props.isLoading}
               authzSupport={props.authzSupport}
-              restakePossible={props.restakePossible}
+              restakePossible={props.restakePossible && !props.modal}
               openGrants={() => props.showValidator(validator, { activeTab: 'restake' })}
             />
           ) : (
@@ -314,7 +314,7 @@ function Validators(props) {
                               grantAddress={operator.botAddress}
                               grants={[grants.stakeGrant, grants.claimGrant]}
                               buttonText="Disable REStake"
-                              stargateClient={props.stargateClient}
+                              signingClient={props.signingClient}
                               onRevoke={props.onRevoke}
                               setLoading={(loading) =>
                                 props.setValidatorLoading(
@@ -333,7 +333,7 @@ function Validators(props) {
                       address={address}
                       wallet={wallet}
                       validatorRewards={props.validatorRewards([validatorAddress])}
-                      stargateClient={props.stargateClient}
+                      signingClient={props.signingClient}
                       onClaimRewards={props.onClaimRewards}
                       setLoading={(loading) =>
                         props.setValidatorLoading(validatorAddress, loading)
@@ -346,7 +346,7 @@ function Validators(props) {
                       address={address}
                       wallet={wallet}
                       validatorRewards={props.validatorRewards([validatorAddress])}
-                      stargateClient={props.stargateClient}
+                      signingClient={props.signingClient}
                       onClaimRewards={props.onClaimRewards}
                       setLoading={(loading) =>
                         props.setValidatorLoading(validatorAddress, loading)
@@ -362,7 +362,7 @@ function Validators(props) {
                           address={address}
                           wallet={wallet}
                           validatorRewards={props.validatorRewards([validatorAddress])}
-                          stargateClient={props.stargateClient}
+                          signingClient={props.signingClient}
                           onClaimRewards={props.onClaimRewards}
                           setLoading={(loading) =>
                             props.setValidatorLoading(validatorAddress, loading)

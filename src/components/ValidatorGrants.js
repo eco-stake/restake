@@ -88,7 +88,7 @@ function ValidatorGrants(props) {
     ]
     console.log(messages)
 
-    props.stargateClient.signAndBroadcast(wallet.address, messages).then((result) => {
+    props.signingClient.signAndBroadcast(wallet.address, messages).then((result) => {
       console.log("Successfully broadcasted:", result);
       showLoading(false)
       props.onGrant(operator.botAddress, {
@@ -263,7 +263,7 @@ function ValidatorGrants(props) {
                           operator={operator}
                           grants={[grants.stakeGrant, grants.claimGrant]}
                           grantAddress={operator.botAddress}
-                          stargateClient={props.stargateClient}
+                          signingClient={props.signingClient}
                           onRevoke={props.onRevoke}
                           setLoading={(loading) => showLoading(loading)}
                           setError={setError}

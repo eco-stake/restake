@@ -38,7 +38,7 @@ class DelegateForm extends React.Component {
     const wallet = this.props.wallet
     const amount = this.state.amount
     const memo = this.state.memo
-    const client = this.props.stargateClient
+    const client = this.props.signingClient
 
     const decimals = pow(10, this.props.network.decimals)
     const denomAmount = bignumber(multiply(amount, decimals))
@@ -108,9 +108,9 @@ class DelegateForm extends React.Component {
 
     this.setState({error: undefined})
     const messages = this.buildMessages(multiply(this.props.availableBalance.amount, 0.95))
-    this.props.stargateClient.simulate(this.props.wallet.address, messages).then(gas => {
+    this.props.signingClient.simulate(this.props.wallet.address, messages).then(gas => {
       const saveTxFeeNum = (this.props.redelegate || this.props.undelegate) ? 0 : 10
-      const gasPrice = this.props.stargateClient.getFee(gas).amount[0].amount
+      const gasPrice = this.props.signingClient.getFee(gas).amount[0].amount
       const decimals = pow(10, this.props.network.decimals)
       const amount = divide(subtract(this.props.availableBalance.amount, multiply(gasPrice, saveTxFeeNum)), decimals)
 
