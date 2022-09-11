@@ -254,30 +254,33 @@ function SigningClient(network, signer) {
   }
 
   function convertToAmino(message){
+    console.log('toAmino', message)
     switch (message.typeUrl) {
       case '/cosmos.authz.v1beta1.MsgGrant':
         return {
-            type: "cosmos-sdk/MsgGrant",
-            value: {
-                granter: message.value.granter,
-                grantee: message.value.grantee,
-                grant: {
-                authorization: {
-                    type: "cosmos-sdk/GenericAuthorization",
-                    value: {
-                    msg: "/cosmos.gov.v1beta1.MsgVote",
-                    },
+          type: "cosmos-sdk/MsgGrant",
+          value: {
+            granter: message.value.granter,
+            grantee: message.value.grantee,
+            grant: {
+              authorization: {
+                type: "cosmos-sdk/GenericAuthorization",
+                value: {
+                  msg: "cosmos-sdk/MsgVote",
                 },
-                expiration: "2023-08-18T23:00:00Z",
-                },
+              },
+              expiration: "2023-08-18T23:00:00Z",
             },
+          },
         }
       case '/cosmos.authz.v1beta1.MsgRevoke':
         return {
-          "@type": "cosmos-sdk/MsgRevoke",
-          "granter": message.value.granter,
-          "grantee": message.value.grantee,
-          "msg_type_url": message.value.msgTypeUrl
+          type: "cosmos-sdk/MsgRevoke",
+          value: {
+            granter: message.value.granter,
+            grantee: message.value.grantee,
+            msg_type_url: "cosmos-sdk/MsgVote"
+          }
         }
       default:
         return aminoTypes.toAmino(message)
@@ -285,31 +288,32 @@ function SigningClient(network, signer) {
   }
 
   function convertFromAmino(message){
-    switch (message['@type']) {
+    console.log('fromAmino', message)
+    switch (message.type) {
       case 'cosmos-sdk/MsgGrant':
         return {
-          "typeUrl": "/cosmos.authz.v1beta1.MsgGrant",
-          "value": {
-            granter: message.granter,
-            grantee: message.grantee,
+          typeUrl: "/cosmos.authz.v1beta1.MsgGrant",
+          value: {
+            granter: message.value.granter,
+            grantee: message.value.grantee,
             grant: {
               authorization: {
-                typeUrl: message.grant.authorization['@type'],
+                typeUrl: "/cosmos.authz.v1beta1.GenericAuthorization",
                 value: {
-                  msg: message.grant.authorization.msg
+                  msg: "/cosmos.gov.v1beta1.MsgVote"
                 }
               },
-              expiration: message.grant.expiration
+              expiration: message.value.grant.expiration
             }
           }
         }
       case 'cosmos-sdk/MsgRevoke':
         return {
-          "typeUrl": "/cosmos.authz.v1beta1.MsgRevoke",
-          "value": {
-            granter: message.granter,
-            grantee: message.grantee,
-            msgTypeUrl: message.msg_type_url
+          typeUrl: "/cosmos.authz.v1beta1.MsgRevoke",
+          value: {
+            granter: message.value.granter,
+            grantee: message.value.grantee,
+            msgTypeUrl: "/cosmos.gov.v1beta1.MsgVote"
           }
         }
       default:
