@@ -306,7 +306,7 @@ function SigningClient(network, signer) {
                 })).finish()
               },
               expiration: Timestamp.fromPartial({
-                seconds: moment(message.value.expiration).unix(),
+                seconds: moment(message.value.grant.expiration).unix(),
                 nanos: 0
               })
             }
