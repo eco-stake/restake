@@ -257,16 +257,20 @@ function SigningClient(network, signer) {
     switch (message.typeUrl) {
       case '/cosmos.authz.v1beta1.MsgGrant':
         return {
-          "@type": "cosmos-sdk/MsgGrant",
-          "granter": message.value.granter,
-          "grantee": message.value.grantee,
-          "grant": {
-            "authorization": {
-              "@type": "/cosmos.authz.v1beta1.GenericAuthorization",
-              "msg": "/cosmos.gov.v1beta1.MsgVote"
+            type: "cosmos-sdk/MsgGrant",
+            value: {
+                granter: message.value.granter,
+                grantee: message.value.grantee,
+                grant: {
+                authorization: {
+                    type: "cosmos-sdk/GenericAuthorization",
+                    value: {
+                    msg: "/cosmos.gov.v1beta1.MsgVote",
+                    },
+                },
+                expiration: "2023-08-18T23:00:00Z",
+                },
             },
-            "expiration": "2023-08-18T23:00:00Z"
-          }
         }
       case '/cosmos.authz.v1beta1.MsgRevoke':
         return {
