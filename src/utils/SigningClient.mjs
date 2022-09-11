@@ -186,6 +186,7 @@ function SigningClient(network, signer) {
     const { account_number: accountNumber, sequence } = account
     let aminoMsgs
     try {
+      // attempt to convert all messages to Amino
       aminoMsgs = messages.map(message => convertToAmino(message) )
     } catch { }
     if(aminoMsgs && signer.signAmino){
@@ -194,6 +195,7 @@ function SigningClient(network, signer) {
       const signDoc = makeAminoSignDoc(aminoMsgs, fee, chainId, memo, accountNumber, sequence);
       const { signature, signed } = await signer.signAmino(address, signDoc);
       
+      // Convert amino signed messages back to protobuf for broadcast
       const signedTxBody = {
         messages: signed.msgs.map((msg) => convertFromAmino(msg)),
         memo: signed.memo,
@@ -299,11 +301,14 @@ function SigningClient(network, signer) {
             grant: {
               authorization: {
                 typeUrl: "/cosmos.authz.v1beta1.GenericAuthorization",
-                value: {
+                value: GenericAuthorization.encode(GenericAuthorization.fromPartial({
                   msg: "/cosmos.gov.v1beta1.MsgVote"
-                }
+                })).finish()
               },
-              expiration: message.value.grant.expiration
+              expiration: Timestamp.fromPartial({
+                seconds: moment(message.value.expiration).unix(),
+                nanos: 0
+              })
             }
           }
         }
