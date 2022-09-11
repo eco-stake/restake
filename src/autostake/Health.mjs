@@ -34,7 +34,7 @@ class Health {
   }
 
   addLogs(logs){
-    this.logs.concat(logs.map(el => [el, "\n"]).flat())
+    this.logs = this.logs.concat(logs.map(el => [el, "\n"]).flat())
   }
 
   sendLog(){
