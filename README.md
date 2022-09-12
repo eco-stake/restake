@@ -174,12 +174,13 @@ Create a `src/networks.local.json` file and specify the networks you want to ove
 ```json
 {
   "osmosis": {
-    "prettyName": "Osmosis with Fees",
+    "prettyName": "Osmosis",
     "restUrl": [
-      "https://rest.validator.com/osmosis"
+      "https://rest.cosmos.directory/osmosis"
     ],
-    "gasPrice": "0.001uosmo",
+    "gasPrice": "0.0025uosmo",
     "autostake": {
+      "retries": 3,
       "batchTxs": 50,
       "batchQueries": 50,
       "delegatorTimeout": 5000,
