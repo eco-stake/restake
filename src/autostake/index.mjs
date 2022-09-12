@@ -48,42 +48,42 @@ export default function Autostake(mnemonic, opts) {
   async function runWithRetry(data, health, retries, limitAddresses){
     retries = retries || 0
     const maxRetries = data.autostake?.retries ?? 3
+    let networkRunner, error
     try {
-      const networkRunner = await getNetworkRunner(data)
+      networkRunner = await getNetworkRunner(data)
       if(!networkRunner) return true
 
       await networkRunner.run(limitAddresses)
       if(networkRunner.didSucceed()){
-        logResults(health, networkRunner)
+        await logResults(health, networkRunner)
         return true
       }else{
-        health.addLogs(networkRunner.allErrors())
-        logResults(health, networkRunner)
-        if(networkRunner.forceFail){
-          return false
-        }
         limitAddresses = networkRunner.failedAddresses()
       }
     } catch (e) {
-      health.log('Failed: ', e.message);
+      error = e.message
     }
-    if(retries < maxRetries){
-      health.log(`Failed attempt ${retries + 1}/${maxRetries}, retrying in 30 seconds...`)
-      await health.sendLog()
+    if(retries < maxRetries && !networkRunner.forceFail){
+      await logResults(health, networkRunner, error, `Failed attempt ${retries + 1}/${maxRetries}, retrying in 30 seconds...`)
       await new Promise(r => setTimeout(r, 30 * 1000));
       return await runWithRetry(data, health, retries + 1, limitAddresses)
     }
+    await logResults(health, networkRunner, error)
     return false
   }
 
-  function logResults(health, networkRunner){
+  function logResults(health, networkRunner, error, message){
     const { network, results } = networkRunner
     const errors = results.filter(result => result.error)
+    health.addLogs(networkRunner.allErrors())
     timeStamp(`${network.prettyName} summary:`);
     for (let [index, result] of results.entries()) {
       health.log(`TX ${index + 1}:`, result.message);
     }
-    return health.log(`Sent ${results.length - errors.length}/${results.length} messages`)
+    health.log(`Sent ${results.length - errors.length}/${results.length} messages`)
+    if(error) health.log(`Failed with error: ${error}`)
+    if(message) health.log(message)
+    return health.sendLog()
   }
 
   async function getNetworkRunner(data) {
