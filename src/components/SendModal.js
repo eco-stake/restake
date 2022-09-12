@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import _ from 'lodash'
-import { pow, multiply, divide, subtract } from 'mathjs'
+import { pow, multiply, divide, subtract, bignumber } from 'mathjs'
 
 import { MsgSend } from "cosmjs-types/cosmos/bank/v1beta1/tx";
 
@@ -98,7 +98,7 @@ function SendModal(props) {
     const message = buildSendMsg(address, recipient(), [coinValue])
     props.signingClient.simulate(wallet.address, [message]).then(gas => {
       const gasPrice = props.signingClient.getFee(gas).amount[0].amount
-      const amount = divide(subtract(props.balance.amount, gasPrice), decimals)
+      const amount = divide(subtract(bignumber(props.balance.amount), gasPrice), decimals)
 
       setState({...state, amountValue: amount > 0 ? amount : 0})
     }, error => {

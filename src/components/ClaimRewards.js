@@ -6,7 +6,7 @@ import {
   Dropdown
 } from 'react-bootstrap'
 
-import { add, subtract, multiply, divide, bignumber, floor } from 'mathjs'
+import { add, subtract, multiply, divide, bignumber } from 'mathjs'
 
 function ClaimRewards(props) {
   const { address, wallet, signingClient, validatorRewards } = props
@@ -30,7 +30,7 @@ function ClaimRewards(props) {
 
     const totalReward = validatorRewards.reduce((sum, validatorReward) => add(sum, bignumber(validatorReward.reward)), 0);
     const adjustedValidatorRewards = validatorRewards.map(validatorReward => {
-      const shareOfFee = multiply(divide(validatorReward.reward, totalReward), feeAmount); // To take a proportional amount from each validator relative to total reward
+      const shareOfFee = multiply(divide(bignumber(validatorReward.reward), totalReward), feeAmount); // To take a proportional amount from each validator relative to total reward
       return {
         validatorAddress: validatorReward.validatorAddress,
         reward: subtract(validatorReward.reward, shareOfFee),
