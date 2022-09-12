@@ -16,6 +16,7 @@ export default class NetworkRunner {
     this.batch = {}
     this.messages = []
     this.processed = {}
+    this.results = []
   }
 
   didSucceed(){
@@ -44,10 +45,7 @@ export default class NetworkRunner {
   }
 
   async run(addresses) {
-    this.balance = await this.getBalance()
-    if (!this.balance) {
-      throw new Error('Bot balance is too low')
-    }
+    this.balance = await this.getBalance() || 0
 
     if(addresses){
       timeStamp('Using provided addresses')
@@ -66,8 +64,9 @@ export default class NetworkRunner {
     let grantedAddresses = await this.getGrantedAddresses(addresses)
 
     timeStamp("Found", grantedAddresses.length, "delegators with valid grants...")
-
-    await this.autostake(grantedAddresses)
+    if(grantedAddresses.length){
+      await this.autostake(grantedAddresses)
+    }
   }
 
   getBalance() {
@@ -204,7 +203,7 @@ export default class NetworkRunner {
         }
         this.processed[item.address] = true
 
-        await this.sendInBatches(item, messages, batchSize, grantedAddresses.length)
+        await this.sendInBatches(item.address, messages, batchSize, grantedAddresses.length)
       }
     })
     let querySize = this.network.data.autostake?.batchQueries || _.clamp(batchSize, 50)

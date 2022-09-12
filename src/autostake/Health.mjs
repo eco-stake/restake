@@ -37,11 +37,12 @@ class Health {
     this.logs = this.logs.concat(logs)
   }
 
-  sendLog(){
-    return this.ping('log', this.logs)
+  async sendLog(){
+    await this.ping('log', this.logs)
+    this.logs = []
   }
 
-  ping(action, logs){
+  async ping(action, logs){
     if(!this.uuid) return
     if(this.dryRun) return timeStamp('DRYRUN: Skipping health check ping')
 
