@@ -47,7 +47,7 @@ export default function Autostake(mnemonic, opts) {
 
   async function runWithRetry(data, health, retries, limitAddresses){
     retries = retries || 0
-    const maxRetries = data.autostake?.retries || 3
+    const maxRetries = data.autostake?.retries ?? 3
     try {
       const networkRunner = await getNetworkRunner(data)
       if(!networkRunner) return true
