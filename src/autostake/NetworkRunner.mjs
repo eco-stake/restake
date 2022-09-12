@@ -13,7 +13,7 @@ export default class NetworkRunner {
     this.queryClient = network.queryClient
     this.errors = {}
     this.opts = opts || {}
-    this.batch = []
+    this.batch = {}
     this.messages = []
     this.processed = {}
   }
@@ -32,7 +32,10 @@ export default class NetworkRunner {
   }
 
   failedAddresses(){
-    return Object.keys(this.errors)
+    return [
+      ...Object.keys(this.errors),
+      ...this.results.filter(el => el.error).map(el => el.addresses).flat()
+    ]
   }
 
   setError(address, error){
@@ -201,7 +204,7 @@ export default class NetworkRunner {
         }
         this.processed[item.address] = true
 
-        await this.sendInBatches(messages, batchSize, grantedAddresses.length)
+        await this.sendInBatches(item, messages, batchSize, grantedAddresses.length)
       }
     })
     let querySize = this.network.data.autostake?.batchQueries || _.clamp(batchSize, 50)
@@ -210,28 +213,29 @@ export default class NetworkRunner {
     this.results = await Promise.all(this.messages)
   }
 
-  async sendInBatches(messages, batchSize, total) {
+  async sendInBatches(address, messages, batchSize, total) {
     if (messages) {
-      this.batch = this.batch.concat(messages)
+      this.batch[address] = messages
     }
 
-    const finished = (Object.keys(this.processed).length >= total && this.batch.length > 0)
-    if (this.batch.length >= batchSize || finished) {
-      const batch = this.batch
-      this.batch = []
+    const addresses = Object.keys(this.batch)
+    const finished = (Object.keys(this.processed).length >= total && addresses.length > 0)
+    if (addresses.length >= batchSize || finished) {
+      const batch = Object.values(this.batch).flat()
+      this.batch = {}
 
       const messages = [...this.messages]
       const promise = messages[messages.length - 1] || Promise.resolve()
       const sendTx = promise.then(() => {
         timeStamp('Sending batch', messages.length + 1)
-        return this.sendMessages(batch)
+        return this.sendMessages(addresses, batch)
       })
       this.messages.push(sendTx)
       return sendTx
     }
   }
 
-  async sendMessages(messages) {
+  async sendMessages(addresses, messages) {
     try {
       const execMsg = this.buildExecMessage(this.operator.botAddress, messages)
       const memo = 'REStaked by ' + this.operator.moniker
@@ -247,23 +251,23 @@ export default class NetworkRunner {
         const message = `DRYRUN: Would send ${messages.length} messages using ${gas} gas`
         timeStamp(message)
         this.balance = subtract(bignumber(this.balance), bignumber(fee.amount))
-        return { message }
+        return { message, addresses }
       } else {
         return await this.signingClient.signAndBroadcast(this.operator.botAddress, [execMsg], gas, memo).then((response) => {
           const message = `Sent ${messages.length} messages - ${response.transactionHash}`
           timeStamp(message)
           this.balance = subtract(bignumber(this.balance), bignumber(fee.amount))
-          return { message }
+          return { message, addresses }
         }, (error) => {
           const message = `Failed ${messages.length} messages - ${error.message}`
           timeStamp(message)
-          return { message, error }
+          return { message, addresses, error }
         })
       }
     } catch (error) {
       const message = `Failed ${messages.length} messages: ${error.message}`
       timeStamp(message)
-      return { message, error }
+      return { message, addresses, error }
     }
   }
 
