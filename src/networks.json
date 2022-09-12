@@ -217,6 +217,11 @@
     "testnet": true
   },
   {
+    "name": "likecoin",
+    "gasPrice": "10nanolike",
+    "authzSupport": true
+  },
+  {
     "name": "passage",
     "ownerAddress": "pasgvaloper196rujtjehu0dfc7y85lkcaps6tel76g3l9knjy"
   }
