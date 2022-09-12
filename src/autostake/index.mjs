@@ -36,7 +36,7 @@ export default function Autostake(mnemonic, opts) {
         const health = new Health(data.healthCheck, { dryRun: opts.dryRun })
         health.started('⚛')
         if(await runWithRetry(data, health)){
-          return health.success('Finished')
+          return health.success('Autostake complete')
         }else{
           return health.failed('Autostake failed, skipping network')
         }
@@ -81,7 +81,7 @@ export default function Autostake(mnemonic, opts) {
     const errors = results.filter(result => result.error)
     timeStamp(`${network.prettyName} summary:`);
     for (let [index, result] of results.entries()) {
-      timeStamp(`TX ${index + 1}:`, result.message);
+      health.log(`TX ${index + 1}:`, result.message);
     }
     return health.log(`Sent ${results.length - errors.length}/${results.length} messages`)
   }
