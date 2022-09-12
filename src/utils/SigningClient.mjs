@@ -102,8 +102,7 @@ function SigningClient(network, signer) {
     const amount = ceil(bignumber(multiply(bignumber(gasPriceAmount.toString()), bignumber(gasLimit.toString()))));
     return {
       amount: [coin(amount, denom)],
-      gas: gasLimit.toString(),
-      gasLimit: gasLimit.toString()
+      gas: gasLimit.toString()
     };
   }
 
@@ -191,7 +190,6 @@ function SigningClient(network, signer) {
     } catch { }
     if(aminoMsgs && signer.signAmino){
       // Sign as amino if possible for Ledger and Keplr support
-      console.log(aminoMsgs)
       const signDoc = makeAminoSignDoc(aminoMsgs, fee, chainId, memo, accountNumber, sequence);
       const { signature, signed } = await signer.signAmino(address, signDoc);
       
@@ -256,7 +254,6 @@ function SigningClient(network, signer) {
   }
 
   function convertToAmino(message){
-    console.log('toAmino', message)
     switch (message.typeUrl) {
       case '/cosmos.authz.v1beta1.MsgGrant':
         return {
@@ -268,7 +265,7 @@ function SigningClient(network, signer) {
               authorization: {
                 type: "cosmos-sdk/GenericAuthorization",
                 value: {
-                  msg: "cosmos-sdk/MsgVote",
+                  msg: "/cosmos.gov.v1beta1.MsgVote",
                 },
               },
               expiration: "2023-08-18T23:00:00Z",
@@ -290,7 +287,6 @@ function SigningClient(network, signer) {
   }
 
   function convertFromAmino(message){
-    console.log('fromAmino', message)
     switch (message.type) {
       case 'cosmos-sdk/MsgGrant':
         return {
