@@ -15,40 +15,40 @@ class Health {
   started(...args){
     timeStamp(...args)
     if(this.uuid) timeStamp('Starting health', [this.address, this.uuid].join('/'))
-    return this.ping('start', ...args)
+    return this.ping('start', [args.join(' ')])
   }
 
   success(...args){
     timeStamp(...args)
-    return this.ping(undefined, ...[...this.logs, "\n", ...args])
+    return this.ping(undefined, [...this.logs, args.join(' ')])
   }
 
   failed(...args){
     timeStamp(...args)
-    return this.ping('fail', ...[...this.logs, "\n", ...args])
+    return this.ping('fail', [...this.logs, args.join(' ')])
   }
 
   log(...args){
     timeStamp(...args)
-    this.logs = [...this.logs, "\n", ...args]
+    this.logs = [...this.logs, args.join(' ')]
   }
 
   addLogs(logs){
-    this.logs = this.logs.concat(logs.map(el => [el, "\n"]).flat())
+    this.logs = this.logs.concat(logs)
   }
 
   sendLog(){
-    return this.ping('log', ...this.logs)
+    return this.ping('log', this.logs)
   }
 
-  ping(action, ...args){
+  ping(action, logs){
     if(!this.uuid) return
     if(this.dryRun) return timeStamp('DRYRUN: Skipping health check ping')
 
     return axios.request({
       method: 'POST',
       url: _.compact([this.address, this.uuid, action]).join('/'), 
-      data: args.join(' ')
+      data: logs.join("\n")
     }).catch(error => {
       timeStamp('Health ping failed', error.message)
     })
