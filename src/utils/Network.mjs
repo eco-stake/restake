@@ -45,7 +45,7 @@ class Network {
   }
 
   estimateOperatorCount() {
-    if(!this.operatorAddresses) return 0 
+    if(!this.operatorAddresses) return 0
     return Object.keys(this.operatorAddresses).filter(el => this.allowOperator(el)).length
   }
 

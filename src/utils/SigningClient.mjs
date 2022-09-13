@@ -80,7 +80,7 @@ function SigningClient(network, signer) {
           value = nestedAccount
         }
 
-        return value 
+        return value
       })
       .catch((error) => {
         if(error.response?.status === 404){
@@ -140,7 +140,7 @@ function SigningClient(network, signer) {
     const txPollTimeout = setTimeout(() => {
       timedOut = true;
     }, timeoutMs);
-    
+
     const pollForTx = async (txId) => {
       if (timedOut) {
         throw new Error(

@@ -1,19 +1,17 @@
-import React from 'react';
+import React from "react";
 
-import {
-  Modal,
-} from 'react-bootstrap'
+import { Modal } from "react-bootstrap";
 
-import ProposalDetails from './ProposalDetails';
+import ProposalDetails from "./ProposalDetails";
 
 function ProposalModal(props) {
-  const { show, proposal, tally, vote, network, address } = props
+  const { show, proposal, tally, vote, network, address } = props;
 
   const handleClose = () => {
-    props.closeProposal()
-  }
+    props.closeProposal();
+  };
 
-  if(!proposal) return null
+  if (!proposal) return null;
 
   return (
     <>
@@ -35,11 +33,12 @@ function ProposalModal(props) {
             favouriteAddresses={props.favouriteAddresses}
             queryClient={props.queryClient}
             signingClient={props.signingClient}
-            onVote={props.onVote} />
+            onVote={props.onVote}
+          />
         </Modal.Body>
       </Modal>
     </>
   );
 }
 
-export default ProposalModal
+export default ProposalModal;

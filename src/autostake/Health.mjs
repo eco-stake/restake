@@ -48,7 +48,7 @@ class Health {
 
     return axios.request({
       method: 'POST',
-      url: _.compact([this.address, this.uuid, action]).join('/'), 
+      url: _.compact([this.address, this.uuid, action]).join('/'),
       data: logs.join("\n")
     }).catch(error => {
       timeStamp('Health ping failed', error.message)

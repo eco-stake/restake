@@ -164,7 +164,6 @@ npm run dryrun osmosis
 
 **You should expect to see a warning that you are 'not an operator' until your REStake operator information is submitted in [Submitting your operator](#submitting-your-operator)**
 
-
 ### Customise REStake and use your own node
 
 You will likely want to customise your networks config, e.g. to set your own node URLs to ensure your autocompounding script completes successfully.
@@ -175,9 +174,7 @@ Create a `src/networks.local.json` file and specify the networks you want to ove
 {
   "osmosis": {
     "prettyName": "Osmosis",
-    "restUrl": [
-      "https://rest.cosmos.directory/osmosis"
-    ],
+    "restUrl": ["https://rest.cosmos.directory/osmosis"],
     "gasPrice": "0.0025uosmo",
     "autostake": {
       "retries": 3,
@@ -242,7 +239,7 @@ Systemd-timer allow to run a one-off service with specified rules. This method i
 
 ##### Create a systemd unit file
 
-The unit file describe the application to run.  We define a dependency with the timer with the `Wants` statement.
+The unit file describe the application to run. We define a dependency with the timer with the `Wants` statement.
 
 ```bash
 sudo vim /etc/systemd/system/restake.service
@@ -299,6 +296,7 @@ systemctl start restake.timer
 ##### Check your timer
 
 `$ systemctl status restake.timer`
+
 <pre><font color="#8AE234"><b>●</b></font> restake.timer - Restake bot timer
      Loaded: loaded (/etc/systemd/system/restake.timer; enabled; vendor preset: enabled)
      Active: <font color="#8AE234"><b>active (waiting)</b></font> since Sun 2022-03-06 22:29:48 UTC; 2 days ago
@@ -307,6 +305,7 @@ systemctl start restake.timer
 </pre>
 
 `$ systemctl status restake.service`
+
 <pre>● restake.service - stakebot service with docker compose
      Loaded: loaded (/etc/systemd/system/restake.service; enabled; vendor preset: enabled)
      Active: inactive (dead) since Tue 2022-03-08 21:00:22 UTC; 16h ago
@@ -358,7 +357,7 @@ You now need to update the [Validator Registry](https://github.com/eco-stake/val
 
 `address` is your validator's address, and `restake.address` is the address from your new hot wallet you generated earlier.
 
-`restake.run_time` is the time *in UTC* that you intend to run your bot, and there are a few options. Pass a single time, e.g. `09:00` to specify a single run at 9am UTC. Use an array for multiple specified times, e.g. `["09:00", "21:00"]`. Use an interval string for multiple times per hour/day, e.g. `"every 15 minutes"`.
+`restake.run_time` is the time _in UTC_ that you intend to run your bot, and there are a few options. Pass a single time, e.g. `09:00` to specify a single run at 9am UTC. Use an array for multiple specified times, e.g. `["09:00", "21:00"]`. Use an interval string for multiple times per hour/day, e.g. `"every 15 minutes"`.
 
 `restake.minimum_reward` is the minimum reward to trigger autostaking, otherwise the address be skipped. This could be set higher for more frequent restaking. Note this is in the base denomination, e.g. `uosmo`.
 

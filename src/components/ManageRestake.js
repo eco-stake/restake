@@ -8,7 +8,15 @@ import { Button, OverlayTrigger, Tooltip } from "react-bootstrap";
 import { CheckCircle, XCircle } from "react-bootstrap-icons";
 
 function ManageRestake(props) {
-  const { validator, operator, delegation, grants, network, authzSupport, restakePossible } = props
+  const {
+    validator,
+    operator,
+    delegation,
+    grants,
+    network,
+    authzSupport,
+    restakePossible,
+  } = props;
 
   return (
     <>
@@ -28,12 +36,22 @@ function ManageRestake(props) {
               placement="top"
               overlay={
                 <Tooltip id={`tooltip-${operator.address}`}>
-                  {grants.grantsExist ? delegation ? 'Update grants to re-enable REStake' : 'Delegate to this validator to enable REStake' : 'Authorize validator to REStake for you'}
+                  {grants.grantsExist
+                    ? delegation
+                      ? "Update grants to re-enable REStake"
+                      : "Delegate to this validator to enable REStake"
+                    : "Authorize validator to REStake for you"}
                 </Tooltip>
               }
             >
-              <Button className="mr-5" onClick={props.openGrants} size={props.size} disabled={props.disabled} variant={grants.grantsExist ? 'danger' : 'success'}>
-                {grants.grantsExist ? 'Fix' : 'Enable'}
+              <Button
+                className="mr-5"
+                onClick={props.openGrants}
+                size={props.size}
+                disabled={props.disabled}
+                variant={grants.grantsExist ? "danger" : "success"}
+              >
+                {grants.grantsExist ? "Fix" : "Enable"}
               </Button>
             </OverlayTrigger>
           ) : (
@@ -62,7 +80,7 @@ function ManageRestake(props) {
         />
       )}
     </>
-  )
+  );
 }
 
 export default ManageRestake;
