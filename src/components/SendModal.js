@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import _ from 'lodash'
-import { pow, multiply, divide, subtract } from 'mathjs'
+import { pow, multiply, divide, subtract, bignumber } from 'mathjs'
 
 import { MsgSend } from "cosmjs-types/cosmos/bank/v1beta1/tx";
 
@@ -57,7 +57,7 @@ function SendModal(props) {
     ]
     console.log(messages)
 
-    props.stargateClient.signAndBroadcast(wallet.address, messages, null, state.memoValue).then((result) => {
+    props.signingClient.signAndBroadcast(wallet.address, messages, null, state.memoValue).then((result) => {
       console.log("Successfully broadcasted:", result);
       showLoading(false)
       setState({
@@ -96,9 +96,9 @@ function SendModal(props) {
     const decimals = pow(10, network.decimals)
     const coinValue = coin(multiply(props.balance.amount, 0.95), network.denom)
     const message = buildSendMsg(address, recipient(), [coinValue])
-    props.stargateClient.simulate(wallet.address, [message]).then(gas => {
-      const gasPrice = props.stargateClient.getFee(gas).amount[0].amount
-      const amount = divide(subtract(props.balance.amount, gasPrice), decimals)
+    props.signingClient.simulate(wallet.address, [message]).then(gas => {
+      const gasPrice = props.signingClient.getFee(gas).amount[0].amount
+      const amount = divide(subtract(bignumber(props.balance.amount), gasPrice), decimals)
 
       setState({...state, amountValue: amount > 0 ? amount : 0})
     }, error => {

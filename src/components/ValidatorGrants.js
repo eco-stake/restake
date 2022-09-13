@@ -38,7 +38,7 @@ function ValidatorGrants(props) {
     setState({
       ...state,
       expiryDateValue: (expiryDate() || defaultExpiry).format('YYYY-MM-DD'),
-      maxTokensValue: maxTokens && state.maxTokensValue === '' ? divide(maxTokens, pow(10, network.decimals)) : maxTokens ? state.maxTokensValue : '',
+      maxTokensValue: maxTokens && state.maxTokensValue === '' ? divide(bignumber(maxTokens), pow(10, network.decimals)) : maxTokens ? state.maxTokensValue : '',
     })
   }, [operator])
 
@@ -88,7 +88,7 @@ function ValidatorGrants(props) {
     ]
     console.log(messages)
 
-    props.stargateClient.signAndBroadcast(wallet.address, messages).then((result) => {
+    props.signingClient.signAndBroadcast(wallet.address, messages).then((result) => {
       console.log("Successfully broadcasted:", result);
       showLoading(false)
       props.onGrant(operator.botAddress, {
@@ -238,7 +238,7 @@ function ValidatorGrants(props) {
                 <Form.Label>Max amount</Form.Label>
                 <div className="mb-3">
                   <div className="input-group">
-                    <Form.Control type="number" name="maxTokensValue" min={divide(1, pow(10, network.decimals))} className={!maxTokensValid() ? 'is-invalid' : 'is-valid'} step={step()} placeholder={maxTokens ? divide(maxTokens, pow(10, network.decimals)) : 'Unlimited'} required={false} value={state.maxTokensValue} onChange={handleInputChange} />
+                    <Form.Control type="number" name="maxTokensValue" min={divide(1, pow(10, network.decimals))} className={!maxTokensValid() ? 'is-invalid' : 'is-valid'} step={step()} placeholder={maxTokens ? divide(bignumber(maxTokens), pow(10, network.decimals)) : 'Unlimited'} required={false} value={state.maxTokensValue} onChange={handleInputChange} />
                     <span className="input-group-text">{network.symbol}</span>
                   </div>
                   <div className="form-text text-end">
@@ -263,7 +263,7 @@ function ValidatorGrants(props) {
                           operator={operator}
                           grants={[grants.stakeGrant, grants.claimGrant]}
                           grantAddress={operator.botAddress}
-                          stargateClient={props.stargateClient}
+                          signingClient={props.signingClient}
                           onRevoke={props.onRevoke}
                           setLoading={(loading) => showLoading(loading)}
                           setError={setError}

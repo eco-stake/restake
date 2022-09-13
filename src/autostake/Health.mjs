@@ -1,58 +1,59 @@
 import _ from 'lodash'
 import axios from 'axios'
-import { timeStamp } from './Helpers.mjs'
+import { timeStamp } from '../utils/Helpers.mjs'
 
-class AutostakeHealth {
+class Health {
   constructor(config, opts) {
     const { address, uuid } = config || {}
     const { dryRun } = opts || {}
     this.address = address || 'https://hc-ping.com'
     this.uuid = uuid
     this.dryRun = dryRun
+    this.logs = []
   }
 
   started(...args){
     timeStamp(...args)
     if(this.uuid) timeStamp('Starting health', [this.address, this.uuid].join('/'))
-    this.ping('start', ...args)
-  }
-
-  error(...args){
-    timeStamp(...args)
-    this.errors = [...(this.errors || []), "\n", ...args]
-  }
-
-  complete(...args){
-    timeStamp(...args)
-    if(this.errors){
-      this.ping('fail', ...[...this.errors, "\n", ...args])
-    }else{
-      this.ping(undefined, ...args)
-    }
+    return this.ping('start', [args.join(' ')])
   }
 
   success(...args){
     timeStamp(...args)
-    this.ping(undefined, ...args)
+    return this.ping(undefined, [...this.logs, args.join(' ')])
   }
 
   failed(...args){
     timeStamp(...args)
-    this.ping('fail', ...args)
+    return this.ping('fail', [...this.logs, args.join(' ')])
   }
 
-  ping(action, ...args){
+  log(...args){
+    timeStamp(...args)
+    this.logs = [...this.logs, args.join(' ')]
+  }
+
+  addLogs(logs){
+    this.logs = this.logs.concat(logs)
+  }
+
+  async sendLog(){
+    await this.ping('log', this.logs)
+    this.logs = []
+  }
+
+  async ping(action, logs){
     if(!this.uuid) return
     if(this.dryRun) return timeStamp('DRYRUN: Skipping health check ping')
 
-    axios.request({
+    return axios.request({
       method: 'POST',
       url: _.compact([this.address, this.uuid, action]).join('/'), 
-      data: args.join(' ')
+      data: logs.join("\n")
     }).catch(error => {
       timeStamp('Health ping failed', error.message)
     })
   }
 }
 
-export default AutostakeHealth
+export default Health

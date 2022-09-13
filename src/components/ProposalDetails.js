@@ -138,7 +138,7 @@ function ProposalDetails(props) {
               address={props.address}
               wallet={props.wallet}
               granter={granter}
-              stargateClient={props.stargateClient}
+              signingClient={props.signingClient}
               onVote={onVote}
               setError={setError} />
           </div>

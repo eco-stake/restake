@@ -38,7 +38,7 @@
   },
   {
     "name": "terra",
-    "gasPrice": "0.015uluna"
+    "gasPrice": "5.665uluna"
   },
   {
     "name": "terra2",
@@ -215,6 +215,10 @@
   {
     "name": "kichaintestnet",
     "testnet": true
+  },
+  {
+    "name": "likecoin",
+    "gasPrice": "10nanolike"
   },
   {
     "name": "passage",

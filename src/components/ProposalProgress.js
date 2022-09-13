@@ -1,8 +1,6 @@
 import React from 'react';
 import _ from 'lodash'
-import { add, divide, format } from 'mathjs'
-
-import { add, divide, multiply } from 'mathjs'
+import { add, divide, multiply, format } from 'mathjs'
 
 import {
   OverlayTrigger, 

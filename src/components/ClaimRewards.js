@@ -6,10 +6,10 @@ import {
   Dropdown
 } from 'react-bootstrap'
 
-import { add, subtract, multiply, divide, bignumber, floor } from 'mathjs'
+import { add, subtract, multiply, divide, bignumber } from 'mathjs'
 
 function ClaimRewards(props) {
-  const { address, wallet, stargateClient, validatorRewards } = props
+  const { address, wallet, signingClient, validatorRewards } = props
 
   async function claim(){
     props.setLoading(true)
@@ -18,19 +18,19 @@ function ClaimRewards(props) {
 
     let gas
     try {
-      gas = await stargateClient.simulate(wallet.address, gasSimMessages)
+      gas = await signingClient.simulate(wallet.address, gasSimMessages)
     } catch (error) {
       props.setLoading(false)
       props.setError('Failed to broadcast: ' + error.message)
       return
     }
 
-    const fee = stargateClient.getFee(gas)
+    const fee = signingClient.getFee(gas)
     const feeAmount = fee.amount[0].amount
 
     const totalReward = validatorRewards.reduce((sum, validatorReward) => add(sum, bignumber(validatorReward.reward)), 0);
     const adjustedValidatorRewards = validatorRewards.map(validatorReward => {
-      const shareOfFee = multiply(divide(validatorReward.reward, totalReward), feeAmount); // To take a proportional amount from each validator relative to total reward
+      const shareOfFee = multiply(divide(bignumber(validatorReward.reward), totalReward), feeAmount); // To take a proportional amount from each validator relative to total reward
       return {
         validatorAddress: validatorReward.validatorAddress,
         reward: subtract(validatorReward.reward, shareOfFee),
@@ -45,7 +45,7 @@ function ClaimRewards(props) {
 
     let messages = buildMessages(adjustedValidatorRewards)
     try {
-      gas = gas || await stargateClient.simulate(wallet.address, messages)
+      gas = gas || await signingClient.simulate(wallet.address, messages)
     } catch (error) {
       props.setLoading(false)
       props.setError('Failed to broadcast: ' + error.message)
@@ -53,7 +53,7 @@ function ClaimRewards(props) {
     }
     console.log(messages, gas)
 
-    const signAndBroadcast = stargateClient.signAndBroadcastWithoutBalanceCheck
+    const signAndBroadcast = signingClient.signAndBroadcastWithoutBalanceCheck
     signAndBroadcast(wallet.address, messages, gas).then((result) => {
       console.log("Successfully broadcasted:", result);
       props.setLoading(false)
