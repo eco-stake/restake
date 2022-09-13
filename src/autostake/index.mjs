@@ -58,7 +58,7 @@ export default function Autostake(mnemonic, opts) {
     retries = retries || 0
     runners = runners || []
     const lastRunner = runners[runners.length - 1]
-    const maxRetries = data.autostake?.retries ?? 3
+    const maxRetries = data.autostake?.retries ?? 2
     let networkRunner, error
     try {
       networkRunner = await getNetworkRunner(data)
@@ -77,7 +77,7 @@ export default function Autostake(mnemonic, opts) {
       error = e.message
     }
     if (retries < maxRetries && !networkRunner.forceFail) {
-      await logResults(health, networkRunner, error, `Failed attempt ${retries + 1}/${maxRetries}, retrying in 30 seconds...`)
+      await logResults(health, networkRunner, error, `Failed attempt ${retries + 1}/${maxRetries + 1}, retrying in 30 seconds...`)
       await new Promise(r => setTimeout(r, 30 * 1000));
       return await runWithRetry(data, health, retries + 1, runners)
     }
