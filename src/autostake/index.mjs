@@ -138,7 +138,7 @@ export default function Autostake(mnemonic, opts) {
     timeStamp('Using REST URL', restUrl)
 
     if (usingDirectory) {
-      timeStamp('You are using public nodes, script may fail with many delegations. Check the README to use your own')
+      timeStamp('You are using public nodes, they may not be reliable. Check the README to use your own')
       timeStamp('Delaying briefly to reduce load...')
       await new Promise(r => setTimeout(r, (Math.random() * 31) * 1000));
     }
