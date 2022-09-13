@@ -35,55 +35,71 @@ export default function Autostake(mnemonic, opts) {
 
         const health = new Health(data.healthCheck, { dryRun: opts.dryRun })
         health.started('⚛')
-        if(await runWithRetry(data, health)){
-          return health.success('Autostake complete')
-        }else{
-          return health.failed('Autostake failed, skipping network')
+        const results = await runWithRetry(data, health)
+        if (Array.isArray(results)) {
+          health.log(`Autostake completed in ${results.length} attempt(s)`)
+          results.forEach((result, index) => {
+            health.log(`Attempt ${index + 1}:`)
+            logSummary(health, result)
+          })
+        }
+        const lastResult = results[results.length - 1]
+        if (lastResult.didSucceed()) {
+          return health.success('Autostake finished')
+        } else {
+          return health.failed('Autostake failed')
         }
       }
     })
     await executeSync(calls, 1)
   }
 
-  async function runWithRetry(data, health, retries, limitAddresses){
+  async function runWithRetry(data, health, retries, runners) {
     retries = retries || 0
+    runners = runners || []
+    const lastRunner = runners[runners.length - 1]
     const maxRetries = data.autostake?.retries ?? 3
     let networkRunner, error
     try {
       networkRunner = await getNetworkRunner(data)
-      if(!networkRunner) return true
+      if (!networkRunner) return true
 
-      await networkRunner.run(limitAddresses)
-      if(networkRunner.didSucceed()){
+      runners.push(networkRunner)
+      const limitAddresses = lastRunner?.failedAddresses()
+      await networkRunner.run(limitAddresses?.length && limitAddresses)
+      if (networkRunner.didSucceed()) {
         await logResults(health, networkRunner)
-        return true
-      }else{
-        limitAddresses = networkRunner.failedAddresses()
+        return runners
+      } else {
+        error = networkRunner.error?.message
       }
     } catch (e) {
       error = e.message
     }
-    if(retries < maxRetries && !networkRunner.forceFail){
+    if (retries < maxRetries && !networkRunner.forceFail) {
       await logResults(health, networkRunner, error, `Failed attempt ${retries + 1}/${maxRetries}, retrying in 30 seconds...`)
       await new Promise(r => setTimeout(r, 30 * 1000));
-      return await runWithRetry(data, health, retries + 1, limitAddresses)
+      return await runWithRetry(data, health, retries + 1, runners)
     }
     await logResults(health, networkRunner, error)
-    return false
+    return runners
   }
 
-  function logResults(health, networkRunner, error, message){
-    const { network, results } = networkRunner
+  function logResults(health, networkRunner, error, message) {
+    health.addLogs(networkRunner.queryErrors())
+    logSummary(health, networkRunner)
+    if (error) health.log(`Failed with error: ${error}`)
+    if (message) health.log(message)
+    return health.sendLog()
+  }
+
+  function logSummary(health, networkRunner) {
+    const { results } = networkRunner
     const errors = results.filter(result => result.error)
-    health.addLogs(networkRunner.allErrors())
-    timeStamp(`${network.prettyName} summary:`);
+    health.log(`Sent ${results.length - errors.length}/${results.length} transactions`)
     for (let [index, result] of results.entries()) {
       health.log(`TX ${index + 1}:`, result.message);
     }
-    health.log(`Sent ${results.length - errors.length}/${results.length} messages`)
-    if(error) health.log(`Failed with error: ${error}`)
-    if(message) health.log(message)
-    return health.sendLog()
   }
 
   async function getNetworkRunner(data) {

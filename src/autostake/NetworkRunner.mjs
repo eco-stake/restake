@@ -19,53 +19,63 @@ export default class NetworkRunner {
     this.results = []
   }
 
-  didSucceed(){
-    return !this.allErrors().length
+  didSucceed() {
+    return !this.allErrors().length && !this.error
   }
 
-  allErrors(){
+  allErrors() {
     return [
-      ...Object.entries(this.errors).map(([address, error]) => {
-        return [address, error].join(': ')
-      }),
+      ...this.queryErrors(),
       ...this.results.filter(el => el.error).map(el => el.message)
     ]
   }
 
-  failedAddresses(){
+  queryErrors() {
+    return Object.entries(this.errors).map(([address, error]) => {
+      return [address, error].join(': ')
+    })
+  }
+
+  failedAddresses() {
     return [
       ...Object.keys(this.errors),
       ...this.results.filter(el => el.error).map(el => el.addresses).flat()
     ]
   }
 
-  setError(address, error){
+  setError(address, error) {
     timeStamp(address, ':', error)
     this.errors[address] = error
   }
 
   async run(addresses) {
-    this.balance = await this.getBalance() || 0
+    try {
+      this.balance = await this.getBalance() || 0
 
-    if(addresses){
-      timeStamp('Using provided addresses')
-    }else{
-      timeStamp('Finding delegators...')
-      addresses = await this.getDelegations().then(delegations => {
-        return delegations.map(delegation => {
-          if (delegation.balance.amount === 0) return
+      if (addresses) {
+        timeStamp("Checking", addresses.length, "addresses for grants...")
+      } else {
+        timeStamp('Finding delegators...')
+        addresses = await this.getDelegations().then(delegations => {
+          return delegations.map(delegation => {
+            if (delegation.balance.amount === 0) return
 
-          return delegation.delegation.delegator_address
+            return delegation.delegation.delegator_address
+          })
         })
-      })
-    }
+        timeStamp("Checking", addresses.length, "delegators for grants...")
+      }
 
-    timeStamp("Checking", addresses.length, "delegators for grants...")
-    let grantedAddresses = await this.getGrantedAddresses(addresses)
+      let grantedAddresses = await this.getGrantedAddresses(addresses)
 
-    timeStamp("Found", grantedAddresses.length, "delegators with valid grants...")
-    if(grantedAddresses.length){
-      await this.autostake(grantedAddresses)
+      timeStamp("Found", grantedAddresses.length, "addresses with valid grants...")
+      if (grantedAddresses.length) {
+        await this.autostake(grantedAddresses)
+      }
+      return true
+    } catch (error) {
+      this.error = error
+      return false
     }
   }
 
@@ -123,7 +133,7 @@ export default class NetworkRunner {
           return this.parseGrantResponse(result, botAddress, delegatorAddress, address)
         },
         (error) => {
-          this.setError(delegatorAddress, `ERROR skipping this run: ${error.message || error}`)
+          this.setError(delegatorAddress, `ERROR failed to get grants: ${error.message || error}`)
         }
       )
   }
@@ -156,14 +166,24 @@ export default class NetworkRunner {
     const { address, grant } = grantAddress
 
     let timeout = this.network.data.autostake?.delegatorTimeout || 5000
-    const withdrawAddress = await this.queryClient.getWithdrawAddress(address, { timeout })
+    let withdrawAddress, totalRewards
+    try {
+      withdrawAddress = await this.queryClient.getWithdrawAddress(address, { timeout })
+    } catch (error) {
+      this.setError(address, `ERROR failed to get withdraw address: ${error.message || error}`)
+      return
+    }
     if (withdrawAddress && withdrawAddress !== address) {
       timeStamp(address, 'has a different withdraw address:', withdrawAddress)
       return
     }
 
-    const totalRewards = await this.totalRewards(address)
-
+    try {
+      totalRewards = await this.totalRewards(address)
+    } catch (error) {
+      this.setError(address, `ERROR failed to get rewards: ${error.message || error}`)
+      return
+    }
     if (totalRewards === undefined) return
 
     let autostakeAmount = floor(totalRewards)
@@ -199,14 +219,14 @@ export default class NetworkRunner {
         try {
           messages = await this.getAutostakeMessage(item)
         } catch (error) {
-          this.setError(item.address, `Failed to get autostake message ${error.message}`)
+          this.setError(item.address, `ERROR Failed to get autostake message ${error.message}`)
         }
         this.processed[item.address] = true
 
         await this.sendInBatches(item.address, messages, batchSize, grantedAddresses.length)
       }
     })
-    let querySize = this.network.data.autostake?.batchQueries || _.clamp(batchSize, 50)
+    let querySize = this.network.data.autostake?.batchQueries || _.clamp(batchSize / 2, 50)
     await executeSync(calls, querySize)
 
     this.results = await Promise.all(this.messages)
@@ -241,7 +261,7 @@ export default class NetworkRunner {
       const gasModifier = this.network.data.autostake?.gasModifier || 1.1
       const gas = await this.signingClient.simulate(this.operator.botAddress, [execMsg], memo, gasModifier);
       const fee = this.signingClient.getFee(gas).amount[0]
-      if(smaller(bignumber(this.balance), bignumber(fee.amount))){
+      if (smaller(bignumber(this.balance), bignumber(fee.amount))) {
         this.forceFail = true
         throw new Error(`Bot balance is too low (${this.balance}/${fee.amount}${fee.denom})`)
       }
@@ -304,9 +324,6 @@ export default class NetworkRunner {
             return sum
           }, 0)
           return total
-        },
-        (error) => {
-          timeStamp(address, "ERROR skipping this run:", error.message || error)
         }
       )
   }
