@@ -45,7 +45,7 @@ export default function Autostake(mnemonic, opts) {
             logSummary(health, result)
           })
         }
-        if (lastResult?.didSucceed() || results) {
+        if (lastResult?.didSucceed() || (!lastResult && results)) {
           return health.success('Autostake finished')
         } else {
           return health.failed('Autostake failed')
