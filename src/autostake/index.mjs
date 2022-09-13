@@ -36,15 +36,16 @@ export default function Autostake(mnemonic, opts) {
         const health = new Health(data.healthCheck, { dryRun: opts.dryRun })
         health.started('⚛')
         const results = await runWithRetry(data, health)
+        let lastResult
         if (Array.isArray(results)) {
-          health.log(`Autostake completed in ${results.length} attempt(s)`)
+          lastResult = results[results.length - 1]
+          health.log(`Autostake ${lastResult.didSucceed() ? 'completed' : 'failed'} after ${results.length} attempt(s)`)
           results.forEach((result, index) => {
             health.log(`Attempt ${index + 1}:`)
             logSummary(health, result)
           })
         }
-        const lastResult = results[results.length - 1]
-        if (lastResult.didSucceed()) {
+        if (lastResult?.didSucceed() || results) {
           return health.success('Autostake finished')
         } else {
           return health.failed('Autostake failed')
