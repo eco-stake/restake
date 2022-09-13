@@ -38,7 +38,7 @@ function ValidatorGrants(props) {
     setState({
       ...state,
       expiryDateValue: (expiryDate() || defaultExpiry).format('YYYY-MM-DD'),
-      maxTokensValue: maxTokens && state.maxTokensValue === '' ? divide(maxTokens, pow(10, network.decimals)) : maxTokens ? state.maxTokensValue : '',
+      maxTokensValue: maxTokens && state.maxTokensValue === '' ? divide(bignumber(maxTokens), pow(10, network.decimals)) : maxTokens ? state.maxTokensValue : '',
     })
   }, [operator])
 
@@ -238,7 +238,7 @@ function ValidatorGrants(props) {
                 <Form.Label>Max amount</Form.Label>
                 <div className="mb-3">
                   <div className="input-group">
-                    <Form.Control type="number" name="maxTokensValue" min={divide(1, pow(10, network.decimals))} className={!maxTokensValid() ? 'is-invalid' : 'is-valid'} step={step()} placeholder={maxTokens ? divide(maxTokens, pow(10, network.decimals)) : 'Unlimited'} required={false} value={state.maxTokensValue} onChange={handleInputChange} />
+                    <Form.Control type="number" name="maxTokensValue" min={divide(1, pow(10, network.decimals))} className={!maxTokensValid() ? 'is-invalid' : 'is-valid'} step={step()} placeholder={maxTokens ? divide(bignumber(maxTokens), pow(10, network.decimals)) : 'Unlimited'} required={false} value={state.maxTokensValue} onChange={handleInputChange} />
                     <span className="input-group-text">{network.symbol}</span>
                   </div>
                   <div className="form-text text-end">

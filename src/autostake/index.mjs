@@ -35,55 +35,72 @@ export default function Autostake(mnemonic, opts) {
 
         const health = new Health(data.healthCheck, { dryRun: opts.dryRun })
         health.started('⚛')
-        if(await runWithRetry(data, health)){
-          return health.success('Finished')
-        }else{
-          return health.failed('Autostake failed, skipping network')
+        const results = await runWithRetry(data, health)
+        let lastResult
+        if (Array.isArray(results)) {
+          lastResult = results[results.length - 1]
+          health.log(`Autostake ${lastResult.didSucceed() ? 'completed' : 'failed'} after ${results.length} attempt(s)`)
+          results.forEach((result, index) => {
+            health.log(`Attempt ${index + 1}:`)
+            logSummary(health, result)
+          })
+        }
+        if (lastResult?.didSucceed() || results) {
+          return health.success('Autostake finished')
+        } else {
+          return health.failed('Autostake failed')
         }
       }
     })
     await executeSync(calls, 1)
   }
 
-  async function runWithRetry(data, health, retries, limitAddresses){
+  async function runWithRetry(data, health, retries, runners) {
     retries = retries || 0
-    const maxRetries = data.autostake?.retries || 3
+    runners = runners || []
+    const lastRunner = runners[runners.length - 1]
+    const maxRetries = data.autostake?.retries ?? 2
+    let networkRunner, error
     try {
-      const networkRunner = await getNetworkRunner(data)
-      if(!networkRunner) return true
+      networkRunner = await getNetworkRunner(data)
+      if (!networkRunner) return true
 
-      await networkRunner.run(limitAddresses)
-      if(networkRunner.didSucceed()){
-        logResults(health, networkRunner)
-        return true
-      }else{
-        health.addLogs(networkRunner.allErrors())
-        logResults(health, networkRunner)
-        if(networkRunner.forceFail){
-          return false
-        }
-        limitAddresses = networkRunner.failedAddresses()
+      runners.push(networkRunner)
+      const limitAddresses = lastRunner?.failedAddresses()
+      await networkRunner.run(limitAddresses?.length && limitAddresses)
+      if (networkRunner.didSucceed()) {
+        await logResults(health, networkRunner)
+        return runners
+      } else {
+        error = networkRunner.error?.message
       }
     } catch (e) {
-      health.log('Failed: ', e.message);
+      error = e.message
     }
-    if(retries < maxRetries){
-      health.log(`Failed attempt ${retries + 1}/${maxRetries}, retrying in 30 seconds...`)
-      await health.sendLog()
+    if (retries < maxRetries && !networkRunner.forceFail) {
+      await logResults(health, networkRunner, error, `Failed attempt ${retries + 1}/${maxRetries + 1}, retrying in 30 seconds...`)
       await new Promise(r => setTimeout(r, 30 * 1000));
-      return await runWithRetry(data, health, retries + 1, limitAddresses)
+      return await runWithRetry(data, health, retries + 1, runners)
     }
-    return false
+    await logResults(health, networkRunner, error)
+    return runners
   }
 
-  function logResults(health, networkRunner){
-    const { network, results } = networkRunner
+  function logResults(health, networkRunner, error, message) {
+    health.addLogs(networkRunner.queryErrors())
+    logSummary(health, networkRunner)
+    if (error) health.log(`Failed with error: ${error}`)
+    if (message) health.log(message)
+    return health.sendLog()
+  }
+
+  function logSummary(health, networkRunner) {
+    const { results } = networkRunner
     const errors = results.filter(result => result.error)
-    timeStamp(`${network.prettyName} summary:`);
+    health.log(`Sent ${results.length - errors.length}/${results.length} transactions`)
     for (let [index, result] of results.entries()) {
-      timeStamp(`TX ${index + 1}:`, result.message);
+      health.log(`TX ${index + 1}:`, result.message);
     }
-    return health.log(`Sent ${results.length - errors.length}/${results.length} messages`)
   }
 
   async function getNetworkRunner(data) {
@@ -121,7 +138,7 @@ export default function Autostake(mnemonic, opts) {
     timeStamp('Using REST URL', restUrl)
 
     if (usingDirectory) {
-      timeStamp('You are using public nodes, script may fail with many delegations. Check the README to use your own')
+      timeStamp('You are using public nodes, they may not be reliable. Check the README to use your own')
       timeStamp('Delaying briefly to reduce load...')
       await new Promise(r => setTimeout(r, (Math.random() * 31) * 1000));
     }

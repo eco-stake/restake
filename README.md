@@ -21,7 +21,7 @@ A script is also provided which allows a validator to automatically search their
 - As of writing, Ledger is unable to send the necessary transactions to enable Authz. This is purely due to the way transactions are sent to a Ledger device and a workaround should be possible soon.
 - Authz is also not fully supported yet. Many chains are yet to update. The REStake UI will fall back to being a manual staking app with useful manual compounding features.
 - Currently REStake needs the browser extension version of Keplr, but WalletConnect and Keplr iOS functionality will be added ASAP.
-- RESTake requires Nodejs version 17.x or later, it will not work with earlier versions.
+- REStake requires Nodejs version 17.x or later, it will not work with earlier versions.
 
 ## Become an operator
 
@@ -129,7 +129,7 @@ or with NPM:
 
 ```bash
 git pull
-npm install && npm run build
+npm install
 ```
 
 #### Running the script
@@ -141,13 +141,13 @@ Running the autostake script manually is then simple.
 Note you might need `sudo` depending on your docker install, and some docker versions utilize `docker compose` instead of `docker-compose`. If you run into issues, try substituting `docker compose`.
 
 ```bash
-npm run autostake
+docker-compose run --rm app npm run autostake
 ```
 
-With docker: 
+Alternatively if you use NPM you can ignore the `docker-compose run --rm app` prefix:
 
 ```bash
-docker-compose run --rm app npm run autostake
+npm run autostake
 ```
 
 Pass network names to restrict the script to certain networks.
@@ -174,16 +174,20 @@ Create a `src/networks.local.json` file and specify the networks you want to ove
 ```json
 {
   "osmosis": {
-    "prettyName": "Osmosis with Fees",
+    "prettyName": "Osmosis",
     "restUrl": [
-      "https://rest.validator.com/osmosis"
+      "https://rest.cosmos.directory/osmosis"
     ],
-    "gasPrice": "0.001uosmo",
+    "gasPrice": "0.0025uosmo",
     "autostake": {
+      "retries": 3,
       "batchTxs": 50,
       "batchQueries": 50,
       "delegatorTimeout": 5000,
       "gasModifier": 1.1
+    },
+    "healthCheck": {
+      "uuid": "XXXXX-XXX-XXXX"
     }
   },
   "desmos": {

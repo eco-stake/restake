@@ -164,7 +164,7 @@ class Network {
 
   suggestChain(){
     const currency = {
-      coinDenom: this.display,
+      coinDenom: this.symbol,
       coinMinimalDenom: this.denom,
       coinDecimals: this.decimals,
       coinGeckoId: this.coinGeckoId
