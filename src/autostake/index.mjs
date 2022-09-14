@@ -45,7 +45,7 @@ export default function Autostake(mnemonic, opts) {
             logSummary(health, result)
           })
         }
-        if (lastResult?.didSucceed() || results) {
+        if (lastResult?.didSucceed() || results === true) {
           return health.success('Autostake finished')
         } else {
           return health.failed('Autostake failed')
@@ -77,7 +77,7 @@ export default function Autostake(mnemonic, opts) {
     } catch (e) {
       error = e.message
     }
-    if (retries < maxRetries && !networkRunner.forceFail) {
+    if (retries < maxRetries && !networkRunner?.forceFail) {
       await logResults(health, networkRunner, error, `Failed attempt ${retries + 1}/${maxRetries + 1}, retrying in 30 seconds...`)
       await new Promise(r => setTimeout(r, 30 * 1000));
       return await runWithRetry(data, health, retries + 1, runners)
@@ -87,8 +87,10 @@ export default function Autostake(mnemonic, opts) {
   }
 
   function logResults(health, networkRunner, error, message) {
-    health.addLogs(networkRunner.queryErrors())
-    logSummary(health, networkRunner)
+    if(networkRunner){
+      health.addLogs(networkRunner.queryErrors())
+      logSummary(health, networkRunner)
+    }
     if (error) health.log(`Failed with error: ${error}`)
     if (message) health.log(message)
     return health.sendLog()
