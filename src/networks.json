@@ -235,6 +235,7 @@
   },
   {
     "name": "pulsar",
-    "ledgerAuthzSupport": true
+    "testnet": true,
+    "ledgerAuthzSupport": true,
   }
 ]

@@ -15,7 +15,7 @@ function createAuthzAuthorizationAminoConverter(){
 
 const dateConverter = {
   toAmino(date){
-    return moment(date.seconds).utc().format()
+    return moment(date.seconds.toNumber() * 1000).utc().format()
   },
   fromAmino(date){
     return {
@@ -85,21 +85,25 @@ export function createAuthzExecAminoConverters(registry, aminoTypes) {
         grantee,
         msgs: msgs.map(({typeUrl, value}) => {
           const msgType = registry.lookupType(typeUrl)
-          return aminoTypes.toAmino({ typeUrl, value: msgType.decode(value) })
+          // MsgExec amino doesn't include type and value is lifted
+          return aminoTypes.toAmino({ typeUrl, value: msgType.decode(value) }).value
         })
       }),
-      fromAmino: ({ grantee, msgs }) => ({
-        grantee,
-        msgs: msgs.map(({type, value}) => {
-          const proto = aminoTypes.fromAmino({ type, value })
-          const typeUrl = proto.typeUrl
-          const msgType = registry.lookupType(typeUrl)
-          return {
-            typeUrl,
-            value: msgType.encode(msgType.fromPartial(proto.value)).finish()
-          }
-        })
-      }),
+      fromAmino: () => {
+        throw new Error('MsgExec fromAmino is not possible')
+      }
+      // fromAmino: ({ grantee, msgs }) => ({
+      //   grantee,
+      //   msgs: msgs.map(({type, value}) => {
+      //     const proto = aminoTypes.fromAmino({ type, value })
+      //     const typeUrl = proto.typeUrl
+      //     const msgType = registry.lookupType(typeUrl)
+      //     return {
+      //       typeUrl,
+      //       value: msgType.encode(msgType.fromPartial(proto.value)).finish()
+      //     }
+      //   })
+      // }),
     },
   };
 }

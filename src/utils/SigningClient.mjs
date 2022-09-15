@@ -33,6 +33,7 @@ function SigningClient(network, signer) {
 
   const registry = new Registry(defaultStargateTypes);
   const defaultConverters = {
+    ...createAuthzAminoConverters(),
     ...createBankAminoConverters(),
     ...createDistributionAminoConverters(),
     ...createGovAminoConverters(),
@@ -195,10 +196,8 @@ function SigningClient(network, signer) {
         amount: signed.fee.amount,
         gasLimit: signed.fee.gas,
       }, SignMode.SIGN_MODE_LEGACY_AMINO_JSON)
-      const signedProtoMsgs = signed.msgs.map((msg) => aminoTypes.fromAmino(msg))
-      console.log('proto', signedProtoMsgs)
       return {
-        bodyBytes: makeBodyBytes(signedProtoMsgs, signed.memo),
+        bodyBytes: makeBodyBytes(messages, signed.memo),
         authInfoBytes: authInfoBytes,
         signatures: [Buffer.from(signature.signature, "base64")],
       }
