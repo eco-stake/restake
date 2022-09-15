@@ -8,7 +8,6 @@ import {
   assertIsDeliverTxSuccess,
   GasPrice,
   AminoTypes,
-  createAuthzAminoConverters,
   createBankAminoConverters,
   createDistributionAminoConverters,
   createFreegrantAminoConverters,
@@ -25,6 +24,7 @@ import { SignMode } from "cosmjs-types/cosmos/tx/signing/v1beta1/signing.js";
 import { AuthInfo, Fee, TxBody, TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx.js";
 
 import { coin } from './Helpers.mjs'
+import { createAuthzAminoConverters, createAuthzExecAminoConverters } from '../converters/Authz.mjs'
 
 function SigningClient(network, signer) {
 
@@ -32,15 +32,16 @@ function SigningClient(network, signer) {
   const { restUrl, gasModifier: defaultGasModifier, slip44: coinType, chainId } = network
 
   const registry = new Registry(defaultStargateTypes);
-  const aminoTypes = new AminoTypes({
-    ...createAuthzAminoConverters(),
+  const defaultConverters = {
     ...createBankAminoConverters(),
     ...createDistributionAminoConverters(),
     ...createGovAminoConverters(),
     ...createStakingAminoConverters(network.prefix),
     ...createIbcAminoConverters(),
     ...createFreegrantAminoConverters(),
-  })
+  }
+  let aminoTypes = new AminoTypes(defaultConverters)
+  aminoTypes = new AminoTypes({...defaultConverters, ...createAuthzExecAminoConverters(registry, aminoTypes)})
 
   function getAccount(address) {
     return axios
@@ -99,8 +100,7 @@ function SigningClient(network, signer) {
     const amount = ceil(bignumber(multiply(bignumber(gasPriceAmount.toString()), bignumber(gasLimit.toString()))));
     return {
       amount: [coin(amount, denom)],
-      gas: gasLimit.toString(),
-      gasLimit: gasLimit.toString()
+      gas: gasLimit.toString()
     };
   }
 
@@ -185,17 +185,20 @@ function SigningClient(network, signer) {
     let aminoMsgs
     try {
       aminoMsgs = messages.map(el => aminoTypes.toAmino(el))
-    } catch { }
+    } catch (e) { console.log(e) }
     if(aminoMsgs && signer.signAmino){
       // Sign as amino if possible for Ledger and Keplr support
+      console.log('amino', aminoMsgs)
       const signDoc = makeAminoSignDoc(aminoMsgs, fee, chainId, memo, accountNumber, sequence);
       const { signature, signed } = await signer.signAmino(address, signDoc);
       const authInfoBytes = await makeAuthInfoBytes(account, {
         amount: signed.fee.amount,
         gasLimit: signed.fee.gas,
       }, SignMode.SIGN_MODE_LEGACY_AMINO_JSON)
+      const signedProtoMsgs = signed.msgs.map((msg) => aminoTypes.fromAmino(msg))
+      console.log('proto', signedProtoMsgs)
       return {
-        bodyBytes: makeBodyBytes(messages, signed.memo),
+        bodyBytes: makeBodyBytes(signedProtoMsgs, signed.memo),
         authInfoBytes: authInfoBytes,
         signatures: [Buffer.from(signature.signature, "base64")],
       }
