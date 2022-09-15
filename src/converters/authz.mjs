@@ -1,5 +1,6 @@
 import moment from 'moment'
 import { GenericAuthorization } from "cosmjs-types/cosmos/authz/v1beta1/authz";
+import { StakeAuthorization } from "cosmjs-types/cosmos/staking/v1beta1/authz";
 
 function createAuthzAuthorizationAminoConverter(){
   return {
@@ -7,7 +8,29 @@ function createAuthzAuthorizationAminoConverter(){
       aminoType: "cosmos-sdk/GenericAuthorization",
       toAmino: (value) => GenericAuthorization.decode(value),
       fromAmino: ({ msg }) => (GenericAuthorization.encode(GenericAuthorization.fromPartial({
-        msg: msg
+        msg
+      })).finish())
+    },
+    "/cosmos.staking.v1beta1.StakeAuthorization": {
+      aminoType: "cosmos-sdk/StakeAuthorization",
+      toAmino: (value) => {
+        console.log(StakeAuthorization.decode(value))
+        const { allowList, maxTokens, authorizationType } = StakeAuthorization.decode(value)
+        return {
+          Validators: {
+            type: "cosmos-sdk/StakeAuthorization/AllowList",
+            value: {
+              allow_list: allowList
+            }
+          },
+          max_tokens: maxTokens,
+          authorization_type: authorizationType
+        }
+      },
+      fromAmino: ({ allow_list, max_tokens, authorization_type }) => (StakeAuthorization.encode(StakeAuthorization.fromPartial({
+        allowList: allow_list,
+        maxTokens: max_tokens,
+        authorizationType: authorization_type
       })).finish())
     }
   }
