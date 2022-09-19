@@ -14,7 +14,6 @@ function createAuthzAuthorizationAminoConverter(){
     "/cosmos.staking.v1beta1.StakeAuthorization": {
       aminoType: "cosmos-sdk/StakeAuthorization",
       toAmino: (value) => {
-        console.log(StakeAuthorization.decode(value))
         const { allowList, maxTokens, authorizationType } = StakeAuthorization.decode(value)
         return {
           Validators: {
@@ -109,7 +108,7 @@ export function createAuthzExecAminoConverters(registry, aminoTypes) {
         msgs: msgs.map(({typeUrl, value}) => {
           const msgType = registry.lookupType(typeUrl)
           // MsgExec amino doesn't include type and value is lifted
-          return aminoTypes.toAmino({ typeUrl, value: msgType.decode(value) }).value
+          return aminoTypes.toAmino({ typeUrl, value: msgType.decode(value) })
         })
       }),
       fromAmino: () => {
