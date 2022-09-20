@@ -3,6 +3,7 @@ import SignerProvider from "./SignerProvider.mjs";
 export default class FalconSignerProvider extends SignerProvider {
   key = 'falcon'
   label = 'Falcon Wallet'
+  keychangeEvent = 'falcon_keystorechange'
 
   enable(network){
     const { chainId } = network
