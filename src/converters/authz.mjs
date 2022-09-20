@@ -53,7 +53,6 @@ export function createAuthzAminoConverters() {
     "/cosmos.authz.v1beta1.MsgGrant": {
       aminoType: "cosmos-sdk/MsgGrant",
       toAmino: ({ granter, grantee, grant }) => {
-        console.log(granter, grantee, grant)
         converter = grantConverter[grant.authorization.typeUrl]
         return {
           granter,
@@ -107,25 +106,21 @@ export function createAuthzExecAminoConverters(registry, aminoTypes) {
         grantee,
         msgs: msgs.map(({typeUrl, value}) => {
           const msgType = registry.lookupType(typeUrl)
-          // MsgExec amino doesn't include type and value is lifted
           return aminoTypes.toAmino({ typeUrl, value: msgType.decode(value) })
         })
       }),
-      fromAmino: () => {
-        throw new Error('MsgExec fromAmino is not possible')
-      }
-      // fromAmino: ({ grantee, msgs }) => ({
-      //   grantee,
-      //   msgs: msgs.map(({type, value}) => {
-      //     const proto = aminoTypes.fromAmino({ type, value })
-      //     const typeUrl = proto.typeUrl
-      //     const msgType = registry.lookupType(typeUrl)
-      //     return {
-      //       typeUrl,
-      //       value: msgType.encode(msgType.fromPartial(proto.value)).finish()
-      //     }
-      //   })
-      // }),
+      fromAmino: ({ grantee, msgs }) => ({
+        grantee,
+        msgs: msgs.map(({type, value}) => {
+          const proto = aminoTypes.fromAmino({ type, value })
+          const typeUrl = proto.typeUrl
+          const msgType = registry.lookupType(typeUrl)
+          return {
+            typeUrl,
+            value: msgType.encode(msgType.fromPartial(proto.value)).finish()
+          }
+        })
+      }),
     },
   };
 }

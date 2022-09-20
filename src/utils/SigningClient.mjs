@@ -185,11 +185,10 @@ function SigningClient(network, signer) {
     const txBodyBytes = makeBodyBytes(messages, memo)
     let aminoMsgs
     try {
-      aminoMsgs = messages.map(el => aminoTypes.toAmino(el))
+      aminoMsgs = convertToAmino(messages)
     } catch (e) { console.log(e) }
     if(aminoMsgs && signer.signAmino){
       // Sign as amino if possible for Ledger and Keplr support
-      console.log('amino', aminoMsgs)
       const signDoc = makeAminoSignDoc(aminoMsgs, fee, chainId, memo, accountNumber, sequence);
       const { signature, signed } = await signer.signAmino(address, signDoc);
       const authInfoBytes = await makeAuthInfoBytes(account, {
@@ -237,6 +236,15 @@ function SigningClient(network, signer) {
     } catch (error) {
       throw new Error(error.response?.data?.message || error.message)
     }
+  }
+
+  function convertToAmino(messages){
+    messages.map(message => {
+      if(message.typeUrl.startsWith('/cosmos.authz') && !network.ledgerAuthzSupport){
+        throw new Error('This chain does not support amino conversion for Authz messages')
+      }
+      return aminoTypes.toAmino(message)
+    })
   }
 
   function parseTxResult(result){
