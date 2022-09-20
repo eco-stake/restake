@@ -239,7 +239,7 @@ function SigningClient(network, signer) {
   }
 
   function convertToAmino(messages){
-    messages.map(message => {
+    return messages.map(message => {
       if(message.typeUrl.startsWith('/cosmos.authz') && !network.ledgerAuthzSupport){
         throw new Error('This chain does not support amino conversion for Authz messages')
       }
