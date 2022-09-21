@@ -33,7 +33,7 @@ class DelegateForm extends React.Component {
   async handleSubmit(event) {
     event.preventDefault();
 
-    this.setState({loading: true})
+    this.setState({loading: true, error: null})
 
     const wallet = this.props.wallet
     const amount = this.state.amount
