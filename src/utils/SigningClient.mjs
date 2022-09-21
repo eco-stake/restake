@@ -186,7 +186,7 @@ function SigningClient(network, signer) {
     let aminoMsgs
     try {
       aminoMsgs = convertToAmino(messages)
-    } catch (e) { console.log(e) }
+    } catch (e) { }
     if(aminoMsgs && signer.signAmino){
       // Sign as amino if possible for Ledger and Keplr support
       const signDoc = makeAminoSignDoc(aminoMsgs, fee, chainId, memo, accountNumber, sequence);
