@@ -8,7 +8,6 @@ import {
   assertIsDeliverTxSuccess,
   GasPrice,
   AminoTypes,
-  createAuthzAminoConverters,
   createBankAminoConverters,
   createDistributionAminoConverters,
   createFreegrantAminoConverters,
@@ -25,6 +24,7 @@ import { SignMode } from "cosmjs-types/cosmos/tx/signing/v1beta1/signing.js";
 import { AuthInfo, Fee, TxBody, TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx.js";
 
 import { coin } from './Helpers.mjs'
+import { createAuthzAminoConverters, createAuthzExecAminoConverters } from '../converters/Authz.mjs'
 
 function SigningClient(network, signer) {
 
@@ -32,7 +32,7 @@ function SigningClient(network, signer) {
   const { restUrl, gasModifier: defaultGasModifier, slip44: coinType, chainId } = network
 
   const registry = new Registry(defaultStargateTypes);
-  const aminoTypes = new AminoTypes({
+  const defaultConverters = {
     ...createAuthzAminoConverters(),
     ...createBankAminoConverters(),
     ...createDistributionAminoConverters(),
@@ -40,7 +40,9 @@ function SigningClient(network, signer) {
     ...createStakingAminoConverters(network.prefix),
     ...createIbcAminoConverters(),
     ...createFreegrantAminoConverters(),
-  })
+  }
+  let aminoTypes = new AminoTypes(defaultConverters)
+  aminoTypes = new AminoTypes({...defaultConverters, ...createAuthzExecAminoConverters(registry, aminoTypes)})
 
   function getAccount(address) {
     return axios
@@ -99,8 +101,7 @@ function SigningClient(network, signer) {
     const amount = ceil(bignumber(multiply(bignumber(gasPriceAmount.toString()), bignumber(gasLimit.toString()))));
     return {
       amount: [coin(amount, denom)],
-      gas: gasLimit.toString(),
-      gasLimit: gasLimit.toString()
+      gas: gasLimit.toString()
     };
   }
 
@@ -184,8 +185,8 @@ function SigningClient(network, signer) {
     const txBodyBytes = makeBodyBytes(messages, memo)
     let aminoMsgs
     try {
-      aminoMsgs = messages.map(el => aminoTypes.toAmino(el))
-    } catch { }
+      aminoMsgs = convertToAmino(messages)
+    } catch (e) { console.log(e) }
     if(aminoMsgs && signer.signAmino){
       // Sign as amino if possible for Ledger and Keplr support
       const signDoc = makeAminoSignDoc(aminoMsgs, fee, chainId, memo, accountNumber, sequence);
@@ -235,6 +236,15 @@ function SigningClient(network, signer) {
     } catch (error) {
       throw new Error(error.response?.data?.message || error.message)
     }
+  }
+
+  function convertToAmino(messages){
+    return messages.map(message => {
+      if(message.typeUrl.startsWith('/cosmos.authz') && !network.ledgerAuthzSupport){
+        throw new Error('This chain does not support amino conversion for Authz messages')
+      }
+      return aminoTypes.toAmino(message)
+    })
   }
 
   function parseTxResult(result){

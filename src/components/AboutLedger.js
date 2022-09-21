@@ -13,7 +13,7 @@ function AboutLedger(props) {
   const { daemon_name, chain_id, node_home, codebase } = network.chain.data
   const { git_repo, binaries } = codebase || {}
 
-  const address = validator?.restake.address || <kbd>GrantAddress</kbd>
+  const address = validator?.restake?.address || <kbd>GrantAddress</kbd>
 
   const show = props.show || (aboutParam == 'ledger' && network.authzSupport)
 

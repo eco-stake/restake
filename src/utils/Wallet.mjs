@@ -30,7 +30,7 @@ class Wallet {
 
   hasPermission(address, action){
     if(address === this.address) return true
-    if(this.getIsNanoLedger()) return false // Ledger Authz disabled for now
+    if(!this.ledgerAuthzSupport()) return false
 
     let message = messageTypes.find(el => {
       return el.split('.').slice(-1)[0].replace('Msg', '') === action
@@ -41,6 +41,12 @@ class Wallet {
         grant.authorization["@type"] === "/cosmos.authz.v1beta1.GenericAuthorization" &&
         grant.authorization.msg === message
     })
+  }
+
+  ledgerAuthzSupport(){
+    if(!this.getIsNanoLedger()) return true
+
+    return this.network.ledgerAuthzSupport
   }
 
   async getAddress(){

@@ -232,5 +232,9 @@
       "average": 0.025,
       "high": 0.04
     }
+  },
+  {
+    "name": "pulsar",
+    "testnet": true
   }
 ]
