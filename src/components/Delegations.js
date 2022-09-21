@@ -413,6 +413,7 @@ class Delegations extends React.Component {
         )}
         {this.authzSupport() &&
           this.props.operators.length > 0 &&
+          this.props.wallet &&
           !this.state.ledgerAuthzSupport && (
             <>
               <AlertMessage
