@@ -1,6 +1,6 @@
 import moment from 'moment'
-import { GenericAuthorization } from "cosmjs-types/cosmos/authz/v1beta1/authz";
-import { StakeAuthorization } from "cosmjs-types/cosmos/staking/v1beta1/authz";
+import { GenericAuthorization } from "cosmjs-types/cosmos/authz/v1beta1/authz.js";
+import { StakeAuthorization } from "cosmjs-types/cosmos/staking/v1beta1/authz.js";
 
 function createAuthzAuthorizationAminoConverter(){
   return {
