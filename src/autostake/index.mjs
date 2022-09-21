@@ -39,7 +39,7 @@ export default function Autostake(mnemonic, opts) {
         let lastResult
         if (Array.isArray(results)) {
           lastResult = results[results.length - 1]
-          health.log(`Autostake ${lastResult.didSucceed() ? 'completed' : 'failed'} after ${results.length} attempt(s)`)
+          health.log(`Autostake ${lastResult?.didSucceed() ? 'completed' : 'failed'} after ${results.length} attempt(s)`)
           results.forEach((result, index) => {
             health.log(`Attempt ${index + 1}:`)
             logSummary(health, result)
