@@ -53,7 +53,7 @@ export function createAuthzAminoConverters() {
     "/cosmos.authz.v1beta1.MsgGrant": {
       aminoType: "cosmos-sdk/MsgGrant",
       toAmino: ({ granter, grantee, grant }) => {
-        converter = grantConverter[grant.authorization.typeUrl]
+        const converter = grantConverter[grant.authorization.typeUrl]
         return {
           granter,
           grantee,
@@ -67,8 +67,8 @@ export function createAuthzAminoConverters() {
         }
       },
       fromAmino: ({ granter, grantee, grant }) => {
-        protoType = Object.keys(grantConverter).find(type => grantConverter[type].aminoType === grant.authorization.type)
-        converter = grantConverter[protoType]
+        const protoType = Object.keys(grantConverter).find(type => grantConverter[type].aminoType === grant.authorization.type)
+        const converter = grantConverter[protoType]
         return {
           granter,
           grantee,
