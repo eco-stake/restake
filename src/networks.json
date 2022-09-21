@@ -142,7 +142,8 @@
   {
     "name": "secretnetwork",
     "gasPrice": "0.025uscrt",
-    "gasPricePrefer": "0.05uscrt"
+    "gasPricePrefer": "0.05uscrt",
+    "ledgerAuthzSupport": true
   },
   {
     "name": "bostrom",
