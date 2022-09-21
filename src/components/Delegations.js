@@ -35,8 +35,8 @@ class Delegations extends React.Component {
   }
 
   async componentDidMount() {
-    const isNanoLedger = this.props.wallet?.getIsNanoLedger();
-    this.setState({ isNanoLedger: isNanoLedger });
+    const ledgerAuthzSupport = this.props.wallet?.ledgerAuthzSupport();
+    this.setState({ ledgerAuthzSupport });
     this.refresh(true);
 
     if (this.props.validator) {
@@ -52,9 +52,9 @@ class Delegations extends React.Component {
     if ((this.props.network !== prevProps.network && !this.props.address)
       || (this.props.address !== prevProps.address)) {
       this.clearRefreshInterval()
-      const isNanoLedger = this.props.wallet?.getIsNanoLedger();
+      const ledgerAuthzSupport = this.props.wallet?.ledgerAuthzSupport();
       this.setState({
-        isNanoLedger: isNanoLedger,
+        ledgerAuthzSupport: ledgerAuthzSupport,
         delegations: undefined, 
         rewards: undefined,
         commission: {},
@@ -297,7 +297,7 @@ class Delegations extends React.Component {
   }
 
   restakePossible() {
-    return this.props.address && !this.state.isNanoLedger && this.authzSupport();
+    return this.props.address && this.state.ledgerAuthzSupport && this.authzSupport();
   }
 
   totalRewards(validators) {
@@ -413,7 +413,7 @@ class Delegations extends React.Component {
         )}
         {this.authzSupport() &&
           this.props.operators.length > 0 &&
-          this.state.isNanoLedger && (
+          !this.state.ledgerAuthzSupport && (
             <>
               <AlertMessage
                 variant="warning"

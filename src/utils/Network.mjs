@@ -86,6 +86,7 @@ class Network {
     this.estimatedApr = this.chain.estimatedApr
     this.apyEnabled = data.apyEnabled !== false && !!this.estimatedApr && this.estimatedApr > 0
     this.authzSupport = this.chain.authzSupport
+    this.ledgerAuthzSupport = this.chain.ledgerAuthzSupport
     this.defaultGasPrice = this.decimals && format(bignumber(multiply(0.000000025, pow(10, this.decimals))), { notation: 'fixed', precision: 4}) + this.denom
     this.gasPrice = this.data.gasPrice || this.defaultGasPrice
     if(this.gasPrice){
