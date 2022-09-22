@@ -57,6 +57,7 @@ import SendModal from './SendModal';
 import KeplrSignerProvider from '../utils/KeplrSignerProvider.mjs';
 import FalconSignerProvider from '../utils/FalconSignerProvider.mjs';
 import LeapSignerProvider from '../utils/LeapSignerProvider.mjs';
+import KeplrMobileSignerProvider from '../utils/KeplrMobileSignerProvider.mjs';
 
 class App extends React.Component {
   constructor(props) {
@@ -69,6 +70,7 @@ class App extends React.Component {
     }
     this.signerProviders = [
       new KeplrSignerProvider(window.keplr),
+      new KeplrMobileSignerProvider(),
       new LeapSignerProvider(window.leap),
       // new FalconSignerProvider(window.falcon)
     ]
