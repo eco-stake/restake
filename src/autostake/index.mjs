@@ -36,16 +36,15 @@ export default function Autostake(mnemonic, opts) {
         const health = new Health(data.healthCheck, { dryRun: opts.dryRun })
         health.started('⚛')
         const results = await runWithRetry(data, health)
-        let lastResult
-        if (Array.isArray(results)) {
-          lastResult = results[results.length - 1]
-          health.log(`Autostake ${lastResult.didSucceed() ? 'completed' : 'failed'} after ${results.length} attempt(s)`)
-          results.forEach((result, index) => {
+        const { success, skipped } = results[results.length - 1] || {}
+        if(!skipped){
+          health.log(`Autostake ${success ? 'completed' : 'failed'} after ${results.length} attempt(s)`)
+          results.forEach(({networkRunner, error}, index) => {
             health.log(`Attempt ${index + 1}:`)
-            logSummary(health, result)
+            logSummary(health, networkRunner, error)
           })
         }
-        if (lastResult?.didSucceed() || results === true) {
+        if (success || skipped) {
           return health.success('Autostake finished')
         } else {
           return health.failed('Autostake failed')
@@ -58,26 +57,26 @@ export default function Autostake(mnemonic, opts) {
   async function runWithRetry(data, health, retries, runners) {
     retries = retries || 0
     runners = runners || []
-    const lastRunner = runners[runners.length - 1]
     const maxRetries = data.autostake?.retries ?? 2
+    let { failedAddresses } = runners[runners.length - 1] || {}
     let networkRunner, error
     try {
       networkRunner = await getNetworkRunner(data)
-      if (!networkRunner) return true
-
-      runners.push(networkRunner)
-      const limitAddresses = lastRunner?.failedAddresses()
-      await networkRunner.run(limitAddresses?.length && limitAddresses)
-      if (networkRunner.didSucceed()) {
-        await logResults(health, networkRunner)
+      if (!networkRunner){
+        runners.push({ skipped: true })
         return runners
-      } else {
+      }
+
+      await networkRunner.run(failedAddresses?.length && failedAddresses)
+      if (!networkRunner.didSucceed()) {
         error = networkRunner.error?.message
+        failedAddresses = networkRunner.failedAddresses()
       }
     } catch (e) {
       error = e.message
     }
-    if (retries < maxRetries && !networkRunner?.forceFail) {
+    runners.push({ success: networkRunner?.didSucceed(), networkRunner, error, failedAddresses })
+    if (!networkRunner?.didSucceed() && !networkRunner?.forceFail && retries < maxRetries) {
       await logResults(health, networkRunner, error, `Failed attempt ${retries + 1}/${maxRetries + 1}, retrying in 30 seconds...`)
       await new Promise(r => setTimeout(r, 30 * 1000));
       return await runWithRetry(data, health, retries + 1, runners)
@@ -89,20 +88,22 @@ export default function Autostake(mnemonic, opts) {
   function logResults(health, networkRunner, error, message) {
     if(networkRunner){
       health.addLogs(networkRunner.queryErrors())
-      logSummary(health, networkRunner)
     }
-    if (error) health.log(`Failed with error: ${error}`)
+    logSummary(health, networkRunner, error)
     if (message) health.log(message)
     return health.sendLog()
   }
 
-  function logSummary(health, networkRunner) {
-    const { results } = networkRunner
-    const errors = results.filter(result => result.error)
-    health.log(`Sent ${results.length - errors.length}/${results.length} transactions`)
-    for (let [index, result] of results.entries()) {
-      health.log(`TX ${index + 1}:`, result.message);
+  function logSummary(health, networkRunner, error) {
+    if(networkRunner){
+      const { results } = networkRunner
+      const errors = results.filter(result => result.error)
+      health.log(`Sent ${results.length - errors.length}/${results.length} transactions`)
+      for (let [index, result] of results.entries()) {
+        health.log(`TX ${index + 1}:`, result.message);
+      }
     }
+    if (error) health.log(`Failed with error: ${error}`)
   }
 
   async function getNetworkRunner(data) {

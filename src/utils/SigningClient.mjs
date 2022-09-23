@@ -164,19 +164,17 @@ function SigningClient(network, signer) {
     })
     const result = parseTxResult(response.data.tx_response)
     assertIsDeliverTxSuccess(result)
-    return new Promise((resolve, reject) =>
-      pollForTx(result.transactionHash).then(
-        (value) => {
-          clearTimeout(txPollTimeout);
-          assertIsDeliverTxSuccess(value)
-          resolve(value);
-        },
-        (error) => {
-          clearTimeout(txPollTimeout);
-          reject(error);
-        },
-      ),
-    );
+    return pollForTx(result.transactionHash).then(
+      (value) => {
+        clearTimeout(txPollTimeout);
+        assertIsDeliverTxSuccess(value)
+        return value
+      },
+      (error) => {
+        clearTimeout(txPollTimeout);
+        return error
+      },
+    )
   }
 
   async function sign(address, messages, memo, fee){
