@@ -58,6 +58,7 @@ import KeplrSignerProvider from '../utils/KeplrSignerProvider.mjs';
 import FalconSignerProvider from '../utils/FalconSignerProvider.mjs';
 import LeapSignerProvider from '../utils/LeapSignerProvider.mjs';
 import KeplrMobileSignerProvider from '../utils/KeplrMobileSignerProvider.mjs';
+import QRCodeModal from './QRCodeModal';
 
 class App extends React.Component {
   constructor(props) {
@@ -70,7 +71,16 @@ class App extends React.Component {
     }
     this.signerProviders = [
       new KeplrSignerProvider(window.keplr),
-      new KeplrMobileSignerProvider(),
+      new KeplrMobileSignerProvider({
+        qrcodeModal: {
+          open: (uri, callback) => {
+            this.setState({ qrCode: uri, qrCodeCallback: callback })
+          },
+          close: () => {
+            this.setState({ qrCode: null, qrCodeCallback: null })
+          }
+        }
+      }),
       new LeapSignerProvider(window.leap),
       // new FalconSignerProvider(window.falcon)
     ]
@@ -101,7 +111,7 @@ class App extends React.Component {
     if (!this.props.network) return
 
     if (this.props.network !== prevProps.network) {
-      this.setState({ balance: undefined, address: undefined, wallet: undefined, grants: undefined })
+      this.setState({ balance: undefined, address: undefined, wallet: undefined, grants: undefined, error: undefined })
       this.connect()
     }else if(this.state.address !== prevState.address){
       this.clearRefreshInterval()
@@ -144,7 +154,8 @@ class App extends React.Component {
       address: null,
       balance: null,
       wallet: null,
-      signingClient: null
+      signingClient: null,
+      signerProvider: null
     })
   }
 
@@ -160,7 +171,7 @@ class App extends React.Component {
     }
 
     let storedKey = localStorage.getItem('connected')
-    if(storedKey === '1'){
+    if(storedKey === '1'){ // deprecate
       storedKey = 'keplr'
       localStorage.setItem('connected', storedKey)
     }
@@ -171,24 +182,21 @@ class App extends React.Component {
 
     providerKey = signerProvider.key
 
-    if (manual && !signerProvider.connected()) {
+    if (manual && !signerProvider.available()) {
       return this.setState({
         providerError: providerKey
       })
     }
 
-    if (storedKey !== providerKey) {
-      if (manual) {
-        localStorage.setItem('connected', providerKey)
-      } else {
-        return
-      }
+    const { network } = this.props
+    if (!network || !signerProvider.available()) return
+
+    if (!manual && (providerKey !== storedKey || !signerProvider.connected())) {
+      return
     }
 
-    const { network } = this.props
-    if (!network || !signerProvider.connected()) return
-
     let key, error
+
     try {
       await signerProvider.enable(network)
       key = await signerProvider.getKey(network);
@@ -215,6 +223,7 @@ class App extends React.Component {
 
       const address = await wallet.getAddress();
 
+      localStorage.setItem('connected', providerKey)
       this.setState({
         address,
         wallet,
@@ -702,7 +711,7 @@ class App extends React.Component {
                               </>
                             ) : (
                               this.signerProviders.map(provider => {
-                                return <Dropdown.Item as="button" key={provider.key} onClick={() => this.connect(provider.key, true)} disabled={!provider.connected()}>Connect {provider.label}</Dropdown.Item>
+                                return <Dropdown.Item as="button" key={provider.key} onClick={() => this.connect(provider.key, true)} disabled={!provider.available()}>Connect {provider.label}</Dropdown.Item>
                               })
                             )}
                             <Dropdown.Item as="button" onClick={() => this.setState({ showAddressModal: true })}>Saved Addresses</Dropdown.Item>
@@ -838,6 +847,7 @@ class App extends React.Component {
           updateFavouriteAddresses={this.updateFavouriteAddresses}
           setAddress={(value) => this.setState({address: value, showAddressModal: false})}
         />
+        <QRCodeModal uri={this.state.qrCode} callback={this.state.qrCodeCallback} onClose={() => this.setState({qrCode: null, qrCodeCallback: null})} />
         {this.props.network && (
           <SendModal
             show={this.state.showSendModal}

@@ -3,8 +3,12 @@ export default class SignerProvider {
     this.provider = provider
   }
 
-  connected(){
+  available(){
     return !!this.provider
+  }
+
+  connected(){
+    return this.available()
   }
 
   enable(network){
