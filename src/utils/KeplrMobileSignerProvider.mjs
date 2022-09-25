@@ -43,6 +43,10 @@ export default class KeplrMobileSignerProvider extends SignerProvider {
     }
   }
 
+  async disconnect(){
+    return this.provider?.clearSaved()
+  }
+
   getSigner(network){
     const { chainId } = network
     // return this.provider.getOfflineSignerAuto(chainId) // no signDirect support currently

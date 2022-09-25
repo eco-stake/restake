@@ -16,6 +16,9 @@ export default class SignerProvider {
     return this.provider.enable(chainId)
   }
 
+  disconnect(){
+  }
+
   getSigner(network){
     const { chainId } = network
     return this.provider.getOfflineSignerAuto(chainId)
