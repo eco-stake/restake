@@ -35,8 +35,8 @@ class Delegations extends React.Component {
   }
 
   async componentDidMount() {
-    const ledgerAuthzSupport = this.props.wallet?.ledgerAuthzSupport();
-    this.setState({ ledgerAuthzSupport });
+    const walletAuthzSupport = this.props.wallet?.authzSupport();
+    this.setState({ walletAuthzSupport });
     this.refresh(true);
 
     if (this.props.validator) {
@@ -52,9 +52,9 @@ class Delegations extends React.Component {
     if ((this.props.network !== prevProps.network && !this.props.address)
       || (this.props.address !== prevProps.address)) {
       this.clearRefreshInterval()
-      const ledgerAuthzSupport = this.props.wallet?.ledgerAuthzSupport();
+      const walletAuthzSupport = this.props.wallet?.authzSupport();
       this.setState({
-        ledgerAuthzSupport: ledgerAuthzSupport,
+        walletAuthzSupport: walletAuthzSupport,
         delegations: undefined, 
         rewards: undefined,
         commission: {},
@@ -297,7 +297,7 @@ class Delegations extends React.Component {
   }
 
   restakePossible() {
-    return this.props.address && this.state.ledgerAuthzSupport && this.authzSupport();
+    return this.props.address && this.state.walletAuthzSupport && this.authzSupport();
   }
 
   totalRewards(validators) {
@@ -414,14 +414,22 @@ class Delegations extends React.Component {
         {this.authzSupport() &&
           this.props.operators.length > 0 &&
           this.props.wallet &&
-          !this.state.ledgerAuthzSupport && (
+          !this.state.walletAuthzSupport && (
             <>
               <AlertMessage
                 variant="warning"
                 dismissible={false}
               >
-                <p>Ledger devices can't send Authz transactions just yet. Full support will be enabled as soon as it is possible.</p>
-                <p className="mb-0"><span onClick={() => this.setState({ showAboutLedger: true })} role="button" className="text-reset text-decoration-underline">A manual workaround is possible using the CLI.</span></p>
+                {this.props.wallet.getIsNanoLedger() ? (
+                  <>
+                    <p>Ledger devices can't send Authz transactions on {this.props.network.prettyName} just yet. All other features are supported and Authz is coming soon.</p>
+                    <p className="mb-0"><span onClick={() => this.setState({ showAboutLedger: true })} role="button" className="text-reset text-decoration-underline">A manual workaround is possible using the CLI.</span></p>
+                  </>
+                ) : (
+                  <>
+                    <p className="mb-0">This wallet can't send Authz transactions on {this.props.network.prettyName} just yet. All other features are supported, and Keplr Extension likely has support if required.</p>
+                  </>
+                )}
               </AlertMessage>
             </>
           )}
