@@ -17,6 +17,7 @@ export default class NetworkRunner {
       batchTxs: 50,
       queryTimeout: network.data.autostake?.delegatorTimeout || 5000, // deprecate
       queryThrottle: 100,
+      gasModifier: 1.1,
       ...network.data.autostake,
       ...opts
     }
@@ -269,7 +270,7 @@ export default class NetworkRunner {
     try {
       const execMsg = this.buildExecMessage(this.operator.botAddress, messages)
       const memo = 'REStaked by ' + this.operator.moniker
-      const gasModifier = this.network.data.autostake?.gasModifier || 1.1
+      const gasModifier = this.opts.gasModifier
       const gas = await this.signingClient.simulate(this.operator.botAddress, [execMsg], memo, gasModifier);
       const fee = this.signingClient.getFee(gas).amount[0]
       if (smaller(bignumber(this.balance), bignumber(fee.amount))) {
