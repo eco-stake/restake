@@ -58,7 +58,7 @@ import KeplrSignerProvider from '../utils/KeplrSignerProvider.mjs';
 import FalconSignerProvider from '../utils/FalconSignerProvider.mjs';
 import LeapSignerProvider from '../utils/LeapSignerProvider.mjs';
 import KeplrMobileSignerProvider from '../utils/KeplrMobileSignerProvider.mjs';
-import QRCodeModal from './QRCodeModal';
+import ConnectWalletModal from './ConnectWalletModal';
 
 class App extends React.Component {
   constructor(props) {
@@ -72,12 +72,12 @@ class App extends React.Component {
     this.signerProviders = [
       new KeplrSignerProvider(window.keplr),
       new KeplrMobileSignerProvider({
-        qrcodeModal: {
+        connectModal: {
           open: (uri, callback) => {
-            this.setState({ qrCode: uri, qrCodeCallback: callback })
+            this.setState({ connectWallet: 'Keplr Mobile', qrCodeUri: uri, qrCodeCallback: callback })
           },
           close: () => {
-            this.setState({ qrCode: null, qrCodeCallback: null })
+            this.setState({ connectWallet: false, qrCodeUri: null, qrCodeCallback: null })
           }
         }
       }),
@@ -847,7 +847,13 @@ class App extends React.Component {
           updateFavouriteAddresses={this.updateFavouriteAddresses}
           setAddress={(value) => this.setState({address: value, showAddressModal: false})}
         />
-        <QRCodeModal uri={this.state.qrCode} callback={this.state.qrCodeCallback} onClose={() => this.setState({qrCode: null, qrCodeCallback: null})} />
+        <ConnectWalletModal 
+          show={!!this.state.connectWallet} 
+          walletName={this.state.connectWallet} 
+          uri={this.state.qrCodeUri} 
+          callback={this.state.qrCodeCallback} 
+          onClose={() => this.setState({connectWallet: false, qrCodeUri: null, qrCodeCallback: null})} 
+        />
         {this.props.network && (
           <SendModal
             show={this.state.showSendModal}

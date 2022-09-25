@@ -8,16 +8,16 @@ export default class KeplrMobileSignerProvider extends SignerProvider {
   label = 'Keplr Mobile'
   keychangeEvent = 'keplr_keystorechange'
 
-  constructor({ qrcodeModal }){
+  constructor({ connectModal }){
     super()
-    this.qrcodeModal = qrcodeModal
+    this.connectModal = connectModal
     this.connector = new WalletConnect({
       bridge: "https://bridge.walletconnect.org", // Required
       signingMethods: [
         "keplr_enable_wallet_connect_v1",
         "keplr_sign_amino_wallet_connect_v1",
       ],
-      qrcodeModal: this.qrcodeModal,
+      qrcodeModal: this.connectModal,
     });
   }
 
@@ -30,11 +30,17 @@ export default class KeplrMobileSignerProvider extends SignerProvider {
   }
 
   suggestChain(network){
+    throw new Error(`${network.prettyName} (${network.chainId}) is not supported`)
   }
 
   async enable(network){
-    await this.createSession()
-    await this.provider.enable(network.chainId)
+    this.connectModal.open()
+    try {
+      await this.createSession()
+      await this.provider.enable(network.chainId)
+    } finally {
+      this.connectModal.close()
+    }
   }
 
   async createSession(){
