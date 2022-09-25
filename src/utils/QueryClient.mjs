@@ -137,7 +137,7 @@ const QueryClient = async (chainId, restUrls) => {
       .then((res) => res.data)
   };
 
-  const getGranteeGrants = (grantee, opts) => {
+  const getGranteeGrants = (grantee, opts, pageCallback) => {
     const { pageSize } = opts || {}
     return getAllPages((nextKey) => {
       const searchParams = new URLSearchParams();
@@ -148,12 +148,12 @@ const QueryClient = async (chainId, restUrls) => {
         .get(restUrl + "/cosmos/authz/v1beta1/grants/grantee/" + grantee + "?" +
           searchParams.toString(), opts)
         .then((res) => res.data)
-    }).then((pages) => {
+    }, pageCallback).then((pages) => {
       return pages.map(el => el.grants).flat();
     });
   };
 
-  const getGranterGrants = (granter, opts) => {
+  const getGranterGrants = (granter, opts, pageCallback) => {
     const { pageSize } = opts || {}
     return getAllPages((nextKey) => {
       const searchParams = new URLSearchParams();
@@ -164,7 +164,7 @@ const QueryClient = async (chainId, restUrls) => {
         .get(restUrl + "/cosmos/authz/v1beta1/grants/granter/" + granter + "?" +
           searchParams.toString(), opts)
         .then((res) => res.data)
-    }).then((pages) => {
+    }, pageCallback).then((pages) => {
       return pages.map(el => el.grants).flat();
     });
   };
@@ -202,7 +202,7 @@ const QueryClient = async (chainId, restUrls) => {
       const result = await getPage(nextKey);
       pages.push(result);
       nextKey = result.pagination.next_key;
-      if (pageCallback) pageCallback(pages);
+      if (pageCallback) await pageCallback(pages);
     } while (nextKey);
     return pages;
   };

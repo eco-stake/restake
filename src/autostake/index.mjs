@@ -142,7 +142,8 @@ export default function Autostake(mnemonic, opts) {
 
     if (usingDirectory) {
       timeStamp('You are using public nodes, they may not be reliable. Check the README to use your own')
-      timeStamp('Delaying briefly to reduce load...')
+      timeStamp('Delaying briefly and adjusting config to reduce load...')
+      opts = {...opts, batchPageSize: 50, batchQueries: 10, queryThrottle: 1000}
       await new Promise(r => setTimeout(r, (Math.random() * 31) * 1000));
     }
 
