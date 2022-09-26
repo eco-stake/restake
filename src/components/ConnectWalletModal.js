@@ -43,10 +43,10 @@ function ConnectWalletModal(props) {
 
   useEffect(() => {
     // Try opening the app without interaction.
-    if (uri && navigateToAppURL) {
+    if (uri && show && navigateToAppURL) {
       window.location.href = navigateToAppURL;
     }
-  }, [uri, navigateToAppURL]);
+  }, [navigateToAppURL]);
 
   const handleClose = () => {
     onClose()
