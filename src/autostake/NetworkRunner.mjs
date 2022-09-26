@@ -90,20 +90,23 @@ export default class NetworkRunner {
   }
 
   getBalance() {
-    return this.queryClient.getBalance(this.operator.botAddress, this.network.denom)
+    let timeout = this.opts.queryTimeout
+    return this.queryClient.getBalance(this.operator.botAddress, this.network.denom, { timeout })
       .then(
         (balance) => {
           timeStamp("Bot balance is", balance.amount, balance.denom)
           return balance.amount
         },
         (error) => {
-          throw new Error("Failed to get balance:", error.message || error)
+          throw new Error(`Failed to get balance: ${error.message || error}`)
         }
       )
   }
 
   getDelegations() {
-    return this.queryClient.getAllValidatorDelegations(this.operator.address, this.opts.batchPageSize, (pages) => {
+    let timeout = this.opts.queryTimeout
+    let pageSize = this.opts.batchPageSize
+    return this.queryClient.getAllValidatorDelegations(this.operator.address, pageSize, { timeout }, (pages) => {
       timeStamp("...batch", pages.length)
       return this.throttleQuery()
     }).catch(error => {
@@ -113,9 +116,11 @@ export default class NetworkRunner {
 
   async getGrantedAddresses(addresses) {
     const { botAddress, address } = this.operator
+    let timeout = this.opts.queryTimeout
+    let pageSize = this.opts.batchPageSize
     let allGrants
     try {
-      allGrants = await this.queryClient.getGranteeGrants(botAddress, (pages) => {
+      allGrants = await this.queryClient.getGranteeGrants(botAddress, { timeout, pageSize }, (pages) => {
       timeStamp("...batch", pages.length)
       return this.throttleQuery()
     })

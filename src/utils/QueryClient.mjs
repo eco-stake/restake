@@ -37,16 +37,17 @@ const QueryClient = async (chainId, restUrls) => {
   const getAllValidatorDelegations = (
     validatorAddress,
     pageSize,
+    opts,
     pageCallback
   ) => {
     return getAllPages((nextKey) => {
-      return getValidatorDelegations(validatorAddress, pageSize, nextKey);
+      return getValidatorDelegations(validatorAddress, pageSize, opts, nextKey);
     }, pageCallback).then((pages) => {
       return pages.map((el) => el.delegation_responses).flat();
     });
   };
 
-  const getValidatorDelegations = (validatorAddress, pageSize, nextKey) => {
+  const getValidatorDelegations = (validatorAddress, pageSize, opts, nextKey) => {
     const searchParams = new URLSearchParams();
     if (pageSize) searchParams.append("pagination.limit", pageSize);
     if (nextKey) searchParams.append("pagination.key", nextKey);
@@ -57,14 +58,15 @@ const QueryClient = async (chainId, restUrls) => {
           "/cosmos/staking/v1beta1/validators/" +
           validatorAddress +
           "/delegations?" +
-          searchParams.toString()
+          searchParams.toString(),
+          opts
       )
       .then((res) => res.data);
   };
 
-  const getBalance = (address, denom) => {
+  const getBalance = (address, denom, opts) => {
     return axios
-      .get(restUrl + "/cosmos/bank/v1beta1/balances/" + address)
+      .get(restUrl + "/cosmos/bank/v1beta1/balances/" + address, opts)
       .then((res) => res.data)
       .then((result) => {
         const balance = result.balances?.find(
