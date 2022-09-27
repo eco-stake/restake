@@ -11,16 +11,11 @@ export default class LeapSignerProvider extends SignerProvider {
         sign: { preferNoSetFee: true }
       })
     }
-    return super.enable(network).then(result => {
-      // Leap returns error instead of throwing
-      if(result instanceof Error){
-        throw result
-      }
-    })
+    return super.enable(network)
   }
 
   suggestChain(network){
-    throw new Error(`${network.prettyName} is not supported currently`)
+    throw new Error(`${network.prettyName} is not supported`)
   }
 
   setOptions(options){

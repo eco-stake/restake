@@ -189,8 +189,6 @@ function SigningClient(network, signer) {
       // Sign as amino if possible for Ledger and Keplr support
       const signDoc = makeAminoSignDoc(aminoMsgs, fee, chainId, memo, accountNumber, sequence);
       const { signature, signed } = await signer.signAmino(address, signDoc);
-      if(!signed) throw new Error('Invalid response')
-
       const authInfoBytes = await makeAuthInfoBytes(account, {
         amount: signed.fee.amount,
         gasLimit: signed.fee.gas,
