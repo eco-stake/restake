@@ -112,7 +112,7 @@ export async function mapSync(calls, count, batchCallback) {
   for (const batchCall of batchCalls) {
     const batchResults = await mapAsync(batchCall, call => call())
     results.push(batchResults)
-    if (batchCallback) batchCallback(batchResults, index)
+    if (batchCallback) await batchCallback(batchResults, index)
     index++
   }
   return results.flat()

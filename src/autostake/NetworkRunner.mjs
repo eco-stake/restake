@@ -11,11 +11,20 @@ export default class NetworkRunner {
     this.operator = operator
     this.signingClient = signingClient
     this.queryClient = network.queryClient
-    this.errors = {}
-    this.opts = opts || {}
+    this.opts = {
+      batchPageSize: 100,
+      batchQueries: 25,
+      batchTxs: 50,
+      queryTimeout: network.data.autostake?.delegatorTimeout || 5000, // deprecate
+      queryThrottle: 100,
+      gasModifier: 1.1,
+      ...network.data.autostake,
+      ...opts
+    }
     this.batch = {}
     this.messages = []
     this.processed = {}
+    this.errors = {}
     this.results = []
   }
 
@@ -50,6 +59,7 @@ export default class NetworkRunner {
 
   async run(addresses) {
     try {
+      timeStamp("Running with options:", this.opts)
       this.balance = await this.getBalance() || 0
 
       if (addresses) {
@@ -80,22 +90,25 @@ export default class NetworkRunner {
   }
 
   getBalance() {
-    return this.queryClient.getBalance(this.operator.botAddress, this.network.denom)
+    let timeout = this.opts.queryTimeout
+    return this.queryClient.getBalance(this.operator.botAddress, this.network.denom, { timeout })
       .then(
         (balance) => {
           timeStamp("Bot balance is", balance.amount, balance.denom)
           return balance.amount
         },
         (error) => {
-          throw new Error("Failed to get balance:", error.message || error)
+          throw new Error(`Failed to get balance: ${error.message || error}`)
         }
       )
   }
 
   getDelegations() {
-    let batchSize = this.network.data.autostake?.batchQueries || 100
-    return this.queryClient.getAllValidatorDelegations(this.operator.address, batchSize, (pages) => {
+    let timeout = this.opts.queryTimeout
+    let pageSize = this.opts.batchPageSize
+    return this.queryClient.getAllValidatorDelegations(this.operator.address, pageSize, { timeout }, (pages) => {
       timeStamp("...batch", pages.length)
+      return this.throttleQuery()
     }).catch(error => {
       throw new Error(`Failed to get delegations: ${error.message || error}`)
     })
@@ -103,9 +116,14 @@ export default class NetworkRunner {
 
   async getGrantedAddresses(addresses) {
     const { botAddress, address } = this.operator
+    let timeout = this.opts.queryTimeout
+    let pageSize = this.opts.batchPageSize
     let allGrants
     try {
-      allGrants = await this.queryClient.getGranteeGrants(botAddress)
+      allGrants = await this.queryClient.getGranteeGrants(botAddress, { timeout, pageSize }, (pages) => {
+      timeStamp("...batch", pages.length)
+      return this.throttleQuery()
+    })
     } catch (e) { }
     let grantCalls = addresses.map(item => {
       return async () => {
@@ -117,16 +135,16 @@ export default class NetworkRunner {
         }
       }
     })
-    let batchSize = this.network.data.autostake?.batchQueries || 50
-    let grantedAddresses = await mapSync(grantCalls, batchSize, (batch, index) => {
+    let grantedAddresses = await mapSync(grantCalls, this.opts.batchQueries, (batch, index) => {
       timeStamp('...batch', index + 1)
+      return this.throttleQuery()
     })
     return _.compact(grantedAddresses.flat())
   }
 
   getGrants(delegatorAddress) {
     const { botAddress, address } = this.operator
-    let timeout = this.network.data.autostake?.delegatorTimeout || 5000
+    let timeout = this.opts.queryTimeout
     return this.queryClient.getGrants(botAddress, delegatorAddress, { timeout })
       .then(
         (result) => {
@@ -165,7 +183,7 @@ export default class NetworkRunner {
   async getAutostakeMessage(grantAddress) {
     const { address, grant } = grantAddress
 
-    let timeout = this.network.data.autostake?.delegatorTimeout || 5000
+    let timeout = this.opts.queryTimeout
     let withdrawAddress, totalRewards
     try {
       withdrawAddress = await this.queryClient.getWithdrawAddress(address, { timeout })
@@ -210,7 +228,7 @@ export default class NetworkRunner {
   }
 
   async autostake(grantedAddresses) {
-    let batchSize = this.network.data.autostake?.batchTxs || 50
+    let batchSize = this.opts.batchTxs
     timeStamp('Calculating and autostaking in batches of', batchSize)
 
     const calls = grantedAddresses.map((item, index) => {
@@ -226,8 +244,7 @@ export default class NetworkRunner {
         await this.sendInBatches(item.address, messages, batchSize, grantedAddresses.length)
       }
     })
-    let querySize = this.network.data.autostake?.batchQueries || _.clamp(batchSize / 2, 50)
-    await executeSync(calls, querySize)
+    await executeSync(calls, this.opts.batchQueries)
 
     this.results = await Promise.all(this.messages)
   }
@@ -258,7 +275,7 @@ export default class NetworkRunner {
     try {
       const execMsg = this.buildExecMessage(this.operator.botAddress, messages)
       const memo = 'REStaked by ' + this.operator.moniker
-      const gasModifier = this.network.data.autostake?.gasModifier || 1.1
+      const gasModifier = this.opts.gasModifier
       const gas = await this.signingClient.simulate(this.operator.botAddress, [execMsg], memo, gasModifier);
       const fee = this.signingClient.getFee(gas).amount[0]
       if (smaller(bignumber(this.balance), bignumber(fee.amount))) {
@@ -290,6 +307,12 @@ export default class NetworkRunner {
     }
   }
 
+  async throttleQuery(){
+    if(!this.opts.queryThrottle) return 
+
+    await new Promise(r => setTimeout(r, this.opts.queryThrottle));
+  }
+
   buildExecMessage(botAddress, messages) {
     return {
       typeUrl: "/cosmos.authz.v1beta1.MsgExec",
@@ -312,7 +335,7 @@ export default class NetworkRunner {
   }
 
   totalRewards(address) {
-    let timeout = this.network.data.autostake?.delegatorTimeout || 5000
+    let timeout = this.opts.queryTimeout
     return this.queryClient.getRewards(address, { timeout })
       .then(
         (rewards) => {
