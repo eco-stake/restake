@@ -91,7 +91,7 @@ export default class NetworkRunner {
   }
 
   getBalance() {
-    let timeout = this.opts.queryTimeout
+    let timeout = this.opts.delegationsTimeout
     return this.queryClient.getBalance(this.operator.botAddress, this.network.denom, { timeout })
       .then(
         (balance) => {
