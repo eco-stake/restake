@@ -15,7 +15,8 @@ export default class NetworkRunner {
       batchPageSize: 100,
       batchQueries: 25,
       batchTxs: 50,
-      queryTimeout: network.data.autostake?.delegatorTimeout || 5000, // deprecate
+      delegationsTimeout: 20000,
+      queryTimeout: network.data.autostake?.delegatorTimeout || 5000, // deprecate delegatorTimeout
       queryThrottle: 100,
       gasModifier: 1.1,
       ...network.data.autostake,
@@ -104,7 +105,7 @@ export default class NetworkRunner {
   }
 
   getDelegations() {
-    let timeout = this.opts.queryTimeout
+    let timeout = this.opts.delegationsTimeout
     let pageSize = this.opts.batchPageSize
     return this.queryClient.getAllValidatorDelegations(this.operator.address, pageSize, { timeout }, (pages) => {
       timeStamp("...batch", pages.length)
