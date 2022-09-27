@@ -66,10 +66,13 @@ const QueryClient = async (chainId, restUrls) => {
 
   const getBalance = (address, denom, opts) => {
     return axios
-      .get(`${restUrl}/cosmos/bank/v1beta1/balances/${address}/${denom}`, opts)
+      .get(restUrl + "/cosmos/bank/v1beta1/balances/" + address, opts)
       .then((res) => res.data)
       .then((result) => {
-        return result.balance || { denom: denom, amount: 0 };
+        const balance = result.balances?.find(
+          (element) => element.denom === denom
+        ) || { denom: denom, amount: 0 };
+        return balance;
       });
   };
 
