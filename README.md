@@ -181,9 +181,11 @@ Create a `src/networks.local.json` file and specify the networks you want to ove
     "gasPrice": "0.0025uosmo",
     "autostake": {
       "retries": 3,
+      "batchPageSize": 100,
+      "batchQueries": 25,
       "batchTxs": 50,
-      "batchQueries": 50,
-      "delegatorTimeout": 5000,
+      "queryTimeout": 5000,
+      "queryThrottle": 100,
       "gasModifier": 1.1
     },
     "healthCheck": {
