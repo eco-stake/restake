@@ -184,6 +184,7 @@ Create a `src/networks.local.json` file and specify the networks you want to ove
       "batchPageSize": 100,
       "batchQueries": 25,
       "batchTxs": 50,
+      "delegationsTimeout": 20000,
       "queryTimeout": 5000,
       "queryThrottle": 100,
       "gasModifier": 1.1
