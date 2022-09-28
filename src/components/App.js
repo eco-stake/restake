@@ -230,7 +230,9 @@ class App extends React.Component {
         wallet,
         signerProvider,
         signingClient,
-        error: false
+        error: false,
+        qrCodeUri: null,
+        qrCodeCallback: null
       })
     } catch (e) {
       console.log(e)

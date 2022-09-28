@@ -19,6 +19,7 @@ export default class KeplrMobileSignerProvider extends SignerProvider {
       ],
       qrcodeModal: this.connectModal,
     });
+    this.provider = new KeplrWalletConnectV1(this.connector);
   }
 
   available(){
@@ -44,7 +45,12 @@ export default class KeplrMobileSignerProvider extends SignerProvider {
   }
 
   async disconnect(){
-    return this.provider?.clearSaved()
+    try {
+      this.provider?.clearSaved()
+      this.connector.killSession()
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   getSigner(network){
@@ -64,14 +70,12 @@ export default class KeplrMobileSignerProvider extends SignerProvider {
           if (error) {
             reject(error);
           } else {
-            this.provider = new KeplrWalletConnectV1(this.connector);
             resolve();
           }
         });
       });
     } else {
-      this.provider = new KeplrWalletConnectV1(this.connector);
-      return Promise.resolve(this.provider);
+      return Promise.resolve();
     }
   }
 }
