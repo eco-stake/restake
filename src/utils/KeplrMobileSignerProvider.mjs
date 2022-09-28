@@ -8,7 +8,7 @@ export default class KeplrMobileSignerProvider extends SignerProvider {
   label = 'Keplr Mobile'
   keychangeEvent = 'keplr_keystorechange'
 
-  constructor({ connectModal }){
+  constructor({ connectModal }) {
     super()
     this.connectModal = connectModal
     this.connector = new WalletConnect({
@@ -19,36 +19,43 @@ export default class KeplrMobileSignerProvider extends SignerProvider {
       ],
       qrcodeModal: this.connectModal,
     });
-    this.provider = new KeplrWalletConnectV1(this.connector);
   }
 
-  available(){
+  available() {
     return true
   }
 
-  connected(){
+  connected() {
     return this.connector.connected
   }
 
-  suggestChain(network){
+  suggestChain(network) {
     throw new Error(`${network.prettyName} (${network.chainId}) is not supported`)
   }
 
-  async enable(network){
-    this.connectModal.open()
+  async connect(network) {
+    let key
     try {
-      await this.createSession()
-      await this.provider.enable(network.chainId)
-    } finally {
+      this.connectModal.open()
+      key = await super.connect(network)
       this.connectModal.close()
+      return key
+    } catch (error) {
+      this.connectModal.close()
+      throw(error)
     }
   }
 
-  async disconnect(){
+  async enable(network) {
+    await this.createSession()
+    await this.provider.enable(network.chainId)
+  }
+
+  async disconnect() {
     return this.provider?.clearSaved()
   }
 
-  async forceDisconnect(){
+  async forceDisconnect() {
     try {
       this.disconnect()
       this.connector.killSession()
@@ -57,28 +64,27 @@ export default class KeplrMobileSignerProvider extends SignerProvider {
     }
   }
 
-  getSigner(network){
+  getSigner(network) {
     const { chainId } = network
     // return this.provider.getOfflineSignerAuto(chainId) // no signDirect support currently
     return this.provider.getOfflineSignerOnlyAmino(chainId)
   }
 
-  async createSession(){
-    // Check if connection is already established
+  async createSession() {
     if (!this.connector.connected) {
-      // create new session
       this.connector.createSession();
-
       return new Promise((resolve, reject) => {
         this.connector.on("connect", (error) => {
           if (error) {
             reject(error);
           } else {
+            this.provider = new KeplrWalletConnectV1(this.connector);
             resolve();
           }
         });
       });
     } else {
+      this.provider = new KeplrWalletConnectV1(this.connector);
       return Promise.resolve();
     }
   }

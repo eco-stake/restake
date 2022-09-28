@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 
 import {
   Modal,
@@ -19,43 +19,37 @@ function ConnectWalletModal(props) {
   const [checkAndroid] = useState(() => isAndroid());
 
   const navigateToAppURL = useMemo(() => {
-    if (uri && checkMobile) {
+    if (checkMobile) {
       if (checkAndroid) {
+        const base = "intent://wcV1#Intent;package=com.chainapsis.keplr;scheme=keplrwallet;end;"
         // Save the mobile link.
         saveMobileLinkInfo({
           name: "Keplr",
-          href:
-            "intent://wcV1#Intent;package=com.chainapsis.keplr;scheme=keplrwallet;end;",
+          href: base,
         });
 
-        return `intent://wcV1?${uri}#Intent;package=com.chainapsis.keplr;scheme=keplrwallet;end;`;
+        return uri ? `intent://wcV1?${uri}#Intent;package=com.chainapsis.keplr;scheme=keplrwallet;end;` : base
       } else {
         // Save the mobile link.
+        const base = "keplrwallet://wcV1"
         saveMobileLinkInfo({
           name: "Keplr",
-          href: "keplrwallet://wcV1",
+          href: base,
         });
 
-        return `keplrwallet://wcV1?${uri}`;
+        return uri ? `keplrwallet://wcV1?${uri}` : base
       }
     }
   }, [checkAndroid, checkMobile, uri]);
-
-  useEffect(() => {
-    // Try opening the app without interaction.
-    if (uri && show && navigateToAppURL) {
-      window.location.href = navigateToAppURL;
-    }
-  }, [navigateToAppURL]);
 
   function handleClose() {
     onClose();
     callback && callback();
   }
 
-  function forceDisconnect(){
+  function forceDisconnect() {
     signerProvider?.forceDisconnect()
-    onClose()
+    handleClose()
   }
 
   const walletName = signerProvider?.label || 'Wallet'
@@ -71,8 +65,9 @@ function ConnectWalletModal(props) {
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            {uri ? (
-              checkMobile ? (
+            <div className="text-center">
+              <p>{`Open your ${walletName} app to continue...`}</p>
+              {checkMobile ? (
                 <Button
                   onClick={() => {
                     if (navigateToAppURL) {
@@ -83,19 +78,22 @@ function ConnectWalletModal(props) {
                   Open App
                 </Button>
               ) : (
-                <div className="text-center">
-                  <QRCode size={300} value={uri} />
-                </div>
-              )
-            ) : (
-              <div className="text-center">
-                <p>{`Open your ${walletName} app to continue...`}</p>
-                <Spinner animation="border" role="status" className="spinner-border-sm">
-                  <span className="visually-hidden">Loading...</span>
-                </Spinner>
-                <p className="mt-5"><Button size="sm" onClick={forceDisconnect} variant="danger">Disconnect session</Button></p>
-              </div>
-            )}
+                uri ? (
+                  <div className="text-center">
+                    <QRCode size={300} value={uri} />
+                  </div>
+                ) : (
+                  <Spinner animation="border" role="status" className="spinner-border-sm">
+                    <span className="visually-hidden">Loading...</span>
+                  </Spinner>
+                )
+              )}
+              {!uri && (
+                <p className="mt-5">
+                  <Button size="sm" onClick={forceDisconnect} variant="danger">Disconnect session</Button>
+                </p>
+              )}
+            </div>
           </Modal.Body>
         </>
       </Modal>

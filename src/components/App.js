@@ -202,20 +202,16 @@ class App extends React.Component {
 
     this.setState({ signerProvider })
 
-    let key, error
-
+    let key
     try {
-      await signerProvider.enable(network)
-      key = await signerProvider.getKey(network);
+      key = await signerProvider.connect(network);
     } catch (e) {
-      try {
-        await signerProvider.suggestChain(network)
-        key = await signerProvider.getKey(network);
-      } catch (e) {
-        return this.setState({
-          error: `Failed to connect to ${signerProvider?.label || 'signer'}: ${e.message}`
-        })
-      }
+      return this.setState({
+        error: `Failed to connect to ${signerProvider?.label || 'signer'}: ${e.message}`,
+        address: null,
+        wallet: null,
+        signingClient: null
+      })
     }
     try {
       const offlineSigner = await signerProvider.getSigner(network)
