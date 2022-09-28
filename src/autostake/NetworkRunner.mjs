@@ -117,14 +117,14 @@ export default class NetworkRunner {
 
   async getGrantedAddresses(addresses) {
     const { botAddress, address } = this.operator
-    let timeout = this.opts.queryTimeout
+    let timeout = this.opts.delegationsTimeout
     let pageSize = this.opts.batchPageSize
     let allGrants
     try {
       allGrants = await this.queryClient.getGranteeGrants(botAddress, { timeout, pageSize }, (pages) => {
-      timeStamp("...batch", pages.length)
-      return this.throttleQuery()
-    })
+        timeStamp("...batch", pages.length)
+        return this.throttleQuery()
+      })
     } catch (e) { }
     let grantCalls = addresses.map(item => {
       return async () => {
