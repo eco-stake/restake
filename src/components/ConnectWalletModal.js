@@ -8,8 +8,7 @@ import {
 
 import {
   isMobile,
-  isAndroid,
-  saveMobileLinkInfo,
+  isAndroid
 } from "@walletconnect/browser-utils";
 import QRCode from "qrcode.react";
 
@@ -20,24 +19,11 @@ function ConnectWalletModal(props) {
 
   const navigateToAppURL = useMemo(() => {
     if (checkMobile) {
+      const uriStr = uri ? `?${uri}` : ''
       if (checkAndroid) {
-        const base = "intent://wcV1#Intent;package=com.chainapsis.keplr;scheme=keplrwallet;end;"
-        // Save the mobile link.
-        saveMobileLinkInfo({
-          name: "Keplr",
-          href: base,
-        });
-
-        return uri ? `intent://wcV1?${uri}#Intent;package=com.chainapsis.keplr;scheme=keplrwallet;end;` : base
+        return `intent://wcV1${uriStr}#Intent;package=com.chainapsis.keplr;scheme=keplrwallet;end;`
       } else {
-        // Save the mobile link.
-        const base = "keplrwallet://wcV1"
-        saveMobileLinkInfo({
-          name: "Keplr",
-          href: base,
-        });
-
-        return uri ? `keplrwallet://wcV1?${uri}` : base
+        return `keplrwallet://wcV1${uriStr}`
       }
     }
   }, [checkAndroid, checkMobile, uri]);
