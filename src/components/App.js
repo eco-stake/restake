@@ -75,7 +75,7 @@ class App extends React.Component {
         connectModal: {
           open: (uri, callback) => {
             this.setState({ 
-              connectWallet: 'Keplr Mobile', 
+              connectWallet: true, 
               qrCodeUri: uri || this.state.qrCodeUri, 
               qrCodeCallback: callback || this.state.qrCodeCallback 
             })
@@ -200,6 +200,8 @@ class App extends React.Component {
       return
     }
 
+    this.setState({ signerProvider })
+
     let key, error
 
     try {
@@ -228,7 +230,6 @@ class App extends React.Component {
       this.setState({
         address,
         wallet,
-        signerProvider,
         signingClient,
         error: false,
         qrCodeUri: null,
@@ -851,8 +852,8 @@ class App extends React.Component {
           setAddress={(value) => this.setState({address: value, showAddressModal: false})}
         />
         <ConnectWalletModal 
-          show={!!this.state.connectWallet} 
-          walletName={this.state.connectWallet} 
+          show={this.state.connectWallet} 
+          signerProvider={this.state.signerProvider} 
           uri={this.state.qrCodeUri} 
           callback={this.state.qrCodeCallback} 
           onClose={() => this.setState({connectWallet: false})} 

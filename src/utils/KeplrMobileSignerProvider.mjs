@@ -45,8 +45,12 @@ export default class KeplrMobileSignerProvider extends SignerProvider {
   }
 
   async disconnect(){
+    return this.provider?.clearSaved()
+  }
+
+  async forceDisconnect(){
     try {
-      this.provider?.clearSaved()
+      this.disconnect()
       this.connector.killSession()
     } catch (error) {
       console.log(error)
