@@ -132,7 +132,7 @@ export default function Autostake(mnemonic, opts) {
 
     if (!network.authzSupport) return timeStamp('No Authz support')
 
-    await network.connect()
+    await network.connect({ timeout: opts.delegationsTimeout || 20000 })
 
     const { restUrl, usingDirectory } = network
 
