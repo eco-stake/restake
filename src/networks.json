@@ -21,8 +21,9 @@
   },
   {
     "name": "chihuahua",
-    "gasPrice": "0.025uhuahua",
-    "ownerAddress": "chihuahuavaloper19vwcee000fhazmpt4ultvnnkhfh23ppwxll8zz"
+    "ownerAddress": "chihuahuavaloper19vwcee000fhazmpt4ultvnnkhfh23ppwxll8zz",
+    "gasPrice": "1uhuahua",
+    "gasPricePrefer": "1uhuahua"
   },
   {
     "name": "gravitybridge",
