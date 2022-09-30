@@ -212,7 +212,7 @@ const QueryClient = async (chainId, restUrls, opts) => {
     return pages;
   };
 
-  async function findAvailableUrl(urls, type, { timeout }) {
+  async function findAvailableUrl(urls, type, opts) {
     if(!urls) return
 
     if (!Array.isArray(urls)) {
@@ -223,6 +223,7 @@ const QueryClient = async (chainId, restUrls, opts) => {
       }
     }
     const path = type === "rest" ? "/blocks/latest" : "/block";
+    const { timeout } = opts || {}
     return Promise.any(urls.map(async (url) => {
       url = url.replace(/\/$/, '')
       try {
