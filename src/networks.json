@@ -21,8 +21,9 @@
   },
   {
     "name": "chihuahua",
-    "gasPrice": "0.025uhuahua",
-    "ownerAddress": "chihuahuavaloper19vwcee000fhazmpt4ultvnnkhfh23ppwxll8zz"
+    "ownerAddress": "chihuahuavaloper19vwcee000fhazmpt4ultvnnkhfh23ppwxll8zz",
+    "gasPrice": "1uhuahua",
+    "gasPricePrefer": "1uhuahua"
   },
   {
     "name": "gravitybridge",
@@ -237,5 +238,14 @@
   {
     "name": "pulsar",
     "testnet": true
+  },
+  {
+    "name": "teritori",
+    "ownerAddress": "torivaloper1d5u07lhelk6lal44a0myvufurvsqk5d499h9hz",
+    "gasPriceStep": {
+      "low": 0,
+      "average": 0.025,
+      "high": 0.04
+    }
   }
 ]
