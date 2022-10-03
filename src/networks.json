@@ -238,5 +238,14 @@
   {
     "name": "pulsar",
     "testnet": true
+  },
+  {
+    "name": "teritori",
+    "ownerAddress": "torivaloper1d5u07lhelk6lal44a0myvufurvsqk5d499h9hz",
+    "gasPriceStep": {
+      "low": 0,
+      "average": 0.025,
+      "high": 0.04
+    }
   }
 ]
