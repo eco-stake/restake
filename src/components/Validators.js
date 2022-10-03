@@ -20,7 +20,7 @@ import {
   Nav,
   Spinner
 } from 'react-bootstrap'
-import { XCircle } from "react-bootstrap-icons";
+import { XCircle, Gear } from "react-bootstrap-icons";
 
 import ValidatorName from "./ValidatorName";
 import ManageRestake from "./ManageRestake";
@@ -233,7 +233,7 @@ function Validators(props) {
         <td className="d-none d-lg-table-cell text-center">
           <small>{format(validator.commission.commission_rates.rate * 100, 2)}%</small>
         </td>
-        <td className="d-none d-sm-table-cell">
+        <td className="">
           {delegations ? (
             <small>
               <Coins
@@ -247,8 +247,8 @@ function Validators(props) {
             </Spinner>
           )}
         </td>
-        {!props.modal && (
-          <td className="d-none d-md-table-cell">
+        {filter.group === 'delegated' && !props.modal && (
+          <td className="d-none d-sm-table-cell">
             {props.rewards ? denomRewards && (
               <small>
                 <Coins
@@ -298,7 +298,8 @@ function Validators(props) {
                     size="sm"
                     id="dropdown-basic"
                   >
-                    Manage
+                    <span className="d-inline d-md-none"><Gear /></span>
+                    <span className="d-none d-md-inline">Manage</span>
                   </Dropdown.Toggle>
                   <Dropdown.Menu>
                     {operator &&
@@ -499,9 +500,9 @@ function Validators(props) {
                 </th>
               )}
               <th className="d-none d-lg-table-cell text-center">Fee</th>
-              <th className="d-none d-sm-table-cell">Delegation</th>
-              {!props.modal && (
-                <th className="d-none d-md-table-cell">Rewards</th>
+              <th className="">Delegation</th>
+              {filter.group === 'delegated' && !props.modal && (
+                <th className="d-none d-sm-table-cell">Rewards</th>
               )}
               {!props.modal && showCommission && (
                 <th className="d-none d-md-table-cell">Commission</th>
@@ -522,7 +523,7 @@ function Validators(props) {
                 <td className="text-center"></td>
               )}
               <td className="d-none d-lg-table-cell"></td>
-              <td className="d-none d-sm-table-cell">
+              <td className="">
                 <strong className="small">
                   <Coins
                     coins={{
@@ -537,8 +538,8 @@ function Validators(props) {
                     asset={network.baseAsset} />
                 </strong>
               </td>
-              {!props.modal && (
-                <td className="d-none d-md-table-cell">
+              {filter.group === 'delegated' && !props.modal && (
+                <td className="d-none d-sm-table-cell">
                   {props.rewards && (
                     <strong className="small">
                       <Coins

@@ -227,11 +227,7 @@ function ValidatorGrants(props) {
       )}
       {props.restakePossible && (
         <div className="row">
-          <div className="col">
-            <p><strong>Grant details</strong></p>
-            {grantInformation()}
-          </div>
-          <div className="col">
+          <div className="col-12 col-md-6 order-md-1">
             <Form onSubmit={handleSubmit}>
           <fieldset disabled={!props.address || !props.wallet}>
               <Form.Group className="mb-3">
@@ -279,6 +275,10 @@ function ValidatorGrants(props) {
               </p>
             </fieldset>
             </Form>
+          </div>
+          <div className="col-12 col-md-6">
+            <p><strong>Grant details</strong></p>
+            {grantInformation()}
           </div>
         </div>
       )}
