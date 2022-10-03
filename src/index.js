@@ -24,6 +24,7 @@ const app = (
         <Route path="/:network/govern/:proposalId" element={<NetworkFinder />} />
         <Route path="/:network/grant" element={<NetworkFinder />} />
         <Route path="/:network/:validator" element={<NetworkFinder />} />
+        <Route path="/:network/:validator/:section" element={<NetworkFinder />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>

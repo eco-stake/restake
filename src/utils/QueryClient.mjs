@@ -1,8 +1,11 @@
 import axios from "axios";
 import _ from "lodash";
 
-const QueryClient = async (chainId, restUrls) => {
-  let restUrl = await findAvailableUrl(restUrls, "rest")
+const QueryClient = async (chainId, restUrls, opts) => {
+  const config = _.merge({
+    connectTimeout: 10000,
+  }, opts)
+  const restUrl = await findAvailableUrl(restUrls, "rest", { timeout: config.connectTimeout })
 
   const getAllValidators = (pageSize, opts, pageCallback) => {
     return getAllPages((nextKey) => {
@@ -209,7 +212,7 @@ const QueryClient = async (chainId, restUrls) => {
     return pages;
   };
 
-  async function findAvailableUrl(urls, type) {
+  async function findAvailableUrl(urls, type, opts) {
     if(!urls) return
 
     if (!Array.isArray(urls)) {
@@ -220,10 +223,11 @@ const QueryClient = async (chainId, restUrls) => {
       }
     }
     const path = type === "rest" ? "/blocks/latest" : "/block";
+    const { timeout } = opts || {}
     return Promise.any(urls.map(async (url) => {
       url = url.replace(/\/$/, '')
       try {
-        let data = await axios.get(url + path, { timeout: 10000 })
+        let data = await axios.get(url + path, { timeout })
           .then((res) => res.data)
         if (type === "rpc") data = data.result;
         if (data.block?.header?.chain_id === chainId) {
