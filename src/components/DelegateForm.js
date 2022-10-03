@@ -58,7 +58,7 @@ class DelegateForm extends React.Component {
       this.props.onDelegate()
     }, (error) => {
       console.log('Failed to broadcast:', error)
-      this.setState({ loading: false, error: error.message })
+      this.setState({ loading: false, error: `Failed to broadcast: ${error.message}` })
     })
   }
 

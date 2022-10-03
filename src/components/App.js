@@ -56,6 +56,7 @@ import Wallet from '../utils/Wallet.mjs';
 import SendModal from './SendModal';
 import KeplrSignerProvider from '../utils/KeplrSignerProvider.mjs';
 import FalconSignerProvider from '../utils/FalconSignerProvider.mjs';
+import LeapSignerProvider from '../utils/LeapSignerProvider.mjs';
 
 class App extends React.Component {
   constructor(props) {
@@ -66,9 +67,13 @@ class App extends React.Component {
       favourites: favouriteJson ? JSON.parse(favouriteJson) : [],
       favouriteAddresses: favouriteAddressJson ? JSON.parse(favouriteAddressJson) : {}
     }
-    this.connectAny = this.connectAny.bind(this);
-    this.connectKeplr = this.connectKeplr.bind(this);
-    this.connectFalcon = this.connectFalcon.bind(this);
+    this.signerProviders = [
+      new KeplrSignerProvider(window.keplr),
+      new LeapSignerProvider(window.leap),
+      // new FalconSignerProvider(window.falcon)
+    ]
+    this.signerConnectors = {}
+    this.connectAuto = this.connectAuto.bind(this);
     this.disconnect = this.disconnect.bind(this);
     this.showNetworkSelect = this.showNetworkSelect.bind(this);
     this.getBalance = this.getBalance.bind(this);
@@ -82,9 +87,12 @@ class App extends React.Component {
 
   async componentDidMount() {
     this.connect()
-    window.addEventListener("load", this.connectAny)
-    window.addEventListener("keplr_keystorechange", this.connectKeplr)
-    window.addEventListener("falcon_keystorechange", this.connectFalcon)
+    window.addEventListener("load", this.connectAuto)
+    this.signerProviders.forEach(provider => {
+      const connector = (event) => this.connectAuto(event, provider.key)
+      this.signerConnectors[provider.key] = connector
+      window.addEventListener(provider.keychangeEvent, connector)
+    })
   }
 
   async componentDidUpdate(prevProps, prevState) {
@@ -110,9 +118,10 @@ class App extends React.Component {
 
   componentWillUnmount() {
     this.clearRefreshInterval()
-    window.removeEventListener("load", this.connectAny)
-    window.removeEventListener("keplr_keystorechange", this.connectKeplr)
-    window.removeEventListener("falcon_keystorechange", this.connectFalcon)
+    window.removeEventListener("load", this.connectAuto)
+    this.signerProviders.forEach(provider => {
+      window.removeEventListener(provider.keychangeEvent, this.signerConnectors[provider.key])
+    })
   }
 
   showNetworkSelect() {
@@ -123,15 +132,8 @@ class App extends React.Component {
     return this.props.network?.connected
   }
 
-  signerProviders(){
-    return [
-      new KeplrSignerProvider(window.keplr),
-      // new FalconSignerProvider(window.falcon)
-    ]
-  }
-
   getSignerProvider(providerKey){
-    return providerKey && this.signerProviders().find(el => el.key === providerKey)
+    return providerKey && this.signerProviders.find(el => el.key === providerKey)
   }
 
   disconnect() {
@@ -144,16 +146,8 @@ class App extends React.Component {
     })
   }
 
-  connectAny(event){
-    return this.connect()
-  }
-
-  connectKeplr(event){
-    return this.connect('keplr')
-  }
-
-  connectFalcon(event){
-    return this.connect('falcon')
+  connectAuto(event, providerKey){
+    return this.connect(providerKey)
   }
 
   async connect(providerKey, manual) {
@@ -192,12 +186,11 @@ class App extends React.Component {
     const { network } = this.props
     if (!network || !signerProvider.connected()) return
 
-    let key
+    let key, error
     try {
       await signerProvider.enable(network)
       key = await signerProvider.getKey(network);
     } catch (e) {
-      console.log(e.message, e)
       try {
         await signerProvider.suggestChain(network)
         key = await signerProvider.getKey(network);
@@ -702,7 +695,7 @@ class App extends React.Component {
                                 </Dropdown.Item>
                               </>
                             ) : (
-                              this.signerProviders().map(provider => {
+                              this.signerProviders.map(provider => {
                                 return <Dropdown.Item as="button" key={provider.key} onClick={() => this.connect(provider.key, true)} disabled={!provider.connected()}>Connect {provider.label}</Dropdown.Item>
                               })
                             )}
