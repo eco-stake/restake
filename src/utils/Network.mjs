@@ -40,8 +40,8 @@ class Network {
   }
 
   connectedDirectory() {
-    const apis = this.chain ? this.chain.data['best_apis'] : this.data['best_apis']
-    return apis && ['rest'].every(type => apis[type].length > 0)
+    const proxy_status = this.chain ? this.chain.data['proxy_status'] : this.data['proxy_status']
+    return proxy_status && ['rest'].every(type => proxy_status[type])
   }
 
   estimateOperatorCount() {
