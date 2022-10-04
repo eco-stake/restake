@@ -167,8 +167,10 @@ class Network {
     const currency = {
       coinDenom: this.symbol,
       coinMinimalDenom: this.denom,
-      coinDecimals: this.decimals,
-      coinGeckoId: this.coinGeckoId
+      coinDecimals: this.decimals
+    }
+    if(this.coinGeckoId){
+      currency.coinGeckoId = this.coinGeckoId
     }
     const data = {
       rpc: this.rpcUrl,
