@@ -191,14 +191,21 @@ class App extends React.Component {
       await signerProvider.enable(network)
       key = await signerProvider.getKey(network);
     } catch (e) {
-      try {
-        await signerProvider.suggestChain(network)
-        key = await signerProvider.getKey(network);
-      } catch (e) {
-        return this.setState({
-          error: `Failed to connect to ${signerProvider?.label || 'signer'}: ${e.message}`
-        })
+      if(signerProvider.suggestChainSupport){
+        try {
+          await signerProvider.suggestChain(network)
+          key = await signerProvider.getKey(network);
+        } catch (e) {
+          error = e
+        }
+      }else{
+        error = e
       }
+    }
+    if(error){
+      return this.setState({
+        error: `Failed to connect to ${signerProvider?.label || 'signer'}: ${error.message}`
+      })
     }
     try {
       const offlineSigner = await signerProvider.getSigner(network)
