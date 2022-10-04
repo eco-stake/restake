@@ -1,4 +1,6 @@
 export default class SignerProvider {
+  suggestChainSupport = true
+
   constructor(provider){
     this.provider = provider
   }
@@ -16,11 +18,14 @@ export default class SignerProvider {
       await this.enable(network)
       return await this.getKey(network)
     } catch (e) {
+      if(!this.suggestChainSupport){
+        throw(e)
+      }
       try {
         await this.suggestChain(network)
         return await this.getKey(network)
       } catch (s) {
-        throw(e)
+        throw(s)
       }
     }
   }
@@ -44,7 +49,11 @@ export default class SignerProvider {
   }
 
   suggestChain(network){
-    return this.provider.experimentalSuggestChain(network.suggestChain())
+    if(this.suggestChainSupport){
+      return this.provider.experimentalSuggestChain(network.suggestChain())
+    }else{
+      throw new Error(`${network.prettyName} (${network.chainId}) is not supported`)
+    }
   }
 
   setOptions(options){

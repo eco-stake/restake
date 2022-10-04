@@ -7,6 +7,7 @@ export default class KeplrMobileSignerProvider extends SignerProvider {
   key = 'keplr-mobile'
   label = 'Keplr Mobile'
   keychangeEvent = 'keplr_keystorechange'
+  suggestChainSupport = false
 
   constructor({ connectModal }) {
     super()
@@ -27,10 +28,6 @@ export default class KeplrMobileSignerProvider extends SignerProvider {
 
   connected() {
     return this.connector.connected
-  }
-
-  suggestChain(network) {
-    throw new Error(`${network.prettyName} (${network.chainId}) is not supported`)
   }
 
   async connect(network) {
