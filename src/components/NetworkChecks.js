@@ -50,9 +50,8 @@ function NetworkChecks(props) {
     failTitle: 'Experimental support',
     failDescription: "This network was added to REStake automatically and has not been thoroughly tested yet.",
   }
-  if(!network.authzSupport && network.operatorCount > 0){
-    testedCheck.failTitle = testedCheck.title,
-    testedCheck.failDescription = "Authz is disabled but all other features have been fully tested."
+  if(!network.authzSupport && !network.experimental){
+    testedCheck.description = "Authz is disabled but all other features have been fully tested."
   }
 
   return (
@@ -60,7 +59,7 @@ function NetworkChecks(props) {
       {([
         renderCheck({
           title: <strong>{`$${price && price.usd.toLocaleString(undefined, { maximumFractionDigits: 8, minimumFractionDigits: 2 })}`}</strong>,
-          failTitle: 'Price Unknown',
+          failTitle: 'Price unknown',
           state: price?.usd,
           identifier: 'price',
           icon: <img src={Coingecko} style={{width: '1em', height: '1em'}} className="me-2 mb-1" />,
@@ -68,7 +67,7 @@ function NetworkChecks(props) {
         }),
         renderCheck({
           title: <strong>{`${Math.round(network.estimatedApr * 100).toLocaleString()}% APR`}</strong>,
-          failTitle: 'APR Unknown',
+          failTitle: 'APR unknown',
           state: network.estimatedApr,
           identifier: 'apr',
         }),
@@ -81,8 +80,8 @@ function NetworkChecks(props) {
           identifier: 'network'
         }),
         renderCheck({
-          title: 'Authz support',
-          failTitle: 'Authz unsupported',
+          title: network.authzAminoSupport ? <strong>Full Authz support</strong> : 'Authz support',
+          failTitle: 'Authz not supported',
           failDescription: "This network doesn't support Authz just yet. You can stake and compound manually, REStake will update automatically when support is added.",
           state: network.authzSupport,
           identifier: 'authz'
@@ -94,7 +93,7 @@ function NetworkChecks(props) {
         }),
         renderCheck({
           ...testedCheck,
-          state: network.authzSupport && !network.experimental,
+          state: !network.experimental,
           identifier: 'experimental'
         }),
       ])}
