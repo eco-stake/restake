@@ -4,8 +4,7 @@
     "gasPrice": "0.0025uosmo",
     "ownerAddress": "osmovaloper1u5v0m74mql5nzfx2yh43s2tke4mvzghr6m2n5t",
     "default": true,
-    "maxPerDay": 1,
-    "authzAminoSupport": true
+    "maxPerDay": 1
   },
   {
     "name": "juno",
@@ -102,8 +101,7 @@
     "gasPrice": "25ncheq"
   },
   {
-    "name": "umee",
-    "authzAminoSupport": true
+    "name": "umee"
   },
   {
     "name": "bitsong"
