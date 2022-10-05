@@ -184,7 +184,7 @@ function SigningClient(network, signer) {
     let aminoMsgs
     try {
       aminoMsgs = convertToAmino(messages)
-    } catch (e) { }
+    } catch (e) { console.log(e) }
     if(aminoMsgs && signer.signAmino){
       // Sign as amino if possible for Ledger and Keplr support
       const signDoc = makeAminoSignDoc(aminoMsgs, fee, chainId, memo, accountNumber, sequence);
@@ -241,9 +241,12 @@ function SigningClient(network, signer) {
       if(message.typeUrl.startsWith('/cosmos.authz') && !network.authzAminoSupport){
         throw new Error('This chain does not support amino conversion for Authz messages')
       }
-      if(message.typeUrl === '/cosmos.authz.v1beta1.MsgExec' && !network.authzAminoExecSupport){
-        // Osmosis MsgExec is broken with Amino currently
-        throw new Error('This chain does not support amino conversion for Authz Exec messages')
+      if(message.typeUrl === '/cosmos.authz.v1beta1.MsgExec' && network.path === 'osmosis'){
+        // Osmosis MsgExec gov is broken with Amino currently
+        // See https://github.com/osmosis-labs/cosmos-sdk/pull/342
+        if(message.value.msgs.some(msg => msg.typeUrl.startsWith('/cosmos.gov'))){
+          throw new Error('Osmosis does not support amino conversion for Authz Exec gov messages')
+        }
       }
       return aminoTypes.toAmino(message)
     })
