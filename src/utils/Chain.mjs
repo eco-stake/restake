@@ -11,7 +11,7 @@ const Chain = (data) => {
     slip44: data.slip44 || 118,
     estimatedApr: data.params?.calculated_apr,
     authzSupport: data.authzSupport ?? data.params?.authz,
-    ledgerAuthzSupport: data.ledgerAuthzSupport ?? false,
+    authzAminoSupport: data.authzAminoSupport ?? false,
     denom: data.denom || baseAsset?.base?.denom,
     display: data.display || baseAsset?.display?.denom,
     symbol: data.symbol || baseAsset?.symbol,

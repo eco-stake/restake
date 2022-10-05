@@ -19,12 +19,12 @@ import { buildExecMessage } from '../utils/Helpers.mjs';
 
 function GrantModal(props) {
   const { show, network, address, wallet } = props
-  const ledgerAuthzSupport = wallet?.ledgerAuthzSupport()
+  const walletAuthzSupport = wallet?.authzSupport()
   const defaultExpiry = moment().add(1, 'year')
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState()
   const [state, setState] = useState({ maxTokensValue: '', expiryDateValue: defaultExpiry.format('YYYY-MM-DD') });
-  const [showLedger, setShowLedger] = useState(!ledgerAuthzSupport)
+  const [showLedger, setShowLedger] = useState(!walletAuthzSupport)
 
   const { daemon_name, chain_id } = network.chain.data
 
@@ -37,7 +37,7 @@ function GrantModal(props) {
       messageTypeValue: messageTypes[0],
       customMessageTypeValue: '',
     })
-    setShowLedger(!ledgerAuthzSupport)
+    setShowLedger(!walletAuthzSupport)
     setError(null)
   }, [address])
 
@@ -56,7 +56,7 @@ function GrantModal(props) {
 
   function handleSubmit(event) {
     event.preventDefault()
-    if(!address || !ledgerAuthzSupport || !valid()) return
+    if(!address || !walletAuthzSupport || !valid()) return
 
     showLoading(true)
     const expiry = moment(state.expiryDateValue)
@@ -147,7 +147,7 @@ function GrantModal(props) {
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title className="text-truncate pe-4">
-          {address && !!ledgerAuthzSupport ? 'New Grant' : 'CLI/Ledger instructions'}
+          {address && !!walletAuthzSupport ? 'New Grant' : 'CLI/Ledger instructions'}
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -156,7 +156,7 @@ function GrantModal(props) {
               {error}
             </AlertMessage>
           }
-          {!address || !ledgerAuthzSupport && (
+          {!address || !walletAuthzSupport && (
             <>
               <p>Enter your grant details to generate the relevant CLI command.</p>
             </>
@@ -214,7 +214,7 @@ function GrantModal(props) {
               </>
             )}
             <p><strong>Incorrect use of Authz grants can be as dangerous as giving away your mnemonic.</strong> Make sure you trust the Grantee address and understand the permissions you are granting.</p>
-            {address && !!ledgerAuthzSupport && (
+            {address && !!walletAuthzSupport && (
               <p className="text-end">
                 <Button
                   variant="link"

@@ -5,7 +5,7 @@
     "ownerAddress": "osmovaloper1u5v0m74mql5nzfx2yh43s2tke4mvzghr6m2n5t",
     "default": true,
     "maxPerDay": 1,
-    "ledgerAuthzSupport": true
+    "authzAminoSupport": true
   },
   {
     "name": "juno",
@@ -145,7 +145,7 @@
     "name": "secretnetwork",
     "gasPrice": "0.025uscrt",
     "gasPricePrefer": "0.05uscrt",
-    "ledgerAuthzSupport": true
+    "authzAminoSupport": true
   },
   {
     "name": "bostrom",

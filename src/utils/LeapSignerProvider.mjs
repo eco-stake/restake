@@ -4,6 +4,7 @@ export default class LeapSignerProvider extends SignerProvider {
   key = 'leap'
   label = 'Leap Wallet'
   keychangeEvent = 'leap_keystorechange'
+  suggestChainSupport = false
 
   enable(network){
     if (network.gasPricePrefer) {
@@ -12,10 +13,6 @@ export default class LeapSignerProvider extends SignerProvider {
       })
     }
     return super.enable(network)
-  }
-
-  suggestChain(network){
-    throw new Error(`${network.prettyName} is not supported`)
   }
 
   setOptions(options){

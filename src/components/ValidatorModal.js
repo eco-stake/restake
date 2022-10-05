@@ -171,7 +171,7 @@ function ValidatorModal(props) {
                     <Nav.Link role="button" eventKey="restake">REStake</Nav.Link>
                   </Nav.Item>
                 )}
-                {network.authzSupport && !network.ledgerAuthzSupport && operator() && (
+                {network.authzSupport && !network.authzAminoSupport && operator() && (
                   <Nav.Item>
                     <Nav.Link role="button" eventKey="ledger">Ledger Instructions</Nav.Link>
                   </Nav.Item>
@@ -183,7 +183,7 @@ function ValidatorModal(props) {
                 {operator() && (
                   <option value="restake">REStake</option>
                 )}
-                {network.authzSupport && !network.ledgerAuthzSupport && operator() && (
+                {network.authzSupport && !network.authzAminoSupport && operator() && (
                   <option value="ledger">Ledger Instructions</option>
                 )}
               </select>

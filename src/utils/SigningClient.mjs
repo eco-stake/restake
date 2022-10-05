@@ -238,7 +238,7 @@ function SigningClient(network, signer) {
 
   function convertToAmino(messages){
     return messages.map(message => {
-      if(message.typeUrl.startsWith('/cosmos.authz') && !network.ledgerAuthzSupport){
+      if(message.typeUrl.startsWith('/cosmos.authz') && !network.authzAminoSupport){
         throw new Error('This chain does not support amino conversion for Authz messages')
       }
       return aminoTypes.toAmino(message)

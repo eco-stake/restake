@@ -51,7 +51,7 @@ function RevokeGrant(props) {
   }
 
   function disabled(){
-    return props.disabled || !wallet?.hasPermission(address, 'Revoke') || !wallet?.ledgerAuthzSupport()
+    return props.disabled || !wallet?.hasPermission(address, 'Revoke') || !wallet?.authzSupport()
   }
 
   if(props.button){

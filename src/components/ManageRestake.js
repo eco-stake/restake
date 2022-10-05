@@ -5,7 +5,7 @@ import TooltipIcon from "./TooltipIcon";
 
 import { Button, OverlayTrigger, Tooltip } from "react-bootstrap";
 
-import { CheckCircle, XCircle } from "react-bootstrap-icons";
+import { CheckCircle, XCircle, WrenchAdjustable, Magic } from "react-bootstrap-icons";
 
 function ManageRestake(props) {
   const { validator, operator, delegation, grants, network, authzSupport, restakePossible } = props
@@ -33,7 +33,8 @@ function ManageRestake(props) {
               }
             >
               <Button className="mr-5" onClick={props.openGrants} size={props.size} disabled={props.disabled} variant={grants.grantsExist ? 'danger' : 'success'}>
-                {grants.grantsExist ? 'Fix' : 'Enable'}
+                  <span className="d-inline d-md-none">{grants.grantsExist ? <WrenchAdjustable /> : <Magic />}</span>
+                  <span className="d-none d-md-inline">{grants.grantsExist ? 'Fix' : 'Enable'}</span>
               </Button>
             </OverlayTrigger>
           ) : (

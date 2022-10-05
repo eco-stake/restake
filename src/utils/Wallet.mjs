@@ -30,7 +30,7 @@ class Wallet {
 
   hasPermission(address, action){
     if(address === this.address) return true
-    if(!this.ledgerAuthzSupport()) return false
+    if(!this.authzSupport()) return false
 
     let message = messageTypes.find(el => {
       return el.split('.').slice(-1)[0].replace('Msg', '') === action
@@ -43,10 +43,8 @@ class Wallet {
     })
   }
 
-  ledgerAuthzSupport(){
-    if(!this.getIsNanoLedger()) return true
-
-    return this.network.ledgerAuthzSupport
+  authzSupport(){
+    return this.signer.signDirect || (this.network.authzAminoSupport && this.signer.signAmino)
   }
 
   async getAddress(){

@@ -29,7 +29,7 @@ function Grants(props) {
   const [filter, setFilter] = useState({keywords: '', group: 'granter'})
   const [results, setResults] = useState([])
 
-  const ledgerAuthzSupport = props.wallet?.ledgerAuthzSupport()
+  const walletAuthzSupport = props.wallet?.authzSupport()
 
   useEffect(() => {
     if(!grants) return
@@ -204,7 +204,7 @@ function Grants(props) {
       {!props.grantQuerySupport && (
         <AlertMessage variant="warning">This network doesn't fully support this feature just yet. <span role="button" className="text-decoration-underline" onClick={props.showFavouriteAddresses}>Save addresses</span> to see them here.</AlertMessage>
       )}
-      {props.grantQuerySupport && !ledgerAuthzSupport && (
+      {props.grantQuerySupport && !walletAuthzSupport && (
         <AlertMessage
           variant="warning"
           dismissible={false}
@@ -260,7 +260,7 @@ function Grants(props) {
           </div>
           <div className="flex-fill d-flex justify-content-end">
             <Button variant="primary" disabled={!wallet?.hasPermission(address, 'Grant')} onClick={() => setShowModal(true)}>
-              {address && !!ledgerAuthzSupport ? 'New Grant' : 'CLI/Ledger Instructions'}
+              {address && !!walletAuthzSupport ? 'New Grant' : 'CLI/Ledger Instructions'}
             </Button>
           </div>
         </div>
