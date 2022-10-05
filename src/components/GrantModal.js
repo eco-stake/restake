@@ -26,7 +26,7 @@ function GrantModal(props) {
   const [state, setState] = useState({ maxTokensValue: '', expiryDateValue: defaultExpiry.format('YYYY-MM-DD') });
   const [showLedger, setShowLedger] = useState(!walletAuthzSupport)
 
-  const { daemon_name, chain_id } = network.chain.data
+  const { daemon_name, chain_id } = network.chain
 
   useEffect(() => {
     setState({
