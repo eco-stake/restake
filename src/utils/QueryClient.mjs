@@ -222,7 +222,7 @@ const QueryClient = async (chainId, restUrls, opts) => {
         urls = [urls]
       }
     }
-    const path = type === "rest" ? "/blocks/latest" : "/block";
+    const path = type === "rest" ? "/cosmos/base/tendermint/v1beta1/blocks/latest" : "/block";
     const { timeout } = opts || {}
     return Promise.any(urls.map(async (url) => {
       url = url.replace(/\/$/, '')
