@@ -5,6 +5,7 @@ const Chain = (data) => {
   const baseAsset = assets[0]
 
   return {
+    ...data,
     prettyName: data.prettyName || data.pretty_name,
     chainId: data.chainId || data.chain_id,
     prefix: data.prefix || data.bech32_prefix,
@@ -12,17 +13,15 @@ const Chain = (data) => {
     estimatedApr: data.params?.calculated_apr,
     authzSupport: data.authzSupport ?? data.params?.authz,
     authzAminoSupport: data.authzAminoSupport ?? false,
+    authzAminoExecSupport: data.authzAminoExecSupport ?? data.authzAminoSupport ?? false,
     denom: data.denom || baseAsset?.base?.denom,
     display: data.display || baseAsset?.display?.denom,
     symbol: data.symbol || baseAsset?.symbol,
     decimals: data.decimals || baseAsset?.decimals,
     image: data.image || baseAsset?.image,
     coinGeckoId: baseAsset?.coingecko_id,
-    services: data.services,
-    explorers: data.explorers,
     assets,
-    baseAsset,
-    data
+    baseAsset
   }
 }
 

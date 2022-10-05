@@ -241,6 +241,10 @@ function SigningClient(network, signer) {
       if(message.typeUrl.startsWith('/cosmos.authz') && !network.authzAminoSupport){
         throw new Error('This chain does not support amino conversion for Authz messages')
       }
+      if(message.typeUrl === '/cosmos.authz.v1beta1.MsgExec' && !network.authzAminoExecSupport){
+        // Osmosis MsgExec is broken with Amino currently
+        throw new Error('This chain does not support amino conversion for Authz Exec messages')
+      }
       return aminoTypes.toAmino(message)
     })
   }
