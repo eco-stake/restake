@@ -48,7 +48,7 @@ function Networks(props) {
     if (!keywords || keywords === '') return searchResults
 
     const searcher = new FuzzySearch(
-      searchResults, ['prettyName'],
+      searchResults, ['prettyName', 'keywords'],
       { sort: true }
     )
 
