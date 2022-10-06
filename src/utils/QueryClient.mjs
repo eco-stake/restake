@@ -223,18 +223,30 @@ const QueryClient = async (chainId, restUrls, opts) => {
       }
     }
     const path = type === "rest" ? "/cosmos/base/tendermint/v1beta1/blocks/latest" : "/block";
-    const { timeout } = opts || {}
     return Promise.any(urls.map(async (url) => {
       url = url.replace(/\/$/, '')
       try {
-        let data = await axios.get(url + path, { timeout })
-          .then((res) => res.data)
+        let data = await getLatestBlock(url, type, path, opts)
         if (type === "rpc") data = data.result;
         if (data.block?.header?.chain_id === chainId) {
           return url;
         }
       } catch { }
     }));
+  }
+
+  async function getLatestBlock(url, type, path, opts){
+    const { timeout } = opts || {}
+    try {
+      return await axios.get(url + path, { timeout })
+        .then((res) => res.data)
+    } catch (error) {
+      const fallback = type === 'rest' && '/blocks/latest'
+      if (fallback && fallback !== path && error.response?.status === 501) {
+        return getLatestBlock(url, type, fallback, opts)
+      }
+      throw(error)
+    }
   }
 
   return {
