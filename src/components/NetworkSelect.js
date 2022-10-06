@@ -1,8 +1,5 @@
 import React, { useState, useReducer, useEffect } from 'react';
 
-import CosmosDirectory from '../utils/CosmosDirectory.mjs';
-import Network from '../utils/Network.mjs'
-
 import {
   Button,
   Modal,
