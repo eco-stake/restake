@@ -154,7 +154,7 @@ class App extends React.Component {
 
   disconnect() {
     localStorage.removeItem('connected')
-    this.state.signerProvider.disconnect()
+    this.state.signerProvider?.disconnect()
     this.setState({
       address: null,
       balance: null,
