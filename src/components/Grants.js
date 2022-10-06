@@ -202,7 +202,7 @@ function Grants(props) {
   const alerts = (
     <>
       {!props.grantQuerySupport && (
-        <AlertMessage variant="warning">This network doesn't fully support this feature just yet. <span role="button" className="text-decoration-underline" onClick={props.showFavouriteAddresses}>Save addresses</span> to see them here.</AlertMessage>
+        <AlertMessage variant="warning">Grants cannot be queried on this network yet. <span role="button" className="text-decoration-underline" onClick={props.showFavouriteAddresses}>Save addresses</span> first to see their grants.</AlertMessage>
       )}
       {props.grantQuerySupport && !walletAuthzSupport && (
         <AlertMessage

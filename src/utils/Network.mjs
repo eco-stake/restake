@@ -100,6 +100,7 @@ class Network {
     this.gasPricePrefer = this.data.gasPricePrefer
     this.gasModifier = this.data.gasModifier || 1.5
     this.txTimeout = this.data.txTimeout || 60_000
+    this.keywords = this.buildKeywords()
   }
 
   async connect(opts) {
@@ -196,6 +197,14 @@ class Network {
       data.features = this.data.keplrFeatures
     }
     return data
+  }
+
+  buildKeywords(){
+    return _.compact([
+      ...this.chain?.keywords || [], 
+      this.authzSupport && 'authz',
+      this.authzAminoSupport && 'full authz ledger',
+    ])
   }
 }
 

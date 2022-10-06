@@ -206,7 +206,7 @@ const QueryClient = async (chainId, restUrls, opts) => {
     do {
       const result = await getPage(nextKey);
       pages.push(result);
-      nextKey = result.pagination.next_key;
+      nextKey = result.pagination?.next_key;
       if (pageCallback) await pageCallback(pages);
     } while (nextKey);
     return pages;
