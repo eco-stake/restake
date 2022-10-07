@@ -205,7 +205,7 @@ function SigningClient(network, signer) {
         gasLimit: fee.gas,
       }, SignMode.SIGN_MODE_DIRECT)
       const signDoc = makeSignDoc(txBodyBytes, authInfoBytes, chainId, accountNumber);
-      if(accountNumber === '0') signDoc.accountNumber = 0 // https://github.com/cosmos/cosmjs/issues/549
+      if(signDoc.accountNumber.isZero()) signDoc.accountNumber = 0 // https://github.com/cosmos/cosmjs/issues/549
       const { signature, signed } = await signer.signDirect(address, signDoc);
       return {
         bodyBytes: signed.bodyBytes,
