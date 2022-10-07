@@ -4,7 +4,7 @@ import ChainAsset from "./ChainAsset.mjs";
 const Chain = (data) => {
   const assets = data.assets?.map(el => ChainAsset(el)) || []
   const baseAsset = assets[0]
-  const { cosmos_sdk_version } = data.versions
+  const { cosmos_sdk_version } = data.versions || {}
   const sdkAuthzAminoSupport = validate(cosmos_sdk_version) && compareVersions(cosmos_sdk_version, '0.46') >= 0
 
   return {
