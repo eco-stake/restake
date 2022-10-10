@@ -284,10 +284,7 @@ function SigningClient(network, signer) {
       signerInfos: [
         {
           publicKey: {
-            typeUrl:
-              coinType === 60
-                ? "/ethermint.crypto.v1.ethsecp256k1.PubKey"
-                : "/cosmos.crypto.secp256k1.PubKey",
+            typeUrl: pubkeyTypeUrl(),
             value: PubKey.encode({
               key: pubkey,
             }).finish(),
@@ -298,6 +295,17 @@ function SigningClient(network, signer) {
       ],
       fee: Fee.fromPartial(fee),
     }).finish()
+  }
+
+  function pubkeyTypeUrl(){
+    if(network.path === 'injective'){
+      return '/injective.crypto.v1beta1.ethsecp256k1.PubKey'
+    }
+
+    if(coinType === 60){
+      return '/ethermint.crypto.v1.ethsecp256k1.PubKey'
+    }
+    return '/cosmos.crypto.secp256k1.PubKey'
   }
 
   return {
