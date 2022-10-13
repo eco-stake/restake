@@ -85,6 +85,7 @@ class Network {
     this.coinGeckoId = this.chain.coinGeckoId
     this.estimatedApr = this.chain.estimatedApr
     this.apyEnabled = data.apyEnabled !== false && !!this.estimatedApr && this.estimatedApr > 0
+    this.ledgerSupport = this.chain.ledgerSupport ?? true
     this.authzSupport = this.chain.authzSupport
     this.authzAminoSupport = this.chain.authzAminoSupport
     this.defaultGasPrice = this.decimals && format(bignumber(multiply(0.000000025, pow(10, this.decimals))), { notation: 'fixed', precision: 4}) + this.denom

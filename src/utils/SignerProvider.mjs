@@ -38,9 +38,13 @@ export default class SignerProvider {
     return this.provider.enable(chainId)
   }
 
-  getKey(network){
+  async getKey(network){
     const { chainId } = network
-    return this.provider.getKey(chainId)
+    const key = await this.provider.getKey(chainId)
+    if(!network.ledgerSupport && (key.isNanoLedger || key.isHardware)){
+      throw new Error('Ledger support is coming soon')
+    }
+    return key
   }
 
   getSigner(network){
