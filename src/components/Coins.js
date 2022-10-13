@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import { divide, bignumber, round } from 'mathjs'
+import { divide, bignumber, round, format } from 'mathjs'
 
 function Coins(props) {
   const { asset, coins, fullPrecision, inBaseDenom, hideValue, className } = props
@@ -10,7 +10,7 @@ function Coins(props) {
     if(inBaseDenom) return coins.amount
 
     const prec = precision(coins, decimals)
-    return round(divide(bignumber(coins.amount), Math.pow(10, decimals)), prec).toLocaleString(undefined, { maximumFractionDigits: prec })
+    return format(round(divide(bignumber(coins.amount), Math.pow(10, decimals)), prec), {notation: 'fixed'}).toLocaleString(undefined, { maximumFractionDigits: prec })
   }
 
   function value(coins){

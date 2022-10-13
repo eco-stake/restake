@@ -191,8 +191,7 @@ class Network {
         bech32PrefixConsPub: this.prefix + "valconspub"
       },
       currencies: [currency],
-      feeCurrencies: [currency],
-      gasPriceStep: this.gasPriceStep
+      feeCurrencies: [{...currency, gasPriceStep: this.gasPriceStep }]
     }
     if(this.data.keplrFeatures){
       data.features = this.data.keplrFeatures
