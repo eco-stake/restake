@@ -279,14 +279,14 @@ function SigningClient(network, signer) {
     if (!accountFromSigner) {
       throw new Error("Failed to retrieve account from signer");
     }
-    const pubkey = accountFromSigner.pubkey;
+    const signerPubkey = accountFromSigner.pubkey;
     return AuthInfo.encode({
       signerInfos: [
         {
           publicKey: {
-            typeUrl: pubkeyTypeUrl(),
+            typeUrl: pubkeyTypeUrl(account.pub_key),
             value: PubKey.encode({
-              key: pubkey,
+              key: signerPubkey,
             }).finish(),
           },
           sequence: Long.fromNumber(sequence, true),
@@ -297,7 +297,9 @@ function SigningClient(network, signer) {
     }).finish()
   }
 
-  function pubkeyTypeUrl(){
+  function pubkeyTypeUrl(pub_key){
+    if(pub_key && pub_key['@type']) return pub_key['@type']
+
     if(network.path === 'injective'){
       return '/injective.crypto.v1beta1.ethsecp256k1.PubKey'
     }
