@@ -236,7 +236,7 @@ Warning: Using crontab with docker will continuously create docker images. Add a
 ```bash
 crontab -e
 
-0 0 * * */7 /bin/bash -c "cd restake && docker compose down" > ./restake_teardown.log 2>&1
+0 0 * * */7 /usr/bin/docker image prune -a -f
 ```
 
 
