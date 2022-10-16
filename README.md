@@ -231,6 +231,15 @@ crontab -e
 0 21 * * * /bin/bash -c "cd restake && docker compose run --rm app npm run autostake" > ./restake.log 2>&1
 ```
 
+Warning: Using crontab with docker will continuously create docker images. Add another crontab to tear down the images weekly.
+
+```bash
+crontab -e
+
+0 0 * * */7 /bin/bash -c "cd restake && docker compose down" > ./restake.log 2>&1
+```
+
+
 or with NPM:
 
 ```bash
