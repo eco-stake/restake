@@ -9,7 +9,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
       - name: Set up Docker Buildx
@@ -29,6 +29,21 @@ jobs:
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
             type=sha
+      - name: Docker testnet meta
+        id: meta-testnet
+        uses: docker/metadata-action@v4
+        with:
+          # list of Docker images to use as base name for tags
+          images: |
+            ghcr.io/${{ github.repository }}
+          # generate Docker tags based on the following events/attributes
+          tags: |
+            type=schedule,suffix=testnet
+            type=ref,event=branch,suffix=testnet
+            type=ref,event=pr,suffix=testnet
+            type=semver,pattern={{version}},suffix=testnet
+            type=semver,pattern={{major}}.{{minor}},suffix=testnet
+            type=sha,suffix=testnet
       - name: Login to GHCR
         if: github.event_name != 'pull_request'
         uses: docker/login-action@v2
@@ -49,3 +64,17 @@ jobs:
             BUGSNAG_KEY=${{ secrets.BUGSNAG_KEY }}
             MAINNET_DOMAIN="restake.app"
             TESTNET_DOMAIN="testnet.restake.app"
+      - name: build and push testnet
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          file: Dockerfile.production
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.meta-testnet.outputs.tags }}
+          labels: ${{ steps.meta-testnet.outputs.labels }}
+          build-args: |
+            BUGSNAG_KEY=${{ secrets.BUGSNAG_KEY }}
+            MAINNET_DOMAIN="restake.app"
+            TESTNET_DOMAIN="testnet.restake.app"
+            TESTNET_MODE="1"
