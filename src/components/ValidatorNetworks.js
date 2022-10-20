@@ -23,13 +23,15 @@ function ValidatorNetworks(props) {
   const validatorNetworks = _.uniqBy(_.compact(registryData.chains.map(chain => {
     const chainNetwork = networks[chain.name]
     if(chainNetwork){
+      const { online } = chainNetwork
       const active = network.path === chainNetwork.path
       return {
         key: chain.name,
         name: chainNetwork.prettyName,
         image: <NetworkImage network={chainNetwork} height={20} width={20} className={active ? 'border border-2 border-info' : ''} />,
         path: `/${chainNetwork.path}/${chain.address}`,
-        active
+        active,
+        online
       }
     }
   })), 'key').sort((a, b) => a.name > b.name ? 1 : -1)
@@ -43,12 +45,16 @@ function ValidatorNetworks(props) {
             rootClose={true}
             key={validatorNetwork.key}
             overlay={
-              <Tooltip id={`tooltip-${validatorNetwork.key}`}>{validatorNetwork.name}</Tooltip>
+              <Tooltip id={`tooltip-${validatorNetwork.key}`}>{validatorNetwork.name}{!validatorNetwork.online && ' (API Offline)'}</Tooltip>
             }
           >
-            <Link to={validatorNetwork.path} onClick={() => !validatorNetwork.active && setNetworkLoading(validatorNetwork.path)}>
-              {validatorNetwork.image}
-            </Link>
+            {!validatorNetwork.online || validatorNetwork.active ? (
+              <span>{validatorNetwork.image}</span>
+            ) : (
+              <Link to={validatorNetwork.path} onClick={() => setNetworkLoading(validatorNetwork.path)}>
+                {validatorNetwork.image}
+              </Link>
+            )}
           </OverlayTrigger>
         )
       })}

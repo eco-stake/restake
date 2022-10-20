@@ -171,7 +171,8 @@
       "average": 0.025,
       "high": 0.04
     },
-    "ownerAddress": "mantlevaloper1fqs7gakxdmujtk0qufdzth5pfyspus3yx394zd"
+    "ownerAddress": "mantlevaloper1fqs7gakxdmujtk0qufdzth5pfyspus3yx394zd",
+    "authzHistorySupport": false
   },
   {
     "name": "crescent",

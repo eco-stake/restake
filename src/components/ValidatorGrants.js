@@ -1,24 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import moment from 'moment'
-import { pow, multiply, divide, larger, smaller, bignumber } from 'mathjs'
+import { pow, multiply, divide, larger, smaller, bignumber, round } from 'mathjs'
 
 import { MsgGrant } from "cosmjs-types/cosmos/authz/v1beta1/tx";
 import { StakeAuthorization } from "cosmjs-types/cosmos/staking/v1beta1/authz";
 import { Timestamp } from "cosmjs-types/google/protobuf/timestamp";
 
 import {
+  Spinner,
   Button,
   Form,
   Table
 } from 'react-bootstrap'
+import {
+  QuestionCircle,
+} from 'react-bootstrap-icons'
 
 import Coins from './Coins';
-import { buildExecMessage, coin } from '../utils/Helpers.mjs';
+import { buildExecMessage, coin, lastRestakeClassname } from '../utils/Helpers.mjs';
 import RevokeGrant from './RevokeGrant';
 import AlertMessage from './AlertMessage';
+import TooltipIcon from './TooltipIcon'
 
 function ValidatorGrants(props) {
-  const { grants, wallet, operator, address, network } = props
+  const { grants, wallet, operator, address, network, lastExec } = props
   const { stakeGrant, maxTokens, validators, grantsValid, grantsExist } = grants || {}
   const defaultExpiry = moment().add(1, 'year')
   const [loading, setLoading] = useState(false);
@@ -60,6 +65,14 @@ function ValidatorGrants(props) {
 
   function maxTokensValid() {
     return !maxTokensDenom() || larger(maxTokensDenom(), props.rewards)
+  }
+
+  function lastRestakeWarning() {
+    if (!operator || lastExec == null)
+      return;
+
+    const missedRuns = operator.missedRunCount(lastExec);
+    return missedRuns > Math.min(15, operator.runsPerDay() * 2);
   }
 
   function showLoading(isLoading) {
@@ -171,6 +184,11 @@ function ValidatorGrants(props) {
           You must delegate to {operator.moniker} before they can REStake for you.
         </AlertMessage>
       )}
+      {lastRestakeWarning() && (
+        <AlertMessage variant="danger" dismissible={false}>
+          This validator has not REStaked recently.
+        </AlertMessage>
+      )}
       {error &&
         <AlertMessage variant="danger" className="text-break small">
           {error}
@@ -188,12 +206,49 @@ function ValidatorGrants(props) {
               <span>{operator.runTimesString()}</span>
             </td>
           </tr>
+          {network.authzHistorySupport && (
+            <tr>
+              <td scope="row">Last REStake</td>
+              <td>
+                <div className="d-flex align-items-center">
+                  {lastExec != null ? <span className={lastRestakeClassname(operator, lastExec)}>{lastExec ? lastExec?.fromNow() : 'Never'}</span> : <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>}
+                  <TooltipIcon icon={<QuestionCircle className="ms-2" />} identifier={operator.address} tooltip="Based on the last REStake transaction sent by this validator for any of their users. Not every run generates a transaction." />
+                </div>
+              </td>
+            </tr>
+          )}
           <tr>
             <td scope="row">Minimum Reward</td>
             <td>
               <Coins coins={minimumReward()} asset={network.baseAsset} fullPrecision={true} hideValue={true} />
             </td>
           </tr>
+          {network.apyEnabled && (
+            <tr>
+              <td scope="row">
+                <TooltipIcon
+                  icon={<span className="p-0 text-decoration-underline">APY</span>}
+                  identifier="delegations-apy"
+                >
+                  <div className="mt-2 text-center">
+                    <p>Based on commission, compounding frequency and estimated block times.</p>
+                    <p>This is an estimate and best case scenario.</p>
+                  </div>
+                </TooltipIcon>
+              </td>
+              <td>
+                {Object.keys(props.validatorApy).length > 0
+                  ? props.validatorApy[operator.address]
+                    ? <span>{round(props.validatorApy[operator.address] * 100, 2).toLocaleString()}%</span>
+                    : "-"
+                  : (
+                    <Spinner animation="border" role="status" className="spinner-border-sm text-secondary">
+                      <span className="visually-hidden">Loading...</span>
+                    </Spinner>
+                  )}
+              </td>
+            </tr>
+          )}
           <tr>
             <td scope="row">Current Rewards</td>
             <td>
