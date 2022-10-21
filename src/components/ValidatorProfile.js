@@ -132,13 +132,13 @@ function ValidatorProfile(props) {
                       <td>{operator.runTimesString()}</td>
                     </tr>
                     <tr>
-                      <td className="border-bottom-0 pe-4">Minimum rewards</td>
-                      <td className="border-bottom-0"><Coins coins={minimumReward()} asset={network.baseAsset} fullPrecision={true} hideValue={true} /></td>
+                      <td className={`${network.authzSupport ? '' : 'border-bottom-0'} pe-4`}>Minimum rewards</td>
+                      <td className={network.authzSupport ? '' : 'border-bottom-0'}><Coins coins={minimumReward()} asset={network.baseAsset} fullPrecision={true} hideValue={true} /></td>
                     </tr>
                     {network.authzSupport && (
                       <tr>
-                        <td className="border-top border-bottom-0">Last REStake</td>
-                        <td className={'border-top pe-4 border-bottom-0'}>
+                        <td className="border-bottom-0">Last REStake</td>
+                        <td className={'pe-4 border-bottom-0'}>
                           <div className="d-flex align-items-center">
                             {lastExec != null ? <span className={lastRestakeClassname(operator, lastExec)}>{lastExec ? lastExec?.fromNow() : 'Not recently'}</span> : <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>}
                             <TooltipIcon icon={<QuestionCircle className="ms-2" />} identifier={operator.address} tooltip="Based on the last REStake transaction sent by this validator for any of their users. Not every run generates a transaction." />
