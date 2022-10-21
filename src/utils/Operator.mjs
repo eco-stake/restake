@@ -38,7 +38,7 @@ const Operator = (network, data) => {
         let date = start.clone()
         const interval = parse(time.replace('every ', ''))
         return [...Array(Math.floor(parse('1d') / interval))].map((_, i) => {
-          current = date.clone()
+          let current = date.clone()
           date.add(interval, 'ms')
           return current
         })
