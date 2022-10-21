@@ -110,7 +110,7 @@ function ValidatorModal(props) {
   }
 
   function getLastExec() {
-    if(!operator || !network.authzHistorySupport){
+    if(!operator || !network.authzSupport){
       setLastExec()
       return
     }

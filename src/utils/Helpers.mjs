@@ -30,9 +30,17 @@ export function lastRestakeClassname(operator, lastExec) {
     return;
 
   const missedRuns = operator.missedRunCount(lastExec);
-  const warning = missedRuns > Math.min(10, operator.runsPerDay());
-  const error = missedRuns > Math.min(15, operator.runsPerDay() * 2);
+  const warning = missedRuns > Math.min(20, operator.runsPerDay());
+  const error = missedRuns > Math.min(30, operator.runsPerDay() * 2);
   return error ? 'text-danger' : warning ? 'text-warning' : 'text-success';
+}
+
+export function lastRestakeWarning(operator, lastExec) {
+  if (!operator || lastExec == null)
+    return;
+
+  const missedRuns = operator.missedRunCount(lastExec);
+  return missedRuns > Math.min(30, operator.runsPerDay() * 2);
 }
 
 export function buildExecMessage(grantee, messages) {

@@ -17,7 +17,7 @@ import {
 } from 'react-bootstrap-icons'
 
 import Coins from './Coins';
-import { buildExecMessage, coin, lastRestakeClassname } from '../utils/Helpers.mjs';
+import { buildExecMessage, coin, lastRestakeClassname, lastRestakeWarning } from '../utils/Helpers.mjs';
 import RevokeGrant from './RevokeGrant';
 import AlertMessage from './AlertMessage';
 import TooltipIcon from './TooltipIcon'
@@ -65,14 +65,6 @@ function ValidatorGrants(props) {
 
   function maxTokensValid() {
     return !maxTokensDenom() || larger(maxTokensDenom(), props.rewards)
-  }
-
-  function lastRestakeWarning() {
-    if (!operator || lastExec == null)
-      return;
-
-    const missedRuns = operator.missedRunCount(lastExec);
-    return missedRuns > Math.min(15, operator.runsPerDay() * 2);
   }
 
   function showLoading(isLoading) {
@@ -184,7 +176,7 @@ function ValidatorGrants(props) {
           You must delegate to {operator.moniker} before they can REStake for you.
         </AlertMessage>
       )}
-      {lastRestakeWarning() && (
+      {lastRestakeWarning(operator, lastExec) && (
         <AlertMessage variant="danger" dismissible={false}>
           This validator has not REStaked recently.
         </AlertMessage>
@@ -206,7 +198,7 @@ function ValidatorGrants(props) {
               <span>{operator.runTimesString()}</span>
             </td>
           </tr>
-          {network.authzHistorySupport && (
+          {network.authzSupport && (
             <tr>
               <td scope="row">Last REStake</td>
               <td>
