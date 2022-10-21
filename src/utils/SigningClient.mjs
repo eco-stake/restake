@@ -273,17 +273,14 @@ function SigningClient(network, signer) {
     if (!accountFromSigner) {
       throw new Error("Failed to retrieve account from signer");
     }
-    const pubkey = accountFromSigner.pubkey;
+    const signerPubkey = accountFromSigner.pubkey;
     return AuthInfo.encode({
       signerInfos: [
         {
           publicKey: {
-            typeUrl:
-              coinType === 60
-                ? "/ethermint.crypto.v1.ethsecp256k1.PubKey"
-                : "/cosmos.crypto.secp256k1.PubKey",
+            typeUrl: pubkeyTypeUrl(account.pub_key),
             value: PubKey.encode({
-              key: pubkey,
+              key: signerPubkey,
             }).finish(),
           },
           sequence: Long.fromNumber(sequence, true),
@@ -292,6 +289,19 @@ function SigningClient(network, signer) {
       ],
       fee: Fee.fromPartial(fee),
     }).finish()
+  }
+
+  function pubkeyTypeUrl(pub_key){
+    if(pub_key && pub_key['@type']) return pub_key['@type']
+
+    if(network.path === 'injective'){
+      return '/injective.crypto.v1beta1.ethsecp256k1.PubKey'
+    }
+
+    if(coinType === 60){
+      return '/ethermint.crypto.v1.ethsecp256k1.PubKey'
+    }
+    return '/cosmos.crypto.secp256k1.PubKey'
   }
 
   return {

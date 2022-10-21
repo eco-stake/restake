@@ -1,4 +1,6 @@
 import React from 'react';
+import { round } from 'mathjs'
+
 import Coins from './Coins';
 import TooltipIcon from './TooltipIcon'
 
@@ -39,7 +41,7 @@ function ValidatorDelegate(props) {
               <td>
                 {Object.keys(props.validatorApy).length > 0
                   ? props.validatorApy[selectedValidator.operator_address]
-                    ? <span>{Math.round(props.validatorApy[selectedValidator.operator_address] * 100).toLocaleString()}%</span>
+                    ? <span>{round(props.validatorApy[selectedValidator.operator_address] * 100, 2).toLocaleString()}%</span>
                     : "-"
                   : (
                     <Spinner animation="border" role="status" className="spinner-border-sm text-secondary">

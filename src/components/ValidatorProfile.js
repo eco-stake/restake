@@ -1,5 +1,6 @@
 import _ from 'lodash'
-import React, { useState, useEffect } from 'react';
+import React from 'react';
+import { round } from 'mathjs'
 
 import ValidatorLink from './ValidatorLink'
 import Coins from './Coins'
@@ -11,24 +12,15 @@ import {
 } from 'react-bootstrap'
 
 import {
+  QuestionCircle,
   XCircle
 } from 'react-bootstrap-icons'
 import ValidatorServices from './ValidatorServices';
 import ValidatorNetworks from './ValidatorNetworks';
+import { lastRestakeClassname } from '../utils/Helpers.mjs';
 
 function ValidatorProfile(props) {
-  const { validator, operator, network, networks } = props
-  const [registryData, setRegistryData] = useState({})
-
-  useEffect(() => {
-    if(validator?.path && network.directory){
-      network.directory.getRegistryValidator(validator.path).then(data => {
-        setRegistryData(data)
-      })
-    }else{
-      setRegistryData({})
-    }
-  }, [validator]);
+  const { validator, operator, network, networks, registryData, lastExec } = props
 
   const active = () => {
     if(!validator) return false
@@ -133,7 +125,29 @@ function ValidatorProfile(props) {
             <td scope="row">REStake</td>
             <td>
               {!!operator ? (
-                <span className="p-0">{operator.runTimesString()} (<Coins coins={minimumReward()} asset={network.baseAsset} fullPrecision={true} hideValue={true} /> min)</span>
+                <Table className="m-0 table-sm w-auto">
+                  <tbody className="small">
+                    <tr>
+                      <td className="pe-4">Frequency</td>
+                      <td>{operator.runTimesString()}</td>
+                    </tr>
+                    <tr>
+                      <td className="border-bottom-0 pe-4">Minimum rewards</td>
+                      <td className="border-bottom-0"><Coins coins={minimumReward()} asset={network.baseAsset} fullPrecision={true} hideValue={true} /></td>
+                    </tr>
+                    {network.authzHistorySupport && (
+                      <tr>
+                        <td className="border-top border-bottom-0">Last REStake</td>
+                        <td className={'border-top pe-4 border-bottom-0'}>
+                          <div className="d-flex align-items-center">
+                            {lastExec != null ? <span className={lastRestakeClassname(operator, lastExec)}>{lastExec ? lastExec?.fromNow() : 'Never'}</span> : <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>}
+                            <TooltipIcon icon={<QuestionCircle className="ms-2" />} identifier={operator.address} tooltip="Based on the last REStake transaction sent by this validator for any of their users. Not every run generates a transaction." />
+                          </div>
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </Table>
               ) :
                 <TooltipIcon icon={<XCircle className="opacity-50 p-0" />} identifier={validator.operator_address} tooltip="This validator is not a REStake operator" />
               }
@@ -155,7 +169,7 @@ function ValidatorProfile(props) {
               <td>
                 {Object.keys(props.validatorApy).length > 0
                   ? props.validatorApy[validator.operator_address]
-                    ? <span className="p-0">{Math.round(props.validatorApy[validator.operator_address] * 100).toLocaleString()}%</span>
+                    ? <span className="p-0">{round(props.validatorApy[validator.operator_address] * 100, 2).toLocaleString()}%</span>
                     : "-"
                   : (
                     <Spinner animation="border" role="status" className="spinner-border-sm text-secondary">

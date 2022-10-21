@@ -85,6 +85,7 @@ function Governance(props) {
     try {
       let newProposals = await props.queryClient.getProposals()
       newProposals = newProposals.map(el => Proposal(el))
+      setError()
       setProposals(sortProposals(newProposals))
       setTallies(newProposals.reduce((sum, proposal) => {
         if (!_.every(Object.values(proposal.final_tally_result), el => el === '0')) {
