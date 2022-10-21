@@ -17,7 +17,6 @@ const Chain = (data) => {
     estimatedApr: data.params?.calculated_apr,
     authzSupport,
     authzAminoSupport: data.authzAminoSupport ?? sdkAuthzAminoSupport ?? false,
-    authzHistorySupport: data.authzHistorySupport ?? authzSupport,
     denom: data.denom || baseAsset?.base?.denom,
     display: data.display || baseAsset?.display?.denom,
     symbol: data.symbol || baseAsset?.symbol,

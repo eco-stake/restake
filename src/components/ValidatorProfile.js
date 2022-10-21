@@ -135,7 +135,7 @@ function ValidatorProfile(props) {
                       <td className="border-bottom-0 pe-4">Minimum rewards</td>
                       <td className="border-bottom-0"><Coins coins={minimumReward()} asset={network.baseAsset} fullPrecision={true} hideValue={true} /></td>
                     </tr>
-                    {network.authzHistorySupport && (
+                    {network.authzSupport && (
                       <tr>
                         <td className="border-top border-bottom-0">Last REStake</td>
                         <td className={'border-top pe-4 border-bottom-0'}>
