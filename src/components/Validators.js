@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import _ from 'lodash'
 import FuzzySearch from 'fuzzy-search'
+import { round } from 'mathjs'
 
 import { format, add } from 'mathjs'
 
@@ -221,7 +222,7 @@ function Validators(props) {
           <td className="text-center">
             {Object.keys(props.validatorApy).length > 0
               ? props.validatorApy[validatorAddress] !== undefined
-                ? <small>{Math.round(props.validatorApy[validatorAddress] * 100).toLocaleString() + "%"}</small>
+                ? <small>{round(props.validatorApy[validatorAddress] * 100, 1).toLocaleString() + "%"}</small>
                 : "-"
               : (
                 <Spinner animation="border" role="status" className="spinner-border-sm text-secondary">

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from "react-router-dom";
 import { bignumber } from 'mathjs'
+import moment from 'moment'
 
 import Validators from './Validators'
 import ValidatorImage from './ValidatorImage'
@@ -23,6 +24,29 @@ function ValidatorModal(props) {
   const params = useParams();
   const [selectedValidator, setSelectedValidator] = useState(!redelegate && validator);
   const [activeTab, setActiveTab] = useState(params.section);
+  const [registryData, setRegistryData] = useState({})
+  const [lastExec, setLastExec] = useState()
+
+  let operator
+  if (operators && selectedValidator){
+    operator = network.getOperator(selectedValidator.operator_address);
+  }
+
+  useEffect(() => {
+    getRegistryData()
+    const interval = setInterval(() => {
+      getRegistryData()
+    }, 15_000);
+    return () => clearInterval(interval);
+  }, [selectedValidator]);
+
+  useEffect(() => {
+    getLastExec()
+    const interval = setInterval(() => {
+      getLastExec()
+    }, 60_000);
+    return () => clearInterval(interval);
+  }, [operator])
 
   useEffect(() => {
     if(params.network !== network.name) return
@@ -56,70 +80,101 @@ function ValidatorModal(props) {
     }
   }, [validator, redelegate, props.show])
 
-  const handleClose = () => {
+  function handleClose() {
     if (selectedValidator && (!validator || redelegate) && selectedValidator !== validator) {
-      setSelectedValidator(null)
+      setSelectedValidator(null);
     } else {
-      props.hideModal()
-      setSelectedValidator(null)
+      props.hideModal();
+      setSelectedValidator(null);
     }
   }
 
-  const selectValidator = (selectedValidator, opts) => {
-    setSelectedValidator(selectedValidator)
-    setActiveTab(opts.activeTab || 'profile')
+  function selectValidator(selectedValidator, opts) {
+    setSelectedValidator(selectedValidator);
+    setActiveTab(opts.activeTab || 'profile');
   }
 
-  const onDelegate = () => {
-    props.onDelegate()
-    props.hideModal()
+  function onDelegate() {
+    props.onDelegate();
+    props.hideModal();
   }
 
-  const excludeValidators = () => {
+  function getRegistryData(){
+    if(selectedValidator?.path && network.directory){
+      network.directory.getRegistryValidator(selectedValidator.path).then(data => {
+        setRegistryData(data)
+      })
+    }else{
+      setRegistryData({})
+    }
+  }
+
+  function getLastExec() {
+    if(!operator || !network.authzSupport){
+      setLastExec()
+      return
+    }
+
+    network.queryClient.getTransactions([
+      { key: 'events', value: `message.action='/cosmos.authz.v1beta1.MsgExec'` },
+      { key: 'events', value: `message.sender='${operator.botAddress}'` }
+    ], {
+      pageSize: 1,
+      order: 2,
+      retries: 3,
+      timeout: 15_000
+    }).then(data => {
+      if (data.tx_responses?.length > 0) {
+        setLastExec(moment(data.tx_responses[0].timestamp))
+      } else {
+        setLastExec(false)
+      }
+    })
+  }
+
+  function excludeValidators() {
     if (redelegate) {
-      return [validator.operator_address]
+      return [validator.operator_address];
     } else if (delegations) {
-      return [...Object.keys(delegations)]
+      return [...Object.keys(delegations)];
     }
   }
 
-  const operator = () => {
-    if (!operators || !selectedValidator) return
-
-    return network.getOperator(selectedValidator.operator_address)
-  }
-
-  const availableBalance = () => {
+  function availableBalance() {
     if (redelegate || undelegate) {
-      return (props.delegations[validator.address] || {}).balance
+      return (props.delegations[validator.address] || {}).balance;
     } else {
-      return props.balance
+      return props.balance;
     }
   }
 
-  const rewards = () => {
-    if (!props.rewards) return 0;
+  function rewards() {
+    if (!props.rewards)
+      return 0;
     const denom = network.denom;
     const validatorReward = props.rewards[selectedValidator.address];
-    const reward = validatorReward && validatorReward.reward.find((el) => el.denom === denom)
-    return reward ? bignumber(reward.amount) : 0
+    const reward = validatorReward && validatorReward.reward.find((el) => el.denom === denom);
+    return reward ? bignumber(reward.amount) : 0;
   }
 
-  const commission = () => {
-    if (!props.commission) return 0;
+  function commission() {
+    if (!props.commission)
+      return 0;
     const denom = network.denom;
     const validatorCommission = props.commission[selectedValidator.address];
-    const commission = validatorCommission && validatorCommission.commission.find((el) => el.denom === denom)
-    return commission ? bignumber(commission.amount) : 0
+    const commission = validatorCommission && validatorCommission.commission.find((el) => el.denom === denom);
+    return commission ? bignumber(commission.amount) : 0;
   }
 
-  const actionText = () => {
-    if (redelegate) return <span>Redelegate from <ValidatorLink validator={validator} /></span>
-    if (undelegate) return 'Undelegate'
+  function actionText() {
+    if (redelegate)
+      return <span>Redelegate from <ValidatorLink validator={validator} /></span>;
+    if (undelegate)
+      return 'Undelegate';
     if (validator) {
-      return 'Delegate'
+      return 'Delegate';
     } else {
-      return 'Add Validator'
+      return 'Add Validator';
     }
   }
 
@@ -166,12 +221,12 @@ function ValidatorModal(props) {
                 <Nav.Item>
                   <Nav.Link role="button" eventKey="delegate">Delegate</Nav.Link>
                 </Nav.Item>
-                {operator() && (
+                {operator && (
                   <Nav.Item>
                     <Nav.Link role="button" eventKey="restake">REStake</Nav.Link>
                   </Nav.Item>
                 )}
-                {network.authzSupport && !network.authzAminoSupport && operator() && (
+                {network.authzSupport && !network.authzAminoSupport && operator && (
                   <Nav.Item>
                     <Nav.Link role="button" eventKey="ledger">Ledger Instructions</Nav.Link>
                   </Nav.Item>
@@ -180,10 +235,10 @@ function ValidatorModal(props) {
               <select className="form-select w-100 mb-3 d-block d-sm-none" aria-label="Section" value={activeTab} onChange={(e) => setActiveTab(e.target.value)}>
                 <option value="profile">Profile</option>
                 <option value="delegate">Delegate</option>
-                {operator() && (
+                {operator && (
                   <option value="restake">REStake</option>
                 )}
-                {network.authzSupport && !network.authzAminoSupport && operator() && (
+                {network.authzSupport && !network.authzAminoSupport && operator && (
                   <option value="ledger">Ledger Instructions</option>
                 )}
               </select>
@@ -194,7 +249,9 @@ function ValidatorModal(props) {
                     network={network}
                     networks={props.networks}
                     validator={selectedValidator}
-                    operator={operator()}
+                    operator={operator}
+                    registryData={registryData}
+                    lastExec={lastExec}
                     validatorApy={props.validatorApy} />
                 </Tab.Pane>
                 <Tab.Pane eventKey="delegate">
@@ -214,16 +271,18 @@ function ValidatorModal(props) {
                     signingClient={props.signingClient}
                     onDelegate={onDelegate} />
                 </Tab.Pane>
-                {operator() && (
+                {operator && (
                   <Tab.Pane eventKey="restake">
                     <ValidatorGrants
                       address={props.address}
                       wallet={props.wallet}
                       network={network}
-                      operator={operator()}
-                      grants={grants[operator()?.botAddress]}
+                      operator={operator}
+                      lastExec={lastExec}
+                      grants={grants[operator?.botAddress]}
                       delegation={delegations[selectedValidator.operator_address]}
                       rewards={rewards()}
+                      validatorApy={props.validatorApy}
                       authzSupport={props.authzSupport}
                       restakePossible={props.restakePossible}
                       signingClient={props.signingClient}
@@ -233,7 +292,7 @@ function ValidatorModal(props) {
                     />
                   </Tab.Pane>
                 )}
-                {network.authzSupport && operator() && (
+                {network.authzSupport && operator && (
                   <Tab.Pane eventKey="ledger">
                     <AboutLedger network={network} validator={selectedValidator} modal={false} />
                   </Tab.Pane>
