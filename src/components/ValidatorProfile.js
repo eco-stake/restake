@@ -12,12 +12,11 @@ import {
 } from 'react-bootstrap'
 
 import {
-  QuestionCircle,
   XCircle
 } from 'react-bootstrap-icons'
 import ValidatorServices from './ValidatorServices';
 import ValidatorNetworks from './ValidatorNetworks';
-import { lastRestakeClassname } from '../utils/Helpers.mjs';
+import OperatorLastRestake from './OperatorLastRestake';
 
 function ValidatorProfile(props) {
   const { validator, operator, network, networks, registryData, lastExec } = props
@@ -139,10 +138,7 @@ function ValidatorProfile(props) {
                       <tr>
                         <td className="border-bottom-0">Last REStake</td>
                         <td className={'pe-4 border-bottom-0'}>
-                          <div className="d-flex align-items-center">
-                            {lastExec != null ? <span className={lastRestakeClassname(operator, lastExec)}>{lastExec ? lastExec?.fromNow() : 'Not recently'}</span> : <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>}
-                            <TooltipIcon icon={<QuestionCircle className="ms-2" />} identifier={operator.address} tooltip="Based on the last REStake transaction sent by this validator for any of their users. Not every run generates a transaction." />
-                          </div>
+                          <OperatorLastRestake operator={operator} lastExec={lastExec} />
                         </td>
                       </tr>
                     )}

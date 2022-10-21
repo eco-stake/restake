@@ -12,15 +12,14 @@ import {
   Form,
   Table
 } from 'react-bootstrap'
-import {
-  QuestionCircle,
-} from 'react-bootstrap-icons'
 
 import Coins from './Coins';
-import { buildExecMessage, coin, lastRestakeClassname, lastRestakeWarning } from '../utils/Helpers.mjs';
+import { buildExecMessage, coin } from '../utils/Helpers.mjs';
 import RevokeGrant from './RevokeGrant';
 import AlertMessage from './AlertMessage';
 import TooltipIcon from './TooltipIcon'
+import OperatorLastRestake from './OperatorLastRestake';
+import OperatorLastRestakeAlert from './OperatorLastRestakeAlert';
 
 function ValidatorGrants(props) {
   const { grants, wallet, operator, address, network, lastExec } = props
@@ -176,11 +175,7 @@ function ValidatorGrants(props) {
           You must delegate to {operator.moniker} before they can REStake for you.
         </AlertMessage>
       )}
-      {lastRestakeWarning(operator, lastExec) && (
-        <AlertMessage variant="danger" dismissible={false}>
-          This validator has not REStaked recently.
-        </AlertMessage>
-      )}
+      <OperatorLastRestakeAlert operator={operator} lastExec={lastExec} />
       {error &&
         <AlertMessage variant="danger" className="text-break small">
           {error}
@@ -202,10 +197,7 @@ function ValidatorGrants(props) {
             <tr>
               <td scope="row">Last REStake</td>
               <td>
-                <div className="d-flex align-items-center">
-                  {lastExec != null ? <span className={lastRestakeClassname(operator, lastExec)}>{lastExec ? lastExec?.fromNow() : 'Not recently'}</span> : <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>}
-                  <TooltipIcon icon={<QuestionCircle className="ms-2" />} identifier={operator.address} tooltip="Based on the last REStake transaction sent by this validator for any of their users. Not every run generates a transaction." />
-                </div>
+                <OperatorLastRestake operator={operator} lastExec={lastExec} />
               </td>
             </tr>
           )}
