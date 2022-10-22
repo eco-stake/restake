@@ -16,7 +16,7 @@ Bu işlemler, stake eden adına stake alan tarafından gönderilir, yani valiato
 
 REStake, özellikle bir validatore `Delegate` işlemlerini yalnızca validatorleriniz yapmasına izin vermenizi sağlar. Validator başka herhangi bir işlem türü gönderemez ya da cüzdanınıza herhangi bir erişimi yoktur. Bunu normal olarak Keplr kullanarak yetkilendiriyorsunuz. REStake artık oto-stake için bir `çekme` izni gerektirmiyor.
 
-Doğrulayıcının delegelerini otomatik olarak aramasını sağlayan bir komut dosyası da sağlanmıştır, gerekli ödemeler için her birini kontrol edin ve varsa, talep ve işlemleri tek bir işlemde onlar adına gerçekleştirin. Bu script günlük olarak çalıştırılmalıdır ve çalıştıracağınız saat [operatörünüzü eklediğinizde](#become-an-operator) belirtilebilir.
+Doğrulayıcının delegelerini otomatik olarak aramasını sağlayan bir komut dosyası da sağlanmıştır, gerekli ödemeler için her birini kontrol edin ve varsa, talep ve işlemleri tek bir işlemde onlar adına gerçekleştirin. Bu script günlük olarak çalıştırılmalıdır ve çalıştıracağınız saat [operatörünüzü eklediğinizde]([#become-an-operator](#operat%C3%B6r-olun)) belirtilebilir.
 
 ## Kısıtlamalar
 
@@ -161,12 +161,12 @@ Normal oto-stake komut dosyasını çalıştıran ancak gönderilen son TX'leri 
 npm run dryrun osmosis
 ```
 
-**REStake operatör bilgilerinizi [Operatörünüzü kaydetme](#submitting-your-operator) bölümünde gösterileceği gibi Validator Regisrty kaydınızı yapana kadar 'operatör olmadığınıza dair bir uyarı görebilirsiniz.**
+**REStake operatör bilgilerinizi [Operatörünüzü kaydetme](#operat%C3%B6r%C3%BCn%C3%BCz%C3%BC-kaydetme) bölümünde gösterileceği gibi [Validator Kayıt Defteri](https://github.com/eco-stake/validator-registry)'ne kaydınızı yapana kadar 'operatör olmadığınıza dair bir uyarı görebilirsiniz.**
 
 
 ### REStake'i özelleştirin ve node'unuzu kullanın
 
-Muhtemelen ağların yapılandırılmasını özelleştirmek isteyeceksiniz, örneğin auto compounding (ödüllerinizi otomatik olarak yeniden stake havuzuna aktarmak) komut dosyanızın başarılı bir şekilde tamamlanmasını sağlamak için node'unuzun URL'lerinizi ayarlamak gibi.
+Muhtemelen ağların yapılandırılmasını özelleştirmek isteyeceksiniz, örneğin auto compounding (ödüllerinizi otomatik olarak yeniden stake etmek) komut dosyanızın başarılı bir şekilde tamamlanmasını sağlamak için node'unuzun URL'lerinizi ayarlamak gibi.
 
 Bir `src/networks.local.json` dosyası oluşturun ve geçersiz kılmak istediğiniz ağları belirtin. Aşağıdaki sadece bir örnektir, **ihtiyaç gerekirse sadece bir yapılandırmayı geçersiz kılmalısınız.**
 
@@ -216,7 +216,7 @@ Komut dosyasını her gün aynı saatte çalıştıracak şekilde ayarlamalısı
 
 Her iki durumda da, sistem zamanınızın doğru olduğundan emin olun ve komut dosyasının UTC'de ne zaman çalışacağını biliyor olmalısınız, çünkü bu daha sonra gerekli olacak. Her iki örnek de saat 21:00'e göre verilmiştir.
 
-[Sık sık güncellemeyi](#updating-your-local-version) unutmayın!
+[Sık sık güncellemeyi](#yerel-versiyonunuzu-g%C3%BCncelleme) unutmayın!
 
 #### `crontab` Kullanma
 
