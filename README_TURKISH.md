@@ -45,7 +45,7 @@ Birden çok Cosmos zinciri için yalnızca tek bir anımsatıcıya ihtiyacınız
 
 118 yolunu kullanan mevcut operatörler olduğundan, operatörlerin yükseltme yapmak istediklerinde doğru yolu seçmeleri gerekecektir. Yeni operatörler, stake almadan önce doğru yolu kullanmalıdır.
 
-Doğru yol, bir [yapılandırma geçersiz kılma](#overriding-networks-config-locallyuse-your-own-node)  dosyası kullanılarak iki yoldan biriyle ayarlanabilir. `"correctSlip44": true`, Zincir Kaydı'nda tanımlanan slip44'ü kullanır. Alternatif olarak `"slip44": 69` kullanarak belirli bir yol ayarlayın. Mümkünse `"correctSlip44": true` kullanmalısınız.
+Doğru yol, bir [yapılandırma geçersiz kılma](https://github.com/AnatolianTeam/restake/edit/master/README_TURKISH.md#restakei-%C3%B6zelle%C5%9Ftirin-ve-nodeunuzu-kullan%C4%B1n)  dosyası kullanılarak iki yoldan biriyle ayarlanabilir. `"correctSlip44": true`, Zincir Kaydı'nda tanımlanan slip44'ü kullanır. Alternatif olarak `"slip44": 69` kullanarak belirli bir yol ayarlayın. Mümkünse `"correctSlip44": true` kullanmalısınız.
 
 ```jsonc
 {
