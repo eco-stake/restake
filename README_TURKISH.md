@@ -16,7 +16,7 @@ Bu işlemler, stake eden adına stake alan tarafından gönderilir, yani valiato
 
 REStake, özellikle bir validatore `Delegate` işlemlerini yalnızca validatorleriniz yapmasına izin vermenizi sağlar. Validator başka herhangi bir işlem türü gönderemez ya da cüzdanınıza herhangi bir erişimi yoktur. Bunu normal olarak Keplr kullanarak yetkilendiriyorsunuz. REStake artık oto-stake için bir `çekme` izni gerektirmiyor.
 
-Doğrulayıcının delegelerini otomatik olarak aramasını sağlayan bir komut dosyası da sağlanmıştır, gerekli ödemeler için her birini kontrol edin ve varsa, talep ve işlemleri tek bir işlemde onlar adına gerçekleştirin. Bu script günlük olarak çalıştırılmalıdır ve çalıştıracağınız saat [operatörünüzü eklediğinizde]([#become-an-operator](#operat%C3%B6r-olun)) belirtilebilir.
+Doğrulayıcının delegelerini otomatik olarak aramasını sağlayan bir komut dosyası da sağlanmıştır, gerekli ödemeler için her birini kontrol edin ve varsa, talep ve işlemleri tek bir işlemde onlar adına gerçekleştirin. Bu script günlük olarak çalıştırılmalıdır ve çalıştıracağınız saat [operatörünüzü eklediğinizde](#operat%C3%B6r-olun) belirtilebilir.
 
 ## Kısıtlamalar
 
