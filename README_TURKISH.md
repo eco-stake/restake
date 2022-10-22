@@ -18,7 +18,6 @@ REStake, özellikle bir validatore `Delegate` işlemlerini yalnızca validatorle
 
 Doğrulayıcının delegelerini otomatik olarak aramasını sağlayan bir komut dosyası da sağlanmıştır, gerekli ödemeler için her birini kontrol edin ve varsa, talep ve işlemleri tek bir işlemde onlar adına gerçekleştirin. Bu script günlük olarak çalıştırılmalıdır ve çalıştıracağınız saat [operatörünüzü eklediğinizde](#become-an-operator) belirtilebilir.
 
-
 ## Kısıtlamalar
 
 Yazılı olarak, Ledger, Authz (Yetkilendirmeyi) etkinleştirmek için gerekli işlemleri gönderemiyor. Bu tamamen işlemlerin bir Ledger cihazına gönderilme şeklinden kaynaklanmaktadır ve yakında bir geçici çözüm mümkün olabilecektir.
@@ -26,7 +25,6 @@ Yazılı olarak, Ledger, Authz (Yetkilendirmeyi) etkinleştirmek için gerekli i
 Authz da henüz tam olarak desteklenmemektedir. Birçok zincir henüz güncellenmedi. REStake UI, kullanışlı manuel birleştirme özelliklerine sahip bir manuel stake uygulaması olmaya geri dönecek.
 
 Şu anda REStake, Keplr'ın tarayıcı uzantısı sürümüne ihtiyaç duyuyor, ancak WalletConnect ve Keplr iOS işlevselliği en kısa sürede eklenecek.
-
 
 ## Operatör olun
 
@@ -244,8 +242,6 @@ Systemd-timer, belirtilen kurallarla bir kerelik hizmetin çalıştırılmasına
 
 ##### systemd birimi dosyası oluşturma
 
-The unit file describe the application to run.  We define a dependency with the timer with the `Wants` statement.
-
 Birim dosyası çalıştırılacak uygulamayı tanımlar. `Wants` ve zamanlayıcı ifadesi ile bir bağımlılık tanımlıyoruz.
 
 ```bash
@@ -271,7 +267,7 @@ Not: Sorun yaşarsanız `WorkingDirectory=/path/to/restake` bölümünü `Workin
 
 Eğer aşağıdaki gibi bir hata alırsanız yine `chmod 777 /usr/bin/docker-compose` komutu ile dosyaya okuma, yazma ve çalıştırma izni veriniz.
 
-Çözüm için değerli arkadaşım [Odyseus'a]() teşekkür ederim. 
+Çözüm için değerli arkadaşım [Odyseus](https://github.com/odyseus8)'a teşekkür ederim. 
 
 ##### systemd timer dosyası oluşturma
 
@@ -344,10 +340,8 @@ Kontrol UUID numaranızı aşağıdaki gibi `networks.local.json` yapılandırma
 
 #### REStake Operatörünüzü Kurma
 
-Artık operatör bilgilerinizi oto-sake'i aktif etmek istediğiniz ağları eklemek için [Doğrulayıcı Kayıt Defteri](https://github.com/eco-stake/validator-registry)'ni güncellemeniz gerekiyor. Örnekler için README ve mevcut doğrulayıcıları kontrol edebilirsiniz, ancak bir ağ için yapılandırma şuna benziyor:
+Artık operatör bilgilerinizi oto-sake'i aktif etmek istediğiniz ağları eklemek için [Validator Kayıt Defteri](https://github.com/eco-stake/validator-registry)'ni güncellemeniz gerekiyor. Örnekler için README ve mevcut doğrulayıcıları kontrol edebilirsiniz, ancak bir ağ için yapılandırma şuna benziyor:
 
-
-You now need to update the [Validator Registry](https://github.com/eco-stake/validator-registry) to add your operator information to any networks you want to auto-compound for. Check the README and existing validators for examples, but the config for a network looks like this:
 
 ```json
 {
@@ -370,12 +364,9 @@ You now need to update the [Validator Registry](https://github.com/eco-stake/val
 
 `restake.minimum_reward`, otomatik stake'i tetiklemek için asgari ödüldür, aksi takdirde adres atlanır. Bu, daha sık yeniden düzenleme için daha yüksek ayarlanabilir. Bunun temel nominal değer olduğunu unutmayın, Örneğin, `uosmo`.
 
-`restake.minimum_reward` is the minimum reward to trigger autostaking, otherwise the address be skipped. This could be set higher for more frequent restaking. Note this is in the base denomination, e.g. `uosmo`.
-
 REStake yapmak istediğiniz tüm ağlar için bu yapılandırmayı tekrarlayın.
 
 `restake.address`'in kullanıcı ara yüzünde delegator'ün restake işlemlerini gerçekleştirmek için vermiş olduğu adrese stake işleminde fee ücretinin lınacağı adres olduğunu unutmayın.
-
 
 #### Operatörünüzü Validator Kayıt Defterine kaydetme
 
@@ -422,9 +413,7 @@ Artık ortak bir operatör bilgisi kaynağımız var, uygulamalar verileri doğr
 
 ## Feragatname
 
-REStake ilk sürümü yeni authz özelliklerinden yararlanmak için hızlı bir şekilde oluşturuldu.
-
-Ben şahsen bir React veya JavaScript geliştiricisi değilim ve bu proje [CosmJS projesi](https://github.com/cosmos/cosmjs) ve [Keplr Wallet](https://github.com/chainapsis/keplr-wallet) ve [Osmosis Zone frontend](https://github.com/osmosis-labs/osmosis-frontend) gibi diğer fantastik kod tabanlarına son derece eğiliyor.
+REStake ilk sürümü yeni authz özelliklerinden yararlanmak için hızlı bir şekilde oluşturuldu. Ben şahsen bir React veya JavaScript geliştiricisi değilim ve bu proje [CosmJS projesi](https://github.com/cosmos/cosmjs) ve [Keplr Wallet](https://github.com/chainapsis/keplr-wallet) ve [Osmosis Zone frontend](https://github.com/osmosis-labs/osmosis-frontend) gibi diğer fantastik kod tabanlarına son derece eğiliyor.
 
 ## ECO Stake 🌱
 
