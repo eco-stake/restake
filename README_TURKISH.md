@@ -263,9 +263,9 @@ WantedBy=multi-user.target
 ```
 NPM kurulumu için `Requires` ve `After` direktiflerini kaldırın ve` `ExecStart`'ı` `ExecStart=/usr/bin/npm run autostake` olarak değiştirin.
 
-Not: Sorun yaşarsanız `WorkingDirectory=/path/to/restake` bölümünü `WorkingDirectory=/root/restake` olarak değiştiriniz. Eğer yine sorun yaşarsanız `chmod 777 /root/restake` komutu ile dosyaya okuma, yazma ve çalıştırma izni veriniz. Daha sonra `systemctl daemon-reload` yaptıktan sonra sistemi yeniden başlatınız. 
+🔴 **Not: Sorun yaşarsanız `WorkingDirectory=/path/to/restake` bölümünü `WorkingDirectory=/root/restake` olarak değiştiriniz. Eğer yine sorun yaşarsanız `chmod 777 /root/restake` komutu ile dosyaya okuma, yazma ve çalıştırma izni veriniz. Daha sonra `systemctl daemon-reload` yaptıktan sonra sistemi yeniden başlatınız. **
 
-Eğer aşağıdaki gibi bir hata alırsanız yine `chmod 777 /usr/bin/docker-compose` komutu ile dosyaya okuma, yazma ve çalıştırma izni veriniz.
+🔴 **Eğer `Failed to restake service with docker compose` gibi bir hata alırsanız yine `chmod 777 /usr/bin/docker-compose` komutu ile dosyaya okuma, yazma ve çalıştırma izni veriniz.**
 
 Çözüm için değerli arkadaşım [Odyseus](https://github.com/odyseus8)'a teşekkür ederim. 
 
