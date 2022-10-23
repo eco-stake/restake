@@ -34,7 +34,7 @@ function ValidatorNetworks(props) {
         online
       }
     }
-  })), 'key').sort((a, b) => a.name > b.name ? 1 : -1)
+  })), 'key').sort((a, b) => a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1)
 
   return (
     <div className="d-flex flex-wrap gap-1 align-items-center">

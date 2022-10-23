@@ -531,7 +531,7 @@ class App extends React.Component {
 
   render() {
     return (
-      <Container>
+      <Container fluid="lg">
         <header className="">
           <div className="d-flex justify-content-between align-items-center py-3 border-bottom">
             <div className="logo d-flex align-items-end text-reset text-decoration-none">
@@ -641,7 +641,7 @@ class App extends React.Component {
                           {this.otherFavouriteAddresses().length < 1 && this.state.wallet ? (
                             <span role="button" onClick={() => this.setState({ showAddressModal: true })} className="small d-none d-lg-inline ms-2">{this.state.wallet.name || this.state.wallet.address}</span>
                           ) : (
-                            <select className="form-select form-select-sm d-none d-lg-block ms-2" aria-label="Address" value={this.state.address || ''} onChange={(e) => this.setState({ address: e.target.value })}>
+                            <select className="form-select form-select-sm d-none d-lg-block ms-2" aria-label="Address" value={this.state.address || ''} onChange={(e) => this.setState({ address: e.target.value })} style={{maxWidth: 200}}>
                               {this.state.wallet ? (
                                 <optgroup label={this.state.signerProvider.label}>
                                   <option value={this.state.wallet.address}>{this.state.wallet.name || this.state.wallet.address}</option>

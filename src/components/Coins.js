@@ -23,6 +23,7 @@ function Coins(props) {
 
   function precision(coins){
     if(fullPrecision) return decimals;
+    if(props.precision) return props.precision;
     if(coins.amount >= (1000 * Math.pow(10, decimals))) return 2
     if(coins.amount >= (100 * Math.pow(10, decimals))) return 3
     return 6

@@ -5,7 +5,7 @@ import TooltipIcon from "./TooltipIcon";
 
 import { Button, OverlayTrigger, Tooltip } from "react-bootstrap";
 
-import { CheckCircle, XCircle, WrenchAdjustable, Magic } from "react-bootstrap-icons";
+import { CheckCircle, XCircle, WrenchAdjustable, Magic, ClockHistory, Clock } from "react-bootstrap-icons";
 
 function ManageRestake(props) {
   const { validator, operator, delegation, grants, network, authzSupport, restakePossible } = props
@@ -20,6 +20,8 @@ function ManageRestake(props) {
                 network={network}
                 operator={operator}
                 maxAmount={grants.maxTokens}
+                icon={grants.maxTokens ? <ClockHistory className="p-0" /> : <Clock className="p-0" />}
+                renderText={(string) => <p>Validator will REStake in<br /><span>{string}</span></p>}
               />
             </span>
           ) : restakePossible && (delegation || grants.grantsExist) ? (

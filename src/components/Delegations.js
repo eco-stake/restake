@@ -6,9 +6,15 @@ import ClaimRewards from "./ClaimRewards";
 import ValidatorModal from "./ValidatorModal";
 import AboutLedger from "./AboutLedger";
 
-import { Button, Dropdown, Spinner } from "react-bootstrap";
+import { 
+  Button, 
+  Dropdown, 
+  Spinner, 
+  Dropdown, 
+ } from "react-bootstrap";
+import { Gear } from "react-bootstrap-icons";
 
-import { parseGrants } from "../utils/Helpers.mjs";
+import { parseGrants, rewardAmount } from "../utils/Helpers.mjs";
 import Validators from "./Validators";
 
 class Delegations extends React.Component {
@@ -21,7 +27,6 @@ class Delegations extends React.Component {
     this.onClaimRewards = this.onClaimRewards.bind(this);
     this.onGrant = this.onGrant.bind(this);
     this.onRevoke = this.onRevoke.bind(this);
-    this.validatorRewards = this.validatorRewards.bind(this);
     this.showValidatorModal = this.showValidatorModal.bind(this);
     this.setValidatorLoading = this.setValidatorLoading.bind(this);
     this.hideValidatorModal = this.hideValidatorModal.bind(this);
@@ -288,7 +293,7 @@ class Delegations extends React.Component {
         grantsValid: !!(
           grant.stakeGrant &&
           (!grant.validators || grant.validators.includes(operator.address)) &&
-          (grant.maxTokens === null || larger(grant.maxTokens, this.validatorReward(operator.address)))
+          (grant.maxTokens === null || larger(grant.maxTokens, rewardAmount(this.state.rewards, this.props.network.denom)))
         ),
         grantsExist: !!(grant.claimGrant || grant.stakeGrant),
       }
@@ -321,31 +326,6 @@ class Delegations extends React.Component {
     };
   }
 
-  validatorReward(validatorAddress) {
-    if (!this.state.rewards) return 0;
-    const denom = this.props.network.denom;
-    const validatorReward = this.state.rewards[validatorAddress];
-    const reward = validatorReward && validatorReward.reward.find((el) => el.denom === denom)
-    return reward ? bignumber(reward.amount) : 0
-  }
-
-  validatorRewards(validators) {
-    if (!this.state.rewards) return [];
-
-    const validatorRewards = Object.keys(this.state.rewards)
-      .map(validator => {
-        return {
-          validatorAddress: validator,
-          reward: this.validatorReward(validator),
-        }
-      })
-      .filter(validatorReward => {
-        return validatorReward.reward && (validators === undefined || validators.includes(validatorReward.validatorAddress))
-      });
-
-    return validatorRewards;
-  }
-
   showValidatorModal(validator, opts) {
     opts = opts || {}
     this.setState({ validatorModal: { show: true, validator: validator, ...opts } })
@@ -367,8 +347,6 @@ class Delegations extends React.Component {
         theme={this.props.theme}
         validator={validatorModal.validator}
         activeTab={validatorModal.activeTab}
-        redelegate={validatorModal.redelegate}
-        undelegate={validatorModal.undelegate}
         network={this.props.network}
         networks={this.props.networks}
         address={this.props.address}
@@ -388,6 +366,7 @@ class Delegations extends React.Component {
         onDelegate={this.onClaimRewards}
         onGrant={this.onGrant}
         onRevoke={this.onRevoke}
+        onClaimRewards={this.onClaimRewards}
         setError={this.setError}
       />
     )
@@ -461,12 +440,87 @@ class Delegations extends React.Component {
             operatorGrants={this.operatorGrants()}
             authzSupport={this.authzSupport()}
             restakePossible={this.restakePossible()}
-            validatorRewards={this.validatorRewards}
             showValidator={this.showValidatorModal}
             setValidatorLoading={this.setValidatorLoading}
             setError={this.setError}
             onClaimRewards={this.onClaimRewards}
-            onRevoke={this.onRevoke} />
+            onRevoke={this.onRevoke}
+            manageControl={({validator, operator, delegation, rewards, grants, filter}) => {
+              const { network, wallet, address } = this.props
+              const validatorAddress = validator.operator_address
+              const validatorOperator = validator.isValidatorOperator(address)
+              return (
+                !this.state.validatorLoading[validatorAddress] ? (
+                  filter.group === 'delegated' && delegation ? (
+                    <Dropdown>
+                      <Dropdown.Toggle
+                        variant="secondary"
+                        size="sm"
+                        id="dropdown-basic"
+                      >
+                        <Gear />
+                      </Dropdown.Toggle>
+                      <Dropdown.Menu>
+                        <Dropdown.Item as="button" onClick={() => this.showValidatorModal(validator, { activeTab: 'profile' })}>
+                          View {validator.moniker}
+                        </Dropdown.Item>
+                        <hr />
+                        <ClaimRewards
+                          network={network}
+                          address={address}
+                          wallet={wallet}
+                          rewards={[rewards]}
+                          signingClient={this.props.signingClient}
+                          onClaimRewards={this.onClaimRewards}
+                          setLoading={(loading) => this.setValidatorLoading(validatorAddress, loading)}
+                          setError={this.setError}
+                        />
+                        <ClaimRewards
+                          restake={true}
+                          network={network}
+                          address={address}
+                          wallet={wallet}
+                          rewards={[rewards]}
+                          signingClient={this.props.signingClient}
+                          onClaimRewards={this.onClaimRewards}
+                          setLoading={(loading) => this.setValidatorLoading(validatorAddress, loading)}
+                          setError={this.setError}
+                        />
+                        {validatorOperator && (
+                          <>
+                            <hr />
+                            <ClaimRewards
+                              commission={true}
+                              network={network}
+                              address={address}
+                              wallet={wallet}
+                              rewards={[rewards]}
+                              signingClient={this.props.signingClient}
+                              onClaimRewards={this.onClaimRewards}
+                              setLoading={(loading) => this.setValidatorLoading(validatorAddress, loading)}
+                              setError={this.setError}
+                            />
+                          </>
+                        )}
+                      </Dropdown.Menu>
+                    </Dropdown>
+                  ) : (
+                    <Button variant="primary" size="sm" onClick={() => this.showValidatorModal(validator)}>
+                      View
+                    </Button>
+                  )
+                ) : (
+                  <Button className="btn-sm btn-secondary" disabled>
+                    <span
+                      className="spinner-border spinner-border-sm"
+                      role="status"
+                      aria-hidden="true"
+                    ></span>
+                    &nbsp;
+                  </Button>
+                )
+              )
+            }} />
         </div>
         <div className="row">
           <div className="col">
@@ -494,7 +548,7 @@ class Delegations extends React.Component {
                         network={this.props.network}
                         address={this.props.address}
                         wallet={this.props.wallet}
-                        validatorRewards={this.validatorRewards()}
+                        rewards={Object.values(this.state.rewards || {})}
                         signingClient={this.props.signingClient}
                         onClaimRewards={this.onClaimRewards}
                         setLoading={this.setClaimLoading}
@@ -505,7 +559,7 @@ class Delegations extends React.Component {
                         network={this.props.network}
                         address={this.props.address}
                         wallet={this.props.wallet}
-                        validatorRewards={this.validatorRewards()}
+                        rewards={Object.values(this.state.rewards || {})}
                         signingClient={this.props.signingClient}
                         onClaimRewards={this.onClaimRewards}
                         setLoading={this.setClaimLoading}

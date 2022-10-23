@@ -14,12 +14,13 @@ import {
 } from 'react-bootstrap'
 
 import Coins from './Coins';
-import { buildExecMessage, coin } from '../utils/Helpers.mjs';
+import { buildExecMessage, coin, rewardAmount } from '../utils/Helpers.mjs';
 import RevokeGrant from './RevokeGrant';
 import AlertMessage from './AlertMessage';
 import TooltipIcon from './TooltipIcon'
 import OperatorLastRestake from './OperatorLastRestake';
 import OperatorLastRestakeAlert from './OperatorLastRestakeAlert';
+import CountdownRestake from './CountdownRestake';
 
 function ValidatorGrants(props) {
   const { grants, wallet, operator, address, network, lastExec } = props
@@ -28,6 +29,8 @@ function ValidatorGrants(props) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState()
   const [state, setState] = useState({ maxTokensValue: '', expiryDateValue: defaultExpiry.format('YYYY-MM-DD') });
+
+  const reward = rewardAmount(props.rewards, network.denom)
 
   useEffect(() => {
     setState({
@@ -63,7 +66,7 @@ function ValidatorGrants(props) {
   }
 
   function maxTokensValid() {
-    return !maxTokensDenom() || larger(maxTokensDenom(), props.rewards)
+    return !maxTokensDenom() || larger(maxTokensDenom(), reward)
   }
 
   function showLoading(isLoading) {
@@ -187,26 +190,6 @@ function ValidatorGrants(props) {
             <td scope="row">REStake Address</td>
             <td className="text-break"><span>{operator.botAddress}</span></td>
           </tr>
-          <tr>
-            <td scope="row">Frequency</td>
-            <td>
-              <span>{operator.runTimesString()}</span>
-            </td>
-          </tr>
-          {network.authzSupport && (
-            <tr>
-              <td scope="row">Last REStake</td>
-              <td>
-                <OperatorLastRestake operator={operator} lastExec={lastExec} />
-              </td>
-            </tr>
-          )}
-          <tr>
-            <td scope="row">Minimum Reward</td>
-            <td>
-              <Coins coins={minimumReward()} asset={network.baseAsset} fullPrecision={true} hideValue={true} />
-            </td>
-          </tr>
           {network.apyEnabled && (
             <tr>
               <td scope="row">
@@ -234,31 +217,66 @@ function ValidatorGrants(props) {
             </tr>
           )}
           <tr>
-            <td scope="row">Current Rewards</td>
+            <td scope="row">Frequency</td>
             <td>
-              <Coins coins={{ amount: props.rewards, denom: network.denom }} asset={network.baseAsset} fullPrecision={true} />
+              <span>{operator.runTimesString()}</span>
             </td>
           </tr>
-          {state.maxTokens && (
+          {network.authzSupport && (
+            <>
+              <tr>
+                <td scope="row">Next REStake</td>
+                <td>
+                  <CountdownRestake
+                    network={network}
+                    operator={operator}
+                  />
+                </td>
+              </tr>
+              <tr>
+                <td scope="row">Last REStake</td>
+                <td>
+                  <OperatorLastRestake operator={operator} lastExec={lastExec} />
+                </td>
+              </tr>
+            </>
+          )}
+          <tr>
+            <td scope="row">Minimum Reward</td>
+            <td>
+              <Coins coins={minimumReward()} asset={network.baseAsset} fullPrecision={true} hideValue={true} />
+            </td>
+          </tr>
+          <tr>
+            <td scope="row">Current Rewards</td>
+            <td>
+              <Coins coins={{ amount: reward, denom: network.denom }} asset={network.baseAsset} fullPrecision={true} />
+            </td>
+          </tr>
+          <tr>
+            <td scope="row">Grant Status</td>
+            <td>
+              {grantsValid
+                ? <span className="text-success p-0">Active</span>
+                : grantsExist
+                  ? state.maxTokens && smaller(state.maxTokens, reward)
+                    ? <span className="text-danger p-0">Not enough grant remaining</span>
+                    : <span className="text-danger p-0">Invalid / total delegation reached</span>
+                  : <em className="p-0">Inactive</em>}
+            </td>
+          </tr>
+          {grantsExist && (
             <tr>
               <td scope="row">Grant Remaining</td>
-              <td className={!props.rewards || larger(state.maxTokens, props.rewards) ? 'text-success' : 'text-danger'}>
-                <Coins coins={{ amount: state.maxTokens, denom: network.denom }} asset={network.baseAsset} fullPrecision={true} />
+              <td className={!reward || state.maxTokens == null || larger(state.maxTokens, reward) ? 'text-success' : 'text-danger'}>
+                {state.maxTokens ? (
+                  <Coins coins={{ amount: state.maxTokens, denom: network.denom }} asset={network.baseAsset} fullPrecision={true} />
+                ) : (
+                  'Unlimited'
+                )}
               </td>
             </tr>
           )}
-          <tr>
-            <td scope="row">Grant status</td>
-            <td>
-              {grantsValid
-                ? <span className="text-success">Active</span>
-                : grantsExist
-                  ? state.maxTokens && smaller(state.maxTokens, props.rewards)
-                    ? <span className="text-danger">Not enough grant remaining</span>
-                    : <span className="text-danger">Invalid / total delegation reached</span>
-                  : <em>Inactive</em>}
-            </td>
-          </tr>
         </tbody>
       </Table>
       {grantsExist && !props.restakePossible && (

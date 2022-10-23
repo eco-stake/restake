@@ -10,14 +10,13 @@ import {
 import Coins from './Coins';
 
 function CountdownRestake(props) {
-  const { operator, network, maxAmount } = props
+  const { operator, network, maxAmount, icon } = props
 
   const nextRun = () => {
     if(!operator) return null
     return operator.nextRun() + (60 * 1000)
   }
 
-  const icon = maxAmount ?  <ClockHistory className="p-0" /> : <Clock className="p-0" />
 
   const countdownRenderer = ({ hours, minutes, seconds, completed }) => {
     if (completed) {
@@ -28,23 +27,37 @@ function CountdownRestake(props) {
       if(minutes > 0) string = string.concat(minutes + (hours > 0 ? 'm ' : ' minutes '))
       if(props.showSeconds) string = string.concat(seconds + 's')
       if(string === '') return <p>Validator is restaking now</p>
+      if(props.renderText) return props.renderText(string)
+
       return (
-        <p>Validator will REStake in<br /><span>{string}</span></p>
+        <div><span>in {string}</span></div>
       )
     }
   }
   return (
-    <TooltipIcon icon={icon} identifier={operator.address}>
-      <div className="mt-2 text-center">
+    icon ? (
+      <TooltipIcon icon={icon} identifier={operator.address}>
+        <div className="mt-2 text-center">
+          <Countdown
+            date={nextRun()}
+            renderer={countdownRenderer}
+          />
+          {maxAmount && (
+            <p>Grant remaining: <Coins coins={{amount: maxAmount, denom: props.network.denom}} asset={network.baseAsset} fullPrecision={true} hideValue={true} /></p>
+          )}
+        </div>
+      </TooltipIcon>
+    ): (
+      <div className={props.className}>
         <Countdown
           date={nextRun()}
           renderer={countdownRenderer}
         />
         {maxAmount && (
-          <p>Grant remaining: <Coins coins={{amount: maxAmount, denom: props.network.denom}} asset={network.baseAsset} fullPrecision={true} hideValue={true} /></p>
+          <div>Grant remaining: <Coins coins={{amount: maxAmount, denom: props.network.denom}} asset={network.baseAsset} fullPrecision={true} hideValue={true} /></div>
         )}
       </div>
-    </TooltipIcon>
+    )
   )
 }
 

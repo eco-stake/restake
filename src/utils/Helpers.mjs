@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import { format, floor } from 'mathjs'
+import { format, floor, bignumber } from 'mathjs'
 import { coin as _coin } from  '@cosmjs/stargate'
 
 export function timeStamp(...args) {
@@ -8,6 +8,14 @@ export function timeStamp(...args) {
 
 export function coin(amount, denom){
   return _coin(format(floor(amount), {notation: 'fixed'}), denom)
+}
+
+export function rewardAmount(rewards, denom, type){
+  if (!rewards)
+    return 0;
+  type = type || 'reward'
+  const reward = rewards && rewards[type]?.find((el) => el.denom === denom);
+  return reward ? bignumber(reward.amount) : 0;
 }
 
 export function overrideNetworks(networks, overrides){
