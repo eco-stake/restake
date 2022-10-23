@@ -366,7 +366,7 @@ Artık operatör bilgilerinizi oto-sake'i aktif etmek istediğiniz ağları ekle
 
 REStake yapmak istediğiniz tüm ağlar için bu yapılandırmayı tekrarlayın.
 
-`restake.address`'in kullanıcı ara yüzünde delegator'ün restake işlemlerini gerçekleştirmek için vermiş olduğu adrese stake işleminde fee ücretinin lınacağı adres olduğunu unutmayın.
+`restake.address`'in kullanıcı ara yüzünde delegator'ün restake işlemlerini gerçekleştirmek için vermiş olduğu adrese stake işleminde fee ücretinin alınacağı adres olduğunu unutmayın.
 
 #### Operatörünüzü Validator Kayıt Defterine kaydetme
 
