@@ -401,7 +401,7 @@ Docker'ı kullanarak kullanıcı arayüzünü bir satırla çalıştırın:
 docker run -p 80:80 -t ghcr.io/eco-stake/restake
 ```
 
-`docker-compose up` ya da `npm start` kullanarak kaynaktan alternatif çalıştırma;
+`docker-compose up` ya da `npm start` kullanarak kaynaktan alternatif olarak da çalıştırılabilir.
 
 ## Etik
 
