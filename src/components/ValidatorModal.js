@@ -39,6 +39,7 @@ function ValidatorModal(props) {
   }, [validator]);
 
   useEffect(() => {
+    setLastExec()
     getLastExec()
     const interval = setInterval(() => {
       getLastExec()

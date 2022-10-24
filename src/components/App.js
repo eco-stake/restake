@@ -675,7 +675,7 @@ class App extends React.Component {
                       )}
                       <li className="nav-item ps-3 d-flex align-items-center">
                         <Dropdown as={ButtonGroup}>
-                          <Dropdown.Toggle size="sm" className="rounded" id="dropdown-custom-1">
+                          <Dropdown.Toggle size="sm" className="rounded">
                             {this.state.address ? (
                               <>
                                 <CashCoin className="me-1" />
@@ -796,17 +796,6 @@ class App extends React.Component {
               grantQuerySupport={this.state.grantQuerySupport}
               signingClient={this.state.signingClient} />
           )}
-          <hr />
-          <p className="mt-5 text-center">
-            Enabling REStake will authorize the validator to send <em>Delegate</em> transactions on your behalf for 1 year <a href="https://docs.cosmos.network/master/modules/authz/" target="_blank" rel="noreferrer" className="text-reset">using Authz</a>.<br />
-            They will only be authorized to delegate to their own validator. You can revoke the authorization at any time and everything is open source.
-          </p>
-          <p className="text-center mb-4">
-            <strong>The validators will pay the transaction fees for you.</strong>
-          </p>
-          <p className="text-center mb-5">
-            <Button onClick={() => this.setState({ showAbout: true })} variant="outline-secondary">More info</Button>
-          </p>
         </div>
         <footer className="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
           <a href="https://akash.network" target="_blank" rel="noreferrer" className="col-md-4 mb-0 text-muted">

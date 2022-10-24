@@ -1,11 +1,15 @@
 import _ from 'lodash'
 import { format, floor, bignumber } from 'mathjs'
 import { coin as _coin } from  '@cosmjs/stargate'
+import truncateMiddle from 'truncate-middle'
 
 export function timeStamp(...args) {
   console.log('[' + new Date().toISOString().substring(11, 23) + ']', ...args);
 }
 
+export function truncateAddress(address){
+  return truncateMiddle(address, 10, 6, '…')
+}
 export function coin(amount, denom){
   return _coin(format(floor(amount), {notation: 'fixed'}), denom)
 }

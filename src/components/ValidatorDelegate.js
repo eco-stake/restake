@@ -163,7 +163,6 @@ function ValidatorDelegate(props) {
                 <Dropdown>
                   <Dropdown.Toggle
                     variant="secondary"
-                    id="dropdown-basic"
                   >
                     Manage
                   </Dropdown.Toggle>

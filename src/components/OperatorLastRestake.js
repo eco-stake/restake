@@ -19,7 +19,7 @@ function OperatorLastRestake(props) {
 
   return (
     <div className="d-flex align-items-center">
-      {lastExec != null ? <span className={classname(operator, lastExec)}>{lastExec ? lastExec?.fromNow() : 'Not recently'}</span> : <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>}
+      <span>{lastExec != null ? <span className={classname(operator, lastExec)}>{lastExec ? lastExec?.fromNow() : 'Not recently'}</span> : <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>}</span>
       <TooltipIcon icon={<QuestionCircle className="ms-2" />} identifier={operator.address} tooltip="Based on the last REStake transaction sent by this validator for any of their users. Not every run generates a transaction." />
     </div>
   )

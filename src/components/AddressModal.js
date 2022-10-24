@@ -13,6 +13,7 @@ import {
   Key
 } from 'react-bootstrap-icons'
 import CopyToClipboard from 'react-copy-to-clipboard';
+import { truncateAddress } from '../utils/Helpers.mjs';
 
 function AddressModal(props) {
   const { show, network, networks, favouriteAddresses, updateFavouriteAddresses } = props
@@ -91,7 +92,7 @@ function AddressModal(props) {
                     return (
                       <tr key={address}>
                         <td className="text-break">
-                          <span role="button" onClick={() => setAddress(address)}>{props.address === address ? <strong>{address}</strong> : address}</span>
+                          <span role="button" onClick={() => setAddress(address)}>{props.address === address ? <strong>{truncateAddress(address)}</strong> : truncateAddress(address)}</span>
                           {props.wallet?.address === address && (
                             <span className="ms-2"><Key /></span>
                           )}

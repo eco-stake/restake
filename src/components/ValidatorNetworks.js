@@ -42,7 +42,6 @@ function ValidatorNetworks(props) {
         return (
           <OverlayTrigger
             placement="top"
-            rootClose={true}
             key={validatorNetwork.key}
             overlay={
               <Tooltip id={`tooltip-${validatorNetwork.key}`}>{validatorNetwork.name}{!validatorNetwork.online && ' (API Offline)'}</Tooltip>

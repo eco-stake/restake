@@ -38,6 +38,7 @@
     "react-router-dom": "^6.2.1",
     "react-select": "^5.2.2",
     "stream": "^0.0.2",
+    "truncate-middle": "^1.0.6",
     "web-vitals": "^2.1.4"
   },
   "scripts": {

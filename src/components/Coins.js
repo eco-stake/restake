@@ -33,7 +33,7 @@ function Coins(props) {
     <span className={['d-inline-block m-0 coins', className].join(' ')}>
       <span>
         <span className="amount">{amount(coins)}</span>&nbsp;
-        <span className="denom">{symbol}</span>
+        <small className="denom">{symbol}</small>
       </span>
       {!!coingecko?.usd && !hideValue && !!coins.amount && (
         <>

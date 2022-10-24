@@ -12,7 +12,8 @@ import {
 } from 'react-bootstrap'
 
 import {
-  XCircle
+  XCircle,
+  HeartPulse
 } from 'react-bootstrap-icons'
 import ValidatorServices from './ValidatorServices';
 import ValidatorNetworks from './ValidatorNetworks';
@@ -21,48 +22,13 @@ import OperatorLastRestake from './OperatorLastRestake';
 function ValidatorProfile(props) {
   const { validator, operator, network, networks, registryData, lastExec } = props
 
-  const active = () => {
-    if(!validator) return false
-
-    return validator.status === 'BOND_STATUS_BONDED' && !validator.jailed
-  }
-
   const status = () => {
-    if(!validator) return
+    if (!validator) return
 
-    let status = ''
-    let className = 'p-0'
-    if(active()){
-      status = 'Active'
-    }else{
-      status = 'Inactive'
-      className += ' text-danger'
-    }
-    if(validator.jailed){
-      status += ' (JAILED)' 
-      className += ' text-danger'
-    }
+    const status = validator.active ? 'Active' : validator.jailed ? 'Jailed' : validator.active != null ? 'Inactive' : 'Unknown'
+    let className = validator.active ? '' : 'text-danger'
 
     return <span className={className}>{status}</span>
-  }
-
-  const website = () => {
-    if (!validator) return
-
-    return validator.description && validator.description.website
-  }
-
-  const securityContact = () => {
-    if (!validator) return
-
-    return validator.description && validator.description.security_contact
-  }
-
-  const bondedTokens = () => {
-    if (!validator) return
-
-    const amount = validator.tokens
-    return <Coins coins={{ amount: amount, denom: network.denom }} asset={network.baseAsset} />
   }
 
   const minimumReward = () => {
@@ -72,8 +38,8 @@ function ValidatorProfile(props) {
     }
   }
 
-  const uptime = () => {
-    if(!validator.uptime_periods?.length) return null
+  function uptime() {
+    if(!validator.uptime) return 
 
     const period = validator.uptime_periods.slice(-1)[0]
     const blockPeriod = validator.missed_blocks_periods.slice(-1)[0]
@@ -82,120 +48,153 @@ function ValidatorProfile(props) {
 
   return (
     <>
-      <Table>
-        <tbody className="table-sm small">
-          <tr>
-            <td scope="row">Validator Address</td>
-            <td className="text-break"><span className="p-0">{validator.operator_address}</span></td>
-          </tr>
-          {!active() && (
-            <tr>
-              <td scope="row">Status</td>
-              <td>{status()}</td>
-            </tr>
-          )}
-          {uptime() && (
-            <tr>
-              <td scope="row">Uptime</td>
-              <td>{uptime()}</td>
-            </tr>
-          )}
-          {!!website() && (
-            <tr>
-              <td scope="row">Website</td>
-              <td className="text-break"><ValidatorLink className="text-decoration-underline p-0" validator={validator}>{website()}</ValidatorLink></td>
-            </tr>
-          )}
-          <tr>
-            <td className="align-middle" scope="row">Profiles</td>
-            <td>
-              <ValidatorServices validator={validator} network={network} theme={props.theme} />
-            </td>
-          </tr>
-          {validator?.path && (
-            <tr>
-              <td className="align-middle" scope="row">Networks</td>
-              <td className="w-75">
-                <ValidatorNetworks validator={validator} registryData={registryData} network={network} networks={networks} />
-              </td>
-            </tr>
-          )}
-          <tr>
-            <td scope="row">REStake</td>
-            <td>
-              {!!operator ? (
-                <Table className="m-0 table-sm w-auto">
-                  <tbody className="small">
-                    <tr>
-                      <td className="pe-4">Frequency</td>
-                      <td>{operator.runTimesString()}</td>
-                    </tr>
-                    <tr>
-                      <td className={`${network.authzSupport ? '' : 'border-bottom-0'} pe-4`}>Minimum rewards</td>
-                      <td className={network.authzSupport ? '' : 'border-bottom-0'}><Coins coins={minimumReward()} asset={network.baseAsset} fullPrecision={true} hideValue={true} /></td>
-                    </tr>
-                    {network.authzSupport && (
-                      <tr>
-                        <td className="border-bottom-0">Last REStake</td>
-                        <td className={'pe-4 border-bottom-0'}>
-                          <OperatorLastRestake operator={operator} lastExec={lastExec} />
+      <div className="row">
+        <div className="col small">
+          <Table>
+            <tbody className="table-sm">
+              <tr>
+                <td scope="row">Validator Address</td>
+                <td className="text-break"><span className="p-0">{validator.operator_address}</span></td>
+              </tr>
+              {!validator.active && (
+                <tr>
+                  <td scope="row">Status</td>
+                  <td>{status()}</td>
+                </tr>
+              )}
+              {uptime() && (
+                <tr>
+                  <td scope="row">Uptime</td>
+                  <td>{uptime()}</td>
+                </tr>
+              )}
+              <tr>
+                <td scope="row">REStake</td>
+                <td>
+                  {!!operator ? (
+                    <Table className="m-0 table-sm">
+                      <tbody className="small">
+                        <tr>
+                          <td className="pe-3">Frequency</td>
+                          <td>{operator.runTimesString()}</td>
+                        </tr>
+                        <tr>
+                          <td className={`${network.authzSupport ? '' : 'border-bottom-0'} pe-3`}>Minimum rewards</td>
+                          <td className={network.authzSupport ? '' : 'border-bottom-0'}><Coins coins={minimumReward()} asset={network.baseAsset} fullPrecision={true} hideValue={true} /></td>
+                        </tr>
+                        {network.authzSupport && (
+                          <tr>
+                            <td className="border-bottom-0">Last REStake</td>
+                            <td className={'border-bottom-0'}>
+                              <OperatorLastRestake operator={operator} lastExec={lastExec} />
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </Table>
+                  ) :
+                    <TooltipIcon icon={<XCircle className="opacity-50 p-0" />} identifier={validator.operator_address} tooltip="This validator is not a REStake operator" />
+                  }
+                </td>
+              </tr>
+              {network.apyEnabled && (
+                <tr>
+                  <td scope="row">
+                    <TooltipIcon
+                      icon={<span className="p-0 text-decoration-underline">APY</span>}
+                      identifier="delegations-apy"
+                    >
+                      <div className="mt-2 text-center">
+                        <p>Based on commission, compounding frequency and estimated block times.</p>
+                        <p>This is an estimate and best case scenario.</p>
+                      </div>
+                    </TooltipIcon>
+                  </td>
+                  <td>
+                    {Object.keys(props.validatorApy).length > 0
+                      ? props.validatorApy[validator.operator_address]
+                        ? <span className="p-0">{round(props.validatorApy[validator.operator_address] * 100, 2).toLocaleString()}%</span>
+                        : "-"
+                      : (
+                        <Spinner animation="border" role="status" className="spinner-border-sm text-secondary">
+                          <span className="visually-hidden">Loading...</span>
+                        </Spinner>
+                      )}
+                  </td>
+                </tr>
+              )}
+              <tr>
+                <td scope="row">Commission</td>
+                <td><span className="p-0">{validator.commission.commission_rates.rate * 100}%</span></td>
+              </tr>
+              <tr>
+                <td scope="row">Rank</td>
+                <td><span className="p-0">#{validator.rank}</span></td>
+              </tr>
+              <tr>
+                <td scope="row">Voting power</td>
+                <td><span className="p-0"><Coins coins={{ amount: validator.tokens, denom: network.denom }} asset={network.baseAsset} /></span></td>
+              </tr>
+            </tbody>
+          </Table>
+        </div>
+        <div className="col small">
+          <Table>
+            <tbody className="table-sm">
+              <tr>
+                <td scope="row">Contact</td>
+                <td><a className="p-0" href={`mailto:${validator.description?.security_contact}`}>{validator.description?.security_contact}</a></td>
+              </tr>
+              {!!validator.description?.website && (
+                <tr>
+                  <td scope="row">Website</td>
+                  <td className="text-break"><ValidatorLink className="text-decoration-underline p-0" validator={validator}>{validator.description.website}</ValidatorLink></td>
+                </tr>
+              )}
+              <tr>
+                <td className="align-middle" scope="row">Profiles</td>
+                <td>
+                  <ValidatorServices validator={validator} network={network} theme={props.theme} exclude={['nodes']} />
+                </td>
+              </tr>
+              {validator?.path && (
+                <tr>
+                  <td className="align-middle" scope="row">Networks</td>
+                  <td className="w-75">
+                    <ValidatorNetworks validator={validator} registryData={registryData} network={network} networks={networks} />
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </Table>
+          <p>
+            {validator.description?.details}
+          </p>
+          {Object.entries(validator.public_nodes || {}).length > 0 && (
+            <>
+              <p className="mb-2 d-flex align-items-center gap-1"><HeartPulse /><strong>Public Nodes</strong></p>
+              <Table className="table-sm">
+                <tbody>
+                  {Object.entries(validator.public_nodes).map(([type, nodes]) => {
+                    return (
+                      <tr key={type}>
+                        <td>
+                          {type.toUpperCase()}
+                        </td>
+                        <td className="list-group list-group-flush flex-fill">
+                          {nodes.map(api => {
+                            return <a href={api.address} target="_blank" className="text-reset text-decoration-underline">{api.address}</a>
+                          }).reduce((prev, curr) => [prev, <br />, curr])}
                         </td>
                       </tr>
-                    )}
-                  </tbody>
-                </Table>
-              ) :
-                <TooltipIcon icon={<XCircle className="opacity-50 p-0" />} identifier={validator.operator_address} tooltip="This validator is not a REStake operator" />
-              }
-            </td>
-          </tr>
-          {network.apyEnabled && (
-            <tr>
-              <td scope="row">
-                <TooltipIcon
-                  icon={<span className="p-0 text-decoration-underline">APY</span>}
-                  identifier="delegations-apy"
-                >
-                  <div className="mt-2 text-center">
-                    <p>Based on commission, compounding frequency and estimated block times.</p>
-                    <p>This is an estimate and best case scenario.</p>
-                  </div>
-                </TooltipIcon>
-              </td>
-              <td>
-                {Object.keys(props.validatorApy).length > 0
-                  ? props.validatorApy[validator.operator_address]
-                    ? <span className="p-0">{round(props.validatorApy[validator.operator_address] * 100, 2).toLocaleString()}%</span>
-                    : "-"
-                  : (
-                    <Spinner animation="border" role="status" className="spinner-border-sm text-secondary">
-                      <span className="visually-hidden">Loading...</span>
-                    </Spinner>
-                  )}
-              </td>
-            </tr>
+                    )
+                  })}
+                </tbody>
+              </Table>
+            </>
           )}
-          <tr>
-            <td scope="row">Commission</td>
-            <td><span className="p-0">{validator.commission.commission_rates.rate * 100}%</span></td>
-          </tr>
-          <tr>
-            <td scope="row">Voting power</td>
-            <td><span className="p-0">{bondedTokens()}</span></td>
-          </tr>
-          <tr>
-            <td scope="row">Rank</td>
-            <td><span className="p-0">#{validator.rank}</span></td>
-          </tr>
-          {!!securityContact() && (
-            <tr>
-              <td scope="row">Contact</td>
-              <td><a className="p-0" href={`mailto:${securityContact()}`}>{securityContact()}</a></td>
-            </tr>
-          )}
-        </tbody>
-      </Table>
-      <p>{validator.description.details}</p>
+        </div>
+      </div>
     </>
   )
 }

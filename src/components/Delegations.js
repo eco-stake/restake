@@ -456,7 +456,6 @@ class Delegations extends React.Component {
                       <Dropdown.Toggle
                         variant="secondary"
                         size="sm"
-                        id="dropdown-basic"
                       >
                         <Gear />
                       </Dropdown.Toggle>
@@ -524,11 +523,6 @@ class Delegations extends React.Component {
         </div>
         <div className="row">
           <div className="col">
-            {this.props.address && (
-              <Button variant="secondary" onClick={() => this.showValidatorModal()}>
-                Add Validator
-              </Button>
-            )}
           </div>
           <div className="col">
             <div className="d-grid gap-2 d-md-flex justify-content-end">
@@ -580,6 +574,17 @@ class Delegations extends React.Component {
             </div>
           </div>
         </div>
+        <hr />
+        <p className="mt-5 text-center">
+          Enabling REStake will authorize the validator to send <em>Delegate</em> transactions on your behalf for 1 year <a href="https://docs.cosmos.network/master/modules/authz/" target="_blank" rel="noreferrer" className="text-reset">using Authz</a>.<br />
+          They will only be authorized to delegate to their own validator. You can revoke the authorization at any time and everything is open source.
+        </p>
+        <p className="text-center mb-4">
+          <strong>The validators will pay the transaction fees for you.</strong>
+        </p>
+        <p className="text-center mb-5">
+          <Button onClick={() => this.setState({ showAbout: true })} variant="outline-secondary">More info</Button>
+        </p>
         {this.renderValidatorModal()}
       </>
     );
