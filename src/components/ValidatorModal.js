@@ -9,19 +9,18 @@ import AboutLedger from './AboutLedger';
 import {
   Modal,
   Tab,
-  Nav
+  Nav,
+  Button
 } from 'react-bootstrap'
 
-import ValidatorDelegate from './ValidatorDelegate';
+import ValidatorStake from './ValidatorStake';
 import ValidatorProfile from './ValidatorProfile';
-import ValidatorGrants from './ValidatorGrants';
 
 function ValidatorModal(props) {
   const { validator, delegations, operators, network, validators, grants } = props
   const navigate = useNavigate()
   const params = useParams();
   const [activeTab, setActiveTab] = useState(params.section || 'profile');
-  const [activeAction, setActiveAction] = useState()
   const [registryData, setRegistryData] = useState({})
   const [lastExec, setLastExec] = useState()
 
@@ -31,21 +30,29 @@ function ValidatorModal(props) {
   }
 
   useEffect(() => {
-    getRegistryData()
-    const interval = setInterval(() => {
-      getRegistryData()
-    }, 15_000);
-    return () => clearInterval(interval);
+    setRegistryData()
+    setLastExec()
   }, [validator]);
 
   useEffect(() => {
-    setLastExec()
-    getLastExec()
-    const interval = setInterval(() => {
-      getLastExec()
-    }, 60_000);
-    return () => clearInterval(interval);
-  }, [operator])
+    if(registryData == null){
+      getRegistryData()
+      const interval = setInterval(() => {
+        getRegistryData()
+      }, 15_000);
+      return () => clearInterval(interval);
+    }
+  }, [validator, registryData]);
+
+  useEffect(() => {
+    if(lastExec == null){
+      getLastExec(2)
+      const interval = setInterval(() => {
+        getLastExec()
+      }, 60_000);
+      return () => clearInterval(interval);
+    }
+  }, [operator, lastExec])
 
   useEffect(() => {
     if(params.network !== network.name) return
@@ -59,29 +66,26 @@ function ValidatorModal(props) {
     } else if (params.validator && props.show === false) {
       navigate(`/${network.name}`)
     }
-  }, [props.show, params.section, activeTab, validator])
+  }, [props.show, activeTab, validator])
 
   useEffect(() => {
     if (props.activeTab && props.activeTab != activeTab) {
       setTab(props.activeTab)
     } else if (params.section && params.section != activeTab) {
-      setTab(params.section)
+      const section = ['delegate', 'restake'].includes(params.section) ? 'stake' : params.section
+      setTab(section)
     } else if (!activeTab) {
       setTab('profile')
+    } else if (!props.show){
+      setTab()
     }
   }, [props.show])
   
   function setTab(tab){
-    setActiveAction()
     setActiveTab(tab)
   }
 
   function handleClose() {
-    props.hideModal();
-  }
-
-  function onDelegate() {
-    props.onDelegate();
     props.hideModal();
   }
 
@@ -95,7 +99,7 @@ function ValidatorModal(props) {
     }
   }
 
-  function getLastExec() {
+  function getLastExec(emptyResponseRetries) {
     if(!operator || !network.authzSupport){
       setLastExec()
       return
@@ -112,7 +116,9 @@ function ValidatorModal(props) {
     }).then(data => {
       if (data.tx_responses?.length > 0) {
         setLastExec(moment(data.tx_responses[0].timestamp))
-      } else {
+      } else if(emptyResponseRetries && lastExec == null) {
+        getLastExec(emptyResponseRetries - 1)
+      } else if(lastExec == null) {
         setLastExec(false)
       }
     })
@@ -137,13 +143,8 @@ function ValidatorModal(props) {
                   <Nav.Link role="button" eventKey="profile">Profile</Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
-                  <Nav.Link role="button" eventKey="delegate">Delegate</Nav.Link>
+                  <Nav.Link role="button" eventKey="stake">Stake</Nav.Link>
                 </Nav.Item>
-                {operator && (
-                  <Nav.Item>
-                    <Nav.Link role="button" eventKey="restake">REStake</Nav.Link>
-                  </Nav.Item>
-                )}
                 {network.authzSupport && !network.authzAminoSupport && operator && (
                   <Nav.Item>
                     <Nav.Link role="button" eventKey="ledger">Ledger</Nav.Link>
@@ -152,10 +153,7 @@ function ValidatorModal(props) {
               </Nav>
               <select className="form-select w-100 mb-3 d-block d-sm-none" aria-label="Section" value={activeTab} onChange={(e) => setTab(e.target.value)}>
                 <option value="profile">Profile</option>
-                <option value="delegate">Delegate</option>
-                {operator && (
-                  <option value="restake">REStake</option>
-                )}
+                <option value="stake">Stake</option>
                 {network.authzSupport && !network.authzAminoSupport && operator && (
                   <option value="ledger">Ledger Instructions</option>
                 )}
@@ -172,11 +170,12 @@ function ValidatorModal(props) {
                     lastExec={lastExec}
                     validatorApy={props.validatorApy} />
                 </Tab.Pane>
-                <Tab.Pane eventKey="delegate">
-                  <ValidatorDelegate
-                    action={activeAction}
+                <Tab.Pane eventKey="stake">
+                  <ValidatorStake
                     network={network}
                     validator={validator}
+                    operator={operator}
+                    lastExec={lastExec}
                     validators={validators}
                     operators={operators}
                     address={props.address}
@@ -190,38 +189,26 @@ function ValidatorModal(props) {
                     authzSupport={props.authzSupport}
                     restakePossible={props.restakePossible}
                     signingClient={props.signingClient}
-                    onChangeAction={setActiveAction}
-                    onDelegate={onDelegate}
-                    onClaimRewards={props.onClaimRewards} />
+                    onDelegate={props.onDelegate}
+                    onClaimRewards={props.onClaimRewards}
+                    onGrant={props.onGrant}
+                    onRevoke={props.onRevoke}
+                  />
                 </Tab.Pane>
-                {operator && (
-                  <Tab.Pane eventKey="restake">
-                    <ValidatorGrants
-                      address={props.address}
-                      wallet={props.wallet}
-                      network={network}
-                      operator={operator}
-                      lastExec={lastExec}
-                      grants={grants[operator?.botAddress]}
-                      delegation={delegations[validator.operator_address]}
-                      rewards={props.rewards && props.rewards[validator.address]}
-                      validatorApy={props.validatorApy}
-                      authzSupport={props.authzSupport}
-                      restakePossible={props.restakePossible}
-                      signingClient={props.signingClient}
-                      onGrant={props.onGrant}
-                      onRevoke={props.onRevoke}
-                      setError={props.setError}
-                    />
-                  </Tab.Pane>
-                )}
-                {network.authzSupport && operator && (
+                {network.authzSupport && !network.authzAminoSupport && operator && (
                   <Tab.Pane eventKey="ledger">
                     <AboutLedger network={network} validator={validator} modal={false} />
                   </Tab.Pane>
                 )}
               </Tab.Content>
             </Tab.Container>
+          )}
+          {activeTab === 'profile' && (
+            <div className="d-flex justify-content-end gap-2">
+              <Button variant="primary" onClick={() => setTab('stake')}>
+                Stake
+              </Button>
+            </div>
           )}
         </Modal.Body>
       </Modal>

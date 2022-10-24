@@ -7,11 +7,13 @@ export function timeStamp(...args) {
   console.log('[' + new Date().toISOString().substring(11, 23) + ']', ...args);
 }
 
-export function truncateAddress(address){
-  return truncateMiddle(address, 10, 6, '…')
-}
 export function coin(amount, denom){
   return _coin(format(floor(amount), {notation: 'fixed'}), denom)
+}
+
+export function truncateAddress(address) {
+  const firstDigit = address.search(/\d/)
+  return truncateMiddle(address, firstDigit + 6, 6, '…')
 }
 
 export function rewardAmount(rewards, denom, type){

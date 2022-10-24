@@ -23,7 +23,7 @@ function ValidatorServices(props) {
   if(Object.entries(validator.public_nodes || {}).length){
     services.push({
       key: 'nodes',
-      tooltip: 'Provides public nodes used by REStake',
+      tooltip: 'Provides public nodes used by REStake and other apps',
       render: () => {
         return (
           <Link to={`/${network.path}/${validator.address}`} className="text-reset">

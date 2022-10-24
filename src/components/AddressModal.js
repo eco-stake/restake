@@ -12,8 +12,7 @@ import {
   Eye,
   Key
 } from 'react-bootstrap-icons'
-import CopyToClipboard from 'react-copy-to-clipboard';
-import { truncateAddress } from '../utils/Helpers.mjs';
+import Address from './Address.js';
 
 function AddressModal(props) {
   const { show, network, networks, favouriteAddresses, updateFavouriteAddresses } = props
@@ -92,13 +91,14 @@ function AddressModal(props) {
                     return (
                       <tr key={address}>
                         <td className="text-break">
-                          <span role="button" onClick={() => setAddress(address)}>{props.address === address ? <strong>{truncateAddress(address)}</strong> : truncateAddress(address)}</span>
-                          {props.wallet?.address === address && (
-                            <span className="ms-2"><Key /></span>
-                          )}
-                          {props.address === address && (
-                            <span className="ms-2"><Eye /></span>
-                          )}
+                          <Address address={address} onClick={() => setAddress(address)} as={props.address === address && 'strong'}>
+                            {props.wallet?.address === address && (
+                              <span className="ms-2"><Key /></span>
+                            )}
+                            {props.address === address && (
+                              <span className="ms-2"><Eye /></span>
+                            )}
+                          </Address>
                         </td>
                         <td><Form.Control size="sm" value={label || ''} onChange={(e) => updateAddress(address, e.target.value)} /></td>
                         <td>

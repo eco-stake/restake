@@ -53,22 +53,30 @@ code p{
   
 .favourite-on .on,
 .favourite-off .off {
-  display: block;
+  display: block !important;
 }
 
 .favourite-on .off,
-.favourite-off .on{
-  display: none;
+.favourite-off .on {
+  display: none !important;
+}
+
+.hover-show .hover-target{
+  visibility: hidden;
 }
 
 @media (hover: hover) {
   .favourite-on:hover .off,
-  .favourite-off:hover .on {
-    display: block;
+  .favourite-off:hover .on{
+    display: block !important;
   }
 
   .favourite-on:hover .on,
   .favourite-off:hover .off {
-    display: none;
+    display: none !important;
+  }
+
+  .hover-show:hover .hover-target{
+    visibility: visible;
   }
 }

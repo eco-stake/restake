@@ -59,6 +59,7 @@ import FalconSignerProvider from '../utils/FalconSignerProvider.mjs';
 import LeapSignerProvider from '../utils/LeapSignerProvider.mjs';
 import KeplrMobileSignerProvider from '../utils/KeplrMobileSignerProvider.mjs';
 import ConnectWalletModal from './ConnectWalletModal';
+import { truncateAddress } from '../utils/Helpers.mjs';
 
 class App extends React.Component {
   constructor(props) {
@@ -611,16 +612,6 @@ class App extends React.Component {
                                   label={this.viewingWallet() && this.state.wallet?.name}
                                   toggle={this.toggleFavouriteAddress} />
                               </span>
-                              <span className="d-none d-md-inline pe-2">
-                                <TooltipIcon tooltip="Copy address">
-                                  <span>
-                                    <CopyToClipboard text={this.state.address}
-                                      onCopy={() => this.setCopied()}>
-                                      <span role="button" className="d-flex align-items-center">{this.state.copied ? <ClipboardCheck /> : <Clipboard />}</span>
-                                    </CopyToClipboard>
-                                  </span>
-                                </TooltipIcon>
-                              </span>
                               <span>
                                 {this.viewingWallet() ? (
                                   <TooltipIcon tooltip="Viewing your wallet">
@@ -639,23 +630,33 @@ class App extends React.Component {
                             </>
                           )}
                           {this.otherFavouriteAddresses().length < 1 && this.state.wallet ? (
-                            <span role="button" onClick={() => this.setState({ showAddressModal: true })} className="small d-none d-lg-inline ms-2">{this.state.wallet.name || this.state.wallet.address}</span>
+                            <span role="button" onClick={() => this.setState({ showAddressModal: true })} className="small d-none d-lg-inline ms-2">{this.state.wallet.name || truncateAddress(this.state.wallet.address)}</span>
                           ) : (
                             <select className="form-select form-select-sm d-none d-lg-block ms-2" aria-label="Address" value={this.state.address || ''} onChange={(e) => this.setState({ address: e.target.value })} style={{maxWidth: 200}}>
                               {this.state.wallet ? (
                                 <optgroup label={this.state.signerProvider.label}>
-                                  <option value={this.state.wallet.address}>{this.state.wallet.name || this.state.wallet.address}</option>
+                                  <option value={this.state.wallet.address}>{this.state.wallet.name || truncateAddress(this.state.wallet.address)}</option>
                                 </optgroup>
                               ) : (
                                 <option value="">Choose address</option>
                               )}
                               <optgroup label="Saved">
                                 {this.otherFavouriteAddresses().map(({ address, label }) => {
-                                  return <option key={address} value={address}>{label || address}</option>
+                                  return <option key={address} value={address}>{label || truncateAddress(address)}</option>
                                 })}
                               </optgroup>
                             </select>
                           )}
+                          <span className="d-none d-md-inline ms-2">
+                            <TooltipIcon tooltip="Copy address">
+                              <span>
+                                <CopyToClipboard text={this.state.address}
+                                  onCopy={() => this.setCopied()}>
+                                  <span role="button" className="d-flex align-items-center">{this.state.copied ? <ClipboardCheck /> : <Clipboard />}</span>
+                                </CopyToClipboard>
+                              </span>
+                            </TooltipIcon>
+                          </span>
                         </li>
                       )}
                       {this.state.address && (

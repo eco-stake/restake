@@ -18,6 +18,7 @@ import {
 import ValidatorServices from './ValidatorServices';
 import ValidatorNetworks from './ValidatorNetworks';
 import OperatorLastRestake from './OperatorLastRestake';
+import Address from './Address';
 
 function ValidatorProfile(props) {
   const { validator, operator, network, networks, registryData, lastExec } = props
@@ -43,7 +44,7 @@ function ValidatorProfile(props) {
 
     const period = validator.uptime_periods.slice(-1)[0]
     const blockPeriod = validator.missed_blocks_periods.slice(-1)[0]
-    return <span className="p-0">{_.round(period.uptime * 100, 2)}% (missed {blockPeriod.missed.toLocaleString()} of {blockPeriod.blocks.toLocaleString()} blocks)</span>
+    return <span>{_.round(period.uptime * 100, 2)}% <small>(missed {blockPeriod.missed.toLocaleString()} of {blockPeriod.blocks.toLocaleString()} blocks)</small></span>
   }
 
   return (
@@ -51,10 +52,10 @@ function ValidatorProfile(props) {
       <div className="row">
         <div className="col small">
           <Table>
-            <tbody className="table-sm">
+            <tbody>
               <tr>
                 <td scope="row">Validator Address</td>
-                <td className="text-break"><span className="p-0">{validator.operator_address}</span></td>
+                <td className="text-break"><Address address={validator.operator_address} /></td>
               </tr>
               {!validator.active && (
                 <tr>
@@ -72,14 +73,14 @@ function ValidatorProfile(props) {
                 <td scope="row">REStake</td>
                 <td>
                   {!!operator ? (
-                    <Table className="m-0 table-sm">
-                      <tbody className="small">
+                    <Table className="m-0 table-sm small">
+                      <tbody>
                         <tr>
-                          <td className="pe-3">Frequency</td>
+                          <td>Frequency</td>
                           <td>{operator.runTimesString()}</td>
                         </tr>
                         <tr>
-                          <td className={`${network.authzSupport ? '' : 'border-bottom-0'} pe-3`}>Minimum rewards</td>
+                          <td className={network.authzSupport ? '' : 'border-bottom-0'}>Minimum rewards</td>
                           <td className={network.authzSupport ? '' : 'border-bottom-0'}><Coins coins={minimumReward()} asset={network.baseAsset} fullPrecision={true} hideValue={true} /></td>
                         </tr>
                         {network.authzSupport && (
@@ -93,7 +94,7 @@ function ValidatorProfile(props) {
                       </tbody>
                     </Table>
                   ) :
-                    <TooltipIcon icon={<XCircle className="opacity-50 p-0" />} identifier={validator.operator_address} tooltip="This validator is not a REStake operator" />
+                    <TooltipIcon icon={<XCircle className="opacity-50" />} identifier={validator.operator_address} tooltip="This validator is not a REStake operator" />
                   }
                 </td>
               </tr>
@@ -101,7 +102,7 @@ function ValidatorProfile(props) {
                 <tr>
                   <td scope="row">
                     <TooltipIcon
-                      icon={<span className="p-0 text-decoration-underline">APY</span>}
+                      icon={<span className="text-decoration-underline">APY</span>}
                       identifier="delegations-apy"
                     >
                       <div className="mt-2 text-center">
@@ -113,7 +114,7 @@ function ValidatorProfile(props) {
                   <td>
                     {Object.keys(props.validatorApy).length > 0
                       ? props.validatorApy[validator.operator_address]
-                        ? <span className="p-0">{round(props.validatorApy[validator.operator_address] * 100, 2).toLocaleString()}%</span>
+                        ? <span>{round(props.validatorApy[validator.operator_address] * 100, 2).toLocaleString()}%</span>
                         : "-"
                       : (
                         <Spinner animation="border" role="status" className="spinner-border-sm text-secondary">
@@ -125,30 +126,30 @@ function ValidatorProfile(props) {
               )}
               <tr>
                 <td scope="row">Commission</td>
-                <td><span className="p-0">{validator.commission.commission_rates.rate * 100}%</span></td>
+                <td><span>{validator.commission.commission_rates.rate * 100}%</span></td>
               </tr>
               <tr>
                 <td scope="row">Rank</td>
-                <td><span className="p-0">#{validator.rank}</span></td>
+                <td><span>#{validator.rank}</span></td>
               </tr>
               <tr>
                 <td scope="row">Voting power</td>
-                <td><span className="p-0"><Coins coins={{ amount: validator.tokens, denom: network.denom }} asset={network.baseAsset} /></span></td>
+                <td><span><Coins coins={{ amount: validator.tokens, denom: network.denom }} asset={network.baseAsset} /></span></td>
               </tr>
             </tbody>
           </Table>
         </div>
         <div className="col small">
           <Table>
-            <tbody className="table-sm">
+            <tbody>
               <tr>
                 <td scope="row">Contact</td>
-                <td><a className="p-0" href={`mailto:${validator.description?.security_contact}`}>{validator.description?.security_contact}</a></td>
+                <td><a href={`mailto:${validator.description?.security_contact}`}>{validator.description?.security_contact}</a></td>
               </tr>
               {!!validator.description?.website && (
                 <tr>
                   <td scope="row">Website</td>
-                  <td className="text-break"><ValidatorLink className="text-decoration-underline p-0" validator={validator}>{validator.description.website}</ValidatorLink></td>
+                  <td className="text-break"><ValidatorLink className="text-decoration-underline" validator={validator}>{validator.description.website}</ValidatorLink></td>
                 </tr>
               )}
               <tr>
