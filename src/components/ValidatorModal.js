@@ -59,7 +59,7 @@ function ValidatorModal(props) {
     } else if (params.validator && props.show === false) {
       navigate(`/${network.name}`)
     }
-  }, [props.show, params.validator, params.section, activeTab, validator])
+  }, [props.show, params.section, activeTab, validator])
 
   useEffect(() => {
     if (props.activeTab && props.activeTab != activeTab) {
@@ -69,7 +69,7 @@ function ValidatorModal(props) {
     } else if (!activeTab) {
       setTab('profile')
     }
-  }, [props.activeTab, validator])
+  }, [props.show])
   
   function setTab(tab){
     setActiveAction()

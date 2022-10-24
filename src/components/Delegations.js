@@ -50,7 +50,7 @@ class Delegations extends React.Component {
   }
 
   async componentDidUpdate(prevProps, prevState) {
-    if (this.state.validatorModal.validator !== this.props.validator && this.props.validator) {
+    if (prevProps.validator !== this.props.validator && this.props.validator) {
       this.showValidatorModal(this.props.validator)
     }
 
