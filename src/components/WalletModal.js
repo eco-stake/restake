@@ -6,16 +6,9 @@ import {
   Tab,
   Nav,
   Table,
-  Form,
   Button
 } from 'react-bootstrap'
 
-import {
-  XCircle,
-  Eye,
-  Key,
-  Coin,
-} from 'react-bootstrap-icons'
 import Address from './Address.js';
 import Coins from './Coins.js';
 import Favourite from './Favourite.js';
@@ -24,6 +17,20 @@ import SavedAddresses from './SavedAddresses.js';
 function WalletModal(props) {
   const { show, network, wallet, favouriteAddresses } = props
   const [activeTab, setActiveTab] = useState(props.activeTab || wallet ? 'wallet' : 'saved')
+
+  useEffect(() => {
+    if (props.activeTab && props.activeTab != activeTab) {
+      setActiveTab(props.activeTab)
+    }else if (!props.show){
+      setActiveTab()
+    }
+  }, [props.show])
+
+  function onHide() {
+    props.onHide()
+  }
+
+  if(!network) return null
 
   // const balances = _.sortBy((props.balances || []).map(balance => {
   const balances = _.sortBy((props.balances || []).filter(el => el.denom === network.denom).map(balance => {
@@ -37,18 +44,6 @@ function WalletModal(props) {
     if(network.denom === asset.base?.denom) return -2
     return -1
   })
-
-  useEffect(() => {
-    if (props.activeTab && props.activeTab != activeTab) {
-      setActiveTab(props.activeTab)
-    }else if (!props.show){
-      setActiveTab()
-    }
-  }, [props.show])
-
-  function onHide() {
-    props.onHide()
-  }
 
   return (
     <>
@@ -135,7 +130,7 @@ function WalletModal(props) {
                   address={props.address}
                   wallet={props.wallet}
                   favouriteAddresses={props.favouriteAddresses}
-                  updateFavouriteAddresses={props}
+                  updateFavouriteAddresses={props.updateFavouriteAddresses}
                   setAddress={props.setAddress}
                 />
               </Tab.Pane>

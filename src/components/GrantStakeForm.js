@@ -164,7 +164,7 @@ function GrantStakeForm(props) {
         </AlertMessage>
       }
       <div className="row">
-        <div className="col-12 col-md-6 order-md-1">
+        <div className="col-12 col-md-6 order-md-1 mb-3">
           <Form onSubmit={handleSubmit}>
             <fieldset disabled={!props.address || !props.wallet}>
               <Form.Group className="mb-3">
@@ -181,7 +181,7 @@ function GrantStakeForm(props) {
               </Form.Group>
               <Form.Group className="mb-3">
                 <Form.Label>Expiry date</Form.Label>
-                <Form.Control type="date" name='expiryDateValue' min={moment().format('YYYY-MM-DD')} required={true} value={state.expiryDateValue} onChange={handleInputChange} />
+                <Form.Control type="date" className="text-start" name='expiryDateValue' min={moment().format('YYYY-MM-DD')} required={true} value={state.expiryDateValue} onChange={handleInputChange} />
                 <div className="form-text text-end">Date the grant will expire. After this date you will need to re-grant</div>
               </Form.Group>
               <div className="text-end">
@@ -217,7 +217,7 @@ function GrantStakeForm(props) {
             </fieldset>
           </Form>
         </div>
-        <div className="col-12 col-md-6">
+        <div className="col-12 col-md-6 mb-3">
           {grantInformation()}
         </div>
       </div>

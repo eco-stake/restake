@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
 import {
-  Modal,
   Table,
   Form,
   Button,
@@ -18,7 +17,7 @@ import Address from './Address.js';
 import TooltipIcon from './TooltipIcon.js';
 
 function SavedAddresses(props) {
-  const { network, networks, wallet, favouriteAddresses, updateFavouriteAddresses } = props
+  const { network, networks, favouriteAddresses, updateFavouriteAddresses } = props
   const [newAddress, setNewAddress] = useState('')
   const [newLabel, setNewLabel] = useState('')
   const [selectedNetwork, setSelectedNetwork] = useState(network)
@@ -89,25 +88,27 @@ function SavedAddresses(props) {
                   return (
                     <tr key={address}>
                       <td className="text-break">
-                        <Address address={address} onClick={() => props.address !== address && setAddress(address)} as={props.address === address && 'strong'} />
+                        <Address address={address} onClick={() => props.address !== address && setAddress(address)} as={props.address === address && 'strong'} addressClassName="flex-fill" />
                       </td>
                       <td><Form.Control size="sm" value={label || ''} onChange={(e) => updateAddress(address, e.target.value)} /></td>
                       <td>
                         <div className="d-flex justify-content-end align-items-center gap-3">
-                          {props.wallet?.address === address && (
-                            <TooltipIcon
-                              icon={<Key />}
-                              identifier={`${address}-wallet`}
-                              tooltip="This is your connected wallet"
-                            />
-                          )}
-                          {props.address === address && (
-                            <TooltipIcon
-                              icon={<Eye />}
-                              identifier={`${address}-view`}
-                              tooltip="This is the address you are viewing"
-                            />
-                          )}
+                          <div className="d-flex flex-column flex-sm-row justify-content-end align-items-center gap-1 gap-sm-2">
+                            {props.wallet?.address === address && (
+                              <TooltipIcon
+                                icon={<Key />}
+                                identifier={`${address}-wallet`}
+                                tooltip="This is your connected wallet"
+                              />
+                            )}
+                            {props.address === address && (
+                              <TooltipIcon
+                                icon={<Eye />}
+                                identifier={`${address}-view`}
+                                tooltip="This is the address you are viewing"
+                              />
+                            )}
+                          </div>
                           <Dropdown>
                             <Dropdown.Toggle
                               variant="secondary"

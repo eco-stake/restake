@@ -129,16 +129,16 @@ function ValidatorModal(props) {
       <Modal size='lg' show={props.show} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title>
-            <>
-              <ValidatorImage validator={validator} className="me-2" />
-              <ValidatorLink validator={validator} hideWarning={true} className="ms-2" />
-            </>
+            <div className="d-flex align-items-center gap-2">
+              <ValidatorImage validator={validator} />
+              <ValidatorLink validator={validator} />
+            </div>
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           {validator && (
             <Tab.Container activeKey={activeTab} onSelect={(k) => setTab(k)} id="validator-tabs">
-              <Nav variant="tabs" className="small mb-3 d-none d-sm-flex">
+              <Nav variant="tabs" className="small mb-3 d-flex">
                 <Nav.Item>
                   <Nav.Link role="button" eventKey="profile">Profile</Nav.Link>
                 </Nav.Item>
@@ -146,18 +146,11 @@ function ValidatorModal(props) {
                   <Nav.Link role="button" eventKey="stake">Stake</Nav.Link>
                 </Nav.Item>
                 {network.authzSupport && !network.authzAminoSupport && operator && (
-                  <Nav.Item>
+                  <Nav.Item className="d-none d-md-flex">
                     <Nav.Link role="button" eventKey="ledger">Ledger</Nav.Link>
                   </Nav.Item>
                 )}
               </Nav>
-              <select className="form-select w-100 mb-3 d-block d-sm-none" aria-label="Section" value={activeTab} onChange={(e) => setTab(e.target.value)}>
-                <option value="profile">Profile</option>
-                <option value="stake">Stake</option>
-                {network.authzSupport && !network.authzAminoSupport && operator && (
-                  <option value="ledger">Ledger Instructions</option>
-                )}
-              </select>
               <Tab.Content>
                 <Tab.Pane eventKey="profile">
                   <ValidatorProfile
