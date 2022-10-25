@@ -126,11 +126,6 @@ class App extends React.Component {
         this.refreshInterval();
       })
     }
-    if(this.state.grants?.grantee !== prevState.grants?.grantee){
-      if(this.state.wallet && this.state.wallet.address === this.state.address){
-        this.state.wallet.grants = this.state.grants?.grantee || []
-      }
-    }
   }
 
   componentWillUnmount() {
@@ -336,28 +331,9 @@ class App extends React.Component {
 
     try {
       granterGrants = await this.props.queryClient.getGranterGrants(address)
-      if (address !== this.state.address) return
-      this.setState((state) => {
-        return { 
-          grantQuerySupport: true, 
-          grants: { 
-            ...state.grants,
-            granter: granterGrants,
-          } 
-        }
-      })
+      this.setGrants(address, granterGrants, 'granter', true)
       granteeGrants = await this.props.queryClient.getGranteeGrants(address)
-      if (address !== this.state.address) return
-      this.setState((state) => {
-        if (address !== state.address) return {}
-        return { 
-          grants: { 
-            ...state.grants,
-            grantee: granteeGrants
-          } 
-        }
-      })
-      return
+      return this.setGrants(address, granteeGrants, 'grantee')
     } catch (error) {
       console.log('Failed to get all grants in batch', error.message)
       grantQuerySupport = error.response?.status !== 501
@@ -374,17 +350,11 @@ class App extends React.Component {
     granterGrants = await this.getGrantsIndividually(addresses.map(el => {
       return { grantee: el, granter: address }
     }))
-    if (address !== this.state.address) return
-    this.setState((state) => {
-      return { grantQuerySupport, grants: { ...state.grants, granter: granterGrants } }
-    })
+    this.setGrants(address, granterGrants, 'granter', grantQuerySupport)
     granteeGrants = await this.getGrantsIndividually(favourites.map(el => {
       return { granter: el.address, grantee: address }
     }))
-    if (address !== this.state.address) return
-    this.setState((state) => {
-      return { grantQuerySupport, grants: { ...state.grants, grantee: granteeGrants } }
-    })
+    this.setGrants(address, granteeGrants, 'grantee', grantQuerySupport)
   }
 
   async getGrantsIndividually(grants){
@@ -415,6 +385,23 @@ class App extends React.Component {
       allGrants = allGrants.concat(_.compact(grants.flat()))
     }
     return allGrants
+  }
+
+  setGrants(address, grants, type, grantQuerySupport){
+    if(type === 'grantee' && this.state.wallet?.address === address){
+      this.state.wallet.grants = grants || []
+    }
+    if (address !== this.state.address) return
+    this.setState((state) => {
+      if (address !== state.address) return {}
+      return {
+        grants: {
+          ...state.grants,
+          [type]: grants,
+          grantQuerySupport: grantQuerySupport ?? state.grantQuerySupport
+        }
+      }
+    })
   }
 
   onSend(recipient, amount){
