@@ -1,38 +1,37 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useReducer } from 'react';
 import moment from 'moment'
-import { pow, multiply, divide, larger, smaller, bignumber, round } from 'mathjs'
+import { pow, multiply, divide, larger, bignumber } from 'mathjs'
 
 import { MsgGrant } from "cosmjs-types/cosmos/authz/v1beta1/tx";
 import { StakeAuthorization } from "cosmjs-types/cosmos/staking/v1beta1/authz";
 import { Timestamp } from "cosmjs-types/google/protobuf/timestamp";
 
 import {
-  Spinner,
   Button,
   Form,
-  Table
 } from 'react-bootstrap'
-import {
-  QuestionCircle,
-} from 'react-bootstrap-icons'
 
 import Coins from './Coins';
-import { buildExecMessage, coin, lastRestakeClassname, lastRestakeWarning } from '../utils/Helpers.mjs';
+import { buildExecMessage, coin, rewardAmount } from '../utils/Helpers.mjs';
 import RevokeGrant from './RevokeGrant';
 import AlertMessage from './AlertMessage';
-import TooltipIcon from './TooltipIcon'
+import OperatorLastRestakeAlert from './OperatorLastRestakeAlert';
 
-function ValidatorGrants(props) {
+function GrantStakeForm(props) {
   const { grants, wallet, operator, address, network, lastExec } = props
-  const { stakeGrant, maxTokens, validators, grantsValid, grantsExist } = grants || {}
+  const { stakeGrant, maxTokens, validators } = grants || {}
   const defaultExpiry = moment().add(1, 'year')
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState()
-  const [state, setState] = useState({ maxTokensValue: '', expiryDateValue: defaultExpiry.format('YYYY-MM-DD') });
+  const [state, setState] = useReducer(
+    (state, newState) => ({ ...state, ...newState }),
+    { maxTokensValue: '', expiryDateValue: defaultExpiry.format('YYYY-MM-DD') }
+  )
+
+  const reward = rewardAmount(props.rewards, network.denom)
 
   useEffect(() => {
     setState({
-      ...state,
       validators: validators || (!stakeGrant && [operator.address]),
       maxTokens,
       expiryDate: expiryDate(),
@@ -41,14 +40,13 @@ function ValidatorGrants(props) {
 
   useEffect(() => {
     setState({
-      ...state,
       expiryDateValue: (expiryDate() || defaultExpiry).format('YYYY-MM-DD'),
       maxTokensValue: maxTokens && state.maxTokensValue === '' ? divide(bignumber(maxTokens), pow(10, network.decimals)) : maxTokens ? state.maxTokensValue : '',
     })
   }, [operator])
 
   function handleInputChange(e) {
-    setState({ ...state, [e.target.name]: e.target.value });
+    setState({ [e.target.name]: e.target.value });
   }
 
   function expiryDate() {
@@ -64,7 +62,7 @@ function ValidatorGrants(props) {
   }
 
   function maxTokensValid() {
-    return !maxTokensDenom() || larger(maxTokensDenom(), props.rewards)
+    return !maxTokensDenom() || larger(maxTokensDenom(), reward)
   }
 
   function showLoading(isLoading) {
@@ -128,12 +126,12 @@ function ValidatorGrants(props) {
         })
       }
     }
-    if(wallet?.address !== address){
+    if (wallet?.address !== address) {
       return buildExecMessage(wallet.address, [{
         typeUrl: "/cosmos.authz.v1beta1.MsgGrant",
         value: MsgGrant.encode(MsgGrant.fromPartial(value)).finish()
       }])
-    }else{
+    } else {
       return {
         typeUrl: "/cosmos.authz.v1beta1.MsgGrant",
         value: value
@@ -153,130 +151,22 @@ function ValidatorGrants(props) {
     )
   }
 
-  const minimumReward = () => {
-    return {
-      amount: operator.minimumReward,
-      denom: network.denom
-    }
-  }
-
   const step = () => {
     return 1 / pow(10, network.decimals)
   }
 
   return (
     <>
-      {!props.authzSupport && (
-        <AlertMessage variant="warning" dismissible={false}>
-          {props.network.prettyName} doesn't support Authz just yet.
-        </AlertMessage>
-      )}
-      {props.restakePossible && !props.delegation && (
-        <AlertMessage variant="warning" dismissible={false}>
-          You must delegate to {operator.moniker} before they can REStake for you.
-        </AlertMessage>
-      )}
-      {lastRestakeWarning(operator, lastExec) && (
-        <AlertMessage variant="danger" dismissible={false}>
-          This validator has not REStaked recently.
-        </AlertMessage>
-      )}
+      <OperatorLastRestakeAlert operator={operator} lastExec={lastExec} />
       {error &&
         <AlertMessage variant="danger" className="text-break small">
           {error}
         </AlertMessage>
       }
-      <Table>
-        <tbody className="table-sm small">
-          <tr>
-            <td scope="row">REStake Address</td>
-            <td className="text-break"><span>{operator.botAddress}</span></td>
-          </tr>
-          <tr>
-            <td scope="row">Frequency</td>
-            <td>
-              <span>{operator.runTimesString()}</span>
-            </td>
-          </tr>
-          {network.authzSupport && (
-            <tr>
-              <td scope="row">Last REStake</td>
-              <td>
-                <div className="d-flex align-items-center">
-                  {lastExec != null ? <span className={lastRestakeClassname(operator, lastExec)}>{lastExec ? lastExec?.fromNow() : 'Not recently'}</span> : <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>}
-                  <TooltipIcon icon={<QuestionCircle className="ms-2" />} identifier={operator.address} tooltip="Based on the last REStake transaction sent by this validator for any of their users. Not every run generates a transaction." />
-                </div>
-              </td>
-            </tr>
-          )}
-          <tr>
-            <td scope="row">Minimum Reward</td>
-            <td>
-              <Coins coins={minimumReward()} asset={network.baseAsset} fullPrecision={true} hideValue={true} />
-            </td>
-          </tr>
-          {network.apyEnabled && (
-            <tr>
-              <td scope="row">
-                <TooltipIcon
-                  icon={<span className="p-0 text-decoration-underline">APY</span>}
-                  identifier="delegations-apy"
-                >
-                  <div className="mt-2 text-center">
-                    <p>Based on commission, compounding frequency and estimated block times.</p>
-                    <p>This is an estimate and best case scenario.</p>
-                  </div>
-                </TooltipIcon>
-              </td>
-              <td>
-                {Object.keys(props.validatorApy).length > 0
-                  ? props.validatorApy[operator.address]
-                    ? <span>{round(props.validatorApy[operator.address] * 100, 2).toLocaleString()}%</span>
-                    : "-"
-                  : (
-                    <Spinner animation="border" role="status" className="spinner-border-sm text-secondary">
-                      <span className="visually-hidden">Loading...</span>
-                    </Spinner>
-                  )}
-              </td>
-            </tr>
-          )}
-          <tr>
-            <td scope="row">Current Rewards</td>
-            <td>
-              <Coins coins={{ amount: props.rewards, denom: network.denom }} asset={network.baseAsset} fullPrecision={true} />
-            </td>
-          </tr>
-          {state.maxTokens && (
-            <tr>
-              <td scope="row">Grant Remaining</td>
-              <td className={!props.rewards || larger(state.maxTokens, props.rewards) ? 'text-success' : 'text-danger'}>
-                <Coins coins={{ amount: state.maxTokens, denom: network.denom }} asset={network.baseAsset} fullPrecision={true} />
-              </td>
-            </tr>
-          )}
-          <tr>
-            <td scope="row">Grant status</td>
-            <td>
-              {grantsValid
-                ? <span className="text-success">Active</span>
-                : grantsExist
-                  ? state.maxTokens && smaller(state.maxTokens, props.rewards)
-                    ? <span className="text-danger">Not enough grant remaining</span>
-                    : <span className="text-danger">Invalid / total delegation reached</span>
-                  : <em>Inactive</em>}
-            </td>
-          </tr>
-        </tbody>
-      </Table>
-      {grantsExist && !props.restakePossible && (
-        <>{grantInformation()}</>
-      )}
-      {props.restakePossible && (
-        <div className="row">
-          <div className="col-12 col-md-6 order-md-1">
-            <Form onSubmit={handleSubmit}>
-          <fieldset disabled={!props.address || !props.wallet}>
+      <div className="row">
+        <div className="col-12 col-md-6 order-md-1">
+          <Form onSubmit={handleSubmit}>
+            <fieldset disabled={!props.address || !props.wallet}>
               <Form.Group className="mb-3">
                 <Form.Label>Max amount</Form.Label>
                 <div className="mb-3">
@@ -294,10 +184,13 @@ function ValidatorGrants(props) {
                 <Form.Control type="date" name='expiryDateValue' min={moment().format('YYYY-MM-DD')} required={true} value={state.expiryDateValue} onChange={handleInputChange} />
                 <div className="form-text text-end">Date the grant will expire. After this date you will need to re-grant</div>
               </Form.Group>
-              <p className="text-end">
+              <div className="text-end">
                 {!loading
                   ? (
-                    <>
+                    <div className="d-flex justify-content-end gap-2">
+                      {props.closeForm && (
+                        <Button variant="secondary" onClick={props.closeForm}>Cancel</Button>
+                      )}
                       {grants.grantsExist && (
                         <RevokeGrant
                           button={true}
@@ -310,27 +203,26 @@ function ValidatorGrants(props) {
                           onRevoke={props.onRevoke}
                           setLoading={(loading) => showLoading(loading)}
                           setError={setError}
+                          buttonText="Disable"
                         />
                       )}
-                      <Button type="submit" disabled={!wallet?.hasPermission(address, 'Grant')} className="btn btn-primary ms-2">{grants.grantsExist ? 'Update REStake' : 'Enable REStake'}</Button>
-                    </>
+                      <Button type="submit" disabled={!wallet?.hasPermission(address, 'Grant')} className="btn btn-primary">{grants.grantsExist ? 'Update' : 'Enable REStake'}</Button>
+                    </div>
                   )
                   : <Button className="btn btn-primary" type="button" disabled>
                     <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>&nbsp;
                   </Button>
                 }
-              </p>
+              </div>
             </fieldset>
-            </Form>
-          </div>
-          <div className="col-12 col-md-6">
-            <p><strong>Grant details</strong></p>
-            {grantInformation()}
-          </div>
+          </Form>
         </div>
-      )}
+        <div className="col-12 col-md-6">
+          {grantInformation()}
+        </div>
+      </div>
     </>
   )
 }
 
-export default ValidatorGrants;
+export default GrantStakeForm;

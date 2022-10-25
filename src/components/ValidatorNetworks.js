@@ -34,7 +34,7 @@ function ValidatorNetworks(props) {
         online
       }
     }
-  })), 'key').sort((a, b) => a.name > b.name ? 1 : -1)
+  })), 'key').sort((a, b) => a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1)
 
   return (
     <div className="d-flex flex-wrap gap-1 align-items-center">
@@ -42,7 +42,6 @@ function ValidatorNetworks(props) {
         return (
           <OverlayTrigger
             placement="top"
-            rootClose={true}
             key={validatorNetwork.key}
             overlay={
               <Tooltip id={`tooltip-${validatorNetwork.key}`}>{validatorNetwork.name}{!validatorNetwork.online && ' (API Offline)'}</Tooltip>

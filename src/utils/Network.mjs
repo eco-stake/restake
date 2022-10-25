@@ -116,19 +116,10 @@ class Network {
   }
 
   async getApy(validators, operators){
-    const chainApr = this.chain.estimatedApr
     let validatorApy = {};
     for (const [address, validator] of Object.entries(validators)) {
-      if(validator.jailed || validator.status !== 'BOND_STATUS_BONDED'){
-        validatorApy[address] = 0
-      }else{
-        const commission = validator.commission.commission_rates.rate
-        const operator = operators.find((el) => el.address === address)
-        const periodPerYear = operator && this.chain.authzSupport ? operator.runsPerDay(this.data.maxPerDay) * 365 : 1;
-        const realApr = chainApr * (1 - commission);
-        const apy = (1 + realApr / periodPerYear) ** periodPerYear - 1;
-        validatorApy[address] = apy;
-      }
+      const operator = operators.find((el) => el.address === address)
+      validatorApy[address] = validator.getAPY(operator)
     }
     return validatorApy;
   }

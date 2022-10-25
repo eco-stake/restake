@@ -15,7 +15,7 @@ import {
 
 import AlertMessage from './AlertMessage';
 import { messageTypes } from '../utils/Wallet.mjs';
-import { buildExecMessage } from '../utils/Helpers.mjs';
+import { buildExecMessage, truncateAddress } from '../utils/Helpers.mjs';
 
 function GrantModal(props) {
   const { show, network, address, wallet } = props
@@ -172,7 +172,7 @@ function GrantModal(props) {
                       if (props.address === address) return null
 
                       return (
-                        <option key={address} value={address}>{label || address}</option>
+                        <option key={address} value={address}>{label || truncateAddress(address)}</option>
                       )
                     })}
                   </optgroup>

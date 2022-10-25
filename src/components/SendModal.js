@@ -11,7 +11,7 @@ import {
 } from 'react-bootstrap'
 
 import AlertMessage from './AlertMessage';
-import { buildExecableMessage, buildExecMessage, coin } from '../utils/Helpers.mjs';
+import { buildExecableMessage, buildExecMessage, coin, truncateAddress } from '../utils/Helpers.mjs';
 import Coins from './Coins';
 
 function SendModal(props) {
@@ -166,7 +166,7 @@ function SendModal(props) {
                       if (props.address === address) return null
 
                       return (
-                        <option key={address} value={address}>{label || address}</option>
+                        <option key={address} value={address}>{label || truncateAddress(address)}</option>
                       )
                     })}
                   </optgroup>

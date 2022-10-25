@@ -3,13 +3,15 @@ import { divide, bignumber, round, format } from 'mathjs'
 
 function Coins(props) {
   const { asset, coins, fullPrecision, inBaseDenom, hideValue, className } = props
-  const { decimals, symbol, prices } = asset
+  let { decimals, symbol, prices } = asset || {}
   const { coingecko } = prices || {}
+  decimals = decimals ?? 6
+  symbol = symbol || coins?.denom?.toUpperCase()
 
   function amount(coins){
     if(inBaseDenom) return coins.amount
 
-    const prec = precision(coins, decimals)
+    const prec = precision(coins)
     return format(round(divide(bignumber(coins.amount), Math.pow(10, decimals)), prec), {notation: 'fixed'}).toLocaleString(undefined, { maximumFractionDigits: prec })
   }
 
@@ -23,6 +25,7 @@ function Coins(props) {
 
   function precision(coins){
     if(fullPrecision) return decimals;
+    if(props.precision) return props.precision;
     if(coins.amount >= (1000 * Math.pow(10, decimals))) return 2
     if(coins.amount >= (100 * Math.pow(10, decimals))) return 3
     return 6
@@ -32,7 +35,7 @@ function Coins(props) {
     <span className={['d-inline-block m-0 coins', className].join(' ')}>
       <span>
         <span className="amount">{amount(coins)}</span>&nbsp;
-        <span className="denom">{symbol}</span>
+        <small className="denom">{symbol}</small>
       </span>
       {!!coingecko?.usd && !hideValue && !!coins.amount && (
         <>

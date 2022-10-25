@@ -51,7 +51,7 @@ import Governance from './Governance';
 import Networks from './Networks';
 import Grants from './Grants';
 import Favourite from './Favourite';
-import AddressModal from './AddressModal';
+import WalletModal from './WalletModal';
 import Wallet from '../utils/Wallet.mjs';
 import SendModal from './SendModal';
 import KeplrSignerProvider from '../utils/KeplrSignerProvider.mjs';
@@ -59,6 +59,7 @@ import FalconSignerProvider from '../utils/FalconSignerProvider.mjs';
 import LeapSignerProvider from '../utils/LeapSignerProvider.mjs';
 import KeplrMobileSignerProvider from '../utils/KeplrMobileSignerProvider.mjs';
 import ConnectWalletModal from './ConnectWalletModal';
+import { truncateAddress } from '../utils/Helpers.mjs';
 
 class App extends React.Component {
   constructor(props) {
@@ -124,11 +125,6 @@ class App extends React.Component {
       this.getGrants().then(() => {
         this.refreshInterval();
       })
-    }
-    if(this.state.grants?.grantee !== prevState.grants?.grantee){
-      if(this.state.wallet && this.state.wallet.address === this.state.address){
-        this.state.wallet.grants = this.state.grants?.grantee || []
-      }
     }
   }
 
@@ -314,11 +310,15 @@ class App extends React.Component {
   async getBalance() {
     if (!this.state.address) return
 
-    this.props.queryClient.getBalance(this.state.address, this.props.network.denom)
+    this.props.queryClient.getBalance(this.state.address)
       .then(
-        (balance) => {
+        (balances) => {
+          const balance = balances?.find(
+            (element) => element.denom === this.props.network.denom
+          ) || { denom: this.props.network.denom, amount: 0 };
           this.setState({
-            balance: balance
+            balance,
+            balances
           })
         }
       )
@@ -331,28 +331,9 @@ class App extends React.Component {
 
     try {
       granterGrants = await this.props.queryClient.getGranterGrants(address)
-      if (address !== this.state.address) return
-      this.setState((state) => {
-        return { 
-          grantQuerySupport: true, 
-          grants: { 
-            ...state.grants,
-            granter: granterGrants,
-          } 
-        }
-      })
+      this.setGrants(address, granterGrants, 'granter', true)
       granteeGrants = await this.props.queryClient.getGranteeGrants(address)
-      if (address !== this.state.address) return
-      this.setState((state) => {
-        if (address !== state.address) return {}
-        return { 
-          grants: { 
-            ...state.grants,
-            grantee: granteeGrants
-          } 
-        }
-      })
-      return
+      return this.setGrants(address, granteeGrants, 'grantee')
     } catch (error) {
       console.log('Failed to get all grants in batch', error.message)
       grantQuerySupport = error.response?.status !== 501
@@ -369,17 +350,11 @@ class App extends React.Component {
     granterGrants = await this.getGrantsIndividually(addresses.map(el => {
       return { grantee: el, granter: address }
     }))
-    if (address !== this.state.address) return
-    this.setState((state) => {
-      return { grantQuerySupport, grants: { ...state.grants, granter: granterGrants } }
-    })
+    this.setGrants(address, granterGrants, 'granter', grantQuerySupport)
     granteeGrants = await this.getGrantsIndividually(favourites.map(el => {
       return { granter: el.address, grantee: address }
     }))
-    if (address !== this.state.address) return
-    this.setState((state) => {
-      return { grantQuerySupport, grants: { ...state.grants, grantee: granteeGrants } }
-    })
+    this.setGrants(address, granteeGrants, 'grantee', grantQuerySupport)
   }
 
   async getGrantsIndividually(grants){
@@ -410,6 +385,23 @@ class App extends React.Component {
       allGrants = allGrants.concat(_.compact(grants.flat()))
     }
     return allGrants
+  }
+
+  setGrants(address, grants, type, grantQuerySupport){
+    if(type === 'grantee' && this.state.wallet?.address === address){
+      this.state.wallet.grants = grants || []
+    }
+    if (address !== this.state.address) return
+    this.setState((state) => {
+      if (address !== state.address) return {}
+      return {
+        grants: {
+          ...state.grants,
+          [type]: grants,
+          grantQuerySupport: grantQuerySupport ?? state.grantQuerySupport
+        }
+      }
+    })
   }
 
   onSend(recipient, amount){
@@ -459,6 +451,20 @@ class App extends React.Component {
     if(this.state.wallet && grantee === this.state.wallet.address){
       this.state.wallet.grants = this.state.wallet.grants.filter(filterGrant)
     }
+  }
+
+  showWalletModal(opts) {
+    opts = opts || {}
+    this.setState((state) => {
+      return { walletModal: { ...state.validatorModal, show: true, ...opts } }
+    })
+  }
+
+  hideWalletModal(opts) {
+    opts = opts || {}
+    this.setState((state) => {
+      return { walletModal: { ...state.walletModal, show: false } }
+    })
   }
 
   setCopied() {
@@ -531,7 +537,7 @@ class App extends React.Component {
 
   render() {
     return (
-      <Container>
+      <Container fluid="lg">
         <header className="">
           <div className="d-flex justify-content-between align-items-center py-3 border-bottom">
             <div className="logo d-flex align-items-end text-reset text-decoration-none">
@@ -611,26 +617,16 @@ class App extends React.Component {
                                   label={this.viewingWallet() && this.state.wallet?.name}
                                   toggle={this.toggleFavouriteAddress} />
                               </span>
-                              <span className="d-none d-md-inline pe-2">
-                                <TooltipIcon tooltip="Copy address">
-                                  <span>
-                                    <CopyToClipboard text={this.state.address}
-                                      onCopy={() => this.setCopied()}>
-                                      <span role="button" className="d-flex align-items-center">{this.state.copied ? <ClipboardCheck /> : <Clipboard />}</span>
-                                    </CopyToClipboard>
-                                  </span>
-                                </TooltipIcon>
-                              </span>
                               <span>
                                 {this.viewingWallet() ? (
-                                  <TooltipIcon tooltip="Viewing your wallet">
-                                    <span role="button" onClick={() => this.setState({ showAddressModal: true })}>
+                                  <TooltipIcon tooltip="Viewing your wallet" rootClose={true}>
+                                    <span role="button" onClick={() => this.showWalletModal({ activeTab: 'wallet' })}>
                                       <Key />
                                     </span>
                                   </TooltipIcon>
                                 ) : (
-                                  <TooltipIcon tooltip="Viewing saved address">
-                                    <span role="button" onClick={() => this.setState({ showAddressModal: true })}>
+                                  <TooltipIcon tooltip="Viewing saved address" rootClose={true}>
+                                    <span role="button" onClick={() => this.showWalletModal({ activeTab: 'saved' })}>
                                       <Eye />
                                     </span>
                                   </TooltipIcon>
@@ -639,43 +635,55 @@ class App extends React.Component {
                             </>
                           )}
                           {this.otherFavouriteAddresses().length < 1 && this.state.wallet ? (
-                            <span role="button" onClick={() => this.setState({ showAddressModal: true })} className="small d-none d-lg-inline ms-2">{this.state.wallet.name || this.state.wallet.address}</span>
+                            <span role="button" onClick={() => this.showWalletModal({ activeTab: 'wallet' })} className="small d-none d-lg-inline ms-2">{this.state.wallet.name || truncateAddress(this.state.wallet.address)}</span>
                           ) : (
-                            <select className="form-select form-select-sm d-none d-lg-block ms-2" aria-label="Address" value={this.state.address || ''} onChange={(e) => this.setState({ address: e.target.value })}>
+                            <select className="form-select form-select-sm d-none d-lg-block ms-2" aria-label="Address" value={this.state.address || ''} onChange={(e) => this.setState({ address: e.target.value })} style={{maxWidth: 200}}>
                               {this.state.wallet ? (
                                 <optgroup label={this.state.signerProvider.label}>
-                                  <option value={this.state.wallet.address}>{this.state.wallet.name || this.state.wallet.address}</option>
+                                  <option value={this.state.wallet.address}>{this.state.wallet.name || truncateAddress(this.state.wallet.address)}</option>
                                 </optgroup>
                               ) : (
                                 <option value="">Choose address</option>
                               )}
                               <optgroup label="Saved">
                                 {this.otherFavouriteAddresses().map(({ address, label }) => {
-                                  return <option key={address} value={address}>{label || address}</option>
+                                  return <option key={address} value={address}>{label || truncateAddress(address)}</option>
                                 })}
                               </optgroup>
                             </select>
                           )}
+                          <span className="d-none d-md-inline ms-2">
+                            <TooltipIcon tooltip="Copy address" rootClose={true}>
+                              <span>
+                                <CopyToClipboard text={this.state.address}
+                                  onCopy={() => this.setCopied()}>
+                                  <span role="button" className="d-flex align-items-center">{this.state.copied ? <ClipboardCheck /> : <Clipboard />}</span>
+                                </CopyToClipboard>
+                              </span>
+                            </TooltipIcon>
+                          </span>
                         </li>
                       )}
                       {this.state.address && (
                       <li className="nav-item px-3 border-end align-items-center d-none d-md-flex">
-                        {this.state.balance ? (
-                          <Coins
-                            coins={this.state.balance}
-                            asset={this.props.network.baseAsset}
-                            className="small text-end"
-                          />
-                        ) : (
-                          <Spinner animation="border" role="status" className="spinner-border-sm text-secondary">
-                            <span className="visually-hidden">Loading...</span>
-                          </Spinner>
-                        )}
+                        <div role="button" onClick={() => this.showWalletModal({activeTab: this.state.wallet ? 'wallet' : 'saved'})}>
+                          {this.state.balance ? (
+                            <Coins
+                              coins={this.state.balance}
+                              asset={this.props.network.baseAsset}
+                              className="small text-end"
+                            />
+                          ) : (
+                            <Spinner animation="border" role="status" className="spinner-border-sm text-secondary">
+                              <span className="visually-hidden">Loading...</span>
+                            </Spinner>
+                          )}
+                        </div>
                       </li>
                       )}
                       <li className="nav-item ps-3 d-flex align-items-center">
                         <Dropdown as={ButtonGroup}>
-                          <Dropdown.Toggle size="sm" className="rounded" id="dropdown-custom-1">
+                          <Dropdown.Toggle size="sm" className="rounded">
                             {this.state.address ? (
                               <>
                                 <CashCoin className="me-1" />
@@ -686,15 +694,12 @@ class App extends React.Component {
                             {this.state.address && (
                               <div className="d-block d-md-none">
                                 <Dropdown.Header className="text-truncate">{this.addressName()}</Dropdown.Header>
-                                <Dropdown.Item as="button">
-                                  <CopyToClipboard text={this.state.address}
-                                    onCopy={() => this.setCopied()}>
-                                    <Coins
-                                      coins={this.state.balance}
-                                      asset={this.props.network.baseAsset}
-                                      className="small"
-                                    />
-                                  </CopyToClipboard>
+                                <Dropdown.Item as="button" onClick={() => this.showWalletModal({activeTab: this.state.wallet ? 'wallet' : 'saved'})}>
+                                  <Coins
+                                    coins={this.state.balance}
+                                    asset={this.props.network.baseAsset}
+                                    className="small"
+                                  />
                                 </Dropdown.Item>
                                 <Dropdown.Divider />
                               </div>
@@ -714,11 +719,11 @@ class App extends React.Component {
                                 return <Dropdown.Item as="button" key={provider.key} onClick={() => this.connect(provider.key, true)} disabled={!provider.available()}>Connect {provider.label}</Dropdown.Item>
                               })
                             )}
-                            <Dropdown.Item as="button" onClick={() => this.setState({ showAddressModal: true })}>Saved Addresses</Dropdown.Item>
+                            <Dropdown.Item as="button" onClick={() => this.showWalletModal({ activeTab: 'saved' })}>Saved Addresses</Dropdown.Item>
                             {this.state.address && (
                               <>
                                 <Dropdown.Divider />
-                                <Dropdown.Item as="button" onClick={this.disconnect}>Disconnect {this.state.signerProvider?.label}</Dropdown.Item>
+                                <Dropdown.Item as="button" onClick={this.disconnect}>{this.state.wallet ? `Disconnect ${this.state.signerProvider?.label}` : 'Close'}</Dropdown.Item>
                               </>
                             )}
                           </Dropdown.Menu>
@@ -788,7 +793,7 @@ class App extends React.Component {
               operators={this.props.operators}
               validators={this.props.validators}
               favouriteAddresses={this.favouriteAddresses()}
-              showFavouriteAddresses={() => this.setState({ showAddressModal: true })}
+              showFavouriteAddresses={() => this.showWalletModal({ activeTab: 'saved' })}
               toggleFavouriteAddress={this.toggleFavouriteAddress}
               onGrant={this.onGrant}
               onRevoke={this.onRevoke}
@@ -796,17 +801,6 @@ class App extends React.Component {
               grantQuerySupport={this.state.grantQuerySupport}
               signingClient={this.state.signingClient} />
           )}
-          <hr />
-          <p className="mt-5 text-center">
-            Enabling REStake will authorize the validator to send <em>Delegate</em> transactions on your behalf for 1 year <a href="https://docs.cosmos.network/master/modules/authz/" target="_blank" rel="noreferrer" className="text-reset">using Authz</a>.<br />
-            They will only be authorized to delegate to their own validator. You can revoke the authorization at any time and everything is open source.
-          </p>
-          <p className="text-center mb-4">
-            <strong>The validators will pay the transaction fees for you.</strong>
-          </p>
-          <p className="text-center mb-5">
-            <Button onClick={() => this.setState({ showAbout: true })} variant="outline-secondary">More info</Button>
-          </p>
         </div>
         <footer className="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
           <a href="https://akash.network" target="_blank" rel="noreferrer" className="col-md-4 mb-0 text-muted">
@@ -837,15 +831,22 @@ class App extends React.Component {
           </p>
         </footer>
         <About show={this.state.showAbout} onHide={() => this.setState({ showAbout: false })} />
-        <AddressModal
-          show={this.state.showAddressModal} onHide={() => this.setState({ showAddressModal: false })}
+        <WalletModal
+          show={this.state.walletModal?.show} onHide={() => this.hideWalletModal()}
+          activeTab={this.state.walletModal?.activeTab}
           network={this.props.network}
           networks={Object.values(this.props.networks)}
           address={this.state.address}
           wallet={this.state.wallet}
+          signerProvider={this.state.signerProvider}
+          balances={this.state.balances}
           favouriteAddresses={this.state.favouriteAddresses}
           updateFavouriteAddresses={this.updateFavouriteAddresses}
-          setAddress={(value) => this.setState({address: value, showAddressModal: false})}
+          toggleFavouriteAddress={this.toggleFavouriteAddress}
+          setAddress={(value) => {
+            this.setState({address: value})
+            this.hideWalletModal()
+          }}
         />
         <ConnectWalletModal 
           show={this.state.connectWallet} 

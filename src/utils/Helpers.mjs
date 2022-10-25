@@ -1,6 +1,7 @@
 import _ from 'lodash'
-import { format, floor } from 'mathjs'
+import { format, floor, bignumber } from 'mathjs'
 import { coin as _coin } from  '@cosmjs/stargate'
+import truncateMiddle from 'truncate-middle'
 
 export function timeStamp(...args) {
   console.log('[' + new Date().toISOString().substring(11, 23) + ']', ...args);
@@ -8,6 +9,19 @@ export function timeStamp(...args) {
 
 export function coin(amount, denom){
   return _coin(format(floor(amount), {notation: 'fixed'}), denom)
+}
+
+export function truncateAddress(address) {
+  const firstDigit = address.search(/\d/)
+  return truncateMiddle(address, firstDigit + 6, 6, '…')
+}
+
+export function rewardAmount(rewards, denom, type){
+  if (!rewards)
+    return 0;
+  type = type || 'reward'
+  const reward = rewards && rewards[type]?.find((el) => el.denom === denom);
+  return reward ? bignumber(reward.amount) : 0;
 }
 
 export function overrideNetworks(networks, overrides){
@@ -23,24 +37,6 @@ export function overrideNetworks(networks, overrides){
       _.isArray(b) ? b : undefined
     );
   })
-}
-
-export function lastRestakeClassname(operator, lastExec) {
-  if (!operator || lastExec == null)
-    return;
-
-  const missedRuns = operator.missedRunCount(lastExec);
-  const warning = missedRuns > Math.min(20, operator.runsPerDay());
-  const error = missedRuns > Math.min(30, operator.runsPerDay() * 2);
-  return error ? 'text-danger' : warning ? 'text-warning' : 'text-success';
-}
-
-export function lastRestakeWarning(operator, lastExec) {
-  if (!operator || lastExec == null)
-    return;
-
-  const missedRuns = operator.missedRunCount(lastExec);
-  return missedRuns > Math.min(30, operator.runsPerDay() * 2);
 }
 
 export function buildExecMessage(grantee, messages) {
