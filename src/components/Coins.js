@@ -12,12 +12,18 @@ function Coins(props) {
     if(inBaseDenom) return coins.amount
 
     const prec = precision(coins)
-    return format(round(divide(bignumber(coins.amount), Math.pow(10, decimals)), prec), {notation: 'fixed'}).toLocaleString(undefined, { maximumFractionDigits: prec })
+    return separator(format(round(divide(bignumber(coins.amount), Math.pow(10, decimals)), prec), {notation: 'fixed'}))
   }
 
   function value(coins){
     return (coins.amount / Math.pow(10, decimals) * coingecko.usd).toLocaleString(undefined, { maximumFractionDigits: 2, minimumFractionDigits: 2 })
   }
+
+  function separator(stringNum) {
+    var str = stringNum.split(".");
+    str[0] = str[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return str.join(".");
+}
 
   if(!coins || !coins.denom){
     return null
