@@ -26,7 +26,7 @@ function Address(props) {
   return (
     <span className={className}>
       <Element className="address" role={props.onClick && 'button'} onClick={props.onClick}>{truncateAddress(address)}</Element>
-      <TooltipIcon tooltip="Copy address">
+      <TooltipIcon tooltip="Copy address" rootClose={true}>
         <span className="ms-2">
           <CopyToClipboard text={address}
             onCopy={() => setCopiedTimeout()}>

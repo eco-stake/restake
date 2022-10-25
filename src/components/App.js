@@ -51,7 +51,7 @@ import Governance from './Governance';
 import Networks from './Networks';
 import Grants from './Grants';
 import Favourite from './Favourite';
-import AddressModal from './AddressModal';
+import WalletModal from './WalletModal';
 import Wallet from '../utils/Wallet.mjs';
 import SendModal from './SendModal';
 import KeplrSignerProvider from '../utils/KeplrSignerProvider.mjs';
@@ -315,11 +315,15 @@ class App extends React.Component {
   async getBalance() {
     if (!this.state.address) return
 
-    this.props.queryClient.getBalance(this.state.address, this.props.network.denom)
+    this.props.queryClient.getBalance(this.state.address)
       .then(
-        (balance) => {
+        (balances) => {
+          const balance = balances?.find(
+            (element) => element.denom === this.props.network.denom
+          ) || { denom: this.props.network.denom, amount: 0 };
           this.setState({
-            balance: balance
+            balance,
+            balances
           })
         }
       )
@@ -460,6 +464,20 @@ class App extends React.Component {
     if(this.state.wallet && grantee === this.state.wallet.address){
       this.state.wallet.grants = this.state.wallet.grants.filter(filterGrant)
     }
+  }
+
+  showWalletModal(opts) {
+    opts = opts || {}
+    this.setState((state) => {
+      return { walletModal: { ...state.validatorModal, show: true, ...opts } }
+    })
+  }
+
+  hideWalletModal(opts) {
+    opts = opts || {}
+    this.setState((state) => {
+      return { walletModal: { ...state.walletModal, show: false } }
+    })
   }
 
   setCopied() {
@@ -614,14 +632,14 @@ class App extends React.Component {
                               </span>
                               <span>
                                 {this.viewingWallet() ? (
-                                  <TooltipIcon tooltip="Viewing your wallet">
-                                    <span role="button" onClick={() => this.setState({ showAddressModal: true })}>
+                                  <TooltipIcon tooltip="Viewing your wallet" rootClose={true}>
+                                    <span role="button" onClick={() => this.showWalletModal({ activeTab: 'wallet' })}>
                                       <Key />
                                     </span>
                                   </TooltipIcon>
                                 ) : (
-                                  <TooltipIcon tooltip="Viewing saved address">
-                                    <span role="button" onClick={() => this.setState({ showAddressModal: true })}>
+                                  <TooltipIcon tooltip="Viewing saved address" rootClose={true}>
+                                    <span role="button" onClick={() => this.showWalletModal({ activeTab: 'saved' })}>
                                       <Eye />
                                     </span>
                                   </TooltipIcon>
@@ -630,7 +648,7 @@ class App extends React.Component {
                             </>
                           )}
                           {this.otherFavouriteAddresses().length < 1 && this.state.wallet ? (
-                            <span role="button" onClick={() => this.setState({ showAddressModal: true })} className="small d-none d-lg-inline ms-2">{this.state.wallet.name || truncateAddress(this.state.wallet.address)}</span>
+                            <span role="button" onClick={() => this.showWalletModal({ activeTab: 'wallet' })} className="small d-none d-lg-inline ms-2">{this.state.wallet.name || truncateAddress(this.state.wallet.address)}</span>
                           ) : (
                             <select className="form-select form-select-sm d-none d-lg-block ms-2" aria-label="Address" value={this.state.address || ''} onChange={(e) => this.setState({ address: e.target.value })} style={{maxWidth: 200}}>
                               {this.state.wallet ? (
@@ -648,7 +666,7 @@ class App extends React.Component {
                             </select>
                           )}
                           <span className="d-none d-md-inline ms-2">
-                            <TooltipIcon tooltip="Copy address">
+                            <TooltipIcon tooltip="Copy address" rootClose={true}>
                               <span>
                                 <CopyToClipboard text={this.state.address}
                                   onCopy={() => this.setCopied()}>
@@ -661,17 +679,19 @@ class App extends React.Component {
                       )}
                       {this.state.address && (
                       <li className="nav-item px-3 border-end align-items-center d-none d-md-flex">
-                        {this.state.balance ? (
-                          <Coins
-                            coins={this.state.balance}
-                            asset={this.props.network.baseAsset}
-                            className="small text-end"
-                          />
-                        ) : (
-                          <Spinner animation="border" role="status" className="spinner-border-sm text-secondary">
-                            <span className="visually-hidden">Loading...</span>
-                          </Spinner>
-                        )}
+                        <div role="button" onClick={() => this.showWalletModal({activeTab: this.state.wallet ? 'wallet' : 'saved'})}>
+                          {this.state.balance ? (
+                            <Coins
+                              coins={this.state.balance}
+                              asset={this.props.network.baseAsset}
+                              className="small text-end"
+                            />
+                          ) : (
+                            <Spinner animation="border" role="status" className="spinner-border-sm text-secondary">
+                              <span className="visually-hidden">Loading...</span>
+                            </Spinner>
+                          )}
+                        </div>
                       </li>
                       )}
                       <li className="nav-item ps-3 d-flex align-items-center">
@@ -687,15 +707,12 @@ class App extends React.Component {
                             {this.state.address && (
                               <div className="d-block d-md-none">
                                 <Dropdown.Header className="text-truncate">{this.addressName()}</Dropdown.Header>
-                                <Dropdown.Item as="button">
-                                  <CopyToClipboard text={this.state.address}
-                                    onCopy={() => this.setCopied()}>
-                                    <Coins
-                                      coins={this.state.balance}
-                                      asset={this.props.network.baseAsset}
-                                      className="small"
-                                    />
-                                  </CopyToClipboard>
+                                <Dropdown.Item as="button" onClick={() => this.showWalletModal({activeTab: this.state.wallet ? 'wallet' : 'saved'})}>
+                                  <Coins
+                                    coins={this.state.balance}
+                                    asset={this.props.network.baseAsset}
+                                    className="small"
+                                  />
                                 </Dropdown.Item>
                                 <Dropdown.Divider />
                               </div>
@@ -715,11 +732,11 @@ class App extends React.Component {
                                 return <Dropdown.Item as="button" key={provider.key} onClick={() => this.connect(provider.key, true)} disabled={!provider.available()}>Connect {provider.label}</Dropdown.Item>
                               })
                             )}
-                            <Dropdown.Item as="button" onClick={() => this.setState({ showAddressModal: true })}>Saved Addresses</Dropdown.Item>
+                            <Dropdown.Item as="button" onClick={() => this.showWalletModal({ activeTab: 'saved' })}>Saved Addresses</Dropdown.Item>
                             {this.state.address && (
                               <>
                                 <Dropdown.Divider />
-                                <Dropdown.Item as="button" onClick={this.disconnect}>Disconnect {this.state.signerProvider?.label}</Dropdown.Item>
+                                <Dropdown.Item as="button" onClick={this.disconnect}>{this.state.wallet ? `Disconnect ${this.state.signerProvider?.label}` : 'Close'}</Dropdown.Item>
                               </>
                             )}
                           </Dropdown.Menu>
@@ -789,7 +806,7 @@ class App extends React.Component {
               operators={this.props.operators}
               validators={this.props.validators}
               favouriteAddresses={this.favouriteAddresses()}
-              showFavouriteAddresses={() => this.setState({ showAddressModal: true })}
+              showFavouriteAddresses={() => this.showWalletModal({ activeTab: 'saved' })}
               toggleFavouriteAddress={this.toggleFavouriteAddress}
               onGrant={this.onGrant}
               onRevoke={this.onRevoke}
@@ -827,15 +844,22 @@ class App extends React.Component {
           </p>
         </footer>
         <About show={this.state.showAbout} onHide={() => this.setState({ showAbout: false })} />
-        <AddressModal
-          show={this.state.showAddressModal} onHide={() => this.setState({ showAddressModal: false })}
+        <WalletModal
+          show={this.state.walletModal?.show} onHide={() => this.hideWalletModal()}
+          activeTab={this.state.walletModal?.activeTab}
           network={this.props.network}
           networks={Object.values(this.props.networks)}
           address={this.state.address}
           wallet={this.state.wallet}
+          signerProvider={this.state.signerProvider}
+          balances={this.state.balances}
           favouriteAddresses={this.state.favouriteAddresses}
           updateFavouriteAddresses={this.updateFavouriteAddresses}
-          setAddress={(value) => this.setState({address: value, showAddressModal: false})}
+          toggleFavouriteAddress={this.toggleFavouriteAddress}
+          setAddress={(value) => {
+            this.setState({address: value})
+            this.hideWalletModal()
+          }}
         />
         <ConnectWalletModal 
           show={this.state.connectWallet} 

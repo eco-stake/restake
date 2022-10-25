@@ -3,13 +3,15 @@ import { divide, bignumber, round, format } from 'mathjs'
 
 function Coins(props) {
   const { asset, coins, fullPrecision, inBaseDenom, hideValue, className } = props
-  const { decimals, symbol, prices } = asset
+  let { decimals, symbol, prices } = asset || {}
   const { coingecko } = prices || {}
+  decimals = decimals ?? 6
+  symbol = symbol || coins?.denom?.toUpperCase()
 
   function amount(coins){
     if(inBaseDenom) return coins.amount
 
-    const prec = precision(coins, decimals)
+    const prec = precision(coins)
     return format(round(divide(bignumber(coins.amount), Math.pow(10, decimals)), prec), {notation: 'fixed'}).toLocaleString(undefined, { maximumFractionDigits: prec })
   }
 

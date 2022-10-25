@@ -50,7 +50,7 @@ function ValidatorProfile(props) {
   return (
     <>
       <div className="row">
-        <div className="col small">
+        <div className="col-12 col-lg-6 small">
           <Table>
             <tbody>
               <tr>
@@ -139,7 +139,7 @@ function ValidatorProfile(props) {
             </tbody>
           </Table>
         </div>
-        <div className="col small">
+        <div className="col-12 col-lg-6 small">
           <Table>
             <tbody>
               <tr>

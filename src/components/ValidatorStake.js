@@ -161,7 +161,7 @@ function ValidatorStake(props) {
       ) : (
         <>
           <div className="row">
-            <div className="col small">
+            <div className="col-12 col-lg-6 small">
               <Table>
                 <tbody>
                   <tr>
@@ -231,7 +231,7 @@ function ValidatorStake(props) {
                 </tbody>
               </Table>
             </div>
-            <div className="col small">
+            <div className="col-12 col-lg-6 small">
               <Table>
                 <tbody>
                   <tr>
@@ -320,7 +320,7 @@ function ValidatorStake(props) {
             </div>
           </div>
           <div className="d-flex justify-content-end gap-2">
-            {delegation?.balance?.amount && (
+            {delegation?.balance?.amount && wallet && (
               !loading ? (
                 <Dropdown>
                   <Dropdown.Toggle
