@@ -22,10 +22,11 @@ function Address(props) {
 
   const Element = props.as ? props.as : 'span'
   const className = [`address-container d-flex align-items-center hover-show`, props.className].join(' ')
+  const addressClassName = [`address`, props.addressClassName].join(' ')
 
   return (
-    <span className={className}>
-      <Element className="address" role={props.onClick && 'button'} onClick={props.onClick}>{truncateAddress(address)}</Element>
+    <div className={className}>
+      <Element className={addressClassName} role={props.onClick && 'button'} onClick={props.onClick}>{truncateAddress(address)}</Element>
       <TooltipIcon tooltip="Copy address" rootClose={true}>
         <span className="ms-2">
           <CopyToClipboard text={address}
@@ -35,7 +36,7 @@ function Address(props) {
         </span>
       </TooltipIcon>
       {props.children}
-    </span>
+    </div>
   );
 }
 

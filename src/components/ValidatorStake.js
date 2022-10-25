@@ -161,7 +161,7 @@ function ValidatorStake(props) {
       ) : (
         <>
           <div className="row">
-            <div className="col-12 col-lg-6 small">
+            <div className="col-12 col-lg-6 small mb-3">
               <Table>
                 <tbody>
                   <tr>
@@ -231,7 +231,7 @@ function ValidatorStake(props) {
                 </tbody>
               </Table>
             </div>
-            <div className="col-12 col-lg-6 small">
+            <div className="col-12 col-lg-6 small mb-3">
               <Table>
                 <tbody>
                   <tr>
@@ -414,20 +414,37 @@ function ValidatorStake(props) {
                 </Button>
               )
             )}
-            <Button variant="primary" disabled={!wallet?.hasPermission(address, 'Delegate')} onClick={() => setAction('delegate')}>
-              Delegate
-            </Button>
+            <TooltipIcon
+              icon={
+                <div>
+                  <Button variant="primary" disabled={!wallet?.hasPermission(address, 'Delegate')} onClick={() => setAction('delegate')}>
+                    Delegate
+                  </Button>
+                </div>
+              }
+              identifier={validator.operator_address}
+              tooltip={
+                  !wallet ? `Connect a wallet to delegate`
+                  : !wallet?.hasPermission(address, 'Delegate') && `You don't have permission to do that.`
+                }
+            />
             {operator && !grantsValid && (
               <TooltipIcon
                 icon={
                   <div>
-                    <Button variant="success" disabled={!network.authzSupport || !delegation?.balance?.amount || !wallet?.hasPermission(address, 'Grant')} onClick={() => setAction('grant')}>
+                    <Button variant="success" disabled={!props.restakePossible || !delegation?.balance?.amount || !wallet?.hasPermission(address, 'Grant')} onClick={() => setAction('grant')}>
                       Enable REStake
                     </Button>
                   </div>
                 }
                 identifier={validator.operator_address}
-                tooltip={!network.authzSupport ? `${props.network.prettyName} doesn't support Authz just yet` : !delegation?.balance?.amount ? `You must delegate to ${validator.moniker} before they can REStake for you.` : !wallet?.hasPermission(address, 'Delegate') && `You don't have permission to do that.`}
+                tooltip={
+                  !network.authzSupport ? `${props.network.prettyName} doesn't support Authz just yet`
+                    : !wallet ? `Connect a wallet to enable REStake`
+                    : !wallet.authzSupport() ? `${wallet.getIsNanoLedger() ? 'Ledger devices' : 'This wallet'} can't send Authz transactions on ${network.prettyName} yet`
+                    : !delegation?.balance?.amount ? `You must delegate to ${validator.moniker} before they can REStake for you.` 
+                    : !wallet?.hasPermission(address, 'Grant') && `You don't have permission to do that.`
+                  }
               />
             )}
           </div>

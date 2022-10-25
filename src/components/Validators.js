@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useReducer, useEffect } from 'react';
 import _ from 'lodash'
 import FuzzySearch from 'fuzzy-search'
 import { round } from 'mathjs'
@@ -14,7 +14,8 @@ import {
   Button,
   Spinner,
   Nav,
-  Spinner
+  Spinner,
+  Badge
 } from 'react-bootstrap'
 import { XCircle } from "react-bootstrap-icons";
 
@@ -25,14 +26,17 @@ import ValidatorServices from './ValidatorServices';
 function Validators(props) {
   const { address, wallet, network, validators, operators, delegations, operatorGrants } = props
 
-  const [filter, setFilter] = useState({keywords: '', status: 'active', group: 'delegated'})
+  const [filter, setFilter] = useReducer(
+    (state, newState) => ({ ...state, ...newState }),
+    {keywords: '', status: 'active', group: 'delegated'}
+  )
   const [results, setResults] = useState([])
 
   const showCommission = results && Object.values(results).find(el => el.isValidatorOperator(address))
 
   useEffect(() => {
     if(delegations && filter.group !== 'delegated'){
-      return setFilter({ ...filter, group: 'delegated' })
+      return setFilter({ group: 'delegated' })
     }
   }, [Object.keys(delegations || {}).length]);
 
@@ -43,7 +47,7 @@ function Validators(props) {
       group = group === 'delegated' ? 'operators' : 'all'
       filtered = filteredValidators(validators, {...filter, group})
       if(filtered.length > 0 || group === 'all'){
-        return setFilter({ ...filter, group })
+        return setFilter({ group })
       }
     }
     setResults(filtered)
@@ -69,7 +73,7 @@ function Validators(props) {
   }
 
   function filterValidators(event){
-    setFilter({...filter, keywords: event.target.value})
+    setFilter({keywords: event.target.value})
   }
 
   function filteredValidators(validators, filter){
@@ -154,6 +158,13 @@ function Validators(props) {
       denom: network.denom,
     };
 
+    let badge
+    if (validator.jailed) {
+      badge = { bg: 'danger', text: 'Jailed' }
+    } else if (!validator.active) {
+      badge = { bg: 'light', text: 'Inactive' }
+    }
+
     return (
       <tr key={validatorAddress} className={rowVariant}>
         <td className="px-1" width={30}>
@@ -164,9 +175,12 @@ function Validators(props) {
           />
         </td>
         <td className="ps-1">
-          <div role="button" onClick={() => props.showValidator(validator, { activeTab: 'profile' })} style={{maxWidth: 200}}>
-            <ValidatorName validator={validator} />
-            <div className="text-muted small">#{validator.rank}</div>
+          <div role="button" onClick={() => props.showValidator(validator, { activeTab: 'profile' })}>
+            <div className="d-flex align-items-center justify-content-end gap-3">
+              <ValidatorName validator={validator} className="me-auto" />
+              {badge ? <small><Badge bg={badge.bg} className="ms-2 opacity-75">{badge.text}</Badge></small> : null}
+              <div className="text-muted small d-none d-md-block">#{validator.rank}</div>
+            </div>
           </div>
         </td>
         <td className="d-none d-sm-table-cell text-center">
@@ -231,25 +245,27 @@ function Validators(props) {
         <td className="d-none d-lg-table-cell text-center">
           <small>{format(validator.commission.commission_rates.rate * 100, 2)}%</small>
         </td>
-        <td className={filter.group === 'delegated' ? '' : 'd-none d-sm-table-cell'}>
-          {delegations ? (
-            delegationBalance && (
-              <div role="button" onClick={() => props.showValidator(validator, { activeTab: 'stake' })}>
-                <small>
-                  <Coins
-                    coins={delegationBalance}
-                    asset={network.baseAsset}
-                    precision={3}
-                  />
-                </small>
-              </div>
-            )
-          ) : address &&  (
-            <Spinner animation="border" role="status" className="spinner-border-sm text-secondary">
-              <span className="visually-hidden">Loading...</span>
-            </Spinner>
-          )}
-        </td>
+        {Object.keys(delegations || {}).length ? (
+          <td className={filter.group === 'delegated' ? '' : 'd-none d-sm-table-cell'}>
+            {delegations ? (
+              delegationBalance && (
+                <div role="button" onClick={() => props.showValidator(validator, { activeTab: 'stake' })}>
+                  <small>
+                    <Coins
+                      coins={delegationBalance}
+                      asset={network.baseAsset}
+                      precision={3}
+                    />
+                  </small>
+                </div>
+              )
+            ) : address &&  (
+              <Spinner animation="border" role="status" className="spinner-border-sm text-secondary">
+                <span className="visually-hidden">Loading...</span>
+              </Spinner>
+            )}
+          </td>
+        ) : null}
         {filter.group === 'delegated' && (
           <>
             {!props.modal && (
@@ -321,7 +337,7 @@ function Validators(props) {
           <div className="input-group">
             <input className="form-control border-right-0 border" onChange={filterValidators} value={filter.keywords} type="text" placeholder="Search.." style={{maxWidth: 150}} />
             <span className="input-group-append">
-              <button className="btn btn-light text-dark border-left-0 border" type="button" onClick={() => setFilter({...filter, keywords: ''})}>
+              <button className="btn btn-light text-dark border-left-0 border" type="button" onClick={() => setFilter({keywords: ''})}>
                 <XCircle />
               </button>
             </span>
@@ -331,14 +347,14 @@ function Validators(props) {
           <div className="input-group">
             <input className="form-control border-right-0 border" onChange={filterValidators} value={filter.keywords} type="text" placeholder="Search.." />
             <span className="input-group-append">
-              <button className="btn btn-light text-dark border-left-0 border" type="button" onClick={() => setFilter({...filter, keywords: ''})}>
+              <button className="btn btn-light text-dark border-left-0 border" type="button" onClick={() => setFilter({keywords: ''})}>
                 <XCircle />
               </button>
             </span>
           </div>
         </div>
         <div className={`${!props.modal && 'd-lg-flex'} d-none position-absolute mx-auto justify-content-center align-self-center`}>
-          <Nav fill variant="pills" activeKey={filter.group} className={`flex-row${props.modal ? ' small' : ''}`} onSelect={(e) => setFilter({...filter, group: e})}>
+          <Nav fill variant="pills" activeKey={filter.group} className={`flex-row${props.modal ? ' small' : ''}`} onSelect={(e) => setFilter({group: e})}>
             <Nav.Item>
               <Nav.Link eventKey="delegated" disabled={filteredValidators(validators, {...filter, group: 'delegated'}).length < 1}>My Delegations</Nav.Link>
             </Nav.Item>
@@ -351,14 +367,14 @@ function Validators(props) {
           </Nav>
         </div>
         <div className={`d-flex ${!props.modal && 'd-lg-none'} justify-content-center`}>
-          <select className="form-select w-auto h-auto" aria-label="Delegation group" value={filter.group} onChange={(e) => setFilter({...filter, group: e.target.value})}>
+          <select className="form-select w-auto h-auto" aria-label="Delegation group" value={filter.group} onChange={(e) => setFilter({group: e.target.value})}>
             <option value="delegated" disabled={filteredValidators(validators, {...filter, group: 'delegated'}).length < 1}>My Delegations</option>
             <option value="operators" disabled={filteredValidators(validators, {...filter, group: 'operators'}).length < 1}>REStake Operators</option>
             <option value="all">All</option>
           </select>
         </div>
         <div className="flex-fill d-flex justify-content-end">
-          <select className="form-select w-auto h-auto" aria-label="Validator status" value={filter.status} onChange={(e) => setFilter({...filter, status: e.target.value})}>
+          <select className="form-select w-auto h-auto" aria-label="Validator status" value={filter.status} onChange={(e) => setFilter({status: e.target.value})}>
             <option value="active">Active</option>
             <option value="inactive">Inactive</option>
             <option value="all">All</option>
@@ -388,7 +404,9 @@ function Validators(props) {
                 </th>
               )}
               <th className="d-none d-lg-table-cell text-center">Fee</th>
-              <th className={filter.group === 'delegated' ? '' : 'd-none d-sm-table-cell'}>Delegation</th>
+              {Object.keys(delegations || {}).length ? (
+                <th className={filter.group === 'delegated' ? '' : 'd-none d-sm-table-cell'}>Delegation</th>
+              ) : null}
               {filter.group === 'delegated' && (
                 <>
                   {!props.modal && (
@@ -417,23 +435,25 @@ function Validators(props) {
                 <td className="text-center"></td>
               )}
               <td className="d-none d-lg-table-cell"></td>
-              <td className={filter.group === 'delegated' ? '' : 'd-none d-sm-table-cell'}>
-                <strong className="small">
-                  <Coins
-                    coins={{
-                      amount: results.reduce((sum, result) => {
-                        const delegation = delegations && delegations[result.operator_address]
-                        if (!delegation) return sum
+              {Object.keys(delegations || {}).length ? (
+                <td className={filter.group === 'delegated' ? '' : 'd-none d-sm-table-cell'}>
+                  <strong className="small">
+                    <Coins
+                      coins={{
+                        amount: results.reduce((sum, result) => {
+                          const delegation = delegations && delegations[result.operator_address]
+                          if (!delegation) return sum
 
-                        return add(sum, delegation.balance.amount)
-                      }, 0),
-                      denom: network.denom
-                    }}
-                    asset={network.baseAsset}
-                    precision={3}
-                  />
-                </strong>
-              </td>
+                          return add(sum, delegation.balance.amount)
+                        }, 0),
+                        denom: network.denom
+                      }}
+                      asset={network.baseAsset}
+                      precision={3}
+                    />
+                  </strong>
+                </td>
+              ) : null}
               {filter.group === 'delegated' && (
                 <>
                   {!props.modal && (

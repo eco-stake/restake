@@ -201,6 +201,9 @@ class App extends React.Component {
     let key
     try {
       key = await signerProvider.connect(network);
+      if (!network.ledgerSupport && (key.isNanoLedger || key.isHardware)) {
+        throw new Error('Ledger support is coming soon')
+      }
     } catch (e) {
       return this.setState({
         error: `Failed to connect to ${signerProvider?.label || 'signer'}: ${e.message}`,
@@ -398,8 +401,8 @@ class App extends React.Component {
         grants: {
           ...state.grants,
           [type]: grants,
-          grantQuerySupport: grantQuerySupport ?? state.grantQuerySupport
-        }
+        },
+        grantQuerySupport: grantQuerySupport ?? state.grantQuerySupport
       }
     })
   }
@@ -652,16 +655,18 @@ class App extends React.Component {
                               </optgroup>
                             </select>
                           )}
-                          <span className="d-none d-md-inline ms-2">
-                            <TooltipIcon tooltip="Copy address" rootClose={true}>
-                              <span>
-                                <CopyToClipboard text={this.state.address}
-                                  onCopy={() => this.setCopied()}>
-                                  <span role="button" className="d-flex align-items-center">{this.state.copied ? <ClipboardCheck /> : <Clipboard />}</span>
-                                </CopyToClipboard>
-                              </span>
-                            </TooltipIcon>
-                          </span>
+                          {this.state.address && (
+                            <span className="d-none d-md-inline ms-2">
+                              <TooltipIcon tooltip="Copy address" rootClose={true}>
+                                <span>
+                                  <CopyToClipboard text={this.state.address}
+                                    onCopy={() => this.setCopied()}>
+                                    <span role="button" className="d-flex align-items-center">{this.state.copied ? <ClipboardCheck /> : <Clipboard />}</span>
+                                  </CopyToClipboard>
+                                </span>
+                              </TooltipIcon>
+                            </span>
+                          )}
                         </li>
                       )}
                       {this.state.address && (
