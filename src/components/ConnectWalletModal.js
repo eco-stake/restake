@@ -16,6 +16,7 @@ function ConnectWalletModal(props) {
   const { show, signerProvider, uri, callback, onClose } = props
   const [checkMobile] = useState(() => isMobile());
   const [checkAndroid] = useState(() => isAndroid());
+  const [showQrCode, setShowQrCode] = useState(!checkMobile);
 
   const navigateToAppURL = useMemo(() => {
     if (checkMobile) {
@@ -53,7 +54,8 @@ function ConnectWalletModal(props) {
           <Modal.Body>
             <div className="text-center">
               <p>{`Open your ${walletName} app to continue...`}</p>
-              {checkMobile ? (
+              {checkMobile && (
+                <>
                 <Button
                   onClick={() => {
                     if (navigateToAppURL) {
@@ -63,16 +65,23 @@ function ConnectWalletModal(props) {
                 >
                   Open App
                 </Button>
-              ) : (
-                uri ? (
+                {uri && (
+                  <div className="my-2">
+                    <Button variant="text" onClick={() => setShowQrCode(!showQrCode)}>{showQrCode ? 'Hide' : 'Show'} QR Code</Button>
+                  </div>
+                )}
+                </>
+              )}
+              {uri ? (
+                showQrCode && (
                   <div className="text-center">
                     <QRCode size={300} value={uri} />
                   </div>
-                ) : (
-                  <Spinner animation="border" role="status" className="spinner-border-sm">
-                    <span className="visually-hidden">Loading...</span>
-                  </Spinner>
                 )
+              ) : (
+                <Spinner animation="border" role="status" className="spinner-border-sm">
+                  <span className="visually-hidden">Loading...</span>
+                </Spinner>
               )}
               {!uri && (
                 <p className="mt-5">
