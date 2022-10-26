@@ -3,11 +3,11 @@ import _ from "lodash";
 import CountdownRestake from "./CountdownRestake";
 import TooltipIcon from "./TooltipIcon";
 
-import { CheckCircle, XCircle, ClockHistory, Clock } from "react-bootstrap-icons";
+import { XCircle } from "react-bootstrap-icons";
 import { joinString } from "../utils/Helpers.mjs";
 
 function REStakeStatus(props) {
-  const { network, validator, operator, delegation, grants, className } = props
+  const { network, validator, operator, delegation, grants, tooltip, className } = props
   
   function content(){
     if (operator) {
@@ -18,7 +18,7 @@ function REStakeStatus(props) {
             operator={operator}
             maxAmount={grants.maxTokens}
             className={className}
-            icon={grants.maxTokens ? <ClockHistory className={joinString('p-0', className)} /> : <Clock className={joinString('p-0', className)} />}
+            icon={<small className="text-nowrap text-success">{operator.frequency()}</small>}
             renderText={(string) => <p>Validator will REStake in<br /><span>{string}</span></p>}
             rootClose={true}
           />
@@ -26,10 +26,10 @@ function REStakeStatus(props) {
       } else {
         return (
           <TooltipIcon
-            icon={<CheckCircle className={joinString(`text-success`, className)} />}
+            icon={<small className="text-nowrap text-decoration-underline">{operator.frequency()}</small>}
             identifier={validator.operator_address}
             rootClose={true}
-            tooltip="This validator can REStake your rewards"
+            tooltip={tooltip || "This validator can REStake your rewards"}
           />
         )
       }
@@ -39,7 +39,7 @@ function REStakeStatus(props) {
           icon={<XCircle className={joinString(`opacity-50`, className)} />}
           identifier={validator.operator_address}
           rootClose={true}
-          tooltip="This validator is not a REStake operator"
+          tooltip={tooltip || "This validator is not a REStake operator"}
         />
       )
     }

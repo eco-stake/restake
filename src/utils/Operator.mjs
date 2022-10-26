@@ -66,7 +66,7 @@ const Operator = (network, data) => {
 
   function frequency() {
     if(runTime.length > 1 && !isInterval()){
-      return runTime.length + 'x per day'
+      return runTime.length + 'x daily'
     }else{
       if(isInterval()){
         return runTime[0].replace('every ', '')

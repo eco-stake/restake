@@ -22,7 +22,6 @@ import { XCircle } from "react-bootstrap-icons";
 import ValidatorName from "./ValidatorName";
 import ManageRestake from "./ManageRestake";
 import ValidatorServices from './ValidatorServices';
-import REStakeStatus from './REStakeStatus';
 
 function Validators(props) {
   const { address, wallet, network, validators, operators, delegations, operatorGrants } = props
@@ -154,11 +153,6 @@ function Validators(props) {
       denom: network.denom,
     };
 
-    const minimumReward = operator && {
-      amount: operator.minimumReward,
-      denom: network.denom,
-    };
-
     let badge
     if (validator.jailed) {
       badge = { bg: 'danger', text: 'Jailed' }
@@ -185,61 +179,17 @@ function Validators(props) {
           </div>
         </td>
         <td className="text-center">
-          {!props.isLoading ? (
             <>
               <ManageRestake
-                size="sm"
-                className="d-none d-sm-inline-block"
-                disabled={!wallet?.hasPermission(address, 'Grant')}
                 network={network}
                 validator={validator}
                 operator={operator}
                 grants={grants}
                 delegation={delegation}
-                isLoading={props.isLoading}
-                authzSupport={props.authzSupport}
                 restakePossible={props.restakePossible && !props.modal}
                 openGrants={() => props.showValidator(validator, { activeTab: 'stake' })}
               />
-              <REStakeStatus
-                className="d-inline-block d-sm-none"
-                disabled={!wallet?.hasPermission(address, 'Grant')}
-                network={network}
-                validator={validator}
-                operator={operator}
-                grants={grants}
-                delegation={delegation}
-                onClick={() => props.showValidator(validator, { activeTab: 'stake' })}
-              />
             </>
-          ) : (
-            <Spinner animation="border" role="status" className="spinner-border-sm text-secondary">
-              <span className="visually-hidden">Loading...</span>
-            </Spinner>
-          )}
-        </td>
-        <td className={filter.group === 'delegated' ? 'text-center d-none d-lg-table-cell' : 'text-center d-none d-md-table-cell'}>
-          {operator && (
-            <span role="button" onClick={() => props.showValidator(validator, { activeTab: 'stake' })}>
-              <TooltipIcon
-                icon={<small className="text-decoration-underline">{operator.frequency()}</small>}
-                identifier={operator.address}
-              >
-                <div className="mt-2 text-center">
-                  <p>REStakes {operator.runTimesString()}</p>
-                  <p>
-                    Minimum reward is{" "}
-                    <Coins
-                      coins={minimumReward}
-                      asset={network.baseAsset}
-                      fullPrecision={true}
-                      hideValue={true}
-                    />
-                  </p>
-                </div>
-              </TooltipIcon>
-            </span>
-          )}
         </td>
         {network.apyEnabled && (
           <td className="text-center">
@@ -400,10 +350,7 @@ function Validators(props) {
           <thead>
             <tr>
               <th colSpan={2}>Validator</th>
-              <th className="text-center"><span className="d-none d-sm-inline">REStake</span></th>
-              <th className={filter.group === 'delegated' ? 'text-center d-none d-lg-table-cell' : 'text-center d-none d-md-table-cell'}>
-                Frequency
-              </th>
+              <th className="text-center">REStake</th>
               {network.apyEnabled && (
                 <th className="text-center">
                   <TooltipIcon
@@ -411,7 +358,7 @@ function Validators(props) {
                     identifier="delegations-apy"
                   >
                     <div className="mt-2 text-center">
-                      <p>Based on commission, compounding frequency and estimated block times.</p>
+                      <p>Based on commission, compounding frequency and recent block times.</p>
                       <p>This is a best case scenario and may not be 100% accurate.</p>
                     </div>
                   </TooltipIcon>
@@ -444,7 +391,6 @@ function Validators(props) {
             <tr>
               <td colSpan={2}></td>
               <td className="text-center"></td>
-              <td className={filter.group === 'delegated' ? 'text-center d-none d-lg-table-cell' : 'text-center d-none d-md-table-cell'}></td>
               {network.apyEnabled && (
                 <td className="text-center"></td>
               )}
