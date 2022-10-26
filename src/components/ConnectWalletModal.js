@@ -72,17 +72,17 @@ function ConnectWalletModal(props) {
                 )}
                 </>
               )}
-              {uri ? (
-                showQrCode && (
-                  <div className="text-center">
+              <div className="text-center">
+                {uri ? (
+                  showQrCode && (
                     <QRCode size={300} value={uri} />
-                  </div>
-                )
-              ) : (
-                <Spinner animation="border" role="status" className="spinner-border-sm">
-                  <span className="visually-hidden">Loading...</span>
-                </Spinner>
-              )}
+                  )
+                ) : (
+                  <Spinner animation="border" role="status" className="spinner-border-sm mt-5">
+                    <span className="visually-hidden">Loading...</span>
+                  </Spinner>
+                )}
+              </div>
               {!uri && (
                 <p className="mt-5">
                   <Button size="sm" onClick={forceDisconnect} variant="danger">Disconnect session</Button>
