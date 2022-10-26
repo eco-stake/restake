@@ -133,8 +133,8 @@ function SavedAddresses(props) {
                   <td>
                     <div className="text-end">
                       <Button type="submit" variant="secondary" size="sm">
-                        <span className="d-none d-sm-inline">Add address</span>
-                        <PlusCircle className="d-inline d-sm-none" />
+                        <span className="d-none d-lg-inline">Add address</span>
+                        <PlusCircle className="d-inline d-lg-none" />
                       </Button>
                     </div>
                   </td>

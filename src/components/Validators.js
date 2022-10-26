@@ -218,7 +218,7 @@ function Validators(props) {
             </Spinner>
           )}
         </td>
-        <td className="d-none d-lg-table-cell text-center">
+        <td className={filter.group === 'delegated' ? 'text-center d-none d-lg-table-cell' : 'text-center d-none d-md-table-cell'}>
           {operator && (
             <span role="button" onClick={() => props.showValidator(validator, { activeTab: 'stake' })}>
               <TooltipIcon
@@ -256,7 +256,7 @@ function Validators(props) {
             </span>
           </td>
         )}
-        <td className="d-none d-lg-table-cell text-center">
+        <td className={network.apyEnabled ? 'text-center d-none d-lg-table-cell' : 'text-center'}>
           <small>{format(validator.commission.commission_rates.rate * 100, 2)}%</small>
         </td>
         {Object.keys(delegations || {}).length ? (
@@ -401,7 +401,7 @@ function Validators(props) {
             <tr>
               <th colSpan={2}>Validator</th>
               <th className="text-center"><span className="d-none d-sm-inline">REStake</span></th>
-              <th className="d-none d-lg-table-cell text-center">
+              <th className={filter.group === 'delegated' ? 'text-center d-none d-lg-table-cell' : 'text-center d-none d-md-table-cell'}>
                 Frequency
               </th>
               {network.apyEnabled && (
@@ -417,7 +417,7 @@ function Validators(props) {
                   </TooltipIcon>
                 </th>
               )}
-              <th className="d-none d-lg-table-cell text-center">Fee</th>
+              <th className={network.apyEnabled ? 'text-center d-none d-lg-table-cell' : 'text-center'}>Fee</th>
               {Object.keys(delegations || {}).length ? (
                 <th className={filter.group === 'delegated' ? '' : 'd-none d-sm-table-cell'}>Delegation</th>
               ) : null}
@@ -444,11 +444,11 @@ function Validators(props) {
             <tr>
               <td colSpan={2}></td>
               <td className="text-center"></td>
-              <td className="d-none d-lg-table-cell text-center"></td>
+              <td className={filter.group === 'delegated' ? 'text-center d-none d-lg-table-cell' : 'text-center d-none d-md-table-cell'}></td>
               {network.apyEnabled && (
                 <td className="text-center"></td>
               )}
-              <td className="d-none d-lg-table-cell"></td>
+              <td className={network.apyEnabled ? 'text-center d-none d-lg-table-cell' : 'text-center'}></td>
               {Object.keys(delegations || {}).length ? (
                 <td className={filter.group === 'delegated' ? '' : 'd-none d-sm-table-cell'}>
                   <strong className="small">

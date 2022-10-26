@@ -91,7 +91,7 @@ function WalletModal(props) {
                           <div className="d-flex gap-2">
                             <Address address={wallet.address} />
                             <Favourite
-                              favourites={favouriteAddresses[network.path]}
+                              favourites={favouriteAddresses[network.path] || []}
                               value={wallet.address}
                               label={props.address === wallet?.address && wallet.name}
                               toggle={props.toggleFavouriteAddress} />

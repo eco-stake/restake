@@ -11,7 +11,7 @@ function ManageRestake(props) {
 
   return (
     <>
-      {restakePossible && !grants?.grantsValid && (delegation || grants?.grantsExist) ? (
+      {restakePossible && operator && !grants?.grantsValid && (delegation || grants?.grantsExist) ? (
         <OverlayTrigger
           key={operator.address}
           placement="top"
