@@ -25,7 +25,7 @@ import {
   DropletHalf,
   CashCoin,
   Coin,
-  Inboxes,
+  EnvelopePaper,
   Stars,
   WrenchAdjustableCircle,
   WrenchAdjustableCircleFill,
@@ -47,7 +47,7 @@ import LogoWhite3x from '../assets/logo-white@3x.png'
 import PoweredByAkash from '../assets/powered-by-akash.svg'
 import PoweredByAkashWhite from '../assets/powered-by-akash-white.svg'
 import TooltipIcon from './TooltipIcon';
-import Governance from './Governance';
+import Voting from './Voting';
 import Networks from './Networks';
 import Grants from './Grants';
 import Favourite from './Favourite';
@@ -530,7 +530,7 @@ class App extends React.Component {
     switch (this.props.active) {
       case 'networks':
         return <span>REStake automatically imports <a href="https://cosmos.network/" target="_blank" className="text-reset"><strong>Cosmos</strong></a> chains from the <a href="https://github.com/cosmos/chain-registry" target="_blank" className="text-reset"><strong>Chain Registry</strong></a></span>
-      case 'governance':
+      case 'voting':
         return <span>REStake let's you vote on behalf of your other {this.props.network && <strong onClick={this.showNetworkSelect} className="text-decoration-underline" role="button">{this.props.network.prettyName}</strong>} wallets using Authz</span>
       case 'grants':
         return <span>REStake manages all your {this.props.network && <strong onClick={this.showNetworkSelect} className="text-decoration-underline" role="button">{this.props.network.prettyName}</strong>} Authz grants in one place</span>
@@ -588,8 +588,8 @@ class App extends React.Component {
                         </Nav.Link>
                       </div>
                       <div className="nav-item px-2 border-end">
-                        <Nav.Link eventKey="governance">
-                          <Inboxes className="mb-1 me-1" /><span className="d-none d-sm-inline"> Govern</span>
+                        <Nav.Link eventKey="voting">
+                          <EnvelopePaper className="mb-1 me-1" /><span className="d-none d-sm-inline"> Vote</span>
                         </Nav.Link>
                       </div>
                       {this.state.address && this.props.network.authzSupport && (
@@ -780,8 +780,8 @@ class App extends React.Component {
                 signingClient={this.state.signingClient} />
             </>
           }
-          {this.props.active === 'governance' && (
-            <Governance
+          {this.props.active === 'voting' && (
+            <Voting
               network={this.props.network}
               address={this.state.address}
               wallet={this.state.wallet}
