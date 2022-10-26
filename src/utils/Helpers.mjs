@@ -11,6 +11,10 @@ export function coin(amount, denom){
   return _coin(format(floor(amount), {notation: 'fixed'}), denom)
 }
 
+export function joinString(...args){
+  return _.compact(args).join(' ')
+}
+
 export function truncateAddress(address) {
   const firstDigit = address.search(/\d/)
   return truncateMiddle(address, firstDigit + 6, 6, '…')

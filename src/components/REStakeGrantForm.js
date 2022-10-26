@@ -17,7 +17,7 @@ import RevokeGrant from './RevokeGrant';
 import AlertMessage from './AlertMessage';
 import OperatorLastRestakeAlert from './OperatorLastRestakeAlert';
 
-function GrantStakeForm(props) {
+function REStakeGrantForm(props) {
   const { grants, wallet, operator, address, network, lastExec } = props
   const { stakeGrant, maxTokens, validators } = grants || {}
   const defaultExpiry = moment().add(1, 'year')
@@ -225,4 +225,4 @@ function GrantStakeForm(props) {
   )
 }
 
-export default GrantStakeForm;
+export default REStakeGrantForm;

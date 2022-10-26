@@ -17,11 +17,12 @@ import { rewardAmount } from '../utils/Helpers.mjs';
 import ClaimRewards from './ClaimRewards';
 import Validators from './Validators'
 import AlertMessage from './AlertMessage'
-import GrantStakeForm from './GrantStakeForm';
+import REStakeGrantForm from './REStakeGrantForm';
 import Address from './Address';
 import OperatorLastRestake from './OperatorLastRestake';
 import CountdownRestake from './CountdownRestake';
 import RevokeGrant from './RevokeGrant';
+import ValidatorStatus from './ValidatorStatus'
 
 function ValidatorStake(props) {
   const { network, validator, operator, balance, wallet, address, lastExec } = props
@@ -126,7 +127,7 @@ function ValidatorStake(props) {
               </div>
             </>
           ) : action === 'grant' ? (
-            <GrantStakeForm
+            <REStakeGrantForm
               network={network}
               address={props.address}
               wallet={props.wallet}
@@ -164,6 +165,12 @@ function ValidatorStake(props) {
             <div className="col-12 col-lg-6 small mb-3">
               <Table>
                 <tbody>
+                  {!validator.active && (
+                    <tr>
+                      <td scope="row">Status</td>
+                      <td><ValidatorStatus validator={validator} /></td>
+                    </tr>
+                  )}
                   <tr>
                     <td scope="row">Current Delegation</td>
                     <td className="text-break"><Coins coins={delegation?.balance || { amount: 0, denom: network.denom }} asset={network.baseAsset} fullPrecision={true} /></td>
@@ -269,18 +276,18 @@ function ValidatorStake(props) {
                       {network.authzSupport && (
                         <>
                           <tr>
+                            <td scope="row">Last REStake</td>
+                            <td>
+                              <OperatorLastRestake operator={operator} lastExec={lastExec} />
+                            </td>
+                          </tr>
+                          <tr>
                             <td scope="row">Next REStake</td>
                             <td>
                               <CountdownRestake
                                 network={network}
                                 operator={operator}
                               />
-                            </td>
-                          </tr>
-                          <tr>
-                            <td scope="row">Last REStake</td>
-                            <td>
-                              <OperatorLastRestake operator={operator} lastExec={lastExec} />
                             </td>
                           </tr>
                         </>
@@ -424,9 +431,9 @@ function ValidatorStake(props) {
               }
               identifier={validator.operator_address}
               tooltip={
-                  !wallet ? `Connect a wallet to delegate`
+                !wallet ? `Connect a wallet to delegate`
                   : !wallet?.hasPermission(address, 'Delegate') && `You don't have permission to do that.`
-                }
+              }
             />
             {operator && !grantsValid && (
               <TooltipIcon
@@ -441,10 +448,10 @@ function ValidatorStake(props) {
                 tooltip={
                   !network.authzSupport ? `${props.network.prettyName} doesn't support Authz just yet`
                     : !wallet ? `Connect a wallet to enable REStake`
-                    : !wallet.authzSupport() ? `${wallet.getIsNanoLedger() ? 'Ledger devices' : 'This wallet'} can't send Authz transactions on ${network.prettyName} yet`
-                    : !delegation?.balance?.amount ? `You must delegate to ${validator.moniker} before they can REStake for you.` 
-                    : !wallet?.hasPermission(address, 'Grant') && `You don't have permission to do that.`
-                  }
+                      : !wallet.authzSupport() ? `${wallet.getIsNanoLedger() ? 'Ledger devices' : 'This wallet'} can't send Authz transactions on ${network.prettyName} yet`
+                        : !delegation?.balance?.amount ? `You must delegate to ${validator.moniker} before they can REStake for you.`
+                          : !wallet?.hasPermission(address, 'Grant') && `You don't have permission to do that.`
+                }
               />
             )}
           </div>

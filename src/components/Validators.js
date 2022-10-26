@@ -22,6 +22,7 @@ import { XCircle } from "react-bootstrap-icons";
 import ValidatorName from "./ValidatorName";
 import ManageRestake from "./ManageRestake";
 import ValidatorServices from './ValidatorServices';
+import REStakeStatus from './REStakeStatus';
 
 function Validators(props) {
   const { address, wallet, network, validators, operators, delegations, operatorGrants } = props
@@ -176,28 +177,41 @@ function Validators(props) {
         </td>
         <td className="ps-1">
           <div role="button" onClick={() => props.showValidator(validator, { activeTab: 'profile' })}>
-            <div className="d-flex align-items-center justify-content-end gap-3">
+            <div className="d-flex align-items-start align-items-sm-center justify-content-end flex-column flex-sm-row gap-1 gap-sm-3">
               <ValidatorName validator={validator} className="me-auto" />
-              {badge ? <small><Badge bg={badge.bg} className="ms-2 opacity-75">{badge.text}</Badge></small> : null}
+              {badge ? <small><Badge bg={badge.bg} className="opacity-75">{badge.text}</Badge></small> : null}
               <div className="text-muted small d-none d-md-block">#{validator.rank}</div>
             </div>
           </div>
         </td>
-        <td className="d-none d-sm-table-cell text-center">
+        <td className="text-center">
           {!props.isLoading ? (
-            <ManageRestake
-              size="sm"
-              disabled={!wallet?.hasPermission(address, 'Grant')}
-              network={network}
-              validator={validator}
-              operator={operator}
-              grants={grants}
-              delegation={delegation}
-              isLoading={props.isLoading}
-              authzSupport={props.authzSupport}
-              restakePossible={props.restakePossible && !props.modal}
-              openGrants={() => props.showValidator(validator, { activeTab: 'stake' })}
-            />
+            <>
+              <ManageRestake
+                size="sm"
+                className="d-none d-sm-inline-block"
+                disabled={!wallet?.hasPermission(address, 'Grant')}
+                network={network}
+                validator={validator}
+                operator={operator}
+                grants={grants}
+                delegation={delegation}
+                isLoading={props.isLoading}
+                authzSupport={props.authzSupport}
+                restakePossible={props.restakePossible && !props.modal}
+                openGrants={() => props.showValidator(validator, { activeTab: 'stake' })}
+              />
+              <REStakeStatus
+                className="d-inline-block d-sm-none"
+                disabled={!wallet?.hasPermission(address, 'Grant')}
+                network={network}
+                validator={validator}
+                operator={operator}
+                grants={grants}
+                delegation={delegation}
+                onClick={() => props.showValidator(validator, { activeTab: 'stake' })}
+              />
+            </>
           ) : (
             <Spinner animation="border" role="status" className="spinner-border-sm text-secondary">
               <span className="visually-hidden">Loading...</span>
@@ -386,7 +400,7 @@ function Validators(props) {
           <thead>
             <tr>
               <th colSpan={2}>Validator</th>
-              <th className="d-none d-sm-table-cell text-center">REStake</th>
+              <th className="text-center"><span className="d-none d-sm-inline">REStake</span></th>
               <th className="d-none d-lg-table-cell text-center">
                 Frequency
               </th>
@@ -429,7 +443,7 @@ function Validators(props) {
           <tfoot>
             <tr>
               <td colSpan={2}></td>
-              <td className="d-none d-sm-table-cell text-center"></td>
+              <td className="text-center"></td>
               <td className="d-none d-lg-table-cell text-center"></td>
               {network.apyEnabled && (
                 <td className="text-center"></td>
