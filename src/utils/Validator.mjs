@@ -21,8 +21,6 @@ const Validator = (network, data) => {
   }
 
   function getAPR(){
-    if(!network?.apyEnabled) return
-
     if (!data.active) {
       return 0
     } else {
@@ -32,7 +30,7 @@ const Validator = (network, data) => {
 
   function getAPY(operator){
     const apr = getAPR()
-    if(!apr) return
+    if(!apr) return 0
 
     const periodPerYear = operator && network.chain.authzSupport ? operator.runsPerDay(network.data.maxPerDay) * 365 : 1;
     return (1 + apr / periodPerYear) ** periodPerYear - 1;

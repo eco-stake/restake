@@ -19,18 +19,10 @@ import ValidatorServices from './ValidatorServices';
 import ValidatorNetworks from './ValidatorNetworks';
 import OperatorLastRestake from './OperatorLastRestake';
 import Address from './Address';
+import ValidatorStatus from './ValidatorStatus'
 
 function ValidatorProfile(props) {
   const { validator, operator, network, networks, registryData, lastExec } = props
-
-  const status = () => {
-    if (!validator) return
-
-    const status = validator.active ? 'Active' : validator.jailed ? 'Jailed' : validator.active != null ? 'Inactive' : 'Unknown'
-    let className = validator.active ? '' : 'text-danger'
-
-    return <span className={className}>{status}</span>
-  }
 
   const minimumReward = () => {
     return {
@@ -60,7 +52,7 @@ function ValidatorProfile(props) {
               {!validator.active && (
                 <tr>
                   <td scope="row">Status</td>
-                  <td>{status()}</td>
+                  <td><ValidatorStatus validator={validator} /></td>
                 </tr>
               )}
               {uptime() && (

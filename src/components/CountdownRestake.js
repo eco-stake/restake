@@ -4,9 +4,6 @@ import TooltipIcon from './TooltipIcon';
 
 import Countdown from 'react-countdown';
 
-import {
-  ClockHistory, Clock
-} from 'react-bootstrap-icons'
 import Coins from './Coins';
 
 function CountdownRestake(props) {
@@ -36,7 +33,7 @@ function CountdownRestake(props) {
   }
   return (
     icon ? (
-      <TooltipIcon icon={icon} identifier={operator.address}>
+      <TooltipIcon icon={icon} identifier={operator.address} rootClose={props.rootClose}>
         <div className="mt-2 text-center">
           <Countdown
             date={nextRun()}

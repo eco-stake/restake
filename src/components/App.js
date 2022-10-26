@@ -496,7 +496,7 @@ class App extends React.Component {
     const tooltip = `Switch to ${switchTo} mode`
     return (
       <span>
-        <TooltipIcon icon={icon} tooltip={tooltip} placement="left" />
+        <TooltipIcon icon={icon} tooltip={tooltip} placement="left" rootClose={true} />
       </span>
     )
   }
