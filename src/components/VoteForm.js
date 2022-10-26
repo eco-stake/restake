@@ -121,7 +121,7 @@ function VoteForm(props) {
           <div className="row pe-lg-5">
             {_.chunk(Object.entries(choices), 2).map((group, index) => {
               return (
-                <div key={index} className="col-12 col-md-6">
+                <div key={index} className="col-6">
                   {group.map(([key, value]) => {
                     const voteChoice = vote && key === vote.option
                     return (

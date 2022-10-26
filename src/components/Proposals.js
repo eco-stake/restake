@@ -84,15 +84,15 @@ function Proposals(props) {
             {proposal.content.title}
           </span>
         </td>
-        <td className="d-none d-lg-table-cell text-center text-nowrap">
+        <td className="d-none d-sm-table-cell text-center text-nowrap">
           {proposal.statusHuman}
         </td>
-        <td className="d-none d-md-table-cell text-center text-nowrap">
+        <td className="d-none d-sm-table-cell text-center text-nowrap">
           <Moment fromNow>
             {proposal.isDeposit ? proposal.deposit_end_time : proposal.voting_end_time}
           </Moment>
         </td>
-        <td className="d-none d-lg-table-cell text-center">
+        <td className="text-center">
           {proposal.isVoting && (
             vote ? vote.optionHuman : <XCircle className="opacity-50" />
           )}
@@ -168,9 +168,9 @@ function Proposals(props) {
             <tr>
               <th className="d-none d-md-table-cell">#</th>
               <th>Proposal</th>
-              <th className="d-none d-lg-table-cell text-center">Status</th>
-              <th className="d-none d-md-table-cell text-center">End Time</th>
-              <th className="d-none d-lg-table-cell text-center">Voted</th>
+              <th className="d-none d-sm-table-cell text-center">Status</th>
+              <th className="d-none d-sm-table-cell text-center">End Time</th>
+              <th className="text-center">Vote</th>
               <th className="d-none d-md-table-cell text-center">Progress</th>
               <th></th>
             </tr>
