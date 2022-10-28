@@ -104,15 +104,10 @@ function ValidatorProfile(props) {
                     </TooltipIcon>
                   </td>
                   <td>
-                    {Object.keys(props.validatorApy).length > 0
-                      ? props.validatorApy[validator.operator_address]
-                        ? <span>{round(props.validatorApy[validator.operator_address] * 100, 2).toLocaleString()}%</span>
-                        : "-"
-                      : (
-                        <Spinner animation="border" role="status" className="spinner-border-sm text-secondary">
-                          <span className="visually-hidden">Loading...</span>
-                        </Spinner>
-                      )}
+                    {props.validatorApy[validator.operator_address]
+                      ? <span>{round(props.validatorApy[validator.operator_address] * 100, 2).toLocaleString()}%</span>
+                      : "-"
+                    }
                   </td>
                 </tr>
               )}

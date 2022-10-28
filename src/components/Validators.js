@@ -188,15 +188,10 @@ function Validators(props) {
         {network.apyEnabled && (
           <td className="text-center">
             <span role="button" onClick={() => props.showValidator(validator, { activeTab: 'stake' })}>
-              {Object.keys(props.validatorApy).length > 0
-                ? props.validatorApy[validatorAddress] !== undefined
-                  ? <small>{round(props.validatorApy[validatorAddress] * 100, 1).toLocaleString() + "%"}</small>
-                  : "-"
-                : (
-                  <Spinner animation="border" role="status" className="spinner-border-sm text-secondary">
-                    <span className="visually-hidden">Loading...</span>
-                  </Spinner>
-                )}
+              {props.validatorApy[validatorAddress] !== undefined
+                ? <small>{round(props.validatorApy[validatorAddress] * 100, 1).toLocaleString() + "%"}</small>
+                : "-"
+              }
             </span>
           </td>
         )}
