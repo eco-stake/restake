@@ -43,8 +43,9 @@ const Operator = (network, data) => {
           return current
         })
       }else{
-        const [hours, minutes, seconds] = time.split(':')
         let date = start.clone()
+        let [hours, minutes, seconds] = time.split(':')
+        if(parseInt(hours) >= 24) hours = 0
         date.utc(true).add({hours, minutes, seconds}) 
         return date
       }

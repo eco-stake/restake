@@ -33,14 +33,14 @@ function REStakeStatus(props) {
           tooltipContent = <span>Grant active {limit}</span>
           // styleClass = 'text-success'
           // styleClass = 'fst-italic'
-          icon = <ToggleOn />
+          icon = <ToggleOn className="d-block" />
         }else if(grants?.grantsExist){
           tooltipContent = 'Update grants to enable REStake'
-          icon = <ToggleOff />
+          icon = <ToggleOff className="d-block" />
           // styleClass = 'text-danger'
         }else{
           tooltipContent = 'Grant to enable REStake'
-          icon = <ToggleOff />
+          icon = <ToggleOff className="d-block" />
         }
       }else{
         tooltipContent = 'Delegate to enable REStake'
@@ -54,10 +54,10 @@ function REStakeStatus(props) {
       </Spinner>
     )
     content = (
-      <div>
+      <div className="d-flex flex-column align-items-center">
         {icon}
         <div>
-          <small className={joinString(`text-nowrap text-decoration-underline`, styleClass, className)}>{operator.frequency()}</small>
+          <small className={joinString(`text-nowrap text-decoration-underline d-block`, styleClass, className)}>{operator.frequency()}</small>
         </div>
       </div>
     )

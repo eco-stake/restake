@@ -74,15 +74,13 @@ function ValidatorModal(props) {
     } else if (params.section && params.section != activeTab) {
       const section = ['delegate', 'restake'].includes(params.section) ? 'stake' : params.section
       setTab(section)
-    } else if (!activeTab) {
+    } else if (!activeTab || !props.show) {
       setTab('profile')
-    } else if (!props.show){
-      setTab()
     }
   }, [props.show])
   
   function setTab(tab){
-    setActiveTab(tab)
+    setActiveTab(tab || 'profile')
   }
 
   function handleClose() {

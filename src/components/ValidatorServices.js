@@ -91,6 +91,7 @@ function ValidatorServices(props) {
           <OverlayTrigger
             placement="top"
             key={service.key}
+            rootClose={true}
             overlay={
               <Tooltip id={`tooltip-${service.key}`}>{service.tooltip}</Tooltip>
             }
