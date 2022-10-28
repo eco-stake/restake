@@ -5,7 +5,7 @@ const Operator = (network, data) => {
   const { address } = data
   const botAddress = data.restake.address
   let runTime = data.restake.run_time
-  runTime = runTime && Array.isArray(runTime) ? runTime : [runTime]
+  runTime = runTime && Array.isArray(runTime) ? runTime : [runTime?.split(',')].flat()
   const minimumReward = data.restake.minimum_reward
 
   function missedRunCount(lastExec){
@@ -43,7 +43,10 @@ const Operator = (network, data) => {
           return current
         })
       }else{
-        return start.utc(time, 'HH:mm:ss')
+        const [hours, minutes, seconds] = time.split(':')
+        let date = start.clone()
+        date.utc(true).add({hours, minutes, seconds}) 
+        return date
       }
     }).flat().sort((a, b) => a.valueOf() - b.valueOf())
   }

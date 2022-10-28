@@ -23,12 +23,15 @@ function CountdownRestake(props) {
       <div><span>{string}</span></div>
     )
   }
+
+  if(!nextRun()) return null
+
   return (
     icon ? (
       <TooltipIcon icon={icon} identifier={operator.address} rootClose={props.rootClose}>
         <div className="mt-2 text-center">
           <Countdown
-            date={nextRun()}
+            date={nextRun().unix()}
             renderer={countdownRenderer}
           />
           {maxAmount && (
@@ -39,7 +42,7 @@ function CountdownRestake(props) {
     ): (
       <div className={props.className}>
         <Countdown
-          date={nextRun()}
+          date={nextRun().unix()}
           renderer={countdownRenderer}
         />
         {maxAmount && (
