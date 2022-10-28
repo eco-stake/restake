@@ -2,6 +2,9 @@ import React from "react";
 import _ from "lodash";
 import TooltipIcon from "./TooltipIcon";
 
+import {
+  Spinner,
+} from 'react-bootstrap'
 import { XCircle, ToggleOn, ToggleOff } from "react-bootstrap-icons";
 import { joinString } from "../utils/Helpers.mjs";
 import Coins from "./Coins";
@@ -45,6 +48,11 @@ function REStakeStatus(props) {
     }else{
       tooltipContent = `Enable REStake once ${network.prettyName} supports Authz`
     }
+    if(props.isLoading('grants')) icon = (
+      <Spinner animation="border" role="status" className="spinner-border-sm">
+        <span className="visually-hidden">Loading...</span>
+      </Spinner>
+    )
     content = (
       <div>
         {icon}

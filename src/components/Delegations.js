@@ -27,6 +27,7 @@ class Delegations extends React.Component {
     this.onClaimRewards = this.onClaimRewards.bind(this);
     this.onGrant = this.onGrant.bind(this);
     this.onRevoke = this.onRevoke.bind(this);
+    this.isLoading = this.isLoading.bind(this);
     this.showValidatorModal = this.showValidatorModal.bind(this);
     this.setValidatorLoading = this.setValidatorLoading.bind(this);
     this.hideValidatorModal = this.hideValidatorModal.bind(this);
@@ -230,8 +231,23 @@ class Delegations extends React.Component {
     };
   }
 
-  isLoading(){
-    return this.props.wallet && (!this.state.delegations || (this.props.network?.authzSupport && !this.props.grants?.granter))
+  isValidatorOperator(){
+    if(!this.props.address) return false
+
+    return Object.values(this.props.validators).some(validator => validator.isValidatorOperator(this.props.address))
+  }
+
+  isLoading(type){
+    if(!this.props.address) return false
+    const loaders = {
+      'delegations': () => !this.state.delegations,
+      'grants': () => this.props.network?.authzSupport && !this.props.grants?.granter,
+      'rewards': () => !this.state.rewards,
+      'commission': () => this.isValidatorOperator() && !this.state.commission
+    }
+    if(!type) return Object.values(loaders).some((value) => value())
+
+    return loaders[type] ? loaders[type]() : false
   }
 
   onGrant(grantAddress, grant) {
@@ -366,6 +382,7 @@ class Delegations extends React.Component {
         authzSupport={this.authzSupport()}
         restakePossible={this.restakePossible()}
         signingClient={this.props.signingClient}
+        isLoading={this.isLoading}
         hideModal={this.hideValidatorModal}
         onDelegate={this.onClaimRewards}
         onGrant={this.onGrant}
@@ -443,6 +460,7 @@ class Delegations extends React.Component {
             authzSupport={this.authzSupport()}
             restakePossible={this.restakePossible()}
             showValidator={this.showValidatorModal}
+            isLoading={this.isLoading}
             setError={this.setError}
             onClaimRewards={this.onClaimRewards}
             onRevoke={this.onRevoke}
@@ -528,7 +546,7 @@ class Delegations extends React.Component {
           <div className="col">
             <div className="d-grid gap-2 d-md-flex justify-content-end">
               {this.state.rewards &&
-                (!this.state.claimLoading ? (
+                (!this.state.claimLoading && !this.isLoading('rewards') ? (
                   <Dropdown>
                     <Dropdown.Toggle
                       variant="secondary"

@@ -12,7 +12,6 @@ import TooltipIcon from './TooltipIcon'
 import {
   Table,
   Button,
-  Spinner,
   Nav,
   Spinner,
   Badge
@@ -182,6 +181,7 @@ function Validators(props) {
             rewards={rewards}
             grants={grants}
             authzSupport={props.authzSupport}
+            isLoading={props.isLoading}
             onClick={() => props.showValidator(validator, { activeTab: 'stake' })}
           />
         </td>
@@ -198,9 +198,9 @@ function Validators(props) {
         <td className={network.apyEnabled ? 'text-center d-none d-lg-table-cell' : 'text-center'}>
           <small>{format(validator.commission.commission_rates.rate * 100, 2)}%</small>
         </td>
-        {Object.keys(delegations || {}).length ? (
+        {props.isLoading('delegations') || Object.keys(delegations || {}).length ? (
           <td className={filter.group === 'delegated' ? '' : 'd-none d-sm-table-cell'}>
-            {delegations ? (
+            {!props.isLoading('delegations') ? (
               delegationBalance?.amount ? (
                 <div role="button" onClick={() => props.showValidator(validator, { activeTab: 'stake' })}>
                   <small>
@@ -212,7 +212,7 @@ function Validators(props) {
                   </small>
                 </div>
               ) : null
-            ) : address &&  (
+            ) : (
               <Spinner animation="border" role="status" className="spinner-border-sm text-secondary">
                 <span className="visually-hidden">Loading...</span>
               </Spinner>
@@ -223,7 +223,7 @@ function Validators(props) {
           <>
             {!props.modal && (
               <td className="d-none d-md-table-cell">
-                {props.rewards ? denomRewards && (
+                {!props.isLoading('rewards') ? denomRewards && (
                   <div role="button" onClick={() => props.showValidator(validator, { activeTab: 'stake' })}>
                     <small>
                       <Coins
@@ -234,7 +234,7 @@ function Validators(props) {
                       />
                     </small>
                   </div>
-                ) : address && (
+                ) : (
                   <Spinner animation="border" role="status" className="spinner-border-sm text-secondary">
                     <span className="visually-hidden">Loading...</span>
                   </Spinner>
@@ -244,19 +244,18 @@ function Validators(props) {
             </>
           )}
           {!props.modal && showCommission && (
-            {denomCommission ? (
           <td className="d-none d-lg-table-cell">
+            {!props.isLoading('commission') ? (
               <div role="button" onClick={() => props.showValidator(validator, { activeTab: 'stake' })}>
                 <small>
                   <Coins
-                    key={denomCommission.denom}
                     coins={denomCommission}
                     asset={network.baseAsset}
                     precision={3}
                   />
                 </small>
               </div>
-            ) : validatorOperator && (
+            ) : (
               <Spinner animation="border" role="status" className="spinner-border-sm text-secondary">
                 <span className="visually-hidden">Loading...</span>
               </Spinner>
@@ -350,7 +349,7 @@ function Validators(props) {
                 </th>
               )}
               <th className={network.apyEnabled ? 'text-center d-none d-lg-table-cell' : 'text-center'}>Fee</th>
-              {Object.keys(delegations || {}).length ? (
+              {props.isLoading('delegations') || Object.keys(delegations || {}).length ? (
                 <th className={filter.group === 'delegated' ? '' : 'd-none d-sm-table-cell'}>Delegation</th>
               ) : null}
               {filter.group === 'delegated' && (
@@ -366,7 +365,7 @@ function Validators(props) {
               {!props.modal && (
                 <th className={filter.group === 'delegated' ? 'd-none d-sm-table-cell' : ''}></th>
               )}
-              <th className="d-none d-sm-table-cell"></th>
+              <th className="d-none d-sm-table-cell text-center"></th>
             </tr>
           </thead>
           <tbody>
@@ -380,7 +379,7 @@ function Validators(props) {
                 <td className="text-center"></td>
               )}
               <td className={network.apyEnabled ? 'text-center d-none d-lg-table-cell' : 'text-center'}></td>
-              {Object.keys(delegations || {}).length ? (
+              {props.isLoading('delegations') || Object.keys(delegations || {}).length ? (
                 <td className={filter.group === 'delegated' ? '' : 'd-none d-sm-table-cell'}>
                   <strong className="small">
                     <Coins
