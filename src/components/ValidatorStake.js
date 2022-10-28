@@ -171,26 +171,6 @@ function ValidatorStake(props) {
                       <td><ValidatorStatus validator={validator} /></td>
                     </tr>
                   )}
-                  <tr>
-                    <td scope="row">Current Delegation</td>
-                    <td className="text-break"><Coins coins={delegation?.balance || { amount: 0, denom: network.denom }} asset={network.baseAsset} fullPrecision={true} /></td>
-                  </tr>
-                  {delegation?.balance?.amount && (
-                    <tr>
-                      <td scope="row">Current Rewards</td>
-                      <td>
-                        <Coins coins={{ amount: reward, denom: network.denom }} asset={network.baseAsset} fullPrecision={true} />
-                      </td>
-                    </tr>
-                  )}
-                  {!!commission && (
-                    <tr>
-                      <td scope="row">Current Commission</td>
-                      <td>
-                        <Coins coins={{ amount: commission, denom: network.denom }} asset={network.baseAsset} fullPrecision={true} />
-                      </td>
-                    </tr>
-                  )}
                   {network.apyEnabled && (
                     <>
                       <tr>
@@ -234,6 +214,26 @@ function ValidatorStake(props) {
                         </tr>
                       )}
                     </>
+                  )}
+                  <tr>
+                    <td scope="row">Current Delegation</td>
+                    <td className="text-break"><Coins coins={delegation?.balance || { amount: 0, denom: network.denom }} asset={network.baseAsset} fullPrecision={true} /></td>
+                  </tr>
+                  {delegation?.balance?.amount && (
+                    <tr>
+                      <td scope="row">Current Rewards</td>
+                      <td>
+                        <Coins coins={{ amount: reward, denom: network.denom }} asset={network.baseAsset} fullPrecision={true} />
+                      </td>
+                    </tr>
+                  )}
+                  {!!commission && (
+                    <tr>
+                      <td scope="row">Current Commission</td>
+                      <td>
+                        <Coins coins={{ amount: commission, denom: network.denom }} asset={network.baseAsset} fullPrecision={true} />
+                      </td>
+                    </tr>
                   )}
                 </tbody>
               </Table>
@@ -376,28 +376,6 @@ function ValidatorStake(props) {
                         setError={setError}
                       />
                     )}
-                    {operator && grantsValid && (
-                      <>
-                        <hr />
-                        <Dropdown.Item as="button" disabled={!wallet?.hasPermission(address, 'Grant') && !wallet?.hasPermission(address, 'Revoke')} onClick={() => {
-                          setAction('grant')
-                        }}>
-                          Manage REStake
-                        </Dropdown.Item>
-                        <RevokeGrant
-                          address={props.address}
-                          wallet={props.wallet}
-                          grantAddress={operator.botAddress}
-                          grants={[validatorGrants.stakeGrant, validatorGrants.claimGrant]}
-                          buttonText="Disable REStake"
-                          signingClient={props.signingClient}
-                          onRevoke={onRevoke}
-                          setLoading={(loading) =>
-                            setLoading(loading)
-                          }
-                          setError={setError} />
-                      </>
-                    )}
                     <hr />
                     <Dropdown.Item as="button" disabled={!wallet?.hasPermission(address, 'BeginRedelegate')} onClick={() => {
                       setSelectedValidator()
@@ -435,7 +413,34 @@ function ValidatorStake(props) {
                   : !wallet?.hasPermission(address, 'Delegate') && `You don't have permission to do that.`
               }
             />
-            {operator && !grantsValid && (
+            {operator && grantsValid ? (
+              <Dropdown>
+                <Dropdown.Toggle
+                  variant="success"
+                >
+                  REStake
+                </Dropdown.Toggle>
+                <Dropdown.Menu>
+                  <Dropdown.Item as="button" disabled={!wallet?.hasPermission(address, 'Grant') && !wallet?.hasPermission(address, 'Revoke')} onClick={() => {
+                    setAction('grant')
+                  }}>
+                    Manage Grant
+                  </Dropdown.Item>
+                  <RevokeGrant
+                    address={props.address}
+                    wallet={props.wallet}
+                    grantAddress={operator.botAddress}
+                    grants={[validatorGrants.stakeGrant, validatorGrants.claimGrant]}
+                    buttonText="Disable REStake"
+                    signingClient={props.signingClient}
+                    onRevoke={onRevoke}
+                    setLoading={(loading) =>
+                      setLoading(loading)
+                    }
+                    setError={setError} />
+                </Dropdown.Menu>
+              </Dropdown>
+            ) : operator && (
               <TooltipIcon
                 icon={
                   <div>

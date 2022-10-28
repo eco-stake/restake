@@ -144,9 +144,9 @@ function SavedAddresses(props) {
           </Form>
         </>
       )}
-      <p>Save addresses here to easily find and view them, and carry out any granted actions in the REStake UI on their behalf.</p>
-      <p>Select 'View address' for any saved address to enter View mode and see REStake as they would - useful for monitoring other addresses quickly!</p>
-      <p>If a saved address has granted you any permissions, REStake will detect them and enable the relevant features. This can make it very easy to manage staking and governance for multiple wallets.</p>
+      <p>Save addresses to easily find and view them, and carry out any granted actions in the REStake UI on their behalf.</p>
+      <p>Select 'View address' for any saved address to enter View mode and see REStake as they would - useful for monitoring other addresses quickly.</p>
+      <p>If a saved address has granted you any permissions, REStake will detect them and enable the relevant features in View mode. This can make it very easy to manage staking and governance for multiple wallets.</p>
     </>
   );
 }

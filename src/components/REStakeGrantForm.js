@@ -191,7 +191,7 @@ function REStakeGrantForm(props) {
                       {props.closeForm && (
                         <Button variant="secondary" onClick={props.closeForm}>Cancel</Button>
                       )}
-                      {grants.grantsExist && (
+                      {grants?.grantsExist && (
                         <RevokeGrant
                           button={true}
                           address={address}
@@ -206,7 +206,7 @@ function REStakeGrantForm(props) {
                           buttonText="Disable"
                         />
                       )}
-                      <Button type="submit" disabled={!wallet?.hasPermission(address, 'Grant')} className="btn btn-primary">{grants.grantsExist ? 'Update' : 'Enable REStake'}</Button>
+                      <Button type="submit" disabled={!wallet?.hasPermission(address, 'Grant')} className="btn btn-primary">{grants?.grantsExist ? 'Update' : 'Enable REStake'}</Button>
                     </div>
                   )
                   : <Button className="btn btn-primary" type="button" disabled>

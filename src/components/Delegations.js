@@ -129,7 +129,7 @@ class Delegations extends React.Component {
         (error) => {
           if(address !== this.props.address) return
 
-          if([404, 500].includes(error.response && error.response.status)){
+          if([404, 500].includes(error.response && error.response.status) && !this.state.delegations){
             this.setState({
               delegations: {},
             });
@@ -165,7 +165,7 @@ class Delegations extends React.Component {
           this.setState({ rewards: rewards });
         },
         (error) => {
-          if ([404, 500].includes(error.response && error.response.status)) {
+          if ([404, 500].includes(error.response && error.response.status) && !this.state.rewards) {
             this.setState({ rewards: {} });
           } else {
             if (!hideError)
@@ -228,6 +228,10 @@ class Delegations extends React.Component {
       validators: grantValidators,
       maxTokens: maxTokens ? bignumber(maxTokens.amount) : null
     };
+  }
+
+  isLoading(){
+    return this.props.wallet && (!this.state.delegations || (this.props.network?.authzSupport && !this.props.grants?.granter))
   }
 
   onGrant(grantAddress, grant) {

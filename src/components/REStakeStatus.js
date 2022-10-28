@@ -2,7 +2,7 @@ import React from "react";
 import _ from "lodash";
 import TooltipIcon from "./TooltipIcon";
 
-import { XCircle } from "react-bootstrap-icons";
+import { XCircle, ToggleOn, ToggleOff } from "react-bootstrap-icons";
 import { joinString } from "../utils/Helpers.mjs";
 import Coins from "./Coins";
 
@@ -14,7 +14,7 @@ function REStakeStatus(props) {
     denom: network.denom,
   };
 
-  let content, tooltip
+  let content, icon, tooltip
   let styleClass = 'text-decoration-underline'
   if(operator){
     let tooltipContent
@@ -28,12 +28,16 @@ function REStakeStatus(props) {
             limit = '(no limit)'
           }
           tooltipContent = <span>Grant active {limit}</span>
-          styleClass = 'text-success'
+          // styleClass = 'text-success'
+          // styleClass = 'fst-italic'
+          icon = <ToggleOn />
         }else if(grants?.grantsExist){
           tooltipContent = 'Update grants to enable REStake'
-          styleClass = 'text-danger'
+          icon = <ToggleOff />
+          // styleClass = 'text-danger'
         }else{
           tooltipContent = 'Grant to enable REStake'
+          icon = <ToggleOff />
         }
       }else{
         tooltipContent = 'Delegate to enable REStake'
@@ -41,7 +45,14 @@ function REStakeStatus(props) {
     }else{
       tooltipContent = `Enable REStake once ${network.prettyName} supports Authz`
     }
-    content = <small className={joinString(`text-nowrap text-decoration-underline`, styleClass, className)}>{operator.frequency()}</small>
+    content = (
+      <div>
+        {icon}
+        <div>
+          <small className={joinString(`text-nowrap text-decoration-underline`, styleClass, className)}>{operator.frequency()}</small>
+        </div>
+      </div>
+    )
     tooltip = (
       <div className="mt-2 text-center">
         <p>REStakes {operator.runTimesString()}</p>
