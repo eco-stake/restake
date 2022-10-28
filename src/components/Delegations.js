@@ -435,13 +435,10 @@ class Delegations extends React.Component {
             rewards={this.state.rewards}
             commission={this.state.commission}
             signingClient={this.props.signingClient}
-            validatorLoading={this.state.validatorLoading}
-            isLoading={this.props.wallet && (!this.state.delegations || (this.props.network?.authzSupport && !this.props.grants?.granter))}
             operatorGrants={this.operatorGrants()}
             authzSupport={this.authzSupport()}
             restakePossible={this.restakePossible()}
             showValidator={this.showValidatorModal}
-            setValidatorLoading={this.setValidatorLoading}
             setError={this.setError}
             onClaimRewards={this.onClaimRewards}
             onRevoke={this.onRevoke}

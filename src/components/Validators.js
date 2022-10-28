@@ -20,8 +20,8 @@ import {
 import { XCircle } from "react-bootstrap-icons";
 
 import ValidatorName from "./ValidatorName";
-import ManageRestake from "./ManageRestake";
 import ValidatorServices from './ValidatorServices';
+import REStakeStatus from './REStakeStatus';
 
 function Validators(props) {
   const { address, wallet, network, validators, operators, delegations, operatorGrants } = props
@@ -179,17 +179,16 @@ function Validators(props) {
           </div>
         </td>
         <td className="text-center">
-            <>
-              <ManageRestake
-                network={network}
-                validator={validator}
-                operator={operator}
-                grants={grants}
-                delegation={delegation}
-                restakePossible={props.restakePossible && !props.modal}
-                openGrants={() => props.showValidator(validator, { activeTab: 'stake' })}
-              />
-            </>
+          <REStakeStatus
+            network={network}
+            validator={validator}
+            operator={operator}
+            delegation={delegation}
+            rewards={rewards}
+            grants={grants}
+            authzSupport={props.authzSupport}
+            onClick={() => props.showValidator(validator, { activeTab: 'stake' })}
+          />
         </td>
         {network.apyEnabled && (
           <td className="text-center">
