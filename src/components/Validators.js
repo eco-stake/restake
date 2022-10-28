@@ -244,8 +244,8 @@ function Validators(props) {
             </>
           )}
           {!props.modal && showCommission && (
-          <td className="d-none d-md-table-cell">
             {denomCommission ? (
+          <td className="d-none d-lg-table-cell">
               <div role="button" onClick={() => props.showValidator(validator, { activeTab: 'stake' })}>
                 <small>
                   <Coins
@@ -361,7 +361,7 @@ function Validators(props) {
                 </>
               )}
               {!props.modal && showCommission && (
-                <th className="d-none d-md-table-cell">Commission</th>
+                <th className="d-none d-lg-table-cell">Commission</th>
               )}
               {!props.modal && (
                 <th className={filter.group === 'delegated' ? 'd-none d-sm-table-cell' : ''}></th>
@@ -425,7 +425,7 @@ function Validators(props) {
                 </>
               )}
               {!props.modal && showCommission && (
-                <td className="d-none d-md-table-cell">
+                <td className="d-none d-lg-table-cell">
                   {props.commission && (
                     <strong className="small">
                       <Coins
