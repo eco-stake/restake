@@ -51,7 +51,7 @@ function WalletModal(props) {
         <Modal.Header closeButton>
           <Modal.Title>Wallet</Modal.Title>
         </Modal.Header>
-        <Modal.Body className="small">
+        <Modal.Body>
           <Tab.Container activeKey={activeTab} onSelect={(k) => setActiveTab(k)} id="wallet-tabs">
             <Nav variant="tabs" className="small mb-3 d-flex">
               <Nav.Item>
@@ -62,7 +62,7 @@ function WalletModal(props) {
               </Nav.Item>
             </Nav>
             <Tab.Content>
-              <Tab.Pane eventKey="wallet">
+              <Tab.Pane eventKey="wallet" className="small">
                 {wallet && (
                   <>
                   <Table>
@@ -91,7 +91,7 @@ function WalletModal(props) {
                           <div className="d-flex gap-2">
                             <Address address={wallet.address} />
                             <Favourite
-                              favourites={favouriteAddresses[network.path]}
+                              favourites={favouriteAddresses[network.path] || []}
                               value={wallet.address}
                               label={props.address === wallet?.address && wallet.name}
                               toggle={props.toggleFavouriteAddress} />
@@ -123,7 +123,7 @@ function WalletModal(props) {
                   </>
                 )}
               </Tab.Pane>
-              <Tab.Pane eventKey="saved">
+              <Tab.Pane eventKey="saved" className="small">
                 <SavedAddresses
                   network={props.network}
                   networks={props.networks}

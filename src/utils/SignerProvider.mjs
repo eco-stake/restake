@@ -19,13 +19,13 @@ export default class SignerProvider {
       return await this.getKey(network)
     } catch (e) {
       if(!this.suggestChainSupport){
-        throw(e)
+        this.handleEnableError(network, e)
       }
       try {
         await this.suggestChain(network)
         return await this.getKey(network)
       } catch (s) {
-        throw(s)
+        this.handleSuggestError(network, e)
       }
     }
   }
@@ -55,6 +55,14 @@ export default class SignerProvider {
     }else{
       throw new Error(`${network.prettyName} (${network.chainId}) is not supported`)
     }
+  }
+
+  handleEnableError(network, error){
+    throw(error)
+  }
+
+  handleSuggestError(network, error){
+    throw(error)
   }
 
   setOptions(options){

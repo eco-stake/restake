@@ -742,7 +742,7 @@ class App extends React.Component {
           </div>
         </header>
         <div className="my-4">
-          {this.props.network?.experimental && (
+          {this.props.network?.experimental && this.props.active !== 'networks' && (
             <AlertMessage variant="info" dismissible={false}>
               This network was added to REStake automatically and has not been thoroughly tested yet. <a href="https://github.com/eco-stake/restake/issues" target="_blank">Raise an issue</a> if you have any problems.
             </AlertMessage>

@@ -6,6 +6,7 @@ import {
   Table,
   Dropdown,
   Button,
+  Spinner
 } from 'react-bootstrap'
 import { ChevronLeft, CheckCircle, XCircle, QuestionCircle } from "react-bootstrap-icons";
 
@@ -121,6 +122,7 @@ function ValidatorStake(props) {
                 authzSupport={props.authzSupport}
                 restakePossible={props.restakePossible}
                 showValidator={setSelectedValidator}
+                isLoading={props.isLoading}
                 buttonText="Redelegate" />
               <div className="d-flex justify-content-end gap-2">
                 <Button variant="secondary" onClick={() => setAction()}>Cancel</Button>
@@ -171,26 +173,6 @@ function ValidatorStake(props) {
                       <td><ValidatorStatus validator={validator} /></td>
                     </tr>
                   )}
-                  <tr>
-                    <td scope="row">Current Delegation</td>
-                    <td className="text-break"><Coins coins={delegation?.balance || { amount: 0, denom: network.denom }} asset={network.baseAsset} fullPrecision={true} /></td>
-                  </tr>
-                  {delegation?.balance?.amount && (
-                    <tr>
-                      <td scope="row">Current Rewards</td>
-                      <td>
-                        <Coins coins={{ amount: reward, denom: network.denom }} asset={network.baseAsset} fullPrecision={true} />
-                      </td>
-                    </tr>
-                  )}
-                  {!!commission && (
-                    <tr>
-                      <td scope="row">Current Commission</td>
-                      <td>
-                        <Coins coins={{ amount: commission, denom: network.denom }} asset={network.baseAsset} fullPrecision={true} />
-                      </td>
-                    </tr>
-                  )}
                   {network.apyEnabled && (
                     <>
                       <tr>
@@ -234,6 +216,48 @@ function ValidatorStake(props) {
                         </tr>
                       )}
                     </>
+                  )}
+                  {address && (
+                    <tr>
+                      <td scope="row">Delegation</td>
+                      <td className="text-break">
+                        {!props.isLoading('delegations') ? (
+                          <Coins coins={delegation?.balance || { amount: 0, denom: network.denom }} asset={network.baseAsset} fullPrecision={true} />
+                        ) : (
+                          <Spinner animation="border" role="status" className="spinner-border-sm">
+                            <span className="visually-hidden">Loading...</span>
+                          </Spinner>
+                        )}
+                      </td>
+                    </tr>
+                  )}
+                  {delegation?.balance?.amount && (
+                    <tr>
+                      <td scope="row">Rewards</td>
+                      <td>
+                        {!props.isLoading('rewards') ? (
+                          <Coins coins={{ amount: reward, denom: network.denom }} asset={network.baseAsset} fullPrecision={true} />
+                        ) : (
+                          <Spinner animation="border" role="status" className="spinner-border-sm">
+                            <span className="visually-hidden">Loading...</span>
+                          </Spinner>
+                        )}
+                      </td>
+                    </tr>
+                  )}
+                  {!!commission && (
+                    <tr>
+                      <td scope="row">Commission</td>
+                      <td>
+                        {!props.isLoading('commission') ? (
+                          <Coins coins={{ amount: commission, denom: network.denom }} asset={network.baseAsset} fullPrecision={true} />
+                        ) : (
+                          <Spinner animation="border" role="status" className="spinner-border-sm">
+                            <span className="visually-hidden">Loading...</span>
+                          </Spinner>
+                        )}
+                      </td>
+                    </tr>
                   )}
                 </tbody>
               </Table>
@@ -296,29 +320,39 @@ function ValidatorStake(props) {
                         <td scope="row">REStake Address</td>
                         <td className="text-break"><Address address={operator.botAddress} /></td>
                       </tr>
-                      <tr>
-                        <td scope="row">Grant Status</td>
-                        <td>
-                          {grantsValid
-                            ? <span><span className="text-success">Active</span><br /><small className="text-muted">expires {expiryDate().fromNow()}</small></span>
-                            : grantsExist
-                              ? maxTokens && smaller(maxTokens, reward)
-                                ? <span className="text-danger">Not enough grant remaining</span>
-                                : <span className="text-danger">Invalid / total delegation reached</span>
-                              : network.authzSupport ? <em>Inactive</em> : <em>Authz not supported</em>}
-                        </td>
-                      </tr>
-                      {grantsExist && (
-                        <tr>
-                          <td scope="row">Grant Remaining</td>
-                          <td className={!reward || maxTokens == null || larger(maxTokens, reward) ? 'text-success' : 'text-danger'}>
-                            {maxTokens ? (
-                              <Coins coins={{ amount: maxTokens, denom: network.denom }} asset={network.baseAsset} fullPrecision={true} />
-                            ) : (
-                              'Unlimited'
-                            )}
-                          </td>
-                        </tr>
+                      {props.address && (
+                        <>
+                          <tr>
+                            <td scope="row">Grant Status</td>
+                            <td>
+                              {!props.isLoading('grants') ? (
+                                grantsValid
+                                  ? <span><span className="text-success">Active</span><br /><small className="text-muted">expires {expiryDate().fromNow()}</small></span>
+                                  : grantsExist
+                                    ? maxTokens && smaller(maxTokens, reward)
+                                      ? <span className="text-danger">Not enough grant remaining</span>
+                                      : <span className="text-danger">Invalid / total delegation reached</span>
+                                    : network.authzSupport ? <em>Inactive</em> : <em>Authz not supported</em>
+                              ) : (
+                                <Spinner animation="border" role="status" className="spinner-border-sm">
+                                  <span className="visually-hidden">Loading...</span>
+                                </Spinner>
+                              )}
+                            </td>
+                          </tr>
+                          {grantsExist && (
+                            <tr>
+                              <td scope="row">Grant Remaining</td>
+                              <td className={!reward || maxTokens == null || larger(maxTokens, reward) ? 'text-success' : 'text-danger'}>
+                                {maxTokens ? (
+                                  <Coins coins={{ amount: maxTokens, denom: network.denom }} asset={network.baseAsset} fullPrecision={true} />
+                                ) : (
+                                  'Unlimited'
+                                )}
+                              </td>
+                            </tr>
+                          )}
+                        </>
                       )}
                     </>
                   )}
@@ -376,28 +410,6 @@ function ValidatorStake(props) {
                         setError={setError}
                       />
                     )}
-                    {operator && grantsValid && (
-                      <>
-                        <hr />
-                        <Dropdown.Item as="button" disabled={!wallet?.hasPermission(address, 'Grant') && !wallet?.hasPermission(address, 'Revoke')} onClick={() => {
-                          setAction('grant')
-                        }}>
-                          Manage REStake
-                        </Dropdown.Item>
-                        <RevokeGrant
-                          address={props.address}
-                          wallet={props.wallet}
-                          grantAddress={operator.botAddress}
-                          grants={[validatorGrants.stakeGrant, validatorGrants.claimGrant]}
-                          buttonText="Disable REStake"
-                          signingClient={props.signingClient}
-                          onRevoke={onRevoke}
-                          setLoading={(loading) =>
-                            setLoading(loading)
-                          }
-                          setError={setError} />
-                      </>
-                    )}
                     <hr />
                     <Dropdown.Item as="button" disabled={!wallet?.hasPermission(address, 'BeginRedelegate')} onClick={() => {
                       setSelectedValidator()
@@ -435,7 +447,34 @@ function ValidatorStake(props) {
                   : !wallet?.hasPermission(address, 'Delegate') && `You don't have permission to do that.`
               }
             />
-            {operator && !grantsValid && (
+            {operator && grantsValid ? (
+              <Dropdown>
+                <Dropdown.Toggle
+                  variant="success"
+                >
+                  REStake
+                </Dropdown.Toggle>
+                <Dropdown.Menu>
+                  <Dropdown.Item as="button" disabled={!wallet?.hasPermission(address, 'Grant') && !wallet?.hasPermission(address, 'Revoke')} onClick={() => {
+                    setAction('grant')
+                  }}>
+                    Manage Grant
+                  </Dropdown.Item>
+                  <RevokeGrant
+                    address={props.address}
+                    wallet={props.wallet}
+                    grantAddress={operator.botAddress}
+                    grants={[validatorGrants.stakeGrant, validatorGrants.claimGrant]}
+                    buttonText="Disable REStake"
+                    signingClient={props.signingClient}
+                    onRevoke={onRevoke}
+                    setLoading={(loading) =>
+                      setLoading(loading)
+                    }
+                    setError={setError} />
+                </Dropdown.Menu>
+              </Dropdown>
+            ) : operator && (
               <TooltipIcon
                 icon={
                   <div>

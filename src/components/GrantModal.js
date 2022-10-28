@@ -32,6 +32,7 @@ function GrantModal(props) {
     setState({
       ...state,
       granteeValue: '',
+      customGranteeValue: '',
       expiryDateValue: defaultExpiry.format('YYYY-MM-DD'),
       grantTypeValue: '/cosmos.authz.v1beta1.GenericAuthorization',
       messageTypeValue: messageTypes[0],
