@@ -193,10 +193,15 @@ class Network {
       currencies: [currency],
       feeCurrencies: [{...currency, gasPriceStep: this.gasPriceStep }]
     }
-    if(this.data.keplrFeatures){
-      data.features = this.data.keplrFeatures
+    if(this.keplrFeatures()){
+      data.features = this.keplrFeatures()
     }
     return data
+  }
+
+  keplrFeatures(){
+    if(this.data.keplrFeatures) return this.data.keplrFeatures
+    if(this.slip44 === 60) return ["ibc-transfer", "ibc-go", "eth-address-gen", "eth-key-sign"]
   }
 
   buildKeywords(){
