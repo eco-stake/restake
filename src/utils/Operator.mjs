@@ -68,12 +68,12 @@ const Operator = (network, data) => {
     return runTime.join(', ')
   }
 
-  function frequency() {
+  function frequency(includeEvery) {
     if(runTime.length > 1 && !isInterval()){
       return runTime.length + 'x daily'
     }else{
       if(isInterval()){
-        return runTime[0].replace('every ', '')
+        return includeEvery ? runTime[0] : runTime[0].replace('every ', '')
       }
       return 'daily'
     }

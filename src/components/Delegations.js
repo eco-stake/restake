@@ -124,6 +124,7 @@ class Delegations extends React.Component {
           if(address === this.props.address){
             this.setState({
               delegations: delegations,
+              error: null
             });
           }
         },
@@ -133,6 +134,7 @@ class Delegations extends React.Component {
           if([404, 500].includes(error.response && error.response.status) && !this.state.delegations){
             this.setState({
               delegations: {},
+              error: null
             });
           }else if(!hideError){
             this.setState({
