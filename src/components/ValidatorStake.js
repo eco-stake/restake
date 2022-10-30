@@ -207,7 +207,7 @@ function ValidatorStake(props) {
                                 identifier="delegations-apy"
                               >
                                 <div className="mt-2 text-center">
-                                  <p>{round(validator.getAPR() * 100, 2).toLocaleString()}% APR compounded {operator.runTimesString()} by {validator.moniker}.</p>
+                                  <p>{round(validator.getAPR() * 100, 2).toLocaleString()}% APR compounded {operator.frequency(true)} by {validator.moniker}.</p>
                                   <p>This is an estimate and best case scenario.</p>
                                 </div>
                               </TooltipIcon>
@@ -455,7 +455,7 @@ function ValidatorStake(props) {
                   REStake
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
-                  <Dropdown.Item as="button" disabled={!wallet?.hasPermission(address, 'Grant') && !wallet?.hasPermission(address, 'Revoke')} onClick={() => {
+                  <Dropdown.Item as="button" disabled={!wallet?.authzSupport || (!wallet?.hasPermission(address, 'Grant') && !wallet?.hasPermission(address, 'Revoke'))} onClick={() => {
                     setAction('grant')
                   }}>
                     Manage Grant
