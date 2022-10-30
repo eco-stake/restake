@@ -251,5 +251,9 @@
   },
   {
     "name": "rebus"
+  },
+  {
+    "name": "orai",
+    "gasPrice": "0.0000025orai"
   }
 ]
