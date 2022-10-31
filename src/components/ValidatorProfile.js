@@ -65,8 +65,8 @@ function ValidatorProfile(props) {
                 <td scope="row">REStake</td>
                 <td>
                   {!!operator ? (
-                    <Table className="m-0 table-sm small">
-                      <tbody>
+                    <Table className="m-0 table-sm">
+                      <tbody className="small">
                         <tr>
                           <td>Frequency</td>
                           <td>{operator.runTimesString()}</td>
