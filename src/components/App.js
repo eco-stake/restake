@@ -120,7 +120,7 @@ class App extends React.Component {
       this.connect()
     }else if(this.state.address !== prevState.address){
       this.clearRefreshInterval()
-      this.setState({ balance: undefined, grants: undefined })
+      this.setState({ balance: undefined, grants: undefined, error: undefined })
       this.getBalance()
       this.getGrants().then(() => {
         this.refreshInterval();
@@ -152,6 +152,7 @@ class App extends React.Component {
     localStorage.removeItem('connected')
     this.state.signerProvider?.disconnect()
     this.setState({
+      error: null,
       address: null,
       balance: null,
       wallet: null,
@@ -321,8 +322,13 @@ class App extends React.Component {
           ) || { denom: this.props.network.denom, amount: 0 };
           this.setState({
             balance,
-            balances
+            balances,
+            error: null
           })
+        },
+        (error) => {
+          console.log(error)
+          this.setState({ error: "Failed to get balance." });
         }
       )
   }

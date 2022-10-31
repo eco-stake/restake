@@ -1,5 +1,6 @@
 import moment from 'moment'
 import parse from 'parse-duration'
+import _ from 'lodash'
 
 const Operator = (network, data) => {
   const { address } = data
@@ -33,10 +34,12 @@ const Operator = (network, data) => {
     if (!runTime) return []
     start = start || moment().startOf('day')
 
-    return runTime.map(time => {
+    return _.compact(runTime.map(time => {
       if(time.startsWith('every')){
         let date = start.clone()
         const interval = parse(time.replace('every ', ''))
+        if(!interval) return
+
         return [...Array(Math.floor(parse('1d') / interval))].map((_, i) => {
           let current = date.clone()
           date.add(interval, 'ms')
@@ -49,7 +52,7 @@ const Operator = (network, data) => {
         date.utc(true).add({hours, minutes, seconds}) 
         return date
       }
-    }).flat().sort((a, b) => a.valueOf() - b.valueOf())
+    }).flat()).sort((a, b) => a.valueOf() - b.valueOf())
   }
 
   function runsPerDay(max) {

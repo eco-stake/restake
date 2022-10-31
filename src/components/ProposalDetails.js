@@ -57,8 +57,8 @@ function ProposalDetails(props) {
       }
       <div className="row">
         <div className="col-12 col-lg-6">
-          <Table className="small">
-            <tbody>
+          <Table>
+            <tbody className="small">
               <tr>
                 <td scope="row">ID</td>
                 <td className="text-break">#{proposal_id}</td>

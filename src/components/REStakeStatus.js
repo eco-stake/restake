@@ -33,14 +33,14 @@ function REStakeStatus(props) {
           tooltipContent = <span>Grant active {limit}</span>
           // styleClass = 'text-success'
           // styleClass = 'fst-italic'
-          icon = <ToggleOn className="d-block" />
+          icon = <ToggleOn className="d-block text-success" />
         }else if(grants?.grantsExist){
           tooltipContent = 'Update grants to enable REStake'
-          icon = <ToggleOff className="d-block" />
+          icon = <ToggleOff className="d-block text-danger" />
           // styleClass = 'text-danger'
         }else{
           tooltipContent = 'Grant to enable REStake'
-          icon = <ToggleOff className="d-block" />
+          icon = <ToggleOff className="d-block text-muted" />
         }
       }else{
         tooltipContent = 'Delegate to enable REStake'
