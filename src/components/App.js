@@ -557,7 +557,7 @@ class App extends React.Component {
               )}
             </div>
             <div className="d-flex align-items-center text-reset text-decoration-none">
-              <p className="lead fs-6 text-center m-0 px-5 d-lg-block d-none">
+              <p className="lead fs-6 text-center m-0 px-3 d-lg-block d-none">
                 {this.introText()}
               </p>
             </div>
