@@ -451,11 +451,12 @@ function ValidatorStake(props) {
               <Dropdown>
                 <Dropdown.Toggle
                   variant="success"
+                  disabled={!props.restakePossible}
                 >
                   REStake
                 </Dropdown.Toggle>
                 <Dropdown.Menu>
-                  <Dropdown.Item as="button" disabled={!wallet?.authzSupport || (!wallet?.hasPermission(address, 'Grant') && !wallet?.hasPermission(address, 'Revoke'))} onClick={() => {
+                  <Dropdown.Item as="button" disabled={(!wallet?.hasPermission(address, 'Grant') && !wallet?.hasPermission(address, 'Revoke'))} onClick={() => {
                     setAction('grant')
                   }}>
                     Manage Grant
