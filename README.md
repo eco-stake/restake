@@ -107,7 +107,7 @@ npm --version
 ```bash
 git clone https://github.com/eco-stake/restake
 cd restake
-npm install && npm run build
+npm install
 cp .env.sample .env
 ```
 
