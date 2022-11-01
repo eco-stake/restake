@@ -374,7 +374,7 @@ function ValidatorStake(props) {
                       network={network}
                       address={address}
                       wallet={wallet}
-                      rewards={[validatorRewards]}
+                      rewards={validatorRewards && [validatorRewards]}
                       signingClient={props.signingClient}
                       onClaimRewards={props.onClaimRewards}
                       setLoading={(loading) =>
@@ -387,7 +387,7 @@ function ValidatorStake(props) {
                       network={network}
                       address={address}
                       wallet={wallet}
-                      rewards={[validatorRewards]}
+                      rewards={validatorRewards && [validatorRewards]}
                       signingClient={props.signingClient}
                       onClaimRewards={props.onClaimRewards}
                       setLoading={(loading) =>
@@ -401,7 +401,7 @@ function ValidatorStake(props) {
                         network={network}
                         address={address}
                         wallet={wallet}
-                        rewards={[validatorRewards]}
+                        rewards={validatorRewards && [validatorRewards]}
                         signingClient={props.signingClient}
                         onClaimRewards={props.onClaimRewards}
                         setLoading={(loading) =>
