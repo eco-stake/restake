@@ -56,9 +56,9 @@ function ProposalDetails(props) {
         </AlertMessage>
       }
       <div className="row">
-        <div className="col">
+        <div className="col-12 col-lg-6">
           <Table>
-            <tbody className="table-sm small">
+            <tbody className="small">
               <tr>
                 <td scope="row">ID</td>
                 <td className="text-break">#{proposal_id}</td>
@@ -115,7 +115,7 @@ function ProposalDetails(props) {
           </Table>
         </div>
         {props.address && (
-          <div className="col">
+          <div className="col-12 col-lg-6">
             <p className="mb-2">
               {props.granters.length > 0 ? (
                 <select className="form-select form-select-sm" aria-label="Granter" value={granter} onChange={(e) => setGranter(e.target.value)}>
@@ -153,7 +153,7 @@ function ProposalDetails(props) {
       <div className="row mt-3">
         <div className="col">
           <h5 className="mb-3">{title}</h5>
-          <p style={{ whiteSpace: 'pre-wrap' }}>
+          <p className="text-break" style={{ whiteSpace: 'pre-wrap' }}>
             {fixDescription}
           </p>
         </div>

@@ -6,9 +6,15 @@ import ClaimRewards from "./ClaimRewards";
 import ValidatorModal from "./ValidatorModal";
 import AboutLedger from "./AboutLedger";
 
-import { Button, Dropdown, Spinner } from "react-bootstrap";
+import { 
+  Button, 
+  Dropdown, 
+  Spinner, 
+  Dropdown, 
+ } from "react-bootstrap";
+import { Gear } from "react-bootstrap-icons";
 
-import { parseGrants } from "../utils/Helpers.mjs";
+import { parseGrants, rewardAmount } from "../utils/Helpers.mjs";
 import Validators from "./Validators";
 
 class Delegations extends React.Component {
@@ -21,7 +27,7 @@ class Delegations extends React.Component {
     this.onClaimRewards = this.onClaimRewards.bind(this);
     this.onGrant = this.onGrant.bind(this);
     this.onRevoke = this.onRevoke.bind(this);
-    this.validatorRewards = this.validatorRewards.bind(this);
+    this.isLoading = this.isLoading.bind(this);
     this.showValidatorModal = this.showValidatorModal.bind(this);
     this.setValidatorLoading = this.setValidatorLoading.bind(this);
     this.hideValidatorModal = this.hideValidatorModal.bind(this);
@@ -45,7 +51,7 @@ class Delegations extends React.Component {
   }
 
   async componentDidUpdate(prevProps, prevState) {
-    if (this.state.validatorModal.validator !== this.props.validator && this.props.validator) {
+    if (prevProps.validator !== this.props.validator && this.props.validator) {
       this.showValidatorModal(this.props.validator)
     }
 
@@ -118,15 +124,17 @@ class Delegations extends React.Component {
           if(address === this.props.address){
             this.setState({
               delegations: delegations,
+              error: null
             });
           }
         },
         (error) => {
           if(address !== this.props.address) return
 
-          if([404, 500].includes(error.response && error.response.status)){
+          if([404, 500].includes(error.response && error.response.status) && !this.state.delegations){
             this.setState({
               delegations: {},
+              error: null
             });
           }else if(!hideError){
             this.setState({
@@ -160,7 +168,7 @@ class Delegations extends React.Component {
           this.setState({ rewards: rewards });
         },
         (error) => {
-          if ([404, 500].includes(error.response && error.response.status)) {
+          if ([404, 500].includes(error.response && error.response.status) && !this.state.rewards) {
             this.setState({ rewards: {} });
           } else {
             if (!hideError)
@@ -223,6 +231,25 @@ class Delegations extends React.Component {
       validators: grantValidators,
       maxTokens: maxTokens ? bignumber(maxTokens.amount) : null
     };
+  }
+
+  isValidatorOperator(){
+    if(!this.props.address) return false
+
+    return Object.values(this.props.validators).some(validator => validator.isValidatorOperator(this.props.address))
+  }
+
+  isLoading(type){
+    if(!this.props.address) return false
+    const loaders = {
+      'delegations': () => !this.state.delegations,
+      'grants': () => this.props.network?.authzSupport && !this.props.grants?.granter,
+      'rewards': () => !this.state.rewards,
+      'commission': () => this.isValidatorOperator() && !this.state.commission
+    }
+    if(!type) return Object.values(loaders).some((value) => value())
+
+    return loaders[type] ? loaders[type]() : false
   }
 
   onGrant(grantAddress, grant) {
@@ -288,7 +315,7 @@ class Delegations extends React.Component {
         grantsValid: !!(
           grant.stakeGrant &&
           (!grant.validators || grant.validators.includes(operator.address)) &&
-          (grant.maxTokens === null || larger(grant.maxTokens, this.validatorReward(operator.address)))
+          (grant.maxTokens === null || larger(grant.maxTokens, rewardAmount(this.state.rewards, this.props.network.denom)))
         ),
         grantsExist: !!(grant.claimGrant || grant.stakeGrant),
       }
@@ -321,31 +348,6 @@ class Delegations extends React.Component {
     };
   }
 
-  validatorReward(validatorAddress) {
-    if (!this.state.rewards) return 0;
-    const denom = this.props.network.denom;
-    const validatorReward = this.state.rewards[validatorAddress];
-    const reward = validatorReward && validatorReward.reward.find((el) => el.denom === denom)
-    return reward ? bignumber(reward.amount) : 0
-  }
-
-  validatorRewards(validators) {
-    if (!this.state.rewards) return [];
-
-    const validatorRewards = Object.keys(this.state.rewards)
-      .map(validator => {
-        return {
-          validatorAddress: validator,
-          reward: this.validatorReward(validator),
-        }
-      })
-      .filter(validatorReward => {
-        return validatorReward.reward && (validators === undefined || validators.includes(validatorReward.validatorAddress))
-      });
-
-    return validatorRewards;
-  }
-
   showValidatorModal(validator, opts) {
     opts = opts || {}
     this.setState({ validatorModal: { show: true, validator: validator, ...opts } })
@@ -367,8 +369,6 @@ class Delegations extends React.Component {
         theme={this.props.theme}
         validator={validatorModal.validator}
         activeTab={validatorModal.activeTab}
-        redelegate={validatorModal.redelegate}
-        undelegate={validatorModal.undelegate}
         network={this.props.network}
         networks={this.props.networks}
         address={this.props.address}
@@ -384,10 +384,12 @@ class Delegations extends React.Component {
         authzSupport={this.authzSupport()}
         restakePossible={this.restakePossible()}
         signingClient={this.props.signingClient}
+        isLoading={this.isLoading}
         hideModal={this.hideValidatorModal}
         onDelegate={this.onClaimRewards}
         onGrant={this.onGrant}
         onRevoke={this.onRevoke}
+        onClaimRewards={this.onClaimRewards}
         setError={this.setError}
       />
     )
@@ -456,30 +458,97 @@ class Delegations extends React.Component {
             rewards={this.state.rewards}
             commission={this.state.commission}
             signingClient={this.props.signingClient}
-            validatorLoading={this.state.validatorLoading}
-            isLoading={this.props.wallet && (!this.state.delegations || (this.props.network?.authzSupport && !this.props.grants?.granter))}
             operatorGrants={this.operatorGrants()}
             authzSupport={this.authzSupport()}
             restakePossible={this.restakePossible()}
-            validatorRewards={this.validatorRewards}
             showValidator={this.showValidatorModal}
-            setValidatorLoading={this.setValidatorLoading}
+            isLoading={this.isLoading}
             setError={this.setError}
             onClaimRewards={this.onClaimRewards}
-            onRevoke={this.onRevoke} />
+            onRevoke={this.onRevoke}
+            manageControl={({validator, operator, delegation, rewards, grants, filter}) => {
+              const { network, wallet, address } = this.props
+              const validatorAddress = validator.operator_address
+              const validatorOperator = validator.isValidatorOperator(address)
+              return (
+                !this.state.validatorLoading[validatorAddress] ? (
+                  filter.group === 'delegated' && delegation ? (
+                    <Dropdown>
+                      <Dropdown.Toggle
+                        variant="secondary"
+                        size="sm"
+                      >
+                        <Gear />
+                      </Dropdown.Toggle>
+                      <Dropdown.Menu>
+                        <Dropdown.Item as="button" onClick={() => this.showValidatorModal(validator, { activeTab: 'profile' })}>
+                          View {validator.moniker}
+                        </Dropdown.Item>
+                        <hr />
+                        <ClaimRewards
+                          network={network}
+                          address={address}
+                          wallet={wallet}
+                          rewards={[rewards]}
+                          signingClient={this.props.signingClient}
+                          onClaimRewards={this.onClaimRewards}
+                          setLoading={(loading) => this.setValidatorLoading(validatorAddress, loading)}
+                          setError={this.setError}
+                        />
+                        <ClaimRewards
+                          restake={true}
+                          network={network}
+                          address={address}
+                          wallet={wallet}
+                          rewards={[rewards]}
+                          signingClient={this.props.signingClient}
+                          onClaimRewards={this.onClaimRewards}
+                          setLoading={(loading) => this.setValidatorLoading(validatorAddress, loading)}
+                          setError={this.setError}
+                        />
+                        {validatorOperator && (
+                          <>
+                            <hr />
+                            <ClaimRewards
+                              commission={true}
+                              network={network}
+                              address={address}
+                              wallet={wallet}
+                              rewards={[rewards]}
+                              signingClient={this.props.signingClient}
+                              onClaimRewards={this.onClaimRewards}
+                              setLoading={(loading) => this.setValidatorLoading(validatorAddress, loading)}
+                              setError={this.setError}
+                            />
+                          </>
+                        )}
+                      </Dropdown.Menu>
+                    </Dropdown>
+                  ) : (
+                    <Button variant="primary" size="sm" onClick={() => this.showValidatorModal(validator)}>
+                      View
+                    </Button>
+                  )
+                ) : (
+                  <Button className="btn-sm btn-secondary" disabled>
+                    <span
+                      className="spinner-border spinner-border-sm"
+                      role="status"
+                      aria-hidden="true"
+                    ></span>
+                    &nbsp;
+                  </Button>
+                )
+              )
+            }} />
         </div>
         <div className="row">
           <div className="col">
-            {this.props.address && (
-              <Button variant="secondary" onClick={() => this.showValidatorModal()}>
-                Add Validator
-              </Button>
-            )}
           </div>
           <div className="col">
             <div className="d-grid gap-2 d-md-flex justify-content-end">
               {this.state.rewards &&
-                (!this.state.claimLoading ? (
+                (!this.state.claimLoading && !this.isLoading('rewards') ? (
                   <Dropdown>
                     <Dropdown.Toggle
                       variant="secondary"
@@ -494,7 +563,7 @@ class Delegations extends React.Component {
                         network={this.props.network}
                         address={this.props.address}
                         wallet={this.props.wallet}
-                        validatorRewards={this.validatorRewards()}
+                        rewards={Object.values(this.state.rewards || {})}
                         signingClient={this.props.signingClient}
                         onClaimRewards={this.onClaimRewards}
                         setLoading={this.setClaimLoading}
@@ -505,7 +574,7 @@ class Delegations extends React.Component {
                         network={this.props.network}
                         address={this.props.address}
                         wallet={this.props.wallet}
-                        validatorRewards={this.validatorRewards()}
+                        rewards={Object.values(this.state.rewards || {})}
                         signingClient={this.props.signingClient}
                         onClaimRewards={this.onClaimRewards}
                         setLoading={this.setClaimLoading}
@@ -526,6 +595,17 @@ class Delegations extends React.Component {
             </div>
           </div>
         </div>
+        <hr />
+        <p className="mt-5 text-center">
+          Enabling REStake will authorize the validator to send <em>Delegate</em> transactions on your behalf for 1 year <a href="https://docs.cosmos.network/master/modules/authz/" target="_blank" rel="noreferrer" className="text-reset">using Authz</a>.<br />
+          They will only be authorized to delegate to their own validator. You can revoke the authorization at any time and everything is open source.
+        </p>
+        <p className="text-center mb-4">
+          <strong>The validators will pay the transaction fees for you.</strong>
+        </p>
+        <p className="text-center mb-5">
+          <Button onClick={() => this.setState({ showAbout: true })} variant="outline-secondary">More info</Button>
+        </p>
         {this.renderValidatorModal()}
       </>
     );

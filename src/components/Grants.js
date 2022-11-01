@@ -16,6 +16,7 @@ import RevokeGrant from './RevokeGrant';
 import Coins from './Coins';
 import GrantModal from './GrantModal';
 import Favourite from './Favourite';
+import Address from './Address'
 
 function Grants(props) {
   const { address, wallet, network, operators, validators, grants } = props
@@ -98,7 +99,10 @@ function Grants(props) {
         return (
           <small>
             Maximum: {maxTokens ? <Coins coins={maxTokens} asset={network.baseAsset} fullPrecision={true} hideValue={true} /> : 'unlimited'}<br />
-            Validators: {grant.authorization.allow_list.address.join(', ')}
+            Validators: {grant.authorization.allow_list.address.map(address => {
+              const validator = validators[address]
+              return <div>{validator?.moniker || <Address address={address} />}</div>
+            })}
           </small>
         )
       case "/cosmos.authz.v1beta1.GenericAuthorization":
@@ -137,10 +141,10 @@ function Grants(props) {
           {filter.group === 'grantee' ? (
             <div className="d-flex">
               <Favourite favourites={props.favouriteAddresses} value={granter} toggle={props.toggleFavouriteAddress} />
-              <span className="ps-2">{favourite?.label || granter}</span>
+              <span className="ps-2">{favourite?.label || <Address address={granter} />}</span>
             </div>
           ) : (
-            validator ? validator.moniker : favourite?.label || grantee
+            validator ? validator.moniker : favourite?.label || <Address address={grantee} />
           )}
         </td>
         <td>

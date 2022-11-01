@@ -4,7 +4,7 @@ export default class LeapSignerProvider extends SignerProvider {
   key = 'leap'
   label = 'Leap Wallet'
   keychangeEvent = 'leap_keystorechange'
-  suggestChainSupport = true
+  suggestChainSupport = false
 
   enable(network){
     if (network.gasPricePrefer) {
@@ -15,15 +15,20 @@ export default class LeapSignerProvider extends SignerProvider {
     return super.enable(network)
   }
 
-  suggestChain(network){
-    throw new Error(`${network.prettyName} (${network.chainId}) is not supported`)
-  }
-
   setOptions(options){
     return this.provider.defaultOptions = options
   }
 
   getOptions(){
     return this.provider.defaultOptions
+  }
+
+  handleEnableError(network, error){
+    switch (error?.message) {
+      case `Invalid chain id`:
+        throw new Error(`${network.prettyName} (${network.chainId}) is not supported`)
+      default:
+        super.handleEnableError(network, error)
+    }
   }
 }

@@ -1,77 +1,94 @@
 import moment from 'moment'
 import parse from 'parse-duration'
+import _ from 'lodash'
 
 const Operator = (network, data) => {
   const { address } = data
   const botAddress = data.restake.address
-  const runTime = data.restake.run_time
+  let runTime = data.restake.run_time
+  runTime = runTime && Array.isArray(runTime) ? runTime : [runTime?.split(',')].flat()
   const minimumReward = data.restake.minimum_reward
 
-  function runsPerDay(max) {
-    let runs = 0
-    if(Array.isArray(runTime)){
-      runs = runTime.length
-    }else{
-      if(runTime.startsWith('every')){
-        const interval = parse(runTime.replace('every ', ''))
-        runs = (1000 * 60 * 60 * 24) / interval
-      }else{
-        runs = 1
-      }
+  function missedRunCount(lastExec){
+    if(lastExec === false) return 9999
+    let count = 0
+    let times = runTimes().reverse()
+    let date = times[0]
+    while(date && date.isAfter(lastExec)){
+      times.forEach(time => {
+        if(time.isBefore() && time.isAfter(lastExec)){
+          count++
+        }
+      })
+      times = runTimes(date.subtract(1, 'day').startOf('day')).reverse()
+      date = times[0]
     }
+    return count
+  }
+
+  function isInterval(){
+    return runTime.length === 1 && runTime[0].startsWith('every')
+  }
+
+  function runTimes(start) {
+    if (!runTime) return []
+    start = start || moment().startOf('day')
+
+    return _.compact(runTime.map(time => {
+      if(time.startsWith('every')){
+        let date = start.clone()
+        const interval = parse(time.replace('every ', ''))
+        if(!interval) return
+
+        return [...Array(Math.floor(parse('1d') / interval))].map((_, i) => {
+          let current = date.clone()
+          date.add(interval, 'ms')
+          return current
+        })
+      }else{
+        let date = start.clone()
+        let [hours, minutes, seconds] = time.split(':')
+        if(parseInt(hours) >= 24) hours = 0
+        date.utc(true).add({hours, minutes, seconds}) 
+        return date
+      }
+    }).flat()).sort((a, b) => a.valueOf() - b.valueOf())
+  }
+
+  function runsPerDay(max) {
+    let runs = runTimes().length
     return max && runs > max ? max : runs
   }
 
-  function runTimes() {
-    if(Array.isArray(runTime)) return runTime
-    return [runTime]
-  }
-
   function runTimesString(){
-    let string = ''
-    if (runTimes().length > 1 || !runTimes()[0].startsWith('every')) {
-      string = 'at '
+    if (!isInterval()) {
+      if(runTime.length > 1){
+        return `at ${runTime.join(', ')}`
+      }else{
+        return `at ${runTime.join(', ')} every day`
+      }
     }
-    return string + runTimes().join(', ')
+    return runTime.join(', ')
   }
 
-  function frequency() {
-    if(Array.isArray(runTime)){
-      return runTime.length + 'x per day'
+  function frequency(includeEvery) {
+    if(runTime.length > 1 && !isInterval()){
+      return runTime.length + 'x daily'
     }else{
-      if(runTime.startsWith('every')){
-        return runTime.replace('every ', '')
+      if(isInterval()){
+        return includeEvery ? runTime[0] : runTime[0].replace('every ', '')
       }
       return 'daily'
     }
   }
 
   function nextRun() {
-    if (!runTime) return
-
-    if (Array.isArray(runTime)) {
-      return runTime
-        .map(el => nextRunFromRuntime(el))
-        .sort((a, b) => a.valueOf() - b.valueOf())
-        .find(el => el.isAfter());
-    } else {
-      if(runTime.startsWith('every')){
-        return nextRunFromInterval(runTime)
-      }
-      return nextRunFromRuntime(runTime)
-    }
-  }
-
-  function nextRunFromInterval(runTime){
-    const interval = parse(runTime.replace('every ', ''))
-    const diff = moment().startOf('day').diff()
-    const ms = interval + diff % interval
-    return moment().add(ms, 'ms')
-  }
-
-  function nextRunFromRuntime(runTime) {
-    const date = moment.utc(runTime, 'HH:mm:ss')
-    return date.isAfter() ? date : date.add(1, 'day')
+    const today = runTimes()
+    const tomorrow = runTimes(moment().startOf('day').add(1, 'day'))
+    return [
+      ...today,
+      ...tomorrow
+    ].find(el => el.isAfter())
   }
 
   return {
@@ -86,7 +103,8 @@ const Operator = (network, data) => {
     frequency,
     runTimes,
     runTimesString,
-    runsPerDay
+    runsPerDay,
+    missedRunCount
   }
 }
 
