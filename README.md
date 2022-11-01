@@ -239,6 +239,14 @@ crontab -e
 0 21 * * * /bin/bash -c "cd restake && npm run autostake" > ./restake.log 2>&1
 ```
 
+Warning: Using crontab with docker without the `--rm` flag will continuously create docker images. Add another cronjob to tear down the images weekly if required:
+
+```bash
+crontab -e
+
+0 0 * * */7 /usr/bin/docker image prune -a -f
+```
+
 #### Using `systemd-timer`
 
 Systemd-timer allow to run a one-off service with specified rules. This method is arguably preferable to Cron.
