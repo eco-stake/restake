@@ -119,7 +119,7 @@ function ValidatorModal(props) {
       } else if(lastExec == null) {
         setLastExec(false)
       }
-    })
+    }).catch(error => console.log(error))
   }
 
   return (

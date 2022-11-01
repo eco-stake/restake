@@ -326,10 +326,7 @@ class App extends React.Component {
             error: null
           })
         },
-        (error) => {
-          console.log(error)
-          this.setState({ error: "Failed to get balance." });
-        }
+        (error) => console.log(error)
       )
   }
 
