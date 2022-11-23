@@ -259,5 +259,11 @@
   {
     "name": "jackal",
     "ownerAddress": "jklvaloper1rdyunvvqg2l3723hlyjvvsnkd4vg338uar8q2s"
+  },
+  {
+    "name": "oraichain",
+    "prettyName": "Oraichain",
+    "gasPrice": "20orai",
+    "authzSupport": true
   }
 ]
