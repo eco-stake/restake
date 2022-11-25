@@ -221,9 +221,15 @@ class Delegations extends React.Component {
     const { claimGrant, stakeGrant } = parseGrants(grants, grantee, granter)
     let grantValidators, maxTokens;
     if (stakeGrant) {
-      grantValidators =
-        stakeGrant.authorization.allow_list?.address;
-      maxTokens = stakeGrant.authorization.max_tokens
+      const { allow_list, deny_list, max_tokens } = stakeGrant.authorization
+      if (allow_list?.address) {
+        grantValidators = allow_list?.address || []
+      } else if (deny_list?.address) {
+        grantValidators = deny_list.address.includes('') ? [] : this.props.validators.map(el => el.address).filter(address => !deny_list.address.includes(address))
+      } else {
+        grantValidators = []
+      }
+      maxTokens = max_tokens
     }
     return {
       claimGrant: claimGrant,

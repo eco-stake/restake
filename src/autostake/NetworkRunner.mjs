@@ -167,7 +167,7 @@ export default class NetworkRunner {
         if(allow_list?.address){
           grantValidators = allow_list?.address || []
         }else if(deny_list?.address){
-          grantValidators = deny_list.address.includes(validatorAddress) ? [] : [validatorAddress]
+          grantValidators = deny_list.address.includes(validatorAddress) || deny_list.address.includes('') ? [] : [validatorAddress]
         }else{
           grantValidators = []
         }
