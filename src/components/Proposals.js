@@ -81,7 +81,7 @@ function Proposals(props) {
         <td className="d-none d-md-table-cell">{proposalId}</td>
         <td>
           <span role="button" onClick={() => props.showProposal(proposal)}>
-            {proposal.content.title}
+            {proposal.title}
           </span>
         </td>
         <td className="d-none d-sm-table-cell text-center text-nowrap">
