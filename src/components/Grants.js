@@ -96,12 +96,14 @@ function Grants(props) {
     const maxTokens = grant.authorization.max_tokens
     switch (grant.authorization['@type']) {
       case "/cosmos.staking.v1beta1.StakeAuthorization":
+        const restrictionType = grant.authorization.allow_list ? 'Validators' : 'Denied Validators'
+        const restrictionList = grant.authorization.allow_list || grant.authorization.deny_list
         return (
           <small>
             Maximum: {maxTokens ? <Coins coins={maxTokens} asset={network.baseAsset} fullPrecision={true} hideValue={true} /> : 'unlimited'}<br />
-            Validators: {grant.authorization.allow_list.address.map(address => {
+            {restrictionType}: {restrictionList.address.map(address => {
               const validator = validators[address]
-              return <div>{validator?.moniker || <Address address={address} />}</div>
+              return address ? <div key={address}>{validator?.moniker || <Address address={address} />}</div> : null
             })}
           </small>
         )

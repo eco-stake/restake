@@ -328,10 +328,12 @@ function ValidatorStake(props) {
                               {!props.isLoading('grants') ? (
                                 grantsValid
                                   ? <span><span className="text-success">Active</span><br /><small className="text-muted">expires {expiryDate().fromNow()}</small></span>
-                                  : grantsExist
-                                    ? maxTokens && smaller(maxTokens, reward)
-                                      ? <span className="text-danger">Not enough grant remaining</span>
-                                      : <span className="text-danger">Invalid / total delegation reached</span>
+                                  : grantsExist 
+                                    ? !validatorGrants.validators.includes(validator.address)
+                                      ? <span className="text-danger">Grant invalid</span>
+                                      : maxTokens && smaller(maxTokens, reward)
+                                        ? <span className="text-danger">Not enough grant remaining</span>
+                                        : <span className="text-danger">Invalid / total delegation reached</span>
                                     : network.authzSupport ? <em>Inactive</em> : <em>Authz not supported</em>
                               ) : (
                                 <Spinner animation="border" role="status" className="spinner-border-sm">
