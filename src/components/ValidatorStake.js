@@ -329,7 +329,7 @@ function ValidatorStake(props) {
                                 grantsValid
                                   ? <span><span className="text-success">Active</span><br /><small className="text-muted">expires {expiryDate().fromNow()}</small></span>
                                   : grantsExist 
-                                    ? !validatorGrants.validators.includes(validator.address)
+                                    ? validatorGrants.validators && !validatorGrants.validators.includes(validator.address)
                                       ? <span className="text-danger">Grant invalid</span>
                                       : maxTokens && smaller(maxTokens, reward)
                                         ? <span className="text-danger">Not enough grant remaining</span>
