@@ -1,4 +1,5 @@
 import axios from "axios";
+import axiosRetry from 'axios-retry';
 import _ from "lodash";
 
 const QueryClient = async (chainId, restUrls, opts) => {
@@ -72,6 +73,8 @@ const QueryClient = async (chainId, restUrls, opts) => {
       .get(restUrl + "/cosmos/bank/v1beta1/balances/" + address, opts)
       .then((res) => res.data)
       .then((result) => {
+        if(!denom) return result.balances
+
         const balance = result.balances?.find(
           (element) => element.denom === denom
         ) || { denom: denom, amount: 0 };
@@ -200,6 +203,19 @@ const QueryClient = async (chainId, restUrls, opts) => {
       });
   };
 
+  const getTransactions = (params, _opts) => {
+    const { pageSize, order, retries, ...opts } = _opts
+    const searchParams = new URLSearchParams()
+    params.forEach(({key, value}) => {
+      searchParams.append(key, value)
+    })
+    if(pageSize) searchParams.append('pagination.limit', pageSize)
+    if(order) searchParams.append('order_by', order)
+    const client = axios.create({ baseURL: restUrl });
+    axiosRetry(client, { retries: retries || 0, shouldResetTimeout: true, retryCondition: (e) => true });
+    return client.get("/cosmos/tx/v1beta1/txs?" + searchParams.toString(), opts).then((res) => res.data)
+  }
+
   const getAllPages = async (getPage, pageCallback) => {
     let pages = [];
     let nextKey, error;
@@ -266,7 +282,8 @@ const QueryClient = async (chainId, restUrls, opts) => {
     getGrants,
     getGranteeGrants,
     getGranterGrants,
-    getWithdrawAddress
+    getWithdrawAddress,
+    getTransactions
   };
 };
 

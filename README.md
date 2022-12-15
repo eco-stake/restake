@@ -44,7 +44,7 @@ Right now, the REStake autostaking script uses the standard 118 derivation path 
 
 As there are existing operators using the 118 path, operators will need to opt in to the correct path when they want to upgrade. **New operators should use the correct path before they get grants**.
 
-The correct path can be set in one of two ways using a [config override](#overriding-networks-config-locallyuse-your-own-node) file. `"correctSlip44": true` will use the slip44 defined in the Chain Registry. Alternatively set a specific path using `"slip44": 69`. You should use `"correctSlip44": true` if possible.
+The correct path can be set in one of two ways using a [config override](#customise-restake-and-use-your-own-node) file. `"correctSlip44": true` will use the slip44 defined in the Chain Registry. Alternatively set a specific path using `"slip44": 69`. You should use `"correctSlip44": true` if possible.
 
 ```jsonc
 {
@@ -107,7 +107,7 @@ npm --version
 ```bash
 git clone https://github.com/eco-stake/restake
 cd restake
-npm install && npm run build
+npm install
 cp .env.sample .env
 ```
 
@@ -237,6 +237,14 @@ or with NPM:
 crontab -e
 
 0 21 * * * /bin/bash -c "cd restake && npm run autostake" > ./restake.log 2>&1
+```
+
+Warning: Using crontab with docker without the `--rm` flag will continuously create docker images. Add another cronjob to tear down the images weekly if required:
+
+```bash
+crontab -e
+
+0 0 * * */7 /usr/bin/docker image prune -a -f
 ```
 
 #### Using `systemd-timer`

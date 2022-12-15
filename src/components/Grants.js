@@ -16,6 +16,7 @@ import RevokeGrant from './RevokeGrant';
 import Coins from './Coins';
 import GrantModal from './GrantModal';
 import Favourite from './Favourite';
+import Address from './Address'
 
 function Grants(props) {
   const { address, wallet, network, operators, validators, grants } = props
@@ -95,10 +96,15 @@ function Grants(props) {
     const maxTokens = grant.authorization.max_tokens
     switch (grant.authorization['@type']) {
       case "/cosmos.staking.v1beta1.StakeAuthorization":
+        const restrictionType = grant.authorization.allow_list ? 'Validators' : 'Denied Validators'
+        const restrictionList = grant.authorization.allow_list || grant.authorization.deny_list
         return (
           <small>
             Maximum: {maxTokens ? <Coins coins={maxTokens} asset={network.baseAsset} fullPrecision={true} hideValue={true} /> : 'unlimited'}<br />
-            Validators: {grant.authorization.allow_list.address.join(', ')}
+            {restrictionType}: {restrictionList.address.map(address => {
+              const validator = validators[address]
+              return address ? <div key={address}>{validator?.moniker || <Address address={address} />}</div> : null
+            })}
           </small>
         )
       case "/cosmos.authz.v1beta1.GenericAuthorization":
@@ -137,10 +143,10 @@ function Grants(props) {
           {filter.group === 'grantee' ? (
             <div className="d-flex">
               <Favourite favourites={props.favouriteAddresses} value={granter} toggle={props.toggleFavouriteAddress} />
-              <span className="ps-2">{favourite?.label || granter}</span>
+              <span className="ps-2">{favourite?.label || <Address address={granter} />}</span>
             </div>
           ) : (
-            validator ? validator.moniker : favourite?.label || grantee
+            validator ? validator.moniker : favourite?.label || <Address address={grantee} />
           )}
         </td>
         <td>

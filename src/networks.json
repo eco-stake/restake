@@ -9,10 +9,14 @@
   {
     "name": "juno",
     "gasPrice": "0.0025ujuno",
-    "ownerAddress": "junovaloper19ur8r2l25qhsy9xvej5zgpuc5cpn6syydmwtrt"
+    "ownerAddress": "junovaloper19ur8r2l25qhsy9xvej5zgpuc5cpn6syydmwtrt",
+    "autostake": {
+      "batchTxs": 25
+    }
   },
   {
     "name": "cosmoshub",
+    "ownerAddress": "cosmosvaloper1a37ze3yrr2y9nn98l6frhjskmufvd40cpyd0gq",
     "gasPrice": "0.0025uatom"
   },
   {
@@ -68,7 +72,9 @@
   },
   {
     "name": "desmos",
-    "gasPrice": "0.001udsm"
+    "gasPrice": "0.001udsm",
+    "authzSupport": true,
+    "authzAminoSupport": true
   },
   {
     "name": "cryptoorgchain",
@@ -230,6 +236,7 @@
   {
     "name": "stride",
     "ownerAddress": "stridevaloper1x2kta40h5rnymtjn6ys7vk2d87xu7y6zfu9j3r",
+    "authzSupport": false,
     "gasPriceStep": {
       "low": 0,
       "average": 0.025,
@@ -251,6 +258,10 @@
   },
   {
     "name": "rebus"
+  },
+  {
+    "name": "jackal",
+    "ownerAddress": "jklvaloper1rdyunvvqg2l3723hlyjvvsnkd4vg338uar8q2s"
   },
   {
     "name": "orai",

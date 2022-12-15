@@ -163,7 +163,14 @@ export default class NetworkRunner {
         timeStamp(delegatorAddress, "Using GenericAuthorization, allowed")
         grantValidators = [validatorAddress];
       } else {
-        grantValidators = result.stakeGrant.authorization.allow_list.address
+        const { allow_list, deny_list } = result.stakeGrant.authorization
+        if(allow_list?.address){
+          grantValidators = allow_list?.address || []
+        }else if(deny_list?.address){
+          grantValidators = deny_list.address.includes(validatorAddress) || deny_list.address.includes('') ? [] : [validatorAddress]
+        }else{
+          grantValidators = []
+        }
         if (!grantValidators.includes(validatorAddress)) {
           timeStamp(delegatorAddress, "Not autostaking for this validator, skipping")
           return
