@@ -57,17 +57,21 @@ function Validators(props) {
       const delegation = delegations && delegations[address]
       return 0 - (delegation?.balance?.amount || 0)
     });
-    return _.sortBy(validators, ({ operator_address: address }) => {
+    return _.sortBy(validators, ({ operator_address: address, public_nodes }) => {
       if(network.data.ownerAddress === address) return -5
 
       const delegation = delegations && delegations[address]
+      const publicNodes = Object.entries(public_nodes || {}).length > 0
       const operator = operators && operators.find(el => el.address === address)
 
+      let score = 1
       if (delegation) {
-        return operator ? -2 : -1
-      } else {
-        return operator ? 0 : 1
+        score = operator ? -3 : -2
+      } else if(operator){
+        score = -1
       }
+      if(publicNodes) score--
+      return score
     });
   }
 
