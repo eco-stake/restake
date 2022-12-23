@@ -266,5 +266,8 @@
   {
     "name": "oraichain",
     "gasPrice": "0.0000025orai"
+  },
+  {
+    "name": "acrechain"
   }
 ]
