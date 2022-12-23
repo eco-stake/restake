@@ -169,7 +169,7 @@ npm run dryrun osmosis
 
 You will likely want to customise your networks config, e.g. to set your own node URLs to ensure your autocompounding script completes successfully.
 
-Create a `src/networks.local.json` file and specify the networks you want to override. The below is just an example, **you should only override a config if you need to**.
+Create a `src/networks.local.json` file and specify the networks you want to override. Alternatively, set the `NETWORKS_OVERRIDE_PATH` environment variable containing the filepath. The below is just an example, **you should only override a config if you need to**.
 
 ```json
 {
