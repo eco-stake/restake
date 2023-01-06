@@ -86,7 +86,7 @@
     "txTimeout": 120000,
     "ownerAddress": "evmosvaloper1umk407eed7af6anvut6llg2zevnf0dn0feqqny",
     "maxPerDay": 1,
-    "ledgerSupport": false
+    "authzAminoSupport": false
   },
   {
     "name": "sifchain",
