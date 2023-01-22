@@ -125,7 +125,7 @@ const QueryClient = async (chainId, restUrls, opts) => {
       if (nextKey) searchParams.append("pagination.key", nextKey);
 
       return axios
-        .get(restUrl + "/cosmos/gov/v1beta1/proposals?" +
+        .get(restUrl + "/cosmos/gov/v1/proposals?" +
           searchParams.toString(), opts)
         .then((res) => res.data)
     }).then((pages) => {

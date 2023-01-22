@@ -8,9 +8,11 @@ export const PROPOSAL_STATUSES = {
 }
 
 const Proposal = (data) => {
-
-  const { title, description } = data.content || {}
-  const type = data.content && data.content['@type']
+  let { proposal_id, content, messages } = data
+  if(!proposal_id && data.id) proposal_id = data.id
+  if(!content && messages?.length) content = messages[0].content
+  const { title, description } = content || {}
+  const type = content && content['@type']
 
   const fixedDescription = description && description.split(/\\n/).join('\n')
   const statusHuman = PROPOSAL_STATUSES[data.status]
@@ -21,6 +23,8 @@ const Proposal = (data) => {
 
   return {
     ...data,
+    proposal_id,
+    content,
     title,
     type,
     fixedDescription,
