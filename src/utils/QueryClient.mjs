@@ -8,7 +8,7 @@ const QueryClient = async (chainId, restUrls, opts) => {
   }, opts)
   const restUrl = await findAvailableUrl(restUrls, "rest", { timeout: config.connectTimeout })
 
-  const getAllValidators = (pageSize, opts, pageCallback) => {
+  function getAllValidators(pageSize, opts, pageCallback) {
     return getAllPages((nextKey) => {
       return getValidators(pageSize, opts, nextKey);
     }, pageCallback).then((pages) => {
@@ -18,73 +18,66 @@ const QueryClient = async (chainId, restUrls, opts) => {
         {}
       );
     });
-  };
+  }
 
-  const getValidators = (pageSize, opts, nextKey) => {
-    opts = opts || {}
+  function getValidators(pageSize, opts, nextKey) {
+    opts = opts || {};
     const searchParams = new URLSearchParams();
-    if (opts.status) searchParams.append("status", opts.status);
-    if (pageSize) searchParams.append("pagination.limit", pageSize);
-    if (nextKey) searchParams.append("pagination.key", nextKey);
+    if (opts.status)
+      searchParams.append("status", opts.status);
+    if (pageSize)
+      searchParams.append("pagination.limit", pageSize);
+    if (nextKey)
+      searchParams.append("pagination.key", nextKey);
     return axios
       .get(
-        restUrl +
-          "/cosmos/staking/v1beta1/validators?" +
-          searchParams.toString(),
-        {
-          timeout: opts.timeout || 10000,
-        }
-      )
+        apiUrl('staking', `validators?${searchParams.toString()}`), {
+        timeout: opts.timeout || 10000,
+      })
       .then((res) => res.data);
-  };
+  }
 
-  const getAllValidatorDelegations = (
-    validatorAddress,
+  function getAllValidatorDelegations(validatorAddress,
     pageSize,
     opts,
-    pageCallback
-  ) => {
+    pageCallback) {
     return getAllPages((nextKey) => {
       return getValidatorDelegations(validatorAddress, pageSize, opts, nextKey);
     }, pageCallback).then((pages) => {
       return pages.map((el) => el.delegation_responses).flat();
     });
-  };
+  }
 
-  const getValidatorDelegations = (validatorAddress, pageSize, opts, nextKey) => {
+  function getValidatorDelegations(validatorAddress, pageSize, opts, nextKey) {
     const searchParams = new URLSearchParams();
-    if (pageSize) searchParams.append("pagination.limit", pageSize);
-    if (nextKey) searchParams.append("pagination.key", nextKey);
+    if (pageSize)
+      searchParams.append("pagination.limit", pageSize);
+    if (nextKey)
+      searchParams.append("pagination.key", nextKey);
 
     return axios
-      .get(
-        restUrl +
-          "/cosmos/staking/v1beta1/validators/" +
-          validatorAddress +
-          "/delegations?" +
-          searchParams.toString(),
-          opts
-      )
+      .get(apiUrl('staking', `validators/${validatorAddress}/delegations?${searchParams.toString()}`), opts)
       .then((res) => res.data);
-  };
+  }
 
-  const getBalance = (address, denom, opts) => {
+  function getBalance(address, denom, opts) {
     return axios
-      .get(restUrl + "/cosmos/bank/v1beta1/balances/" + address, opts)
+      .get(apiUrl('bank', `balances/${address}`), opts)
       .then((res) => res.data)
       .then((result) => {
-        if(!denom) return result.balances
+        if (!denom)
+          return result.balances;
 
         const balance = result.balances?.find(
           (element) => element.denom === denom
         ) || { denom: denom, amount: 0 };
         return balance;
       });
-  };
+  }
 
-  const getDelegations = (address) => {
+  function getDelegations(address) {
     return axios
-      .get(restUrl + "/cosmos/staking/v1beta1/delegations/" + address)
+      .get(apiUrl('staking', `delegations/${address}`))
       .then((res) => res.data)
       .then((result) => {
         const delegations = result.delegation_responses.reduce(
@@ -93,11 +86,11 @@ const QueryClient = async (chainId, restUrls, opts) => {
         );
         return delegations;
       });
-  };
+  }
 
-  const getRewards = (address, opts) => {
+  function getRewards(address, opts) {
     return axios
-      .get(`${restUrl}/cosmos/distribution/v1beta1/delegators/${address}/rewards`, opts)
+      .get(apiUrl('distribution', `delegators/${address}/rewards`), opts)
       .then((res) => res.data)
       .then((result) => {
         const rewards = result.rewards.reduce(
@@ -106,127 +99,127 @@ const QueryClient = async (chainId, restUrls, opts) => {
         );
         return rewards;
       });
-  };
+  }
 
-  const getCommission = (validatorAddress, opts) => {
+  function getCommission(validatorAddress, opts) {
     return axios
-      .get(`${restUrl}/cosmos/distribution/v1beta1/validators/${validatorAddress}/commission`, opts)
+      .get(apiUrl('distribution', `validators/${validatorAddress}/commission`), opts)
       .then((res) => res.data)
       .then((result) => {
-        return result.commission
+        return result.commission;
       });
-  };
+  }
 
-  const getProposals = (opts) => {
-    const { pageSize } = opts || {}
+  function getProposals(opts) {
+    const { pageSize } = opts || {};
     return getAllPages((nextKey) => {
       const searchParams = new URLSearchParams();
       searchParams.append("pagination.limit", pageSize || 100);
-      if (nextKey) searchParams.append("pagination.key", nextKey);
+      if (nextKey)
+        searchParams.append("pagination.key", nextKey);
 
       return axios
-        .get(restUrl + "/cosmos/gov/v1/proposals?" +
-          searchParams.toString(), opts)
-        .then((res) => res.data)
+        .get(apiUrl('gov', `proposals?${searchParams.toString()}`), opts)
+        .then((res) => res.data);
     }).then((pages) => {
       return pages.map(el => el.proposals).flat();
     });
-  };
-
-  const getProposalTally = (proposal_id, opts) => {
-    return axios
-      .get(restUrl + "/cosmos/gov/v1beta1/proposals/" + proposal_id + '/tally', opts)
-      .then((res) => res.data)
-  };
-
-  const getProposalVote = (proposal_id, address, opts) => {
-    return axios
-      .get(restUrl + "/cosmos/gov/v1beta1/proposals/" + proposal_id + '/votes/' + address, opts)
-      .then((res) => res.data)
-  };
-
-  const getGranteeGrants = (grantee, opts, pageCallback) => {
-    const { pageSize } = opts || {}
-    return getAllPages((nextKey) => {
-      const searchParams = new URLSearchParams();
-      searchParams.append("pagination.limit", pageSize || 100);
-      if (nextKey) searchParams.append("pagination.key", nextKey);
-
-      return axios
-        .get(restUrl + "/cosmos/authz/v1beta1/grants/grantee/" + grantee + "?" +
-          searchParams.toString(), opts)
-        .then((res) => res.data)
-    }, pageCallback).then((pages) => {
-      return pages.map(el => el.grants).flat();
-    });
-  };
-
-  const getGranterGrants = (granter, opts, pageCallback) => {
-    const { pageSize } = opts || {}
-    return getAllPages((nextKey) => {
-      const searchParams = new URLSearchParams();
-      searchParams.append("pagination.limit", pageSize || 100);
-      if (nextKey) searchParams.append("pagination.key", nextKey);
-
-      return axios
-        .get(restUrl + "/cosmos/authz/v1beta1/grants/granter/" + granter + "?" +
-          searchParams.toString(), opts)
-        .then((res) => res.data)
-    }, pageCallback).then((pages) => {
-      return pages.map(el => el.grants).flat();
-    });
-  };
-
-  const getGrants = (grantee, granter, opts) => {
-    const searchParams = new URLSearchParams();
-    if(grantee) searchParams.append("grantee", grantee);
-    if(granter) searchParams.append("granter", granter);
-    return axios
-      .get(restUrl + "/cosmos/authz/v1beta1/grants?" + searchParams.toString(), opts)
-      .then((res) => res.data)
-      .then((result) => {
-        return result.grants
-      });
-  };
-
-  const getWithdrawAddress = (address, opts) => {
-    return axios
-      .get(
-        restUrl +
-          "/cosmos/distribution/v1beta1/delegators/" +
-          address +
-          "/withdraw_address", opts
-      )
-      .then((res) => res.data)
-      .then((result) => {
-        return result.withdraw_address
-      });
-  };
-
-  const getTransactions = (params, _opts) => {
-    const { pageSize, order, retries, ...opts } = _opts
-    const searchParams = new URLSearchParams()
-    params.forEach(({key, value}) => {
-      searchParams.append(key, value)
-    })
-    if(pageSize) searchParams.append('pagination.limit', pageSize)
-    if(order) searchParams.append('order_by', order)
-    const client = axios.create({ baseURL: restUrl });
-    axiosRetry(client, { retries: retries || 0, shouldResetTimeout: true, retryCondition: (e) => true });
-    return client.get("/cosmos/tx/v1beta1/txs?" + searchParams.toString(), opts).then((res) => res.data)
   }
 
-  const getAllPages = async (getPage, pageCallback) => {
+  function getProposalTally(proposal_id, opts) {
+    return axios
+      .get(apiUrl('gov', `proposals/${proposal_id}/tally`), opts)
+      .then((res) => res.data);
+  }
+
+  function getProposalVote(proposal_id, address, opts) {
+    return axios
+      .get(apiUrl('gov', `proposals/${proposal_id}/votes/${address}`), opts)
+      .then((res) => res.data);
+  }
+
+  function getGranteeGrants(grantee, opts, pageCallback) {
+    const { pageSize } = opts || {};
+    return getAllPages((nextKey) => {
+      const searchParams = new URLSearchParams();
+      searchParams.append("pagination.limit", pageSize || 100);
+      if (nextKey)
+        searchParams.append("pagination.key", nextKey);
+
+      return axios
+        .get(apiUrl('authz', `grants/grantee/${grantee}?${searchParams.toString()}`), opts)
+        .then((res) => res.data);
+    }, pageCallback).then((pages) => {
+      return pages.map(el => el.grants).flat();
+    });
+  }
+
+  function getGranterGrants(granter, opts, pageCallback) {
+    const { pageSize } = opts || {};
+    return getAllPages((nextKey) => {
+      const searchParams = new URLSearchParams();
+      searchParams.append("pagination.limit", pageSize || 100);
+      if (nextKey)
+        searchParams.append("pagination.key", nextKey);
+
+      return axios
+        .get(apiUrl('authz', `grants/granter/${granter}?${searchParams.toString()}`), opts)
+        .then((res) => res.data);
+    }, pageCallback).then((pages) => {
+      return pages.map(el => el.grants).flat();
+    });
+  }
+
+  function getGrants(grantee, granter, opts) {
+    const searchParams = new URLSearchParams();
+    if (grantee)
+      searchParams.append("grantee", grantee);
+    if (granter)
+      searchParams.append("granter", granter);
+    return axios
+      .get(apiUrl('authz', `grants?${searchParams.toString()}`), opts)
+      .then((res) => res.data)
+      .then((result) => {
+        return result.grants;
+      });
+  }
+
+  function getWithdrawAddress(address, opts) {
+    return axios
+      .get(apiUrl('distribution', `delegators/${address}/withdraw_address`))
+      .then((res) => res.data)
+      .then((result) => {
+        return result.withdraw_address;
+      });
+  }
+
+  function getTransactions(params, _opts) {
+    const { pageSize, order, retries, ...opts } = _opts;
+    const searchParams = new URLSearchParams();
+    params.forEach(({ key, value }) => {
+      searchParams.append(key, value);
+    });
+    if (pageSize)
+      searchParams.append('pagination.limit', pageSize);
+    if (order)
+      searchParams.append('order_by', order);
+    const client = axios.create({ baseURL: restUrl });
+    axiosRetry(client, { retries: retries || 0, shouldResetTimeout: true, retryCondition: (e) => true });
+    return client.get(apiPath('tx', `txs?${searchParams.toString()}`), opts).then((res) => res.data);
+  }
+
+  async function getAllPages(getPage, pageCallback) {
     let pages = [];
     let nextKey, error;
     do {
       const result = await getPage(nextKey);
       pages.push(result);
       nextKey = result.pagination?.next_key;
-      if (pageCallback) await pageCallback(pages);
+      if (pageCallback)
+        await pageCallback(pages);
     } while (nextKey);
     return pages;
-  };
+  }
 
   async function findAvailableUrl(urls, type, opts) {
     if(!urls) return
@@ -238,7 +231,7 @@ const QueryClient = async (chainId, restUrls, opts) => {
         urls = [urls]
       }
     }
-    const path = type === "rest" ? "/cosmos/base/tendermint/v1beta1/blocks/latest" : "/block";
+    const path = type === "rest" ? apiPath('/base/tendermint', 'blocks/latest') : "/block";
     return Promise.any(urls.map(async (url) => {
       url = url.replace(/\/$/, '')
       try {
@@ -263,6 +256,16 @@ const QueryClient = async (chainId, restUrls, opts) => {
       }
       throw(error)
     }
+  }
+
+  function apiUrl(type, path){
+    return restUrl + apiPath(type, path)
+  }
+
+  function apiPath(type, path){
+    const versions = config.apiVersions || {}
+    const version = versions[type] || 'v1beta1'
+    return `/cosmos/${type}/${version}/${path}`
   }
 
   return {
