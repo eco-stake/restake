@@ -20,7 +20,7 @@ function ProposalModal(props) {
       <Modal size="lg" show={show} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title className="text-truncate pe-4">
-            {proposal.content.title}
+            {proposal.title}
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>

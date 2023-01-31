@@ -17,8 +17,7 @@ function ProposalDetails(props) {
   const [granterVote, setGranterVote] = useState()
   const [error, setError] = useState()
 
-  const { proposal_id, content } = proposal
-  const { title, description } = content
+  const { proposal_id, title, description } = proposal
 
   const fixDescription = description?.replace(/\/n/g, '\n').split(/\\n/).join('\n')
 
