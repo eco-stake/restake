@@ -28,6 +28,11 @@ function ProposalProgress(props) {
     sum[key] = multiply(divide(tally[key], total), 100)
     return sum
   }, {})
+
+  function variant(key){
+    return variants[key.replace('_count', '')]
+  }
+
   return (
     <OverlayTrigger
       overlay={
@@ -41,7 +46,7 @@ function ProposalProgress(props) {
       <ProgressBar style={{height: props.height || 15}}>
         {Object.entries(progress).map(([key, value]) => {
           return (
-            <ProgressBar variant={variants[key]} now={value} key={key} label={`${format(value, { precision: 0, notation: 'fixed' })}%`} />
+            <ProgressBar variant={variant(key)} now={value} key={key} label={`${format(value, { precision: 0, notation: 'fixed' })}%`} />
           )
         })}
       </ProgressBar>

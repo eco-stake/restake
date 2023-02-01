@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Moment from 'react-moment';
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 
 import {
   Table,
@@ -17,10 +19,9 @@ function ProposalDetails(props) {
   const [granterVote, setGranterVote] = useState()
   const [error, setError] = useState()
 
-  const { proposal_id, content } = proposal
-  const { title, description } = content
+  const { proposal_id, title, description } = proposal
 
-  const fixDescription = description.replace(/\/n/g, '\n').split(/\\n/).join('\n')
+  const fixDescription = description?.replace(/\/n/g, '\n').split(/\\n/).join('\n')
 
   useEffect(() => {
     if(props.address !== props.wallet?.address && props.granters.includes(props.address)){
@@ -153,9 +154,19 @@ function ProposalDetails(props) {
       <div className="row mt-3">
         <div className="col">
           <h5 className="mb-3">{title}</h5>
-          <p className="text-break" style={{ whiteSpace: 'pre-wrap' }}>
-            {fixDescription}
-          </p>
+          <ReactMarkdown
+            children={fixDescription} 
+            remarkPlugins={[remarkGfm]}
+            components={{
+              h1: 'h5',
+              h2: 'h6',
+              h3: 'h6',
+              h4: 'h6',
+              h5: 'h6',
+              h6: 'h6',
+              table: ({node, ...props}) => <table className="table" {...props} />
+            }}
+           />
         </div>
       </div>
     </>

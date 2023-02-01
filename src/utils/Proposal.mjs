@@ -8,24 +8,43 @@ export const PROPOSAL_STATUSES = {
 }
 
 const Proposal = (data) => {
+  let { proposal_id, content, messages, metadata } = data
+  if(!proposal_id && data.id) proposal_id = data.id
 
-  const { title, description } = data.content || {}
-  const type = data.content && data.content['@type']
+  let title, description, typeHuman
+  if(metadata){
+    metadata = JSON.parse(metadata)
+    title = metadata.title
+    description = metadata.summary
+  }
 
-  const fixedDescription = description && description.split(/\\n/).join('\n')
+  if(messages){
+    content = messages.find(el => el['@type'] === '/cosmos.gov.v1.MsgExecLegacyContent')?.content
+    messages = messages.filter(el => el['@type'] !== '/cosmos.gov.v1.MsgExecLegacyContent')
+    typeHuman = messages.map(el => el['@type'].split('.').reverse()[0]).join(', ')
+  }
+  
+  if(content){
+    title = title || content.title
+    description = description || content.description
+    typeHuman = typeHuman || (content['@type'] ? content['@type'].split('.').reverse()[0] : 'Unknown')
+  }
+
   const statusHuman = PROPOSAL_STATUSES[data.status]
-  const typeHuman = type ? type.split('.').reverse()[0] : 'Unknown'
 
   const isDeposit = data.status === 'PROPOSAL_STATUS_DEPOSIT_PERIOD'
   const isVoting = data.status === 'PROPOSAL_STATUS_VOTING_PERIOD'
 
   return {
     ...data,
+    proposal_id,
     title,
-    type,
-    fixedDescription,
-    statusHuman,
     typeHuman,
+    statusHuman,
+    description,
+    content,
+    metadata,
+    messages,
     isDeposit,
     isVoting
   }
