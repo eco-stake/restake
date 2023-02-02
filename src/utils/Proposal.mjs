@@ -13,9 +13,13 @@ const Proposal = (data) => {
 
   let title, description, typeHuman
   if(metadata){
-    metadata = JSON.parse(metadata)
-    title = metadata.title
-    description = metadata.summary
+    try {
+      metadata = JSON.parse(metadata)
+      title = metadata.title
+      description = metadata.summary
+    } catch (e) {
+      console.log(e)
+    }
   }
 
   if(messages){
@@ -29,6 +33,9 @@ const Proposal = (data) => {
     description = description || content.description
     typeHuman = typeHuman || (content['@type'] ? content['@type'].split('.').reverse()[0] : 'Unknown')
   }
+
+  title = title || typeHuman
+  description = description || metadata
 
   const statusHuman = PROPOSAL_STATUSES[data.status]
 
