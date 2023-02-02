@@ -9,7 +9,8 @@ const Chain = (data) => {
   const sdkAuthzAminoSupport = sdk46OrLater
   const authzSupport = data.authzSupport ?? data.params?.authz
   const apiVersions = {
-    gov: sdk46OrLater ? 'v1' : 'v1beta1'
+    gov: sdk46OrLater ? 'v1' : 'v1beta1',
+    ...data.apiVersions || {}
   }
 
   return {
