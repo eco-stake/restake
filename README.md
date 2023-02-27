@@ -34,7 +34,7 @@ Becoming an operator is pretty easy, the overall process is as follows:
 
 ### Setup a hot wallet
 
-Generate a new hot wallet you will use to automatically carry out the staking transactions. The mnemonic will need to be provided to the script so **use a dedicated wallet and only keep enough funds for transaction fees**. The ONLY menmonic required here is for the hot wallet, do not put your validator operator mnemonic anywhere.
+Generate a new hot wallet you will use to automatically carry out the staking transactions. The mnemonic will need to be provided to the script so **use a dedicated wallet and only keep enough funds for transaction fees**. The ONLY mnemonic required here is for the hot wallet, do not put your validator operator mnemonic anywhere.
 
 You only need a single mnemonic for multiple Cosmos chains, and the script will check each network in the [networks.json](./src/networks.json) file for a matching bot address.
 
@@ -57,7 +57,7 @@ The correct path can be set in one of two ways using a [config override](#custom
 }
 ```
 
-In the future, `correctSlip44` will become the default and you will need to set `slip44` explicitely if you want to use the 118 path.
+In the future, `correctSlip44` will become the default and you will need to set `slip44` explicitly if you want to use the 118 path.
 
 ### Setup the autostaking script
 
@@ -249,11 +249,11 @@ crontab -e
 
 #### Using `systemd-timer`
 
-Systemd-timer allow to run a one-off service with specified rules. This method is arguably preferable to Cron.
+Systemd-timer allows to run a one-off service with specified rules. This method is arguably preferable to Cron.
 
 ##### Create a systemd unit file
 
-The unit file describe the application to run.  We define a dependency with the timer with the `Wants` statement.
+The unit file describes the application to run.  We define a dependency with the timer with the `Wants` statement.
 
 ```bash
 sudo vim /etc/systemd/system/restake.service
@@ -371,7 +371,7 @@ You now need to update the [Validator Registry](https://github.com/eco-stake/val
 
 `restake.run_time` is the time *in UTC* that you intend to run your bot, and there are a few options. Pass a single time, e.g. `09:00` to specify a single run at 9am UTC. Use an array for multiple specified times, e.g. `["09:00", "21:00"]`. Use an interval string for multiple times per hour/day, e.g. `"every 15 minutes"`.
 
-`restake.minimum_reward` is the minimum reward to trigger autostaking, otherwise the address be skipped. This could be set higher for more frequent restaking. Note this is in the base denomination, e.g. `uosmo`.
+`restake.minimum_reward` is the minimum reward to trigger autostaking, otherwise the address is skipped. This could be set higher for more frequent restaking. Note this is in the base denomination, e.g. `uosmo`.
 
 Repeat this config for all networks you want to REStake for.
 
@@ -400,7 +400,7 @@ To add or override a chain in REStake, add the required information to `networks
 }
 ```
 
-Note that most attributes from Chain Registry can be overriden by defining the camelCase version in networks.json.
+Note that most attributes from Chain Registry can be overridden by defining the camelCase version in networks.json.
 
 ### Running the UI
 
