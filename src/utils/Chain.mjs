@@ -5,8 +5,13 @@ const Chain = (data) => {
   const assets = data.assets?.map(el => ChainAsset(el)) || []
   const baseAsset = assets[0]
   const { cosmos_sdk_version } = data.versions || {}
-  const sdkAuthzAminoSupport = validate(cosmos_sdk_version) && compareVersions(cosmos_sdk_version, '0.46') >= 0
+  const sdk46OrLater = validate(cosmos_sdk_version) && compareVersions(cosmos_sdk_version, '0.46') >= 0
+  const sdkAuthzAminoSupport = sdk46OrLater
   const authzSupport = data.authzSupport ?? data.params?.authz
+  const apiVersions = {
+    gov: sdk46OrLater ? 'v1' : 'v1beta1',
+    ...data.apiVersions || {}
+  }
 
   return {
     ...data,
@@ -17,6 +22,7 @@ const Chain = (data) => {
     estimatedApr: data.params?.calculated_apr,
     authzSupport,
     authzAminoSupport: data.authzAminoSupport ?? sdkAuthzAminoSupport ?? false,
+    apiVersions,
     denom: data.denom || baseAsset?.base?.denom,
     display: data.display || baseAsset?.display?.denom,
     symbol: data.symbol || baseAsset?.symbol,
