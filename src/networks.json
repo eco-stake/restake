@@ -277,5 +277,9 @@
     "name": "mars",
     "ownerAddress": "marsvaloper1hvtaqw9mlwc0a4cdx6g3klk8acfc6z3yazzk8a",
     "gasPrice": "0umars"
+  },
+  {
+    "name": "injective",
+    "ownerAddress": "injvaloper1vqz7mgm47xhx25xu5g9qagnz48naks6pk6fmg2"
   }
 ]
