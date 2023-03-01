@@ -281,5 +281,9 @@
   {
     "name": "planq",
     "gasPrice": "30000000000aplanq"
+  },
+  {
+    "name": "injective",
+    "ownerAddress": "injvaloper1vqz7mgm47xhx25xu5g9qagnz48naks6pk6fmg2"
   }
 ]
