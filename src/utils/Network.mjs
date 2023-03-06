@@ -88,20 +88,19 @@ class Network {
     this.ledgerSupport = this.chain.ledgerSupport ?? true
     this.authzSupport = this.chain.authzSupport
     this.authzAminoSupport = this.chain.authzAminoSupport
-    this.defaultGasPrice = this.decimals && format(bignumber(multiply(0.000000025, pow(10, this.decimals))), { notation: 'fixed', precision: 4}) + this.denom
-    this.gasPrice = this.data.gasPrice || this.defaultGasPrice
-    if(this.gasPrice){
-      this.gasPriceAmount = GasPrice.fromString(this.gasPrice).amount.toString()
-      this.gasPriceStep = this.data.gasPriceStep || {
-        "low": multiply(this.gasPriceAmount, 0.5),
-        "average": multiply(this.gasPriceAmount, 1),
-        "high": multiply(this.gasPriceAmount, 2)
-      }
-    }
-    this.gasPricePrefer = this.data.gasPricePrefer
-    this.gasModifier = this.data.gasModifier || 1.5
     this.txTimeout = this.data.txTimeout || 60_000
     this.keywords = this.buildKeywords()
+
+    const defaultGasPrice = this.decimals && format(bignumber(multiply(0.000000025, pow(10, this.decimals))), { notation: 'fixed', precision: 4})
+    const gasPriceAmount = this.data.gasPrice ? GasPrice.fromString(this.data.gasPrice).amount.toString() : defaultGasPrice
+    const feeConfig = this.chain.fees?.fee_tokens?.find(el => el.denom === this.denom)
+    this.gasPriceStep = this.data.gasPriceStep || {
+      "low": feeConfig?.low_gas_price ?? multiply(gasPriceAmount, 0.5),
+      "average": feeConfig?.average_gas_price ?? multiply(gasPriceAmount, 1), 
+      "high": feeConfig?.high_gas_price ?? multiply(gasPriceAmount, 2), 
+    }
+    this.gasPrice = this.data.gasPrice || (this.gasPriceStep.average.toString() + this.denom)
+    this.gasModifier = this.data.gasModifier || 1.5
   }
 
   async connect(opts) {
