@@ -29,8 +29,7 @@
   {
     "name": "chihuahua",
     "ownerAddress": "chihuahuavaloper19vwcee000fhazmpt4ultvnnkhfh23ppwxll8zz",
-    "gasPrice": "1uhuahua",
-    "gasPricePrefer": "1uhuahua"
+    "gasPrice": "1uhuahua"
   },
   {
     "name": "gravitybridge",
@@ -45,12 +44,10 @@
     }
   },
   {
-    "name": "terra",
-    "gasPrice": "28.325uluna"
+    "name": "terra"
   },
   {
-    "name": "terra2",
-    "gasPrice": "0.015uluna"
+    "name": "terra2"
   },
   {
     "name": "sentinel",
@@ -124,8 +121,7 @@
   },
   {
     "name": "impacthub",
-    "gasPrice": "0.025uixo",
-    "gasPricePrefer": "0.1uixo"
+    "gasPrice": "0.1uixo"
   },
   {
     "name": "kichain",
@@ -152,8 +148,7 @@
   },
   {
     "name": "secretnetwork",
-    "gasPrice": "0.025uscrt",
-    "gasPricePrefer": "0.05uscrt",
+    "gasPrice": "0.05uscrt",
     "authzAminoSupport": true
   },
   {
@@ -170,17 +165,22 @@
   },
   {
     "name": "decentr",
-    "gasPrice": "0.025udec"
+    "gasPrice": "0.025udec",
+    "gasPriceStep": {
+      "low": 0.025,
+      "average": 0.025,
+      "high": 0.04
+    }
   },
   {
     "name": "assetmantle",
+    "ownerAddress": "mantlevaloper1fqs7gakxdmujtk0qufdzth5pfyspus3yx394zd",
     "gasPrice": "0.025umntl",
     "gasPriceStep": {
       "low": 0,
       "average": 0.025,
       "high": 0.04
-    },
-    "ownerAddress": "mantlevaloper1fqs7gakxdmujtk0qufdzth5pfyspus3yx394zd"
+    }
   },
   {
     "name": "crescent",
@@ -192,8 +192,7 @@
     }
   },
   {
-    "name": "meme",
-    "gasPrice": "0.025umeme"
+    "name": "meme"
   },
   {
     "name": "cronos",
@@ -221,16 +220,14 @@
     "enabled": false
   },
   {
-    "name": "echelon",
-    "keplrFeatures": ["ibc-transfer", "ibc-go", "eth-address-gen", "eth-key-sign"]
+    "name": "echelon"
   },
   {
     "name": "kichaintestnet",
     "testnet": true
   },
   {
-    "name": "likecoin",
-    "gasPrice": "10nanolike"
+    "name": "likecoin"
   },
   {
     "name": "passage",
@@ -239,12 +236,7 @@
   {
     "name": "stride",
     "ownerAddress": "stridevaloper1x2kta40h5rnymtjn6ys7vk2d87xu7y6zfu9j3r",
-    "authzSupport": false,
-    "gasPriceStep": {
-      "low": 0,
-      "average": 0.025,
-      "high": 0.04
-    }
+    "authzSupport": false
   },
   {
     "name": "pulsar",
@@ -252,12 +244,7 @@
   },
   {
     "name": "teritori",
-    "ownerAddress": "torivaloper1d5u07lhelk6lal44a0myvufurvsqk5d499h9hz",
-    "gasPriceStep": {
-      "low": 0,
-      "average": 0.025,
-      "high": 0.04
-    }
+    "ownerAddress": "torivaloper1d5u07lhelk6lal44a0myvufurvsqk5d499h9hz"
   },
   {
     "name": "rebus"
@@ -275,15 +262,16 @@
   },
   {
     "name": "mars",
-    "ownerAddress": "marsvaloper1hvtaqw9mlwc0a4cdx6g3klk8acfc6z3yazzk8a",
-    "gasPrice": "0umars"
+    "ownerAddress": "marsvaloper1hvtaqw9mlwc0a4cdx6g3klk8acfc6z3yazzk8a"
   },
   {
-    "name": "planq",
-    "gasPrice": "30000000000aplanq"
+    "name": "planq"
   },
   {
     "name": "injective",
     "ownerAddress": "injvaloper1vqz7mgm47xhx25xu5g9qagnz48naks6pk6fmg2"
+  },
+  {
+    "name": "panacea"
   }
 ]
