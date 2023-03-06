@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import SignerProvider from "./SignerProvider.mjs"
 
 export default class LeapSignerProvider extends SignerProvider {
@@ -14,7 +15,7 @@ export default class LeapSignerProvider extends SignerProvider {
   }
 
   setOptions(options){
-    return this.provider.defaultOptions = options
+    return _.merge(this.provider.defaultOptions, options)
   }
 
   getOptions(){
