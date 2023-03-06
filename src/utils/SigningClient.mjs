@@ -28,8 +28,12 @@ import { createAuthzAminoConverters, createAuthzExecAminoConverters } from '../c
 
 function SigningClient(network, signer) {
 
-  const defaultGasPrice = network.gasPricePrefer || network.gasPrice
-  const { restUrl, gasModifier: defaultGasModifier, slip44: coinType, chainId } = network
+  const { 
+    restUrl, chainId, 
+    gasPrice: defaultGasPrice, 
+    gasModifier: defaultGasModifier, 
+    slip44: coinType 
+  } = network
 
   const registry = new Registry(defaultStargateTypes);
   const defaultConverters = {
@@ -114,8 +118,7 @@ function SigningClient(network, signer) {
   async function signAndBroadcastWithoutBalanceCheck(address, msgs, gas, memo, gasPrice) {
     let defaultOptions
     if(signer.keplr.defaultOptions){
-      defaultOptions = _.clone(signer.keplr.defaultOptions);
-      signer.keplr.defaultOptions = {...defaultOptions, sign: { disableBalanceCheck: true }}
+      _.merge(signer.keplr.defaultOptions, { sign: { disableBalanceCheck: true } })
     }
     try {
       return await signAndBroadcast(address, msgs, gas, memo, gasPrice)

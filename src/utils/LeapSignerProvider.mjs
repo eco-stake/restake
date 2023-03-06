@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import SignerProvider from "./SignerProvider.mjs"
 
 export default class LeapSignerProvider extends SignerProvider {
@@ -7,16 +8,14 @@ export default class LeapSignerProvider extends SignerProvider {
   suggestChainSupport = false
 
   enable(network){
-    if (network.gasPricePrefer) {
-      this.setOptions({
-        sign: { preferNoSetFee: true }
-      })
-    }
+    this.setOptions({
+      sign: { preferNoSetFee: true }
+    })
     return super.enable(network)
   }
 
   setOptions(options){
-    return this.provider.defaultOptions = options
+    return _.merge(this.provider.defaultOptions, options)
   }
 
   getOptions(){
