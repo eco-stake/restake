@@ -6,11 +6,9 @@ export default class KeplrSignerProvider extends SignerProvider {
   keychangeEvent = 'keplr_keystorechange'
 
   enable(network){
-    if (network.gasPricePrefer) {
-      this.setOptions({
-        sign: { preferNoSetFee: true }
-      })
-    }
+    this.setOptions({
+      sign: { preferNoSetFee: true }
+    })
     return super.enable(network)
   }
 

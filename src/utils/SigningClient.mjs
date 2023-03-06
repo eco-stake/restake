@@ -28,8 +28,12 @@ import { createAuthzAminoConverters, createAuthzExecAminoConverters } from '../c
 
 function SigningClient(network, signer) {
 
-  const defaultGasPrice = network.gasPricePrefer || network.gasPrice
-  const { restUrl, gasModifier: defaultGasModifier, slip44: coinType, chainId } = network
+  const { 
+    restUrl, chainId, 
+    gasPrice: defaultGasPrice, 
+    gasModifier: defaultGasModifier, 
+    slip44: coinType 
+  } = network
 
   const registry = new Registry(defaultStargateTypes);
   const defaultConverters = {
