@@ -4,7 +4,10 @@
     "gasPrice": "0.0025uosmo",
     "ownerAddress": "osmovaloper1u5v0m74mql5nzfx2yh43s2tke4mvzghr6m2n5t",
     "default": true,
-    "maxPerDay": 1
+    "maxPerDay": 1,
+    "apiVersions": {
+      "gov": "v1beta1"
+    }
   },
   {
     "name": "juno",
@@ -43,7 +46,7 @@
   },
   {
     "name": "terra",
-    "gasPrice": "5.665uluna"
+    "gasPrice": "28.325uluna"
   },
   {
     "name": "terra2",
@@ -68,7 +71,7 @@
   },
   {
     "name": "kava",
-    "gasPrice": "0.00008ukava"
+    "gasPrice": "0.001ukava"
   },
   {
     "name": "desmos",
@@ -86,7 +89,7 @@
     "txTimeout": 120000,
     "ownerAddress": "evmosvaloper1umk407eed7af6anvut6llg2zevnf0dn0feqqny",
     "maxPerDay": 1,
-    "ledgerSupport": false
+    "authzAminoSupport": false
   },
   {
     "name": "sifchain",
@@ -266,5 +269,21 @@
   {
     "name": "oraichain",
     "gasPrice": "0.0000025orai"
+  },
+  {
+    "name": "acrechain"
+  },
+  {
+    "name": "mars",
+    "ownerAddress": "marsvaloper1hvtaqw9mlwc0a4cdx6g3klk8acfc6z3yazzk8a",
+    "gasPrice": "0umars"
+  },
+  {
+    "name": "planq",
+    "gasPrice": "30000000000aplanq"
+  },
+  {
+    "name": "injective",
+    "ownerAddress": "injvaloper1vqz7mgm47xhx25xu5g9qagnz48naks6pk6fmg2"
   }
 ]

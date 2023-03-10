@@ -1,3 +1,5 @@
+import { equal } from 'mathjs'
+
 export const VOTE_CHOICES = {
   'VOTE_OPTION_YES': 'Yes',
   'VOTE_OPTION_NO': 'No',
@@ -14,11 +16,19 @@ export const VOTE_VALUES = {
 
 const Vote = (data) => {
 
-  const optionHuman = VOTE_CHOICES[data.option]
-  const optionValue = VOTE_VALUES[data.option]
+  let option = data.option
+  let optionHuman = VOTE_CHOICES[data.option]
+  let optionValue = VOTE_VALUES[data.option]
+
+  if(!optionValue && data.options?.length){
+    option = data.options.find(el => equal(el.weight, 1))?.option
+    optionHuman = option ? VOTE_CHOICES[option] : 'Multiple'
+    optionValue = option ? VOTE_VALUES[option] : null // doesn't support multiple right now
+  }
 
   return {
     ...data,
+    option,
     optionHuman,
     optionValue
   }

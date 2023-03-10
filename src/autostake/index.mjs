@@ -23,8 +23,8 @@ export default function Autostake(mnemonic, opts) {
     process.exit()
   }
 
-  async function run(networkNames) {
-    const networks = getNetworksData()
+  async function run(networkNames, networksOverridePath) {
+    const networks = getNetworksData(networksOverridePath)
     for (const name of networkNames) {
       if (name && !networks.map(el => el.name).includes(name)) return timeStamp('Invalid network name:', name)
     }
@@ -189,11 +189,11 @@ export default function Autostake(mnemonic, opts) {
     return { signer, slip44 }
   }
 
-  function getNetworksData() {
+  function getNetworksData(networksOverridePath) {
     const networksData = fs.readFileSync('src/networks.json');
     const networks = JSON.parse(networksData);
     try {
-      const overridesData = fs.readFileSync('src/networks.local.json');
+      const overridesData = fs.readFileSync(networksOverridePath);
       const overrides = overridesData && JSON.parse(overridesData) || {}
       return overrideNetworks(networks, overrides)
     } catch (error) {
