@@ -289,5 +289,10 @@
   {
     "name": "xpla",
     "gasPrice": "850000000000axpla"
+  },
+  {
+    "name": "kyve",
+    "ownerAddress": "kyvevaloper1egqphd8yjdfv84fl825grwgna0pf2emagdmnz8",
+    "gasPrice": "0.02ukyve"
   }
 ]
