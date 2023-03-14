@@ -285,5 +285,9 @@
   {
     "name": "injective",
     "ownerAddress": "injvaloper1vqz7mgm47xhx25xu5g9qagnz48naks6pk6fmg2"
+  },
+  {
+    "name": "xpla",
+    "gasPrice": "850000000000axpla"
   }
 ]
