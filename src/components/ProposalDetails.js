@@ -21,7 +21,7 @@ function ProposalDetails(props) {
 
   const { proposal_id, title, description } = proposal
 
-  const fixDescription = description?.replace(/\/n/g, '\n').split(/\\n/).join('\n')
+  const fixDescription = description.replace(/\\n/g, '  \n')
 
   useEffect(() => {
     if(props.address !== props.wallet?.address && props.granters.includes(props.address)){
