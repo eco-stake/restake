@@ -111,7 +111,8 @@
     "gasPrice": "25ncheq"
   },
   {
-    "name": "umee"
+    "name": "umee",
+    "gasPrice": "0.05uumee"
   },
   {
     "name": "bitsong"
