@@ -304,5 +304,8 @@
       "average": 0.0001,
       "high": 0.00025
     }
+  },
+  {
+    "name": "chain4energy"
   }
 ]
