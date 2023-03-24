@@ -298,7 +298,6 @@
   },
   {
     "name": "quicksilver",
-    "ownerAddress": "quickvaloper1jdq7efmzmc8smscwmaw77vul7wptww74wskggw",
     "gasPrice": "0.0001uqck",
     "gasPriceStep": {
       "low": 0.0001,
