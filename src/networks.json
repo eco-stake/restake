@@ -295,5 +295,14 @@
     "name": "kyve",
     "ownerAddress": "kyvevaloper1egqphd8yjdfv84fl825grwgna0pf2emagdmnz8",
     "gasPrice": "0.02ukyve"
+  },
+  {
+    "name": "quicksilver",
+    "gasPrice": "0.0001uqck",
+    "gasPriceStep": {
+      "low": 0.0001,
+      "average": 0.0001,
+      "high": 0.00025
+    }
   }
 ]
