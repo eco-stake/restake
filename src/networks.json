@@ -141,7 +141,11 @@
   },
   {
     "name": "fetchhub",
-    "gasPrice": "5000afet"
+    "gasPriceStep": {
+      "low": 0.025,
+      "average": 0.025,
+      "high": 0.035
+    }
   },
   {
     "name": "cerberus",
