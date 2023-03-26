@@ -1,10 +1,10 @@
-import { Bech32 } from '@cosmjs/encoding'
+import Bech32 from "bech32";
 
 const Validator = (network, data) => {
   const address = data.operator_address
   const { delegations } = data
   const totalSlashes = data.slashes?.length
-  const blockPeriod = data.missed_blocks_periods && data.missed_blocks_periods.slice(-1)[0] 
+  const blockPeriod = data.missed_blocks_periods && data.missed_blocks_periods.slice(-1)[0]
   const uptime = blockPeriod?.blocks && ((blockPeriod.blocks - blockPeriod.missed) / blockPeriod.blocks)
   const missedBlocks = blockPeriod?.missed
   const totalTokens = delegations?.total_tokens_display
