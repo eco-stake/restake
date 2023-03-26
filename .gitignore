@@ -25,13 +25,6 @@ scripts/*
 .env.production.local
 
 npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
 
 .vim
 .iml
-
-# Parcel related files
-dist/
-.cache
-.parcel-cache/

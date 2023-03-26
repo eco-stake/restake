@@ -1,7 +1,6 @@
 import _ from 'lodash'
 import { format, floor, bignumber } from 'mathjs'
 import { coin as _coin } from  '@cosmjs/stargate'
-import truncateMiddle from 'truncate-middle'
 
 export function timeStamp(...args) {
   console.log('[' + new Date().toISOString().substring(11, 23) + ']', ...args);
@@ -13,11 +12,6 @@ export function coin(amount, denom){
 
 export function joinString(...args){
   return _.compact(args).join(' ')
-}
-
-export function truncateAddress(address) {
-  const firstDigit = address.search(/\d/)
-  return truncateMiddle(address, firstDigit + 6, 6, '…')
 }
 
 export function rewardAmount(rewards, denom, type){
@@ -71,7 +65,7 @@ export function parseGrants(grants, grantee, granter) {
   // claimGrant is removed but we track for now to allow revoke
   const claimGrant = grants.find((el) => {
     if (
-      (!el.grantee || el.grantee === grantee) && 
+      (!el.grantee || el.grantee === grantee) &&
       (!el.granter || el.granter === granter) &&
       (el.authorization["@type"] ===
       "/cosmos.authz.v1beta1.GenericAuthorization" &&
@@ -85,7 +79,7 @@ export function parseGrants(grants, grantee, granter) {
   });
   const stakeGrant = grants.find((el) => {
     if (
-      (!el.grantee || el.grantee === grantee) && 
+      (!el.grantee || el.grantee === grantee) &&
       (!el.granter || el.granter === granter) &&
       (el.authorization["@type"] ===
       "/cosmos.staking.v1beta1.StakeAuthorization" || (

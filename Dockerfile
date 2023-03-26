@@ -1,5 +1,5 @@
 # dev env
-FROM node:17-slim
+FROM node:18-slim
 
 RUN apt-get update && apt-get install -y python3 make g++
 
@@ -14,4 +14,4 @@ ENV DIRECTORY_PROTOCOL=https
 ENV DIRECTORY_DOMAIN=cosmos.directory
 
 EXPOSE 3000
-CMD npm run start
+CMD npm run autostake

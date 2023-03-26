@@ -1,5 +1,4 @@
 node_modules
-.parcel-cache
 Dockerfile
 .git
 .vim

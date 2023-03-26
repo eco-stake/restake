@@ -3,79 +3,20 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@bugsnag/js": "^7.16.1",
-    "@bugsnag/plugin-react": "^7.16.1",
     "@cosmjs/proto-signing": "^0.28.1",
     "@cosmjs/stargate": "^0.28.1",
     "@ethersproject/wallet": "^5.6.2",
-    "@keplr-wallet/wc-client": "^0.11.3",
-    "@testing-library/jest-dom": "^5.16.2",
-    "@testing-library/react": "^12.1.3",
-    "@testing-library/user-event": "^13.5.0",
     "@tharsis/address-converter": "^0.1.8",
-    "@walletconnect/client": "^1.8.0",
     "axios": "^0.26.0",
     "axios-retry": "^3.3.1",
-    "bootstrap": "^5.1.3",
-    "buffer": "^6.0.3",
     "compare-versions": "^5.0.1",
     "cosmjs-types": "^0.4.1",
     "dotenv": "^16.0.0",
-    "fuzzy-search": "^3.2.1",
-    "mathjs": "^10.4.3",
-    "moment": "^2.29.2",
-    "parse-duration": "^1.0.2",
-    "path": "^0.12.7",
-    "qrcode.react": "^3.1.0",
-    "react": "^17.0.2",
-    "react-bootstrap": "^2.1.2",
-    "react-bootstrap-icons": "^1.8.3",
-    "react-copy-to-clipboard": "^5.0.4",
-    "react-countdown": "^2.3.2",
-    "react-dom": "^17.0.2",
-    "react-github-btn": "^1.2.1",
-    "react-markdown": "^8.0.5",
-    "react-moment": "^1.1.2",
-    "react-router-dom": "^6.2.1",
-    "react-select": "^5.2.2",
-    "remark-gfm": "^3.0.1",
-    "stream": "^0.0.2",
-    "truncate-middle": "^1.0.6",
-    "web-vitals": "^2.1.4"
+    "lodash": "^4.17.21",
+    "mathjs": "^10.4.3"
   },
   "scripts": {
-    "start": "npx parcel src/index.html",
-    "prebuild": "rm -rf dist/",
-    "build": "npx parcel build src/index.html",
-    "dryrun": "NODE_OPTIONS=--openssl-legacy-provider node scripts/dryrun.mjs",
-    "autostake": "NODE_OPTIONS=--openssl-legacy-provider node scripts/autostake.mjs"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  },
-  "devDependencies": {
-    "@parcel/packager-raw-url": "^2.0.0",
-    "@parcel/transformer-webmanifest": "^2.0.0",
-    "crypto-browserify": "^3.12.0",
-    "eslint": "^8.10.0",
-    "events": "^3.3.0",
-    "parcel": "^2.0.0",
-    "path-browserify": "^1.0.1",
-    "stream-browserify": "^3.0.0"
+    "dryrun": "node scripts/dryrun.mjs",
+    "autostake": "node scripts/autostake.mjs"
   }
 }
