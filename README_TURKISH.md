@@ -88,18 +88,18 @@ cp .env.sample .env
 
 #### NPM için Talimatlar
 
-##### nodejs@v17 yükleme
+##### nodejs@v18 yükleme
 
 ```bash
-curl -sL https://deb.nodesource.com/setup_17.x -o /tmp/nodesource_setup.sh
+curl -sL https://deb.nodesource.com/setup_18.x -o /tmp/nodesource_setup.sh
 # read the script file and when you're sure it's safe run it
 chmod +x /tmp/nodesource_setup.sh
 /tmp/nodesource_setup.sh
 apt install nodejs -y
 node --version
-> v17.9.0
+> v18.15.0
 npm --version
-> 8.5.5
+> 9.5.0
 ```
 
 Depoyu klonlama ve yükleme
@@ -267,7 +267,7 @@ NPM kurulumu için `Requires` ve `After` direktiflerini kaldırın ve` `ExecStar
 
 🔴 **Eğer `Failed to restake service with docker compose` gibi bir hata alırsanız yine `chmod 777 /usr/bin/docker-compose` komutu ile dosyaya okuma, yazma ve çalıştırma izni veriniz.**
 
-Çözüm için değerli arkadaşım [Odyseus](https://github.com/odyseus8)'a teşekkür ederim. 
+Çözüm için değerli arkadaşım [Odyseus](https://github.com/odyseus8)'a teşekkür ederim.
 
 ##### systemd timer dosyası oluşturma
 
