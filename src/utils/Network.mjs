@@ -45,7 +45,7 @@ class Network {
   }
 
   estimateOperatorCount() {
-    if(!this.operatorAddresses) return 0 
+    if(!this.operatorAddresses) return 0
     return Object.keys(this.operatorAddresses).filter(el => this.allowOperator(el)).length
   }
 
@@ -101,12 +101,11 @@ class Network {
     this.gasPricePrefer = this.data.gasPricePrefer
     this.gasModifier = this.data.gasModifier || 1.5
     this.txTimeout = this.data.txTimeout || 60_000
-    this.keywords = this.buildKeywords()
   }
 
   async connect(opts) {
     try {
-      this.queryClient = await QueryClient(this.chain.chainId, this.restUrl, { 
+      this.queryClient = await QueryClient(this.chain.chainId, this.restUrl, {
         connectTimeout: opts?.timeout,
         apiVersions: this.chain.apiVersions
       })
@@ -157,53 +156,6 @@ class Network {
       (a, v) => ({ ...a, [v.operator_address]: v }),
       {}
     )
-  }
-
-  suggestChain(){
-    const currency = {
-      coinDenom: this.symbol,
-      coinMinimalDenom: this.denom,
-      coinDecimals: this.decimals
-    }
-    if(this.coinGeckoId){
-      currency.coinGeckoId = this.coinGeckoId
-    }
-    const data = {
-      rpc: this.rpcUrl,
-      rest: this.restUrl,
-      chainId: this.chainId,
-      chainName: this.prettyName,
-      stakeCurrency: currency,
-      bip44: { coinType: this.slip44 },
-      walletUrlForStaking: "https://restake.app/" + this.name,
-      bech32Config: {
-        bech32PrefixAccAddr: this.prefix,
-        bech32PrefixAccPub: this.prefix + "pub",
-        bech32PrefixValAddr: this.prefix + "valoper",
-        bech32PrefixValPub: this.prefix + "valoperpub",
-        bech32PrefixConsAddr: this.prefix + "valcons",
-        bech32PrefixConsPub: this.prefix + "valconspub"
-      },
-      currencies: [currency],
-      feeCurrencies: [{...currency, gasPriceStep: this.gasPriceStep }]
-    }
-    if(this.keplrFeatures()){
-      data.features = this.keplrFeatures()
-    }
-    return data
-  }
-
-  keplrFeatures(){
-    if(this.data.keplrFeatures) return this.data.keplrFeatures
-    if(this.slip44 === 60) return ["ibc-transfer", "ibc-go", "eth-address-gen", "eth-key-sign"]
-  }
-
-  buildKeywords(){
-    return _.compact([
-      ...this.chain?.keywords || [], 
-      this.authzSupport && 'authz',
-      this.authzAminoSupport && 'full authz ledger',
-    ])
   }
 }
 

@@ -5,8 +5,6 @@ services:
     build: .
     env_file:
       - .env
-    ports:
-      - '1234:1234'
     volumes:
       - .:/usr/src/app
       - restake_node_modules:/usr/src/app/node_modules

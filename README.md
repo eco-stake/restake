@@ -8,6 +8,8 @@ REStake is also a convenient staking tool, allowing you to claim and compound yo
 
 Try it out at [restake.app](https://restake.app).
 
+The REStake UI has it's own dedicated repository at [eco-stake/restake-ui](https://github.com/eco-stake/restake-ui).
+
 ## How it works / Authz
 
 Authz is a new feature for Tendermint chains which lets you grant permission to another wallet to carry out certain transactions for you. These transactions are sent by the grantee on behalf of the granter, meaning the validator will send and pay for the TX, but actions will affect your wallet (such as claiming rewards).
@@ -21,7 +23,7 @@ A script is also provided which allows a validator to automatically search their
 - As of writing, Ledger is unable to send the necessary transactions to enable Authz. This is purely due to the way transactions are sent to a Ledger device and a workaround should be possible soon.
 - Authz is also not fully supported yet. Many chains are yet to update. The REStake UI will fall back to being a manual staking app with useful manual compounding features.
 - Currently REStake needs the browser extension version of Keplr, but WalletConnect and Keplr iOS functionality will be added ASAP.
-- REStake requires Nodejs version 17.x or later, it will not work with earlier versions.
+- REStake requires Nodejs version 18.x or later, it will not work with earlier versions.
 
 ## Become an operator
 
@@ -87,19 +89,18 @@ cp .env.sample .env
 
 #### Instructions for NPM
 
-##### Install nodejs@v17
+##### Install nodejs@v18
 
 ```bash
-curl -sL https://deb.nodesource.com/setup_17.x -o /tmp/nodesource_setup.sh
+curl -sL https://deb.nodesource.com/setup_18.x -o /tmp/nodesource_setup.sh
 # read the script file and when you're sure it's safe run it
 chmod +x /tmp/nodesource_setup.sh
 /tmp/nodesource_setup.sh
 apt install nodejs -y
 node --version
-> v17.9.0
+> v18.15.0
 npm --version
-> 8.5.5
-
+> 9.5.0
 ```
 
 ##### Clone the repository and build it
@@ -404,13 +405,9 @@ Note that most attributes from Chain Registry can be overridden by defining the 
 
 ### Running the UI
 
-Run the UI using docker with one line:
+The REStake UI now has it's own dedicated repository at [eco-stake/restake-ui](https://github.com/eco-stake/restake-ui).
 
-```bash
-docker run -p 80:80 -t ghcr.io/eco-stake/restake
-```
-
-Alternative run from source using `docker-compose up` or `npm start`.
+Check the project README for instructions on running your own UI.
 
 ## Ethos
 
