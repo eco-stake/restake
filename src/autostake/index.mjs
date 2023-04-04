@@ -17,6 +17,7 @@ import EthSigner from '../utils/EthSigner.mjs';
 
 export default function Autostake(mnemonic, opts) {
   opts = opts || {}
+  let failed = false
 
   if (!mnemonic) {
     timeStamp('Please provide a MNEMONIC environment variable')
@@ -26,7 +27,10 @@ export default function Autostake(mnemonic, opts) {
   async function run(networkNames, networksOverridePath) {
     const networks = getNetworksData(networksOverridePath)
     for (const name of networkNames) {
-      if (name && !networks.map(el => el.name).includes(name)) return timeStamp('Invalid network name:', name)
+      if (name && !networks.map(el => el.name).includes(name)){
+        // Assume network will be found in Chain Registry
+        networks.push({ name, path: name })
+      }
     }
     const calls = networks.map(data => {
       return async () => {
@@ -37,7 +41,7 @@ export default function Autostake(mnemonic, opts) {
         health.started('⚛')
         const results = await runWithRetry(data, health)
         const { success, skipped } = results[results.length - 1] || {}
-        if(!skipped){
+        if(!skipped && !failed){
           health.log(`Autostake ${success ? 'completed' : 'failed'} after ${results.length} attempt(s)`)
           results.forEach(({networkRunner, error}, index) => {
             health.log(`Attempt ${index + 1}:`)
@@ -76,7 +80,7 @@ export default function Autostake(mnemonic, opts) {
       error = e.message
     }
     runners.push({ success: networkRunner?.didSucceed(), networkRunner, error, failedAddresses })
-    if (!networkRunner?.didSucceed() && !networkRunner?.forceFail && retries < maxRetries) {
+    if (!networkRunner?.didSucceed() && !networkRunner?.forceFail && retries < maxRetries && !failed) {
       await logResults(health, networkRunner, error, `Failed attempt ${retries + 1}/${maxRetries + 1}, retrying in 30 seconds...`)
       await new Promise(r => setTimeout(r, 30 * 1000));
       return await runWithRetry(data, health, retries + 1, runners)
@@ -111,8 +115,12 @@ export default function Autostake(mnemonic, opts) {
     let config = { ...opts }
     try {
       await network.load()
-    } catch {
-      throw new Error('Unable to load network data for', network.name)
+    } catch(e) {
+      if(e.response.status === 404){
+        failed = true
+        throw new Error(`${network.name} not found in Chain Registry`)
+      }
+      throw new Error(`Unable to load network data for ${network.name}`)
     }
 
     timeStamp('Loaded', network.prettyName)
