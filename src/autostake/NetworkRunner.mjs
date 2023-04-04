@@ -135,8 +135,10 @@ export default class NetworkRunner {
       }
     })
     let grantedAddresses = await mapSync(grantCalls, this.opts.batchQueries, (batch, index) => {
-      timeStamp('...batch', index + 1)
-      return this.throttleQuery()
+      if(!allGrants){
+        timeStamp('...batch', index + 1)
+        return this.throttleQuery()
+      }
     })
     return _.compact(grantedAddresses.flat())
   }
@@ -314,7 +316,7 @@ export default class NetworkRunner {
   }
 
   async throttleQuery(){
-    if(!this.opts.queryThrottle) return 
+    if(!this.opts.queryThrottle) return
 
     await new Promise(r => setTimeout(r, this.opts.queryThrottle));
   }
