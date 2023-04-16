@@ -215,7 +215,8 @@
   },
   {
     "name": "genesisl1",
-    "txTimeout": 120000
+    "txTimeout": 120000,
+    "gasPrice": "51000000000el1"
   },
   {
     "name": "tgrade",
