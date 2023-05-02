@@ -4,36 +4,15 @@ import { timeStamp } from '../utils/Helpers.mjs'
 
 class Health {
   constructor(config, opts) {
-    const { address, uuid, name, api_key } = config || {}
+    const { address, uuid, name, apiKey } = config || {}
     const { dryRun, networkName } = opts || {}
-    console.log(networkName);
     this.address = address || 'https://hc-ping.com'
     this.uuid = uuid
     this.name = name || networkName
-    this.api_key = api_key
+    this.apiKey = apiKey
     this.dryRun = dryRun
     this.logs = []
     this.pingUrl = this.getOrCreateHealthCheck();
-  }
-
-  getOrCreateHealthCheck(...args) {
-    if (!this.api_key) return;
-
-    let config = {
-      headers: {
-        "X-Api-Key": this.api_key,
-      }
-    }
-
-    let data = {
-      "name": this.name, "channels": "*", "timeout": 43200, "grace": 86400, "unique": ["name"]
-    }
-
-    try {
-      var response = await axios.post([this.address, 'api/v2/checks/'].join('/'), data, config).then((res) => res.data.pingUrl);
-    } catch (error) {
-      timeStamp("Health Check creation failed: " + error);
-    }
   }
 
   started(...args) {
@@ -59,6 +38,28 @@ class Health {
 
   addLogs(logs) {
     this.logs = this.logs.concat(logs)
+  }
+
+  async getOrCreateHealthCheck(...args) {
+    if (!this.apiKey) return;
+
+    let config = {
+      headers: {
+        "X-Api-Key": this.apiKey,
+      }
+    }
+
+    let data = {
+      "name": this.name, "channels": "*", "timeout": 43200, "grace": 86400, "unique": ["name"]
+    }
+
+    try {
+      await axios.post([this.address, 'api/v2/checks/'].join('/'), data, config).then((res) => {
+        this.uuid = res.data.ping_url.split('/')[4];
+      });
+    } catch (error) {
+      timeStamp("Health Check creation failed: " + error);
+    }
   }
 
   async sendLog() {
