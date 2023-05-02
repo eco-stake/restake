@@ -1,0 +1,8 @@
+{
+  "akash": {
+    "prettyName": "Akash",
+    "restUrl": [
+      "https://rest.validator.com/osmosis"
+    ]
+  }
+}
