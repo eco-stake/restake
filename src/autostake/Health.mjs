@@ -7,10 +7,10 @@ class Health {
     const { address, uuid, name, apiKey } = config || {}
     const { dryRun, networkName } = opts || {}
     this.address = address || 'https://hc-ping.com'
+    this.uuid = uuid
     this.name = name || networkName
     this.apiKey = apiKey
     this.dryRun = dryRun
-    this.uuid = uuid
     this.logs = []
     this.getOrCreateHealthCheck()
 
