@@ -7,12 +7,19 @@ class Health {
     const { address, uuid, name, apiKey } = config || {}
     const { dryRun, networkName } = opts || {}
     this.address = address || 'https://hc-ping.com'
-    this.uuid = uuid
     this.name = name || networkName
     this.apiKey = apiKey
     this.dryRun = dryRun
+    this.uuid = uuid
     this.logs = []
-    this.pingUrl = this.getOrCreateHealthCheck();
+    this.getOrCreateHealthCheck()
+
+    if (address) {
+      // This is necessary as the default provider - hc-ping.com - has a built in ping mechanism
+      // whereas providing self-hosted addresses do NOT. 
+      // https://healthchecks.selfhosted.com/ping/{uuid} rather than https://hc-ping.com/{uuid}
+      this.address = this.address + "/ping"
+    }
   }
 
   started(...args) {
@@ -55,10 +62,10 @@ class Health {
 
     try {
       await axios.post([this.address, 'api/v2/checks/'].join('/'), data, config).then((res) => {
-        this.uuid = res.data.ping_url.split('/')[4];
+        this.uuid = res.data.ping_url.split('/')[4]
       });
     } catch (error) {
-      timeStamp("Health Check creation failed: " + error);
+      timeStamp("Health Check creation failed: " + error)
     }
   }
 
