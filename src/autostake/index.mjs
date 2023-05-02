@@ -36,8 +36,8 @@ export default function Autostake(mnemonic, opts) {
       return async () => {
         if (networkNames && networkNames.length && !networkNames.includes(data.name)) return
         if (data.enabled === false) return
-
-        const health = new Health(data.healthCheck, { dryRun: opts.dryRun })
+        console.log(data);
+        const health = new Health(data.healthCheck, { dryRun: opts.dryRun, networkName: data.name })
         health.started('⚛')
         const results = await runWithRetry(data, health)
         const { success, skipped } = results[results.length - 1] || {}
