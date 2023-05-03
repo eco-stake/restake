@@ -4,11 +4,13 @@ import { timeStamp } from '../utils/Helpers.mjs'
 
 class Health {
   constructor(config, opts) {
-    const { address, uuid, name, apiKey } = config || {}
+    const { address, uuid, name, apiKey, timeout, gracePeriod } = config || {}
     const { dryRun, networkName } = opts || {}
     this.address = address || 'https://hc-ping.com'
-    this.uuid = uuid
     this.name = name || networkName
+    this.gracePeriod = gracePeriod || 86400   // default 24 hours
+    this.timeout = timeout || 86400           // default 24 hours
+    this.uuid = uuid
     this.apiKey = apiKey
     this.dryRun = dryRun
     this.logs = []
@@ -57,7 +59,7 @@ class Health {
     }
 
     let data = {
-      "name": this.name, "channels": "*", "timeout": 43200, "grace": 86400, "unique": ["name"]
+      "name": this.name, "channels": "*", "timeout": this.timeout, "grace": this.gracePeriod, "unique": ["name"]
     }
 
     try {
