@@ -347,6 +347,24 @@ Add your Check UUID to the relevant network in your `networks.local.json` config
 }
 ```
 
+If you wish for your health checks to be created automatically, you can provide an [API key](https://healthchecks.io/docs/api/) to manage it for you. 
+The default behavior is for the check to be named after the network, but this can be overridden with the `name` property. 
+
+**Note that the `uuid` is not necessary when using an `apiKey` to create checks automatically.**
+
+```JSON
+{
+  "cheqd": {
+    "healthCheck": {
+      "apiKey": "12_CanM1Q3T72uGH4kc32G14BdA4Emc4y",
+      "name": "cheqd every 12 hours", // optional, defaults to the network name
+      "timeout": 43200, // optional, expected seconds between each run
+      "gracePeriod": 86400, // optional, grace period seconds before it notifies
+    }
+  }
+}
+```
+
 ### Submitting your operator
 
 #### Setup your REStake operator
