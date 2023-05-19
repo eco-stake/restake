@@ -317,5 +317,11 @@
     "name": "coreum",
     "ownerAddress": "corevaloper1py9v5f7e4aaka55lwtthk30scxhnqfa6agwxt8",
     "gasPrice": "0.0625ucore"
-  }
+  },
+  {
+  "name": "gitopia",
+  "prettyName": "Gitopia",
+  "gasPrice": "0.001ulore",
+  "authzSupport": true
+ }
 ]
