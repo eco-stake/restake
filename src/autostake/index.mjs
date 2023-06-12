@@ -189,7 +189,7 @@ export default function Autostake(mnemonic, opts) {
       hdPaths: [hdPath]
     });
 
-    if (network.slip44 === 60) {
+    if (slip44 === 60) {
       const ethSigner = EthWallet.fromMnemonic(mnemonic);
       signer = EthSigner(signer, ethSigner, network.prefix)
     }
