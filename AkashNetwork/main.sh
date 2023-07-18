@@ -19,7 +19,7 @@ npm install
 echo MNEMONIC="$MNEMONIC" > .env
 npm run autostake
 crontab -l > current_cron
-echo "0 9 * * * /bin/bash -c 'cd /restake && npm run autostake' > /restake/restake.log 2>&1" >> ~/current_cron
+echo "0 12 * * * /bin/bash -c 'cd /restake && npm run autostake' > /restake/restake.log 2>&1" >> ~/current_cron
 crontab -l | cat - ~/current_cron | crontab -
 service cron start
 sleep infinity
