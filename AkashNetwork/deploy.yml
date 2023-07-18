@@ -29,9 +29,9 @@ profiles:
         cpu:
           units: 1
         memory:
-          size: 256Mi
+          size: 512Mi
         storage:
-          size: 512Mi         
+          size: 1Gi         
   placement:
     akash: 
       pricing:
