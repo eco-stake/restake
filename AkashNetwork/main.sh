@@ -3,7 +3,7 @@
 # Discord Dimokus_
 # 2023
 TZ=Europe/Kiev && ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
-apt install -y build-essential git make gcc nvme-cli nodejs ssh
+apt install -y build-essential git make gcc nvme-cli nodejs npm ssh
 node --version
 npm --version
 sleep 5
