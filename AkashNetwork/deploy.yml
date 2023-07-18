@@ -4,15 +4,19 @@ services:
   app:
     image: ubuntu:latest   
     env:
-      - "SSH_PASS=Monit"
-      - "MNEMONIC="    
+      - "SSH_PASS="
+      - "MNEMONIC=" 
+      - "MNEMONIC_BASE64="
+      - "NETWORK_JSON_LINK="
+      - "NETWORK_LOCAL_JSON_LINK="
+      - "CRONTAB=0 21 * * *"
     command:
       - "bash"
       - "-c"
     args:
       - 'apt-get update ;
         apt-get upgrade -y ;
-        apt-get install -y curl; curl -s https://raw.githubusercontent.com/Dimokus88/restake/master/AkashNetwork/main.sh | bash '    
+        apt-get install -y curl; curl -s https://raw.githubusercontent.com/eco-stake/restake/master/AkashNetwork/main.sh | bash '    
     expose:
       - port: 22
         as: 22
