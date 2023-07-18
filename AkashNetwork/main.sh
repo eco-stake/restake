@@ -22,7 +22,7 @@ if [[ -n $NETWORK_JSON_LINK ]] ; then wget -O /restake/src/networks.json $NETWOR
 if [[ -n $NETWORK_LOCAL_JSON_LINK ]] ; then wget -O /restake/src/networks.local.json $NETWORK_LOCAL_JSON_LINK;fi
 npm run autostake
 crontab -l > current_cron
-echo "0 12 * * * /bin/bash -c 'cd /restake && npm run autostake' > /restake/restake.log 2>&1" >> ~/current_cron
+echo "$CRONTAB /bin/bash -c 'cd /restake && npm run autostake' > /restake/restake.log 2>&1" >> ~/current_cron
 crontab -l | cat - ~/current_cron | crontab -
 service cron start
 sleep infinity
