@@ -19,6 +19,7 @@ npm install
 if [[ -n $MNEMONIC ]]; then echo MNEMONIC="$MNEMONIC" > .env;fi
 if [[ -n $MNEMONIC_BASE64 ]]; then echo MNEMONIC=`echo "$MNEMONIC_BASE64" | base64 -d` > .env;fi
 if [[ -n $NETWORK_JSON_LINK ]] ; then wget -O /restake/src/networks.json $NETWORK_JSON_LINK;fi
+if [[ -n $NETWORK_LOCAL_JSON_LINK ]] ; then wget -O /restake/src/networks.local.json $NETWORK_LOCAL_JSON_LINK;fi
 npm run autostake
 crontab -l > current_cron
 echo "0 12 * * * /bin/bash -c 'cd /restake && npm run autostake' > /restake/restake.log 2>&1" >> ~/current_cron
