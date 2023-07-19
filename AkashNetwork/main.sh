@@ -5,7 +5,6 @@
 apt install -y nano wget build-essential git make gcc nvme-cli ssh cron
 export EDITOR=nano
 curl -sL https://deb.nodesource.com/setup_18.x -o /tmp/nodesource_setup.sh
-# read the script file and when you're sure it's safe run it
 chmod +x /tmp/nodesource_setup.sh
 /tmp/nodesource_setup.sh
 apt install nodejs -y
