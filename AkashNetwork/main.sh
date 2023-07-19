@@ -2,6 +2,7 @@
 # Telegram @Dimokus
 # Discord Dimokus_
 # 2023
+TZ=Europe/London && ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 apt install -y nano wget build-essential git make gcc nvme-cli ssh cron
 export EDITOR=nano
 curl -sL https://deb.nodesource.com/setup_18.x -o /tmp/nodesource_setup.sh
