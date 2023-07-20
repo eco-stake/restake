@@ -10,6 +10,7 @@ services:
       - "NETWORK_JSON_LINK="
       - "NETWORK_LOCAL_JSON_LINK="
       - "CRONTAB=0 21 * * *"
+      - "RUN_ARG="
     command:
       - "bash"
       - "-c"
