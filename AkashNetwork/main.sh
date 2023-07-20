@@ -20,7 +20,8 @@ if [[ -n $MNEMONIC_BASE64 ]]; then echo MNEMONIC=`echo "$MNEMONIC_BASE64" | base
 if [[ -n $NETWORK_JSON_LINK ]]; then wget -O /restake/src/networks.json $NETWORK_JSON_LINK;fi
 if [[ -n $NETWORK_LOCAL_JSON_LINK ]]; then wget -O /restake/src/networks.local.json $NETWORK_LOCAL_JSON_LINK; fi
 
-if [[ -n $RUN_ARG ]]; then alias autostake='cd /restake; npm run autostake $RUN_ARG'; else alias autostake='cd /restake; npm run autostake'; fi
+if [[ -n $RUN_ARG ]]; then echo "alias autostake='cd /restake; npm run autostake $RUN_ARG'" >> ~/.bashrc; else echo "alias autostake='cd /restake; npm run autostake'" >> ~/.bashrc; fi
+source ~/.bashrc
 autostake
 crontab -l > current_cron
 echo "$CRONTAB /bin/bash -c 'cd /restake && autostake' > /restake/restake.log 2>&1" >> ~/current_cron
