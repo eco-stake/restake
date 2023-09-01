@@ -72,7 +72,15 @@ export function parseGrants(grants, grantee, granter) {
       el.authorization.msg ===
       "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward")
     ) {
-      return Date.parse(el.expiration) > new Date();
+      if (el.expiration === null) {
+        timeStamp("claimGrant does NOT expire!")
+        return true;
+      } else if (Date.parse(el.expiration) > new Date()) {
+        return true;
+      } else {
+        timeStamp("claimGrant expired!")
+        return false;
+      }
     } else {
       return false;
     }
@@ -90,7 +98,15 @@ export function parseGrants(grants, grantee, granter) {
         "/cosmos.staking.v1beta1.MsgDelegate"
       ))
     ) {
-      return Date.parse(el.expiration) > new Date();
+      if (el.expiration === null) {
+        timeStamp("stakeGrant does NOT expire!")
+        return true;
+      } else if (Date.parse(el.expiration) > new Date()) {
+        return true;
+      } else {
+        timeStamp("stakeGrant expired!")
+        return false;
+      }
     } else {
       return false;
     }
