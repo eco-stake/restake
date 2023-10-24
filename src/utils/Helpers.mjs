@@ -62,21 +62,6 @@ export function buildExecableMessage(type, typeUrl, value, shouldExec){
 }
 
 export function parseGrants(grants, grantee, granter) {
-  // claimGrant is removed but we track for now to allow revoke
-  const claimGrant = grants.find((el) => {
-    if (
-      (!el.grantee || el.grantee === grantee) &&
-      (!el.granter || el.granter === granter) &&
-      (el.authorization["@type"] ===
-      "/cosmos.authz.v1beta1.GenericAuthorization" &&
-      el.authorization.msg ===
-      "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward")
-    ) {
-      return Date.parse(el.expiration) > new Date();
-    } else {
-      return false;
-    }
-  });
   const stakeGrant = grants.find((el) => {
     if (
       (!el.grantee || el.grantee === grantee) &&
@@ -90,14 +75,19 @@ export function parseGrants(grants, grantee, granter) {
         "/cosmos.staking.v1beta1.MsgDelegate"
       ))
     ) {
-      return Date.parse(el.expiration) > new Date();
+      if (el.expiration === null) {
+        return true;
+      } else if (Date.parse(el.expiration) > new Date()) {
+        return true;
+      } else {
+        return false;
+      }
     } else {
       return false;
     }
   })
   return {
-    claimGrant,
-    stakeGrant,
+    stakeGrant
   };
 }
 
