@@ -24,7 +24,8 @@ export default function Autostake(mnemonic, opts) {
     process.exit()
   }
 
-  async function run(networkNames, networksOverridePath) {
+  async function run(networkNames, networksOverridePath,onlyOperators) {
+
     const networks = getNetworksData(networksOverridePath)
     for (const name of networkNames) {
       if (name && !networks.map(el => el.name).includes(name)){
@@ -38,8 +39,9 @@ export default function Autostake(mnemonic, opts) {
         if (data.enabled === false) return
 
         const health = new Health(data.healthCheck, { dryRun: opts.dryRun, networkName: data.name })
-        health.started('⚛')
-        const results = await runWithRetry(data, health)
+        health.started(onlyOperators,'⚛')
+
+        const results = await runWithRetry(data, health,undefined,undefined,onlyOperators)
         const { success, skipped } = results[results.length - 1] || {}
         if(!skipped && !failed){
           health.log(`Autostake ${success ? 'completed' : 'failed'} after ${results.length} attempt(s)`)
@@ -48,8 +50,12 @@ export default function Autostake(mnemonic, opts) {
             logSummary(health, networkRunner, error)
           })
         }
-        if (success || skipped) {
+        if (success ) {
           return health.success('Autostake finished')
+        }else if ( skipped) {
+          if (!onlyOperators) {
+            return health.success('Autostake skipped')
+          }
         } else {
           return health.failed('Autostake failed')
         }
@@ -58,14 +64,15 @@ export default function Autostake(mnemonic, opts) {
     await executeSync(calls, 1)
   }
 
-  async function runWithRetry(data, health, retries, runners) {
+  async function runWithRetry(data, health, retries, runners,onlyOperators) {
     retries = retries || 0
     runners = runners || []
     const maxRetries = data.autostake?.retries ?? 2
     let { failedAddresses } = runners[runners.length - 1] || {}
     let networkRunner, error
     try {
-      networkRunner = await getNetworkRunner(data)
+
+      networkRunner = await getNetworkRunner(data,onlyOperators)
       if (!networkRunner){
         runners.push({ skipped: true })
         return runners
@@ -83,7 +90,8 @@ export default function Autostake(mnemonic, opts) {
     if (!networkRunner?.didSucceed() && !networkRunner?.forceFail && retries < maxRetries && !failed) {
       await logResults(health, networkRunner, error, `Failed attempt ${retries + 1}/${maxRetries + 1}, retrying in 30 seconds...`)
       await new Promise(r => setTimeout(r, 30 * 1000));
-      return await runWithRetry(data, health, retries + 1, runners)
+
+      return await runWithRetry(data, health, retries + 1, runners,onlyOperators)
     }
     await logResults(health, networkRunner, error)
     return runners
@@ -110,26 +118,35 @@ export default function Autostake(mnemonic, opts) {
     if (error) health.log(`Failed with error: ${error}`)
   }
 
-  async function getNetworkRunner(data) {
+  async function getNetworkRunner(data,onlyOperators) {
     const network = new Network(data)
-    let config = { ...opts }
+    let config = {...opts}
     try {
       await network.load()
-    } catch(e) {
-      if(e.response.status === 404){
+    } catch (e) {
+      if (e.response.status === 404) {
         failed = true
         throw new Error(`${network.name} not found in Chain Registry`)
       }
       throw new Error(`Unable to load network data for ${network.name}`)
     }
 
-    timeStamp('Loaded', network.prettyName)
+    if (!onlyOperators) {
+      timeStamp('Loaded', network.prettyName)
+    }
+    const {signer, slip44} = await getSigner(network,onlyOperators)
 
-    const { signer, slip44 } = await getSigner(network)
     const wallet = new Wallet(network, signer)
     const botAddress = await wallet.getAddress()
-
+    if (onlyOperators) {
+      if (!network.getOperatorByBotAddress(botAddress)) {
+        return
+      } else {
+        timeStamp('Loaded', network.prettyName)
+      }
+    }
     timeStamp('Bot address is', botAddress)
+
 
     if (network.slip44 && network.slip44 !== slip44) {
       timeStamp("!! You are not using the preferred derivation path !!")
@@ -167,10 +184,14 @@ export default function Autostake(mnemonic, opts) {
     )
   }
 
-  async function getSigner(network) {
+  async function getSigner(network,onlyOperators) {
     let slip44
     if (network.data.autostake?.correctSlip44 || network.slip44 === 60) {
-      if (network.slip44 === 60) timeStamp('Found ETH coin type')
+      if (network.slip44 === 60) {
+        if (!onlyOperators) {
+          timeStamp('Found ETH coin type')
+        }
+      }
       slip44 = network.slip44 || 118
     } else {
       slip44 = network.data.autostake?.slip44 || 118
@@ -182,7 +203,7 @@ export default function Autostake(mnemonic, opts) {
       Slip10RawIndex.normal(0),
       Slip10RawIndex.normal(0),
     ];
-    slip44 != 118 && timeStamp('Using HD Path', pathToString(hdPath))
+    if (slip44 !== 118 && !onlyOperators) { timeStamp('Using HD Path', pathToString(hdPath))}
 
     let signer = await DirectSecp256k1HdWallet.fromMnemonic(mnemonic, {
       prefix: network.prefix,
