@@ -228,7 +228,12 @@
   },
   {
     "name": "echelon",
-    "keplrFeatures": ["ibc-transfer", "ibc-go", "eth-address-gen", "eth-key-sign"]
+    "keplrFeatures": [
+      "ibc-transfer",
+      "ibc-go",
+      "eth-address-gen",
+      "eth-key-sign"
+    ]
   },
   {
     "name": "kichaintestnet",
@@ -317,5 +322,12 @@
     "name": "coreum",
     "ownerAddress": "corevaloper1py9v5f7e4aaka55lwtthk30scxhnqfa6agwxt8",
     "gasPrice": "0.0625ucore"
+  },
+  {
+    "name": "source",
+    "gasPrice": "0.025usource",
+    "autostake": {
+      "gasModifier": 1.4
+    }
   }
 ]
