@@ -236,7 +236,7 @@
   },
   {
     "name": "likecoin",
-    "gasPrice": "10nanolike"
+    "gasPrice": "10000nanolike"
   },
   {
     "name": "passage",
