@@ -61,21 +61,11 @@ export default class NetworkRunner {
       timeStamp("Running with options:", this.opts)
       this.balance = await this.getBalance() || 0
 
-      if (addresses) {
-        timeStamp("Checking", addresses.length, "addresses for grants...")
-      } else {
-        timeStamp('Finding delegators...')
-        addresses = await this.getDelegations().then(delegations => {
-          return delegations.map(delegation => {
-            if (delegation.balance.amount === 0) return
-
-            return delegation.delegation.delegator_address
-          })
-        })
-        timeStamp("Checking", addresses.length, "delegators for grants...")
+      let grantedAddresses = await this.getAddressesFromGrants(addresses)
+      if(grantedAddresses === false){
+        timeStamp('All grants query not supported, falling back to checking delegators...')
+        grantedAddresses = await this.getAddressesFromDelegators(addresses)
       }
-
-      let grantedAddresses = await this.getGrantedAddresses(addresses)
 
       timeStamp("Found", grantedAddresses.length, "addresses with valid grants...")
       if (grantedAddresses.length) {
@@ -102,6 +92,65 @@ export default class NetworkRunner {
       )
   }
 
+  async getAddressesFromGrants(addresses) {
+    const { botAddress, address } = this.operator
+    let timeout = this.opts.delegationsTimeout
+    let pageSize = this.opts.batchPageSize
+    let allGrants
+    try {
+      timeStamp('Finding all grants...')
+      allGrants = await this.queryClient.getGranteeGrants(botAddress, { timeout, pageSize }, (pages) => {
+        timeStamp("...batch", pages.length)
+        return this.throttleQuery()
+      })
+    } catch (e) {
+      if(error.response?.status === 501){
+        return false
+      }else{
+        throw new Error('Failed to load grants')
+      }
+    }
+    if(addresses){
+      timeStamp("Checking", addresses.length, "addresses for grants...")
+    }else{
+      addresses = allGrants.map(grant => grant.granter)
+    }
+    let addressGrants = addresses.map(item => {
+      return this.parseGrantResponse(allGrants, botAddress, item, address)
+    })
+    return _.compact(addressGrants.flat())
+  }
+
+  async getAddressesFromDelegators(addresses) {
+    if(!addresses){
+      timeStamp('Finding delegators...')
+      addresses = await this.getDelegations().then(delegations => {
+        return delegations.map(delegation => {
+          if (delegation.balance.amount === 0) return
+
+          return delegation.delegation.delegator_address
+        })
+      })
+      timeStamp("Checking", addresses.length, "delegators for grants...")
+    }else{
+      timeStamp("Checking", addresses.length, "addresses for grants...")
+    }
+    let grantCalls = addresses.map(item => {
+      return async () => {
+        try {
+          return await this.getGrantsIndividually(item)
+        } catch (error) {
+          this.setError(item, `Failed to get grants: ${error.message}`)
+        }
+      }
+    })
+    let grantedAddresses = await mapSync(grantCalls, this.opts.batchQueries, (batch, index) => {
+      timeStamp('...batch', index + 1)
+      return this.throttleQuery()
+    })
+    return _.compact(grantedAddresses.flat())
+  }
+
   getDelegations() {
     let timeout = this.opts.delegationsTimeout
     let pageSize = this.opts.batchPageSize
@@ -113,37 +162,7 @@ export default class NetworkRunner {
     })
   }
 
-  async getGrantedAddresses(addresses) {
-    const { botAddress, address } = this.operator
-    let timeout = this.opts.delegationsTimeout
-    let pageSize = this.opts.batchPageSize
-    let allGrants
-    try {
-      allGrants = await this.queryClient.getGranteeGrants(botAddress, { timeout, pageSize }, (pages) => {
-        timeStamp("...batch", pages.length)
-        return this.throttleQuery()
-      })
-    } catch (e) { }
-    let grantCalls = addresses.map(item => {
-      return async () => {
-        if (allGrants) return this.parseGrantResponse(allGrants, botAddress, item, address)
-        try {
-          return await this.getGrants(item)
-        } catch (error) {
-          this.setError(item, `Failed to get grants: ${error.message}`)
-        }
-      }
-    })
-    let grantedAddresses = await mapSync(grantCalls, this.opts.batchQueries, (batch, index) => {
-      if(!allGrants){
-        timeStamp('...batch', index + 1)
-        return this.throttleQuery()
-      }
-    })
-    return _.compact(grantedAddresses.flat())
-  }
-
-  getGrants(delegatorAddress) {
+  getGrantsIndividually(delegatorAddress) {
     const { botAddress, address } = this.operator
     let timeout = this.opts.queryTimeout
     return this.queryClient.getGrants(botAddress, delegatorAddress, { timeout })
@@ -162,7 +181,6 @@ export default class NetworkRunner {
     let grantValidators, maxTokens
     if (result.stakeGrant) {
       if (result.stakeGrant.authorization['@type'] === "/cosmos.authz.v1beta1.GenericAuthorization") {
-        timeStamp(delegatorAddress, "Using GenericAuthorization, allowed")
         grantValidators = [validatorAddress];
       } else {
         const { allow_list, deny_list } = result.stakeGrant.authorization
