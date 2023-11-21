@@ -228,7 +228,12 @@
   },
   {
     "name": "echelon",
-    "keplrFeatures": ["ibc-transfer", "ibc-go", "eth-address-gen", "eth-key-sign"]
+    "keplrFeatures": [
+      "ibc-transfer",
+      "ibc-go",
+      "eth-address-gen",
+      "eth-key-sign"
+    ]
   },
   {
     "name": "kichaintestnet",
@@ -320,9 +325,6 @@
   },
   {
     "name": "source",
-    "gasPrice": "0.025usource",
-    "autostake": {
-      "gasModifier": 1.4
-    }
+    "gasPrice": "0.05usource"
   }
 ]
