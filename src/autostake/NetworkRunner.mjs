@@ -103,7 +103,7 @@ export default class NetworkRunner {
         timeStamp("...batch", pages.length)
         return this.throttleQuery()
       })
-    } catch (e) {
+    } catch (error) {
       if(error.response?.status === 501){
         return false
       }else{
