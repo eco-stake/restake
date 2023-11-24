@@ -76,7 +76,10 @@ export function parseGrants(grants, grantee, granter) {
       ))
     ) {
       if (el.expiration === null) {
-        return true;
+        // null expiration is flakey currently
+        // sometimes it means it's expired, sometimes no expiration set (infinite grant)
+        // we have to treat as invalid until this is resolved
+        return false;
       } else if (Date.parse(el.expiration) > new Date()) {
         return true;
       } else {

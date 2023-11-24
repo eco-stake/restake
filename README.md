@@ -20,7 +20,6 @@ A script is also provided which allows a validator to automatically search their
 
 ## Limitations
 
-- As of writing, Ledger is unable to send the necessary transactions to enable Authz. This is purely due to the way transactions are sent to a Ledger device and a workaround should be possible soon.
 - Authz is also not fully supported yet. Many chains are yet to update. The REStake UI will fall back to being a manual staking app with useful manual compounding features.
 - Currently REStake needs the browser extension version of Keplr, but WalletConnect and Keplr iOS functionality will be added ASAP.
 - REStake requires Nodejs version 18.x or later, it will not work with earlier versions.
@@ -165,7 +164,6 @@ npm run dryrun osmosis
 
 **You should expect to see a warning that you are 'not an operator' until your REStake operator information is submitted in [Submitting your operator](#submitting-your-operator)**
 
-
 ### Customise REStake and use your own node
 
 You will likely want to customise your networks config, e.g. to set your own node URLs to ensure your autocompounding script completes successfully.
@@ -222,7 +220,7 @@ Don't forget to [update often](#updating-your-local-version)!
 
 #### Using `crontab`
 
-Note: A helpful calculator for determining your REStake timer for `crontab` can be found here: https://crontab.guru/.
+Note: A helpful calculator for determining your REStake timer for `crontab` can be found here: <https://crontab.guru/>.
 
 Updated versions utilize `docker compose` instead of `docker-compose`. If you run into issues, try substituting `docker compose`.
 
@@ -282,7 +280,7 @@ For NPM installs, remove `Requires` and `After` directives, and change `ExecStar
 
 The timer file defines the rules for running the restake service every day. All rules are described in the [systemd documentation](https://www.freedesktop.org/software/systemd/man/systemd.timer.html).
 
-Note: Helpful calculator for determining restake times for `OnCalendar` can also be found at https://crontab.guru/.
+Note: Helpful calculator for determining restake times for `OnCalendar` can also be found at <https://crontab.guru/>.
 
 ```bash
 sudo vim /etc/systemd/system/restake.timer
@@ -347,8 +345,8 @@ Add your Check UUID to the relevant network in your `networks.local.json` config
 }
 ```
 
-If you wish for your health checks to be created automatically, you can provide an [API key](https://healthchecks.io/docs/api/) to manage it for you. 
-The default behavior is for the check to be named after the network, but this can be overridden with the `name` property. 
+If you wish for your health checks to be created automatically, you can provide an [API key](https://healthchecks.io/docs/api/) to manage it for you.
+The default behavior is for the check to be named after the network, but this can be overridden with the `name` property.
 
 **Note that the `uuid` is not necessary when using an `apiKey` to create checks automatically.**
 
@@ -388,7 +386,7 @@ You now need to update the [Validator Registry](https://github.com/eco-stake/val
 
 `address` is your validator's address, and `restake.address` is the address from your new hot wallet you generated earlier.
 
-`restake.run_time` is the time *in UTC* that you intend to run your bot, and there are a few options. Pass a single time, e.g. `09:00` to specify a single run at 9am UTC. Use an array for multiple specified times, e.g. `["09:00", "21:00"]`. Use an interval string for multiple times per hour/day, e.g. `"every 15 minutes"`.
+`restake.run_time` is the time _in UTC_ that you intend to run your bot, and there are a few options. Pass a single time, e.g. `09:00` to specify a single run at 9am UTC. Use an array for multiple specified times, e.g. `["09:00", "21:00"]`. Use an interval string for multiple times per hour/day, e.g. `"every 15 minutes"`.
 
 `restake.minimum_reward` is the minimum reward to trigger autostaking, otherwise the address is skipped. This could be set higher for more frequent restaking. Note this is in the base denomination, e.g. `uosmo`.
 
