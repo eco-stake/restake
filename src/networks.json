@@ -320,6 +320,9 @@
   },
   {
     "name": "source",
-    "gasPrice": "0.05usource"
+    "gasPrice": "0.05usource",
+    "autostake": {
+      "retries": 10
+    }   
   }
 ]
