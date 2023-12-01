@@ -115,7 +115,7 @@ export default class NetworkRunner {
     }else{
       addresses = allGrants.map(grant => grant.granter)
     }
-    let addressGrants = addresses.map(item => {
+    let addressGrants = _.uniq(addresses).map(item => {
       return this.parseGrantResponse(allGrants, botAddress, item, address)
     })
     return _.compact(addressGrants.flat())
@@ -135,7 +135,7 @@ export default class NetworkRunner {
     }else{
       timeStamp("Checking", addresses.length, "addresses for grants...")
     }
-    let grantCalls = addresses.map(item => {
+    let grantCalls = _.uniq(addresses).map(item => {
       return async () => {
         try {
           return await this.getGrantsIndividually(item)
