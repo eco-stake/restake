@@ -20,8 +20,6 @@ Doğrulayıcının delegelerini otomatik olarak aramasını sağlayan bir komut 
 
 ## Kısıtlamalar
 
-Yazılı olarak, Ledger, Authz (Yetkilendirmeyi) etkinleştirmek için gerekli işlemleri gönderemiyor. Bu tamamen işlemlerin bir Ledger cihazına gönderilme şeklinden kaynaklanmaktadır ve yakında bir geçici çözüm mümkün olabilecektir.
-
 Authz da henüz tam olarak desteklenmemektedir. Birçok zincir henüz güncellenmedi. REStake UI, kullanışlı manuel birleştirme özelliklerine sahip bir manuel stake uygulaması olmaya geri dönecek.
 
 Şu anda REStake, Keplr'ın tarayıcı uzantısı sürümüne ihtiyaç duyuyor, ancak WalletConnect ve Keplr iOS işlevselliği en kısa sürede eklenecek.
@@ -110,6 +108,7 @@ cd restake
 npm install && npm run build
 cp .env.sample .env
 ```
+
 **Yeni .env dosyanıza anımsatıcı kelimelerinizi yazın.**
 
 #### Yerel versiyonunuzu güncelleme
@@ -162,7 +161,6 @@ npm run dryrun osmosis
 ```
 
 **REStake operatör bilgilerinizi [Operatörünüzü kaydetme](#operat%C3%B6r%C3%BCn%C3%BCz%C3%BC-kaydetme) bölümünde gösterileceği gibi [Validator Kayıt Defteri](https://github.com/eco-stake/validator-registry)'ne kaydınızı yapana kadar 'operatör olmadığınıza dair bir uyarı görebilirsiniz.**
-
 
 ### REStake'i özelleştirin ve node'unuzu kullanın
 
@@ -220,7 +218,7 @@ Her iki durumda da, sistem zamanınızın doğru olduğundan emin olun ve komut 
 
 #### `crontab` Kullanma
 
-NOT: REStake zamanlayıcınızı `crontab`'a göre belirlemek için faydalı bir hesap makinesini buradan ulaşabilirsiniz: https://crontab.guru/.
+NOT: REStake zamanlayıcınızı `crontab`'a göre belirlemek için faydalı bir hesap makinesini buradan ulaşabilirsiniz: <https://crontab.guru/>.
 
 Güncellenmiş sürümler, `docker-compose` yerine `docker compose` kullanır. Sorunlarla karşılaşırsanız, `docker compose` yerine bunu kullanmayı deneyin.
 
@@ -261,9 +259,10 @@ ExecStart=/usr/bin/docker-compose run --rm app npm run autostake
 [Install]
 WantedBy=multi-user.target
 ```
-NPM kurulumu için `Requires` ve `After` direktiflerini kaldırın ve` `ExecStart`'ı` `ExecStart=/usr/bin/npm run autostake` olarak değiştirin.
 
-🔴 **Not: Sorun yaşarsanız `WorkingDirectory=/path/to/restake` bölümünü `WorkingDirectory=/root/restake` olarak değiştiriniz. Eğer yine sorun yaşarsanız `chmod 777 /root/restake` komutu ile dosyaya okuma, yazma ve çalıştırma izni veriniz. Daha sonra `systemctl daemon-reload` yaptıktan sonra sistemi yeniden başlatınız. **
+NPM kurulumu için `Requires` ve `After` direktiflerini kaldırın ve``ExecStart`'ı` `ExecStart=/usr/bin/npm run autostake` olarak değiştirin.
+
+🔴 **Not: Sorun yaşarsanız `WorkingDirectory=/path/to/restake` bölümünü `WorkingDirectory=/root/restake` olarak değiştiriniz. Eğer yine sorun yaşarsanız `chmod 777 /root/restake` komutu ile dosyaya okuma, yazma ve çalıştırma izni veriniz. Daha sonra `systemctl daemon-reload` yaptıktan sonra sistemi yeniden başlatınız.**
 
 🔴 **Eğer `Failed to restake service with docker compose` gibi bir hata alırsanız yine `chmod 777 /usr/bin/docker-compose` komutu ile dosyaya okuma, yazma ve çalıştırma izni veriniz.**
 
@@ -271,9 +270,9 @@ NPM kurulumu için `Requires` ve `After` direktiflerini kaldırın ve` `ExecStar
 
 ##### systemd timer dosyası oluşturma
 
-Zamanlayıcı dosyası, yeniden düzenleme hizmetini her gün çalıştırma kurallarını tanımlar. Tüm kurallar [systemd dokümanlarında] (https://www.freedesktop.org/software/systemd/man/systemd.timer.html) açıklanmaktadır.
+Zamanlayıcı dosyası, yeniden düzenleme hizmetini her gün çalıştırma kurallarını tanımlar. Tüm kurallar [systemd dokümanlarında] (<https://www.freedesktop.org/software/systemd/man/systemd.timer.html>) açıklanmaktadır.
 
-Not: `OnCalendar` için restake sürelerini belirlemek için yararlı hesap makinesi https://crontab.guru/ adresinde bulunabilir.
+Not: `OnCalendar` için restake sürelerini belirlemek için yararlı hesap makinesi <https://crontab.guru/> adresinde bulunabilir.
 
 ```bash
 sudo vim /etc/systemd/system/restake.timer
@@ -318,7 +317,7 @@ TriggeredBy: <font color="#8AE234"><b>●</b></font> restake.timer
 
 ### İzleme
 
-Her ağ için komut dosyası durumunu bildirmek için REStake oto-stake betiği [healthchecks.io] (https://healthchecks.io/) ile entegre olabilir. [HealthChecks.io] (https://healthchecks.io/) daha sonra, herhangi bir arızayı bildiğinizden emin olmak için e -posta, Discord ve Slack gibi birçok bildirim platformuyla entegre edilebilir.
+Her ağ için komut dosyası durumunu bildirmek için REStake oto-stake betiği [healthchecks.io] (<https://healthchecks.io/>) ile entegre olabilir. [HealthChecks.io] (<https://healthchecks.io/>) daha sonra, herhangi bir arızayı bildiğinizden emin olmak için e -posta, Discord ve Slack gibi birçok bildirim platformuyla entegre edilebilir.
 
 Yapılandırıldıktan sonra, komut dosyası başladığında, başarılı ya da başarısız olduğunda REStake [healthchecks.io](https://healthchecks.io/)'a ping atacaktır. Kontrol günlüğü ilgili hata bilgilerini içerecektir ve yapılandırılması basittir.
 
@@ -341,7 +340,6 @@ Kontrol UUID numaranızı aşağıdaki gibi `networks.local.json` yapılandırma
 #### REStake Operatörünüzü Kurma
 
 Artık operatör bilgilerinizi oto-sake'i aktif etmek istediğiniz ağları eklemek için [Validator Kayıt Defteri](https://github.com/eco-stake/validator-registry)'ni güncellemeniz gerekiyor. Örnekler için README ve mevcut doğrulayıcıları kontrol edebilirsiniz, ancak bir ağ için yapılandırma şuna benziyor:
-
 
 ```json
 {
@@ -370,15 +368,15 @@ REStake yapmak istediğiniz tüm ağlar için bu yapılandırmayı tekrarlayın.
 
 #### Operatörünüzü Validator Kayıt Defterine kaydetme
 
-Artık [Validator Kayıt Defteri] (https://github.com/eco-stake/validator-registry) güncellemenizi mümkün olan en kısa sürede merge edilmek üzere pull request isteğinde bulunabilirsiniz. REStake, değişikliklerin birleştirilmesinden sonraki 15 dakika içinde otomatik olarak güncellenir.
+Artık [Validator Kayıt Defteri] (<https://github.com/eco-stake/validator-registry>) güncellemenizi mümkün olan en kısa sürede merge edilmek üzere pull request isteğinde bulunabilirsiniz. REStake, değişikliklerin birleştirilmesinden sonraki 15 dakika içinde otomatik olarak güncellenir.
 
 ## Katkıda Bulunma
 
 ### Bir Ağ Ekleme/Güncelleme
 
-Ağ bilgileri [Zincir Kayıt Defteri] (https://github.com/cosmos/chain-registry) [registry.cosmos.directory] (https://registry.cosmos.directory) API üzerinden alınır. Yeterli temel bilgilerin sağlandığı varsayılarak, REStake'e ana daldaki zincirler otomatik olarak eklenir.
+Ağ bilgileri [Zincir Kayıt Defteri] (<https://github.com/cosmos/chain-registry>) [registry.cosmos.directory] (<https://registry.cosmos.directory>) API üzerinden alınır. Yeterli temel bilgilerin sağlandığı varsayılarak, REStake'e ana daldaki zincirler otomatik olarak eklenir.
 
-'networks.json' dosyası, REStake'de 'desteklendiği' gibi hangi zincirlerin göründüğünü tanımlar; zincir adı Zincir Kayıt Defterinden dizin adıyla eşleştiği sürece, tüm zincir bilgileri otomatik olarak sağlanacaktır. Alternatif olarak zincirler, tek başına `networks.json`'da _desteklenebilir_, ancak bu belgelenmiş bir özellik değildir.
+'networks.json' dosyası, REStake'de 'desteklendiği' gibi hangi zincirlerin göründüğünü tanımlar; zincir adı Zincir Kayıt Defterinden dizin adıyla eşleştiği sürece, tüm zincir bilgileri otomatik olarak sağlanacaktır. Alternatif olarak zincirler, tek başına `networks.json`'da *desteklenebilir*, ancak bu belgelenmiş bir özellik değildir.
 
 Bir zinciri yeniden eklemek veya geçersiz kılmak için gerekli bilgileri aşağıdaki gibi `networks.json`'a ekleyin:
 
