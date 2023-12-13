@@ -24,8 +24,11 @@ class Health {
     }
   }
 
-  started(...args) {
-    timeStamp(...args)
+  started(onlyOperators,...args) {
+    if (!onlyOperators) {
+      timeStamp(...args)
+    }
+
     if (this.uuid) timeStamp('Starting health', [this.address, this.uuid].join('/'))
     return this.ping('start', [args.join(' ')])
   }
