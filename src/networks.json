@@ -321,5 +321,13 @@
   {
     "name": "source",
     "gasPrice": "0.05usource"
+  },
+  {
+    "name": "nolus",
+    "gasPrice": "0.0025unls"
+  },
+  {
+    "name": "realio",
+    "gasPrice": "1000000000ario"
   }
 ]
