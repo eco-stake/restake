@@ -190,7 +190,7 @@ Create a `src/networks.local.json` file and specify the networks you want to ove
     },
     "operator": {
       "address": "OVERRIDE_BOT_ADDRESS",
-      "minimumReward": "OVERRIDER_BOT_MINIMUM_REWARD"
+      "minimumReward": "OVERRIDE_BOT_MINIMUM_REWARD"
     },
     "healthCheck": {
       "uuid": "XXXXX-XXX-XXXX"
