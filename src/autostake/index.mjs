@@ -49,9 +49,9 @@ export default function Autostake(mnemonic, opts) {
           })
         }
         if (success || skipped) {
-          return health.success('Autostake finished for ${data.prettyName}')
+          return health.success(`Autostake finished for ${data.prettyName}`)
         } else {
-          return health.failed('Autostake failed for ${data.prettyName}')
+          return health.failed(`Autostake failed for ${data.prettyName}`)
         }
       }
     })
