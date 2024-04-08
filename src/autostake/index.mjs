@@ -40,6 +40,7 @@ export default function Autostake(mnemonic, opts) {
         const health = new Health(data.healthCheck, { dryRun: opts.dryRun, networkName: data.name })
         health.started('⚛')
         const results = await runWithRetry(data, health)
+        const network = results[0]?.networkRunner?.network
         const { success, skipped } = results[results.length - 1] || {}
         if(!skipped && !failed){
           health.log(`Autostake ${success ? 'completed' : 'failed'} after ${results.length} attempt(s)`)
@@ -49,9 +50,9 @@ export default function Autostake(mnemonic, opts) {
           })
         }
         if (success || skipped) {
-          return health.success(`Autostake finished for ${data.prettyName}`)
+          return health.success(`Autostake finished for ${network?.prettyName || data.name}`)
         } else {
-          return health.failed(`Autostake failed for ${data.prettyName}`)
+          return health.failed(`Autostake failed for ${network?.prettyName || data.name}`)
         }
       }
     })
