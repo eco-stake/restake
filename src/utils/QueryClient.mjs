@@ -2,6 +2,8 @@ import axios from "axios";
 import axiosRetry from 'axios-retry';
 import _ from "lodash";
 
+import { get } from './Helpers.mjs';
+
 const QueryClient = async (chainId, restUrls, opts) => {
   const config = _.merge({
     connectTimeout: 10000,
@@ -29,8 +31,7 @@ const QueryClient = async (chainId, restUrls, opts) => {
       searchParams.append("pagination.limit", pageSize);
     if (nextKey)
       searchParams.append("pagination.key", nextKey);
-    return axios
-      .get(
+    return get(
         apiUrl('staking', `validators?${searchParams.toString()}`), {
         timeout: opts.timeout || 10000,
       })
@@ -57,14 +58,12 @@ const QueryClient = async (chainId, restUrls, opts) => {
     if (nextKey)
       searchParams.append("pagination.key", nextKey);
 
-    return axios
-      .get(apiUrl('staking', `validators/${validatorAddress}/delegations?${searchParams.toString()}`), opts)
+    return get(apiUrl('staking', `validators/${validatorAddress}/delegations?${searchParams.toString()}`), opts)
       .then((res) => res.data);
   }
 
   function getBalance(address, denom, opts) {
-    return axios
-      .get(apiUrl('bank', `balances/${address}`), opts)
+    return get(apiUrl('bank', `balances/${address}`), opts)
       .then((res) => res.data)
       .then((result) => {
         if (!denom)
@@ -78,8 +77,7 @@ const QueryClient = async (chainId, restUrls, opts) => {
   }
 
   function getDelegations(address) {
-    return axios
-      .get(apiUrl('staking', `delegations/${address}`))
+    return get(apiUrl('staking', `delegations/${address}`))
       .then((res) => res.data)
       .then((result) => {
         const delegations = result.delegation_responses.reduce(
@@ -91,8 +89,7 @@ const QueryClient = async (chainId, restUrls, opts) => {
   }
 
   function getRewards(address, opts) {
-    return axios
-      .get(apiUrl('distribution', `delegators/${address}/rewards`), opts)
+    return get(apiUrl('distribution', `delegators/${address}/rewards`), opts)
       .then((res) => res.data)
       .then((result) => {
         const rewards = result.rewards.reduce(
@@ -104,8 +101,7 @@ const QueryClient = async (chainId, restUrls, opts) => {
   }
 
   function getCommission(validatorAddress, opts) {
-    return axios
-      .get(apiUrl('distribution', `validators/${validatorAddress}/commission`), opts)
+    return get(apiUrl('distribution', `validators/${validatorAddress}/commission`), opts)
       .then((res) => res.data)
       .then((result) => {
         return result.commission;
@@ -120,8 +116,7 @@ const QueryClient = async (chainId, restUrls, opts) => {
       if (nextKey)
         searchParams.append("pagination.key", nextKey);
 
-      return axios
-        .get(apiUrl('gov', `proposals?${searchParams.toString()}`), opts)
+      return get(apiUrl('gov', `proposals?${searchParams.toString()}`), opts)
         .then((res) => res.data);
     }).then((pages) => {
       return pages.map(el => el.proposals).flat();
@@ -129,14 +124,12 @@ const QueryClient = async (chainId, restUrls, opts) => {
   }
 
   function getProposalTally(proposal_id, opts) {
-    return axios
-      .get(apiUrl('gov', `proposals/${proposal_id}/tally`), opts)
+    return get(apiUrl('gov', `proposals/${proposal_id}/tally`), opts)
       .then((res) => res.data);
   }
 
   function getProposalVote(proposal_id, address, opts) {
-    return axios
-      .get(apiUrl('gov', `proposals/${proposal_id}/votes/${address}`), opts)
+    return get(apiUrl('gov', `proposals/${proposal_id}/votes/${address}`), opts)
       .then((res) => res.data);
   }
 
@@ -148,8 +141,7 @@ const QueryClient = async (chainId, restUrls, opts) => {
       if (nextKey)
         searchParams.append("pagination.key", nextKey);
 
-      return axios
-        .get(apiUrl('authz', `grants/grantee/${grantee}?${searchParams.toString()}`), opts)
+      return get(apiUrl('authz', `grants/grantee/${grantee}?${searchParams.toString()}`), opts)
         .then((res) => res.data);
     }, pageCallback).then((pages) => {
       return pages.map(el => el.grants).flat();
@@ -164,8 +156,7 @@ const QueryClient = async (chainId, restUrls, opts) => {
       if (nextKey)
         searchParams.append("pagination.key", nextKey);
 
-      return axios
-        .get(apiUrl('authz', `grants/granter/${granter}?${searchParams.toString()}`), opts)
+      return get(apiUrl('authz', `grants/granter/${granter}?${searchParams.toString()}`), opts)
         .then((res) => res.data);
     }, pageCallback).then((pages) => {
       return pages.map(el => el.grants).flat();
@@ -178,8 +169,7 @@ const QueryClient = async (chainId, restUrls, opts) => {
       searchParams.append("grantee", grantee);
     if (granter)
       searchParams.append("granter", granter);
-    return axios
-      .get(apiUrl('authz', `grants?${searchParams.toString()}`), opts)
+    return get(apiUrl('authz', `grants?${searchParams.toString()}`), opts)
       .then((res) => res.data)
       .then((result) => {
         return result.grants;
@@ -187,8 +177,7 @@ const QueryClient = async (chainId, restUrls, opts) => {
   }
 
   function getWithdrawAddress(address, opts) {
-    return axios
-      .get(apiUrl('distribution', `delegators/${address}/withdraw_address`))
+    return get(apiUrl('distribution', `delegators/${address}/withdraw_address`))
       .then((res) => res.data)
       .then((result) => {
         return result.withdraw_address;
@@ -205,7 +194,10 @@ const QueryClient = async (chainId, restUrls, opts) => {
       searchParams.append('pagination.limit', pageSize);
     if (order)
       searchParams.append('order_by', order);
-    const client = axios.create({ baseURL: restUrl });
+    const client = axios.create({
+      baseURL: restUrl,
+      headers: { 'User-Agent': RESTAKE_USER_AGENT }
+    });
     axiosRetry(client, { retries: retries || 0, shouldResetTimeout: true, retryCondition: (e) => true });
     return client.get(apiPath('tx', `txs?${searchParams.toString()}`), opts).then((res) => res.data);
   }
@@ -249,7 +241,7 @@ const QueryClient = async (chainId, restUrls, opts) => {
   async function getLatestBlock(url, type, path, opts){
     const { timeout } = opts || {}
     try {
-      return await axios.get(url + path, { timeout })
+      return await get(url + path, { timeout })
         .then((res) => res.data)
     } catch (error) {
       const fallback = type === 'rest' && '/blocks/latest'
