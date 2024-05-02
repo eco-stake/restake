@@ -1,1 +1,1 @@
-export const RESTAKE_USER_AGENT = 'ReStake'
+export const RESTAKE_USER_AGENT = 'REStake'
