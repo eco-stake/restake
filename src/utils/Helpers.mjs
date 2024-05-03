@@ -2,12 +2,9 @@ import _ from 'lodash'
 import { format, floor, bignumber } from 'mathjs'
 import { coin as _coin } from  '@cosmjs/stargate'
 import axios from 'axios'
+import winston from 'winston'
 
 import { RESTAKE_USER_AGENT } from './constants.mjs'
-
-export function timeStamp(...args) {
-  console.log('[' + new Date().toISOString().substring(11, 23) + ']', ...args);
-}
 
 export function coin(amount, denom){
   return _coin(format(floor(amount), {notation: 'fixed'}), denom)
@@ -155,4 +152,32 @@ export async function post(url, body, opts) {
       'User-Agent': RESTAKE_USER_AGENT,
     }
   })
+}
+
+export function createLogger(module) {
+  return winston.createLogger({
+    level: 'debug',
+    defaultMeta: { module },
+    format: winston.format.combine(
+      winston.format.colorize(),
+      winston.format.prettyPrint(),
+      winston.format.timestamp(),
+      winston.format.splat(),
+      winston.format.printf(({
+        timestamp,
+        level,
+        message,
+        label = '',
+        ...meta
+      }) => {
+        const metaFormatted = Object.entries(meta)
+          .map(([key, value]) => `${key}=${value}`)
+          .join(' ')
+        return `[${timestamp}] ${level}: ${message} ${metaFormatted}`
+      })
+    ),
+    transports: [
+      new winston.transports.Console()
+    ],
+  });
 }

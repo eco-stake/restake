@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import axios from 'axios'
-import { timeStamp } from '../utils/Helpers.mjs'
+import { createLogger } from '../utils/Helpers.mjs'
 
 class Health {
   constructor(config, opts) {
@@ -22,26 +22,28 @@ class Health {
       // https://healthchecks.selfhosted.com/ping/{uuid} rather than https://hc-ping.com/{uuid}
       this.address = this.address + "/ping"
     }
+
+    this.logger = createLogger('health')
   }
 
   started(...args) {
-    timeStamp(...args)
-    if (this.uuid) timeStamp('Starting health', [this.address, this.uuid].join('/'))
+    this.logger.info(args.join(' '))
+    if (this.uuid) this.logger.info('Starting health', { path: [this.address, this.uuid].join('/') })
     return this.ping('start', [args.join(' ')])
   }
 
   success(...args) {
-    timeStamp(...args)
+    this.logger.info(args.join(' '))
     return this.ping(undefined, [...this.logs, args.join(' ')])
   }
 
   failed(...args) {
-    timeStamp(...args)
+    this.logger.warn(args.join(' '))
     return this.ping('fail', [...this.logs, args.join(' ')])
   }
 
   log(...args) {
-    timeStamp(...args)
+    this.logger.info(args.join(' '))
     this.logs = [...this.logs, args.join(' ')]
   }
 
@@ -67,7 +69,7 @@ class Health {
         this.uuid = res.data.ping_url.split('/')[4]
       });
     } catch (error) {
-      timeStamp("Health Check creation failed: " + error)
+      this.logger.error('Health Check creation failed', { error })
     }
   }
 
@@ -78,14 +80,14 @@ class Health {
 
   async ping(action, logs) {
     if (!this.uuid) return
-    if (this.dryRun) return timeStamp('DRYRUN: Skipping health check ping')
+    if (this.dryRun) return this.logger.info('DRYRUN: Skipping health check ping')
 
     return axios.request({
       method: 'POST',
       url: _.compact([this.address, this.uuid, action]).join('/'),
       data: logs.join("\n")
     }).catch(error => {
-      timeStamp('Health ping failed', error.message)
+      this.logger.error('Health ping failed', { error })
     })
   }
 }
