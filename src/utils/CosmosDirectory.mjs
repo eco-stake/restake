@@ -1,4 +1,4 @@
-import axios from 'axios'
+import { get } from './Helpers.mjs'
 
 function CosmosDirectory(testnet){
   const protocol = process.env.DIRECTORY_PROTOCOL || 'https'
@@ -19,34 +19,34 @@ function CosmosDirectory(testnet){
   }
 
   function getChains(){
-    return axios.get(chainsUrl)
+    return get(chainsUrl)
       .then(res => res.data)
       .then(data => Array.isArray(data) ? data : data.chains) // deprecate
       .then(data => data.reduce((a, v) => ({ ...a, [v.path]: v }), {}))
   }
 
   function getChainData(name) {
-    return axios.get([chainsUrl, name].join('/'))
+    return get([chainsUrl, name].join('/'))
       .then(res => res.data.chain)
   }
 
   async function getTokenData(name) {
-    return axios.get([chainsUrl, name, 'assetlist'].join('/'))
+    return get([chainsUrl, name, 'assetlist'].join('/'))
       .then(res => res.data)
   }
 
   function getValidators(chainName){
-    return axios.get(validatorsUrl + '/chains/' + chainName)
+    return get(validatorsUrl + '/chains/' + chainName)
       .then(res => res.data.validators)
   }
 
   function getRegistryValidator(validatorName) {
-    return axios.get(validatorsUrl + '/' + validatorName)
+    return get(validatorsUrl + '/' + validatorName)
       .then(res => res.data.validator)
   }
 
   function getOperatorAddresses(){
-    return axios.get(validatorsUrl)
+    return get(validatorsUrl)
       .then(res => res.data)
       .then(data => Array.isArray(data) ? data : data.validators) // deprecate
       .then(data => data.reduce((sum, validator) => {

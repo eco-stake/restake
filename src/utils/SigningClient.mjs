@@ -1,5 +1,4 @@
 import _ from 'lodash'
-import axios from 'axios'
 import { multiply, ceil, bignumber } from 'mathjs'
 import Long from "long";
 
@@ -15,7 +14,7 @@ import { PubKey } from "cosmjs-types/cosmos/crypto/secp256k1/keys.js";
 import { SignMode } from "cosmjs-types/cosmos/tx/signing/v1beta1/signing.js";
 import { AuthInfo, Fee, TxBody, TxRaw } from "cosmjs-types/cosmos/tx/v1beta1/tx.js";
 
-import { coin } from './Helpers.mjs'
+import { coin, get, post } from './Helpers.mjs'
 
 function SigningClient(network, signer) {
 
@@ -25,8 +24,7 @@ function SigningClient(network, signer) {
   const registry = new Registry(defaultStargateTypes);
 
   function getAccount(address) {
-    return axios
-      .get(restUrl + "/cosmos/auth/v1beta1/accounts/" + address)
+    return get(restUrl + "/cosmos/auth/v1beta1/accounts/" + address)
       .then((res) => res.data.account)
       .then((value) => {
         // see https://github.com/chainapsis/keplr-wallet/blob/7ca025d32db7873b7a870e69a4a42b525e379132/packages/cosmos/src/account/index.ts#L73
@@ -122,7 +120,7 @@ function SigningClient(network, signer) {
       }
       await sleep(pollIntervalMs);
       try {
-        const response = await axios.get(restUrl + '/cosmos/tx/v1beta1/txs/' + txId);
+        const response = await get(restUrl + '/cosmos/tx/v1beta1/txs/' + txId);
         const result = parseTxResult(response.data.tx_response)
         return result
       } catch {
@@ -130,7 +128,7 @@ function SigningClient(network, signer) {
       }
     };
 
-    const response = await axios.post(restUrl + '/cosmos/tx/v1beta1/txs', {
+    const response = await post(restUrl + '/cosmos/tx/v1beta1/txs', {
       tx_bytes: toBase64(TxRaw.encode(txBody).finish()),
       mode: "BROADCAST_MODE_SYNC"
     })
@@ -180,7 +178,7 @@ function SigningClient(network, signer) {
     }
 
     try {
-      const estimate = await axios.post(restUrl + '/cosmos/tx/v1beta1/simulate', {
+      const estimate = await post(restUrl + '/cosmos/tx/v1beta1/simulate', {
         tx_bytes: toBase64(TxRaw.encode(txBody).finish()),
       }).then(el => el.data.gas_info.gas_used)
       return (parseInt(estimate * (modifier || defaultGasModifier)));
