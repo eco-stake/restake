@@ -109,7 +109,7 @@ export default class NetworkRunner {
       if(error.response?.status === 501){
         return false
       }else{
-        throw new Error('Failed to load grants')
+        throw new Error(`Failed to load grants: ${error.response?.status}`)
       }
     }
     if (addresses){
@@ -241,7 +241,7 @@ export default class NetworkRunner {
       this.logger.info('Reward is too low, skipping', {
         address,
         amount: autostakeAmount,
-        denom: this.network.denom, 
+        denom: this.network.denom,
       })
       return
     }
