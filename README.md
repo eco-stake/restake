@@ -22,7 +22,7 @@ A script is also provided which allows a validator to automatically search their
 
 - Authz is also not fully supported yet. Many chains are yet to update. The REStake UI will fall back to being a manual staking app with useful manual compounding features.
 - Currently REStake needs the browser extension version of Keplr, but WalletConnect and Keplr iOS functionality will be added ASAP.
-- REStake requires Nodejs version 18.x or later, it will not work with earlier versions.
+- REStake requires Nodejs version 20.x or later, it will not work with earlier versions.
 
 ## Become an operator
 
@@ -88,18 +88,18 @@ cp .env.sample .env
 
 #### Instructions for NPM
 
-##### Install nodejs@v18
+##### Install nodejs@v20
 
 ```bash
-curl -sL https://deb.nodesource.com/setup_18.x -o /tmp/nodesource_setup.sh
+curl -sL https://deb.nodesource.com/setup_20.x -o /tmp/nodesource_setup.sh
 # read the script file and when you're sure it's safe run it
 chmod +x /tmp/nodesource_setup.sh
 /tmp/nodesource_setup.sh
 apt install nodejs -y
 node --version
-> v18.15.0
+> v20.9.0
 npm --version
-> 9.5.0
+> 10.1.0
 ```
 
 ##### Clone the repository and build it
