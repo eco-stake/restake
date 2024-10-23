@@ -329,5 +329,9 @@
   {
     "name": "realio",
     "gasPrice": "1000000000ario"
-  }
+  },
+  {
+    "name": "DungeonChain",
+    "gasPrice": "0.05udgn"
+  },
 ]
