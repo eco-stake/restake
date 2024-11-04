@@ -4,7 +4,7 @@ import { createLogger } from '../utils/Helpers.mjs'
 
 class Health {
   constructor(config, opts) {
-    const { address, uuid, name, apiKey, timeout, gracePeriod } = config || {}
+    const { address, apiAddress, uuid, name, apiKey, timeout, gracePeriod } = config || {}
     const { dryRun, networkName } = opts || {}
     this.address = address || 'https://hc-ping.com'
     this.apiAddress = apiAddress || 'https://healthchecks.io'
