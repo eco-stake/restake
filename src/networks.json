@@ -333,5 +333,9 @@
   {
     "name": "dungeon",
     "gasPrice": "0.05udgn"
+  },
+  {
+    "name": "elys",
+    "gasPrice": "0uelys"
   }
 ]
