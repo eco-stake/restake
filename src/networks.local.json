@@ -1,0 +1,75 @@
+{
+  "celestia": {
+    "restUrl": [
+      "https://api.mainnet.celestia.tm.p2p.org"
+    ],
+    "rpcUrl": [
+      "https://rpc.mainnet.celestia.tm.p2p.org"
+    ]
+  },
+  "cosmoshub": {
+    "restUrl": [
+      "https://cosmoshub-mainnet-1-archive-rest.tm.p2p.org"
+    ],
+    "rpcUrl": [
+      "https://cosmoshub-mainnet-1-archive.tm.p2p.org"
+    ]
+  },
+  "agoric": {
+    "autostake": {
+      "correctSlip44": true
+    },
+    "restUrl": [
+      "https://agoric-api.polkachu.com"
+    ],
+    "rpcUrl": [
+      "https://rpc.agoric-main-eu1.ccvalidators.com"
+    ]
+  },
+  "axelar": {
+    "restUrl": [
+      "https://api.mainnet.axelar.tm.p2p.org"
+    ],
+    "rpcUrl": [
+      "https://rpc.mainnet.axelar.tm.p2p.org"
+    ]
+  },
+  "dydx": {
+    "restUrl": [
+      "https://api.dydx-mainnet.tm.p2p.org"
+    ],
+    "rpcUrl": [
+      "https://rpc.dydx-mainnet.tm.p2p.org"
+    ]
+  },
+  "haqq": {
+    "restUrl": [
+      "https://api.haqq-mainnet.tm.p2p.org"
+    ],
+    "rpcUrl": [
+      "https://rpc.haqq-mainnet.tm.p2p.org"
+    ]
+  },
+  "dymension": {
+    "operator": {
+      "minimumReward": "500000000000000000"
+    },
+    "restUrl": [
+      "https://api.dymension-mainnet.tm.p2p.org"
+    ],
+    "rpcUrl": [
+      "https://rpc.dymension-mainnet.tm.p2p.org"
+    ]
+  },
+  "saga": {
+    "operator": {
+      "minimumReward": "500000"
+    },
+    "restUrl": [
+      "https://api.mainnet.saga.tm.p2p.org"
+    ],
+    "rpcUrl": [
+      "https://rpc.mainnet.saga.tm.p2p.org"
+    ]
+  }
+}
