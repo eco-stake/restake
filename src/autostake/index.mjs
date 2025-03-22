@@ -119,37 +119,37 @@ export default function Autostake(mnemonic, opts) {
   }
 
   async function getNetworkRunner(data,onlyOperators) {
-    const network = new Network(data)
-    let config = { ...opts }
-    try {
-      await network.load()
-    } catch(e) {
-      if(e.response.status === 404){
-        failed = true
-        throw new Error(`${network.name} not found in Chain Registry`)
+      const network = new Network(data)
+      let config = {...opts}
+      try {
+          await network.load()
+      } catch (e) {
+          if (e.response.status === 404) {
+              failed = true
+              throw new Error(`${network.name} not found in Chain Registry`)
+          }
+          throw new Error(`Unable to load network data for ${network.name}`)
       }
-      throw new Error(`Unable to load network data for ${network.name}`)
-    }
 
-      const logger = mainLogger.child({ chain: network.name })
+      const logger = mainLogger.child({chain: network.name})
       if (!onlyOperators) {
-          logger.info('Loaded chain', { prettyName: network.prettyName })
+          logger.info('Loaded chain', {prettyName: network.prettyName})
       }
 
-    const { signer, slip44 } = await getSigner(network, onlyOperators)
-    const wallet = new Wallet(network, signer)
-    const botAddress = await wallet.getAddress()
-    if (onlyOperators) {
-        if (!network.getOperatorByBotAddress(botAddress)) {
-            return
-        } else {
-            logger.info('Loaded', network.prettyName)
-        }
-        logger.info('Bot address', { address: botAddress })
+      const {signer, slip44} = await getSigner(network, onlyOperators)
+      const wallet = new Wallet(network, signer)
+      const botAddress = await wallet.getAddress()
+      if (onlyOperators) {
+          if (!network.getOperatorByBotAddress(botAddress)) {
+              return
+          } else {
+              logger.info('Loaded', {prettyName: network.prettyName})
+          }
+          logger.info('Bot address', {address: botAddress})
 
-        if (network.slip44 && network.slip44 !== slip44) {
-          logger.warn("!! You are not using the preferred derivation path !!")
-          logger.warn("!! You should switch to the correct path unless you have grants. Check the README !!")
+          if (network.slip44 && network.slip44 !== slip44) {
+              logger.warn("!! You are not using the preferred derivation path !!")
+              logger.warn("!! You should switch to the correct path unless you have grants. Check the README !!")
         }
 
         const operator = network.getOperatorByBotAddress(botAddress)
@@ -188,9 +188,9 @@ export default function Autostake(mnemonic, opts) {
 
     let slip44
     if (network.data.autostake?.correctSlip44 || network.slip44 === 60) {
-      if (network.slip44 === 60)  {
-        if (!onlyOperators) {
-          logger.info('Found ETH coin type')
+      if (network.slip44 === 60) {
+          if (!onlyOperators) {
+              logger.info('Found ETH coin type')
         }
       }
       slip44 = network.slip44 || 118
@@ -204,7 +204,7 @@ export default function Autostake(mnemonic, opts) {
       Slip10RawIndex.normal(0),
       Slip10RawIndex.normal(0),
     ];
-    if (slip44 != 118 && !onlyOperators) {
+    if (slip44 !== 118 && !onlyOperators) {
         logger.info('Using HD Path', { path: pathToString(hdPath) })
     }
 
