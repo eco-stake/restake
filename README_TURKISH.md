@@ -86,18 +86,18 @@ cp .env.sample .env
 
 #### NPM için Talimatlar
 
-##### nodejs@v18 yükleme
+##### nodejs@v20 yükleme
 
 ```bash
-curl -sL https://deb.nodesource.com/setup_18.x -o /tmp/nodesource_setup.sh
+curl -sL https://deb.nodesource.com/setup_20.x -o /tmp/nodesource_setup.sh
 # read the script file and when you're sure it's safe run it
 chmod +x /tmp/nodesource_setup.sh
 /tmp/nodesource_setup.sh
 apt install nodejs -y
 node --version
-> v18.15.0
+> v20.9.0
 npm --version
-> 9.5.0
+> 10.1.0
 ```
 
 Depoyu klonlama ve yükleme

@@ -1,12 +1,13 @@
 import _ from 'lodash'
 import axios from 'axios'
-import { timeStamp } from '../utils/Helpers.mjs'
+import { timeStamp, createLogger } from '../utils/Helpers.mjs'
 
 class Health {
   constructor(config, opts) {
-    const { address, uuid, name, apiKey, timeout, gracePeriod } = config || {}
+    const { address, apiAddress, uuid, name, apiKey, timeout, gracePeriod } = config || {}
     const { dryRun, networkName } = opts || {}
     this.address = address || 'https://hc-ping.com'
+    this.apiAddress = apiAddress || 'https://healthchecks.io'
     this.name = name || networkName
     this.gracePeriod = gracePeriod || 86400   // default 24 hours
     this.timeout = timeout || 86400           // default 24 hours
@@ -18,33 +19,35 @@ class Health {
 
     if (address) {
       // This is necessary as the default provider - hc-ping.com - has a built in ping mechanism
-      // whereas providing self-hosted addresses do NOT. 
+      // whereas providing self-hosted addresses do NOT.
       // https://healthchecks.selfhosted.com/ping/{uuid} rather than https://hc-ping.com/{uuid}
       this.address = this.address + "/ping"
     }
+
+    this.logger = createLogger('health')
   }
 
-  started(onlyOperators,...args) {
+  started(onlyOperators, ...args) {
     if (!onlyOperators) {
-      timeStamp(...args)
+      this.logger.info(args.join(' '))
     }
-
-    if (this.uuid) timeStamp('Starting health', [this.address, this.uuid].join('/'))
+    if (this.uuid) this.logger.info('Starting health', { path: [this.address, this.uuid].join('/') })
     return this.ping('start', [args.join(' ')])
+
   }
 
   success(...args) {
-    timeStamp(...args)
+    this.logger.info(args.join(' '))
     return this.ping(undefined, [...this.logs, args.join(' ')])
   }
 
   failed(...args) {
-    timeStamp(...args)
+    this.logger.warn(args.join(' '))
     return this.ping('fail', [...this.logs, args.join(' ')])
   }
 
   log(...args) {
-    timeStamp(...args)
+    this.logger.info(args.join(' '))
     this.logs = [...this.logs, args.join(' ')]
   }
 
@@ -66,11 +69,11 @@ class Health {
     }
 
     try {
-      await axios.post([this.address, 'api/v2/checks/'].join('/'), data, config).then((res) => {
+      await axios.post([this.apiAddress, 'api/v2/checks/'].join('/'), data, config).then((res) => {
         this.uuid = res.data.ping_url.split('/')[4]
       });
     } catch (error) {
-      timeStamp("Health Check creation failed: " + error)
+      this.logger.error('Health Check creation failed', { error })
     }
   }
 
@@ -81,14 +84,14 @@ class Health {
 
   async ping(action, logs) {
     if (!this.uuid) return
-    if (this.dryRun) return timeStamp('DRYRUN: Skipping health check ping')
+    if (this.dryRun) return this.logger.info('DRYRUN: Skipping health check ping')
 
     return axios.request({
       method: 'POST',
       url: _.compact([this.address, this.uuid, action]).join('/'),
       data: logs.join("\n")
     }).catch(error => {
-      timeStamp('Health ping failed', error.message)
+      this.logger.error('Health ping failed', { error })
     })
   }
 }
