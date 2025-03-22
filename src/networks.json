@@ -57,11 +57,6 @@
     "gasPrice": "0.1udvpn"
   },
   {
-    "name": "dig",
-    "gasPrice": "0.01udig",
-    "ownerAddress": "digvaloper136avwnuvvy94dqmtnaue2nfvjes8xr37h9rzay"
-  },
-  {
     "name": "bitcanna",
     "gasPrice": "0.001ubcna"
   },
@@ -147,14 +142,7 @@
       "high": 0.035
     }
   },
-  {
-    "name": "cerberus",
-    "gasPrice": "0.025ucrbrus",
-    "autostake": {
-      "batchTxs": 100
-    },
-    "ownerAddress": "cerberusvaloper1tat2cy3f9djtq9z7ly262sqngcarvaktr0w78f"
-  },
+
   {
     "name": "secretnetwork",
     "gasPrice": "0.025uscrt",
@@ -205,11 +193,6 @@
     "enabled": false
   },
   {
-    "name": "harpoon",
-    "ownerAddress": "kujiravaloper1vue5lawr3s0au9zj0aqeft5aknx6cjq6w5ghca",
-    "testnet": true
-  },
-  {
     "name": "kujira",
     "ownerAddress": "kujiravaloper1vue5lawr3s0au9zj0aqeft5aknx6cjq6w5ghca"
   },
@@ -242,16 +225,7 @@
     "name": "passage",
     "ownerAddress": "pasgvaloper196rujtjehu0dfc7y85lkcaps6tel76g3l9knjy"
   },
-  {
-    "name": "stride",
-    "ownerAddress": "stridevaloper1x2kta40h5rnymtjn6ys7vk2d87xu7y6zfu9j3r",
-    "authzSupport": false,
-    "gasPriceStep": {
-      "low": 0,
-      "average": 0.025,
-      "high": 0.04
-    }
-  },
+
   {
     "name": "pulsar",
     "testnet": true
@@ -279,11 +253,7 @@
   {
     "name": "acrechain"
   },
-  {
-    "name": "mars",
-    "ownerAddress": "marsvaloper1hvtaqw9mlwc0a4cdx6g3klk8acfc6z3yazzk8a",
-    "gasPrice": "0umars"
-  },
+
   {
     "name": "planq",
     "gasPrice": "30000000000aplanq"

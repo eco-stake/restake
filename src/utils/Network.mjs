@@ -63,7 +63,8 @@ class Network {
     this.validators = (await this.directory.getValidators(this.name)).map(data => {
       return Validator(this, data)
     })
-    this.operators = (this.data.operators || this.validators.filter(el => el.restake && this.allowOperator(el.operator_address))).map(data => {
+    this.operators = (this.data.operators || this.validators.filter(el => {
+      return (el.restake && this.allowOperator(el.operator_address))})).map(data => {
       return Operator(this, data)
     })
     this.operatorCount = this.operators.length

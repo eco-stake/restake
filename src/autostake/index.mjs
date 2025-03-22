@@ -87,7 +87,10 @@ export default function Autostake(mnemonic, opts) {
     } catch (e) {
       error = e.message
     }
-    runners.push({ success: networkRunner?.didSucceed(), networkRunner, error, failedAddresses })
+    if (networkRunner?.didSucceed) {
+      runners.push({ success: networkRunner?.didSucceed(), networkRunner, error, failedAddresses })
+    }
+
     if (!networkRunner?.didSucceed() && !networkRunner?.forceFail && retries < maxRetries && !failed) {
       await logResults(health, networkRunner, error, `Failed attempt ${retries + 1}/${maxRetries + 1}, retrying in 30 seconds...`)
       await new Promise(r => setTimeout(r, 30 * 1000));
@@ -152,9 +155,10 @@ export default function Autostake(mnemonic, opts) {
               logger.warn("!! You should switch to the correct path unless you have grants. Check the README !!")
         }
 
-        const operator = network.getOperatorByBotAddress(botAddress)
-        if (!operator) return  logger.info('Not an operator')
+
     }
+    const operator = network.getOperatorByBotAddress(botAddress)
+    if (!operator) return  logger.info('Not an operator')
     if (!network.authzSupport) return logger.info('No Authz support')
 
     await network.connect({ timeout: config.delegationsTimeout || 20000 })
@@ -169,7 +173,7 @@ export default function Autostake(mnemonic, opts) {
       logger.warn('You are using public nodes, they may not be reliable. Check the README to use your own')
       logger.warn('Delaying briefly and adjusting config to reduce load...')
       config = {...config, batchPageSize: 50, batchQueries: 10, queryThrottle: 2500}
-      await new Promise(r => setTimeout(r, (Math.random() * 31) * 1000));
+   //   await new Promise(r => setTimeout(r, (Math.random() * 31) * 1000));
     }
 
     const signingClient = wallet.signingClient()
@@ -226,6 +230,7 @@ export default function Autostake(mnemonic, opts) {
     const networks = JSON.parse(networksData);
     try {
       const overridesData = fs.readFileSync(networksOverridePath);
+      mainLogger.info("Loading networks.local.json for overrides",{file: networksOverridePath})
       const overrides = overridesData && JSON.parse(overridesData) || {}
       return overrideNetworks(networks, overrides)
     } catch (error) {
