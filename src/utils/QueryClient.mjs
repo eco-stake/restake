@@ -225,7 +225,7 @@ const QueryClient = async (chainId, restUrls, opts) => {
         urls = [urls]
       }
     }
-    const path = type === "rest" ? apiPath('/base/tendermint', 'blocks/latest') : "/block";
+    const path = type === "rest" ? apiPath('base/tendermint', 'blocks/latest') : "/block";
     return Promise.any(urls.map(async (url) => {
       url = url.replace(/\/$/, '')
       try {
