@@ -253,13 +253,16 @@ const QueryClient = async (chainId, restUrls, opts) => {
   }
 
   function apiUrl(type, path){
-    return restUrl + apiPath(type, path)
+    const normalizedRestUrl = restUrl.replace(/\/$/, '')
+    return normalizedRestUrl + apiPath(type, path)
   }
 
   function apiPath(type, path){
     const versions = config.apiVersions || {}
     const version = versions[type] || 'v1beta1'
-    return `/cosmos/${type}/${version}/${path}`
+    const normalizedType = type.replace(/^\/+/, '')
+    const normalizedPath = path.replace(/^\/+/, '')
+    return `/cosmos/${normalizedType}/${version}/${normalizedPath}`
   }
 
   return {
