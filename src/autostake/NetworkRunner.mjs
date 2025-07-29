@@ -82,7 +82,8 @@ export default class NetworkRunner {
 
   getBalance() {
     let timeout = this.opts.delegationsTimeout
-    return this.queryClient.getBalance(this.operator.botAddress, this.network.denom, { timeout })
+    const denom = this.network.gasPriceDenom || this.network.denom
+    return this.queryClient.getBalance(this.operator.botAddress, denom, { timeout })
       .then(
         (balance) => {
           this.logger.info('Fetched bot balance', balance)
