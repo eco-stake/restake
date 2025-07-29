@@ -25,6 +25,8 @@ export function rewardAmount(rewards, denom, type){
 export function overrideNetworks(networks, overrides){
   networks = networks.reduce((a, v) => ({ ...a, [v.name]: v }), {})
   const names = [...Object.keys(networks), ...Object.keys(overrides)]
+
+  //const names2 = names.filter(name => { return overrides[name]});
   return _.uniq(names).sort().map(name => {
     let network = networks[name]
     let override = overrides[name]

@@ -26,7 +26,7 @@ export default function Autostake(mnemonic, opts) {
     process.exit()
   }
 
-  async function run(networkNames, networksOverridePath) {
+  async function run(networkNames, networksOverridePath,onlyOperators) {
     const networks = getNetworksData(networksOverridePath)
     for (const name of networkNames) {
       if (name && !networks.map(el => el.name).includes(name)){
@@ -40,8 +40,8 @@ export default function Autostake(mnemonic, opts) {
         if (data.enabled === false) return
 
         const health = new Health(data.healthCheck, { dryRun: opts.dryRun, networkName: data.name })
-        health.started('⚛')
-        const results = await runWithRetry(data, health)
+        health.started(onlyOperators,'⚛')
+        const results = await runWithRetry(data, health, undefined, undefined, onlyOperators)
         const network = results[0]?.networkRunner?.network
         const { success, skipped } = results[results.length - 1] || {}
         if(!skipped && !failed){
@@ -51,9 +51,13 @@ export default function Autostake(mnemonic, opts) {
             logSummary(health, networkRunner, error)
           })
         }
-        if (success || skipped) {
-          return health.success(`Autostake finished for ${network?.prettyName || data.name}`)
-        } else {
+        if (success) {
+            return health.success(`Autostake finished for ${network?.prettyName || data.name}`)
+        } else if (skipped){
+            if (!onlyOperators) {
+                return health.success(`Autostake skipped for ${network?.prettyName || data.name}`)
+            }
+        }else {
           return health.failed(`Autostake failed for ${network?.prettyName || data.name}`)
         }
       }
@@ -61,14 +65,15 @@ export default function Autostake(mnemonic, opts) {
     await executeSync(calls, 1)
   }
 
-  async function runWithRetry(data, health, retries, runners) {
+  async function runWithRetry(data, health, retries, runners, onlyOperators) {
     retries = retries || 0
     runners = runners || []
     const maxRetries = data.autostake?.retries ?? 2
     let { failedAddresses } = runners[runners.length - 1] || {}
     let networkRunner, error
     try {
-      networkRunner = await getNetworkRunner(data)
+
+      networkRunner = await getNetworkRunner(data,onlyOperators)
       if (!networkRunner){
         runners.push({ skipped: true })
         return runners
@@ -82,11 +87,14 @@ export default function Autostake(mnemonic, opts) {
     } catch (e) {
       error = e.message
     }
-    runners.push({ success: networkRunner?.didSucceed(), networkRunner, error, failedAddresses })
+    if (networkRunner?.didSucceed) {
+      runners.push({ success: networkRunner?.didSucceed(), networkRunner, error, failedAddresses })
+    }
+
     if (!networkRunner?.didSucceed() && !networkRunner?.forceFail && retries < maxRetries && !failed) {
       await logResults(health, networkRunner, error, `Failed attempt ${retries + 1}/${maxRetries + 1}, retrying in 30 seconds...`)
       await new Promise(r => setTimeout(r, 30 * 1000));
-      return await runWithRetry(data, health, retries + 1, runners)
+      return await runWithRetry(data, health, retries + 1, runners, onlyOperators)
     }
     await logResults(health, networkRunner, error)
     return runners
@@ -113,44 +121,45 @@ export default function Autostake(mnemonic, opts) {
     if (error) health.log(`Failed with error: ${error}`)
   }
 
-  async function getNetworkRunner(data) {
-    const network = new Network(data)
-    let config = { ...opts }
-    try {
-      await network.load()
-    } catch(e) {
-      if(e.response.status === 404){
-        failed = true
-        throw new Error(`${network.name} not found in Chain Registry`)
+  async function getNetworkRunner(data,onlyOperators) {
+      const network = new Network(data)
+      let config = {...opts}
+      try {
+          await network.load()
+      } catch (e) {
+          if (e.response.status === 404) {
+              failed = true
+              throw new Error(`${network.name} not found in Chain Registry`)
+          }
+          throw new Error(`Unable to load network data for ${network.name}`)
       }
-      throw new Error(`Unable to load network data for ${network.name}`)
+
+      const logger = mainLogger.child({chain: network.name})
+      if (!onlyOperators) {
+          logger.info('Loaded chain', {prettyName: network.prettyName})
+      }
+
+      const {signer, slip44} = await getSigner(network, onlyOperators)
+      const wallet = new Wallet(network, signer)
+      const botAddress = await wallet.getAddress()
+      if (onlyOperators) {
+          if (!network.getOperatorByBotAddress(botAddress)) {
+              return
+          } else {
+              logger.info('Loaded', {prettyName: network.prettyName})
+          }
+          logger.info('Bot address', {address: botAddress})
+
+          if (network.slip44 && network.slip44 !== slip44) {
+              logger.warn("!! You are not using the preferred derivation path !!")
+              logger.warn("!! You should switch to the correct path unless you have grants. Check the README !!")
+        }
+
+
     }
-
-    const logger = mainLogger.child({ chain: network.name })
-
-    logger.info('Loaded chain', { prettyName: network.prettyName })
-
-    const { signer, slip44 } = await getSigner(network)
-    const wallet = new Wallet(network, signer)
-    const botAddress = await wallet.getAddress()
-
-    logger.info('Bot address', { address: botAddress })
-
-    if (network.slip44 && network.slip44 !== slip44) {
-      logger.warn("!! You are not using the preferred derivation path !!")
-      logger.warn("!! You should switch to the correct path unless you have grants. Check the README !!")
-    }
-
     const operator = network.getOperatorByBotAddress(botAddress)
-    if (!operator) {
-      logger.info('Not an operator')
-      return
-    }
-
-    if (!network.authzSupport) {
-      logger.info('No Authz support')
-      return
-    }
+    if (!operator) return  logger.info('Not an operator')
+    if (!network.authzSupport) return logger.info('No Authz support')
 
     await network.connect({ timeout: config.delegationsTimeout || 20000 })
 
@@ -164,7 +173,7 @@ export default function Autostake(mnemonic, opts) {
       logger.warn('You are using public nodes, they may not be reliable. Check the README to use your own')
       logger.warn('Delaying briefly and adjusting config to reduce load...')
       config = {...config, batchPageSize: 50, batchQueries: 10, queryThrottle: 2500}
-      await new Promise(r => setTimeout(r, (Math.random() * 31) * 1000));
+   //   await new Promise(r => setTimeout(r, (Math.random() * 31) * 1000));
     }
 
     const signingClient = wallet.signingClient()
@@ -178,12 +187,16 @@ export default function Autostake(mnemonic, opts) {
     )
   }
 
-  async function getSigner(network) {
+  async function getSigner(network, onlyOperators) {
     const logger = mainLogger.child({ chain: network.name })
 
     let slip44
     if (network.data.autostake?.correctSlip44 || network.slip44 === 60) {
-      if (network.slip44 === 60) logger.info('Found ETH coin type')
+      if (network.slip44 === 60) {
+          if (!onlyOperators) {
+              logger.info('Found ETH coin type')
+        }
+      }
       slip44 = network.slip44 || 118
     } else {
       slip44 = network.data.autostake?.slip44 || 118
@@ -195,7 +208,9 @@ export default function Autostake(mnemonic, opts) {
       Slip10RawIndex.normal(0),
       Slip10RawIndex.normal(0),
     ];
-    slip44 != 118 && logger.info('Using HD Path', { path: pathToString(hdPath) })
+    if (slip44 !== 118 && !onlyOperators) {
+        logger.info('Using HD Path', { path: pathToString(hdPath) })
+    }
 
     let signer = await DirectSecp256k1HdWallet.fromMnemonic(mnemonic, {
       prefix: network.prefix,
@@ -215,6 +230,7 @@ export default function Autostake(mnemonic, opts) {
     const networks = JSON.parse(networksData);
     try {
       const overridesData = fs.readFileSync(networksOverridePath);
+      mainLogger.info("Loading networks.local.json for overrides",{file: networksOverridePath})
       const overrides = overridesData && JSON.parse(overridesData) || {}
       return overrideNetworks(networks, overrides)
     } catch (error) {
