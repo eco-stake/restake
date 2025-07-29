@@ -91,7 +91,9 @@ class Network {
     this.defaultGasPrice = this.decimals && format(bignumber(multiply(0.000000025, pow(10, this.decimals))), { notation: 'fixed', precision: 4}) + this.denom
     this.gasPrice = this.data.gasPrice || this.defaultGasPrice
     if(this.gasPrice){
-      this.gasPriceAmount = GasPrice.fromString(this.gasPrice).amount.toString()
+      const gasPrice = GasPrice.fromString(this.gasPrice)
+      this.gasPriceAmount = gasPrice.amount.toString()
+      this.gasPriceDenom = gasPrice.denom
       this.gasPriceStep = this.data.gasPriceStep || {
         "low": multiply(this.gasPriceAmount, 0.5),
         "average": multiply(this.gasPriceAmount, 1),

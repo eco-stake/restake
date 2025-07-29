@@ -334,5 +334,9 @@
   {
     "name": "dungeon",
     "gasPrice": "0.05udgn"
+  },
+  {
+    "name": "atomone",
+    "gasPrice": "0.225uphoton"
   }
 ]
