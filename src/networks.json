@@ -240,7 +240,8 @@
   },
   {
     "name": "passage",
-    "ownerAddress": "pasgvaloper196rujtjehu0dfc7y85lkcaps6tel76g3l9knjy"
+    "ownerAddress": "pasgvaloper196rujtjehu0dfc7y85lkcaps6tel76g3l9knjy",
+    "gasPrice": "12.5upasg"
   },
   {
     "name": "stride",
