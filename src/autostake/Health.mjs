@@ -27,10 +27,13 @@ class Health {
     this.logger = createLogger('health')
   }
 
-  started(...args) {
-    this.logger.info(args.join(' '))
-    if (this.uuid) this.logger.info('Starting health', { path: [this.address, this.uuid].join('/') })
+  started(onlyOperators, ...args) {
+    if (!onlyOperators) {
+        this.logger.info(args.join(' '))
+    }
+      if (this.uuid) this.logger.info('Starting health', { path: [this.address, this.uuid].join('/') })
     return this.ping('start', [args.join(' ')])
+
   }
 
   success(...args) {
